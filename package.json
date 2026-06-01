@@ -14,16 +14,32 @@
   "engines": {
     "vscode": "^1.95.0"
   },
-  "categories": ["Programming Languages", "Linters"],
-  "keywords": ["carve", "markup", "djot", "lsp"],
-  "activationEvents": ["onLanguage:carve"],
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "keywords": [
+    "carve",
+    "markup",
+    "djot",
+    "lsp"
+  ],
+  "activationEvents": [
+    "onLanguage:carve"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "languages": [
       {
         "id": "carve",
-        "aliases": ["Carve", "carve"],
-        "extensions": [".crv", ".carve"],
+        "aliases": [
+          "Carve",
+          "carve"
+        ],
+        "extensions": [
+          ".crv",
+          ".carve"
+        ],
         "filenames": [],
         "configuration": "./language-configuration/carve.json"
       }
