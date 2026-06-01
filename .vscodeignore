@@ -1,0 +1,17 @@
+.github/**
+.gitignore
+.vscode/**
+.vscode-test/**
+src/**
+tsconfig.json
+dist/*.test.*
+dist/**/*.map
+*.log
+*.vsix
+node_modules/**/{test,tests,__tests__,docs,doc,example,examples}/**
+node_modules/**/src/**
+node_modules/**/tsconfig.json
+node_modules/**/*.map
+node_modules/**/*.ts
+node_modules/**/*.md
+!node_modules/**/README.md

@@ -1,0 +1,72 @@
+{
+  "name": "vscode-carve",
+  "displayName": "Carve",
+  "description": "VS Code language support for Carve markup documents.",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "markup-carve",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markup-carve/vscode-carve.git"
+  },
+  "type": "module",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": ["Programming Languages", "Linters"],
+  "keywords": ["carve", "markup", "djot", "lsp"],
+  "activationEvents": ["onLanguage:carve"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "carve",
+        "aliases": ["Carve", "carve"],
+        "extensions": [".crv", ".carve"],
+        "filenames": [],
+        "configuration": "./language-configuration/carve.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "carve",
+        "scopeName": "text.carve",
+        "path": "./syntaxes/carve.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Carve",
+      "properties": {
+        "carve.lsp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the Carve language server."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "carve.restartLanguageServer",
+        "title": "Carve: Restart Language Server"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "node --test dist/*.test.js",
+    "typecheck": "tsc --noEmit",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "@markup-carve/carve-lsp": "git+https://github.com/markup-carve/carve-lsp.git",
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.2.2",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Carve",
+  "scopeName": "text.carve",
+  "patterns": [
+    { "include": "#frontmatter" },
+    { "include": "#comments" },
+    { "include": "#headings" },
+    { "include": "#code-blocks" },
+    { "include": "#raw-blocks" },
+    { "include": "#tables" },
+    { "include": "#block-quotes" },
+    { "include": "#lists" },
+    { "include": "#divs" },
+    { "include": "#definitions" },
+    { "include": "#links" },
+    { "include": "#images" },
+    { "include": "#footnotes" },
+    { "include": "#attributes" },
+    { "include": "#inline-code" },
+    { "include": "#math" },
+    { "include": "#emphasis" },
+    { "include": "#mentions-tags" },
+    { "include": "#smart-typography" }
+  ],
+  "repository": {
+    "frontmatter": {
+      "patterns": [
+        {
+          "name": "meta.frontmatter.carve",
+          "begin": "\\A(---)\\s*([A-Za-z0-9_-]+)?\\s*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
+            "2": { "name": "entity.name.type.frontmatter.carve" }
+          },
+          "end": "^(---)\\s*$",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.end.carve" }
+          },
+          "patterns": [{ "name": "string.unquoted.frontmatter.carve", "match": ".+" }]
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.carve",
+          "begin": "\\{%",
+          "end": "%\\}"
+        }
+      ]
+    },
+    "headings": {
+      "patterns": [
+        {
+          "name": "markup.heading.carve",
+          "match": "^(#{1,6})(\\s+)(.+)$",
+          "captures": {
+            "1": { "name": "punctuation.definition.heading.carve" },
+            "3": { "name": "entity.name.section.carve" }
+          }
+        },
+        {
+          "name": "markup.heading.setext.carve",
+          "match": "^(.+)\\n(=+|-+)\\s*$",
+          "captures": {
+            "1": { "name": "entity.name.section.carve" },
+            "2": { "name": "punctuation.definition.heading.carve" }
+          }
+        }
+      ]
+    },
+    "code-blocks": {
+      "patterns": [
+        {
+          "name": "markup.raw.block.fenced.code.carve",
+          "begin": "^(`{3,}|~{3,})\\s*([^`~\\s]+)?\\s*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.raw.begin.carve" },
+            "2": { "name": "entity.name.type.language.carve" }
+          },
+          "end": "^(`{3,}|~{3,})\\s*$",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.raw.end.carve" }
+          }
+        }
+      ]
+    },
+    "raw-blocks": {
+      "patterns": [
+        {
+          "name": "markup.raw.block.carve",
+          "begin": "^(%{3,})\\s*([^\\s]+)?\\s*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.raw.begin.carve" },
+            "2": { "name": "entity.name.type.language.carve" }
+          },
+          "end": "^(%{3,})\\s*$",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.raw.end.carve" }
+          }
+        }
+      ]
+    },
+    "tables": {
+      "patterns": [
+        {
+          "name": "markup.table.row.carve",
+          "match": "^\\s*\\|.*\\|\\s*$",
+          "captures": {
+            "0": { "patterns": [{ "name": "punctuation.separator.table.carve", "match": "\\|" }] }
+          }
+        },
+        {
+          "name": "markup.table.caption.carve",
+          "match": "^\\s*\\^\\s+.+$"
+        }
+      ]
+    },
+    "block-quotes": {
+      "patterns": [
+        {
+          "name": "markup.quote.carve",
+          "match": "^\\s*(>+)\\s?.*$",
+          "captures": {
+            "1": { "name": "punctuation.definition.quote.carve" }
+          }
+        }
+      ]
+    },
+    "lists": {
+      "patterns": [
+        {
+          "name": "markup.list.unnumbered.carve",
+          "match": "^(\\s*)([-+*])\\s+(\\[[ xX]\\]\\s+)?",
+          "captures": {
+            "2": { "name": "punctuation.definition.list.begin.carve" },
+            "3": { "name": "constant.language.task-list.carve" }
+          }
+        },
+        {
+          "name": "markup.list.numbered.carve",
+          "match": "^(\\s*)(\\(?[0-9]+[.)]|\\(?[A-Za-z][.)]|\\(?[ivxlcdmIVXLCDM]+[.)])\\s+",
+          "captures": {
+            "2": { "name": "punctuation.definition.list.begin.carve" }
+          }
+        },
+        {
+          "name": "markup.list.definition.carve",
+          "match": "^(\\s*)(:)\\s+",
+          "captures": {
+            "2": { "name": "punctuation.definition.list.begin.carve" }
+          }
+        }
+      ]
+    },
+    "divs": {
+      "patterns": [
+        {
+          "name": "markup.other.div.carve",
+          "match": "^\\s*(:::+)\\s*([^\\s{]+)?",
+          "captures": {
+            "1": { "name": "punctuation.definition.div.carve" },
+            "2": { "name": "entity.name.type.div.carve" }
+          }
+        }
+      ]
+    },
+    "definitions": {
+      "patterns": [
+        {
+          "name": "meta.link.reference.definition.carve",
+          "match": "^\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)",
+          "captures": {
+            "1": { "name": "constant.other.reference.link.carve" },
+            "2": { "name": "markup.underline.link.carve" }
+          }
+        },
+        {
+          "name": "meta.abbreviation.definition.carve",
+          "match": "^\\s*(\\*\\[[^\\]]+\\]:)\\s+(.+)$",
+          "captures": {
+            "1": { "name": "constant.other.reference.abbreviation.carve" },
+            "2": { "name": "string.unquoted.abbreviation.carve" }
+          }
+        }
+      ]
+    },
+    "links": {
+      "patterns": [
+        {
+          "name": "meta.link.inline.carve",
+          "match": "(\\[)([^\\]]+)(\\])(\\()([^\\s)]+)(?:\\s+\"([^\"]+)\")?(\\))",
+          "captures": {
+            "1": { "name": "punctuation.definition.link.begin.carve" },
+            "2": { "name": "string.other.link.title.carve" },
+            "3": { "name": "punctuation.definition.link.end.carve" },
+            "4": { "name": "punctuation.definition.metadata.begin.carve" },
+            "5": { "name": "markup.underline.link.carve" },
+            "6": { "name": "string.quoted.double.link-title.carve" },
+            "7": { "name": "punctuation.definition.metadata.end.carve" }
+          }
+        },
+        {
+          "name": "meta.link.reference.carve",
+          "match": "(\\[)([^\\]]+)(\\])(\\[)([^\\]]*)(\\])",
+          "captures": {
+            "2": { "name": "string.other.link.title.carve" },
+            "5": { "name": "constant.other.reference.link.carve" }
+          }
+        }
+      ]
+    },
+    "images": {
+      "patterns": [
+        {
+          "name": "meta.image.inline.carve",
+          "match": "(!\\[)([^\\]]*)(\\]\\()([^\\s)]+)(?:\\s+\"([^\"]+)\")?(\\))",
+          "captures": {
+            "1": { "name": "punctuation.definition.image.begin.carve" },
+            "2": { "name": "string.other.image.alt.carve" },
+            "4": { "name": "markup.underline.link.image.carve" },
+            "5": { "name": "string.quoted.double.image-title.carve" }
+          }
+        }
+      ]
+    },
+    "footnotes": {
+      "patterns": [
+        {
+          "name": "constant.other.reference.footnote.carve",
+          "match": "\\[\\^[^\\]]+\\]"
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "name": "meta.attributes.carve",
+          "match": "\\{[^}\\n]+\\}",
+          "captures": {
+            "0": {
+              "patterns": [
+                { "name": "entity.other.attribute-name.id.carve", "match": "#[A-Za-z_][A-Za-z0-9_-]*" },
+                { "name": "entity.other.attribute-name.class.carve", "match": "\\.[A-Za-z_][A-Za-z0-9_-]*" },
+                { "name": "entity.other.attribute-name.carve", "match": "[A-Za-z_:][A-Za-z0-9_:-]*(?==)" },
+                { "name": "string.quoted.double.attribute.carve", "match": "\"[^\"]*\"" },
+                { "name": "string.quoted.single.attribute.carve", "match": "'[^']*'" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "inline-code": {
+      "patterns": [
+        {
+          "name": "markup.raw.inline.carve",
+          "match": "`[^`\\n]+`"
+        }
+      ]
+    },
+    "math": {
+      "patterns": [
+        {
+          "name": "markup.other.math.block.carve",
+          "begin": "\\$\\$",
+          "end": "\\$\\$"
+        },
+        {
+          "name": "markup.other.math.inline.carve",
+          "match": "\\$[^$\\n]+\\$"
+        }
+      ]
+    },
+    "emphasis": {
+      "patterns": [
+        { "name": "markup.bold.italic.carve", "match": "\\*{3}[^*\\n]+\\*{3}" },
+        { "name": "markup.bold.carve", "match": "\\*[^*\\n]+\\*" },
+        { "name": "markup.italic.carve", "match": "/[^/\\n]+/" },
+        { "name": "markup.underline.carve", "match": "_[^_\\n]+_" },
+        { "name": "markup.strikethrough.carve", "match": "~[^~\\n]+~" },
+        { "name": "markup.inserted.carve", "match": "\\+\\+[^+\\n]+\\+\\+" },
+        { "name": "markup.deleted.carve", "match": "--[^-\\n]+--" },
+        { "name": "markup.highlight.carve", "match": "==[^=\\n]+==" },
+        { "name": "markup.superscript.carve", "match": "\\^[^\\^\\n]+\\^" },
+        { "name": "markup.subscript.carve", "match": ",,[^,\\n]+,," }
+      ]
+    },
+    "mentions-tags": {
+      "patterns": [
+        { "name": "constant.other.symbol.mention.carve", "match": "(?<![\\w.])@[A-Za-z0-9_][A-Za-z0-9_-]*" },
+        { "name": "constant.other.symbol.tag.carve", "match": "(?<!\\w)#[A-Za-z0-9_][A-Za-z0-9_-]*" },
+        { "name": "constant.character.emoji.carve", "match": ":[A-Za-z0-9_+-]+:" }
+      ]
+    },
+    "smart-typography": {
+      "patterns": [
+        { "name": "constant.character.escape.carve", "match": "\\\\." },
+        { "name": "constant.character.typography.carve", "match": "\\.\\.\\.|---|--|<-|->|<->|=>|<=" }
+      ]
+    }
+  }
+}

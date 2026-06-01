@@ -1,0 +1,43 @@
+{
+  "comments": {
+    "blockComment": ["{%", "%}"]
+  },
+  "brackets": [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"]
+  ],
+  "autoClosingPairs": [
+    { "open": "{", "close": "}" },
+    { "open": "[", "close": "]" },
+    { "open": "(", "close": ")" },
+    { "open": "\"", "close": "\"", "notIn": ["string", "comment"] },
+    { "open": "'", "close": "'", "notIn": ["string", "comment"] },
+    { "open": "`", "close": "`", "notIn": ["string", "comment"] },
+    { "open": "*", "close": "*", "notIn": ["string", "comment"] },
+    { "open": "/", "close": "/", "notIn": ["string", "comment"] },
+    { "open": "_", "close": "_", "notIn": ["string", "comment"] },
+    { "open": "~", "close": "~", "notIn": ["string", "comment"] },
+    { "open": "$", "close": "$", "notIn": ["string", "comment"] }
+  ],
+  "surroundingPairs": [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+    ["\"", "\""],
+    ["'", "'"],
+    ["`", "`"],
+    ["*", "*"],
+    ["/", "/"],
+    ["_", "_"],
+    ["~", "~"],
+    ["$", "$"]
+  ],
+  "folding": {
+    "markers": {
+      "start": "^\\s*:::+\\s*",
+      "end": "^\\s*:::+\\s*$"
+    }
+  },
+  "wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)"
+}
