@@ -63,6 +63,10 @@
     },
     "commands": [
       {
+        "command": "carve.openPreview",
+        "title": "Carve: Open Preview"
+      },
+      {
         "command": "carve.restartLanguageServer",
         "title": "Carve: Restart Language Server"
       }
@@ -76,6 +80,7 @@
     "package": "vsce package"
   },
   "dependencies": {
+    "@markup-carve/carve": "git+https://github.com/markup-carve/carve-js.git",
     "@markup-carve/carve-lsp": "git+https://github.com/markup-carve/carve-lsp.git",
     "vscode-languageclient": "^9.0.1"
   },
