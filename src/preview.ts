@@ -86,21 +86,56 @@ export function previewDocument(source: string, options: PreviewOptions): string
     pre, code {
       font-family: var(--vscode-editor-font-family);
     }
+    main > :first-child { margin-top: 0; }
+    a { color: var(--vscode-textLink-foreground); }
+    a:hover { color: var(--vscode-textLink-activeForeground); }
+    img { max-width: 100%; height: auto; }
+    h1, h2 {
+      border-bottom: 1px solid var(--vscode-panel-border);
+      padding-bottom: 0.2em;
+    }
     pre {
       overflow-x: auto;
       padding: 12px;
+      border-radius: 6px;
       background: var(--vscode-textCodeBlock-background);
+    }
+    :not(pre) > code {
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+      font-size: 0.92em;
+      background: var(--vscode-textCodeBlock-background);
+    }
+    kbd {
+      font-family: var(--vscode-editor-font-family);
+      font-size: 0.85em;
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      border: 1px solid var(--vscode-panel-border);
+      border-bottom-width: 2px;
+      background: var(--vscode-keybindingLabel-background, var(--vscode-textCodeBlock-background));
     }
     .mermaid {
       background: transparent;
       text-align: center;
     }
+    .math.display {
+      display: block;
+      overflow-x: auto;
+      text-align: center;
+      margin: 1em 0;
+    }
     table {
       border-collapse: collapse;
+      width: auto;
     }
     th, td {
       border: 1px solid var(--vscode-panel-border);
-      padding: 4px 8px;
+      padding: 5px 10px;
+    }
+    thead th { background: var(--vscode-editorWidget-background); }
+    tbody tr:nth-child(even) {
+      background: color-mix(in srgb, var(--vscode-foreground) 4%, transparent);
     }
     blockquote {
       margin-left: 0;
@@ -108,6 +143,55 @@ export function previewDocument(source: string, options: PreviewOptions): string
       border-left: 3px solid var(--vscode-textBlockQuote-border);
       color: var(--vscode-textBlockQuote-foreground);
     }
+    mark {
+      background: var(--vscode-editor-findMatchHighlightBackground, rgba(234, 179, 8, 0.4));
+      color: inherit;
+      border-radius: 2px;
+    }
+    ins { text-decoration: none; background: color-mix(in srgb, var(--vscode-charts-green, #3fb950) 22%, transparent); }
+    del { background: color-mix(in srgb, var(--vscode-charts-red, #f85149) 22%, transparent); }
+    .critic-comment { color: var(--vscode-descriptionForeground); font-style: italic; }
+    dl dt { font-weight: 600; margin-top: 0.6em; }
+    dl dd { margin: 0 0 0 1.5em; }
+    /* Mentions and tags: subtle pills whether linked or plain. */
+    .mention, .tag {
+      text-decoration: none;
+      padding: 0 0.35em;
+      border-radius: 999px;
+      font-size: 0.95em;
+    }
+    .mention, .mention strong {
+      color: var(--vscode-charts-blue, #4a9eff);
+      font-weight: 500;
+    }
+    .mention { background: color-mix(in srgb, var(--vscode-charts-blue, #4a9eff) 14%, transparent); }
+    .tag, .tag strong {
+      color: var(--vscode-charts-purple, #a371f7);
+      font-weight: 500;
+    }
+    .tag { background: color-mix(in srgb, var(--vscode-charts-purple, #a371f7) 14%, transparent); }
+    /* Admonitions: callout boxes with a per-type accent. */
+    .admonition {
+      --admonition-accent: var(--vscode-focusBorder);
+      margin: 1em 0;
+      padding: 12px 16px;
+      border-left: 4px solid var(--admonition-accent);
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--admonition-accent) 9%, transparent);
+    }
+    .admonition > .admonition-title {
+      margin: 0 0 0.5em;
+      font-weight: 600;
+      text-transform: capitalize;
+      color: var(--admonition-accent);
+    }
+    .admonition > :last-child { margin-bottom: 0; }
+    .admonition.note, .admonition.info { --admonition-accent: var(--vscode-charts-blue, #4a9eff); }
+    .admonition.tip, .admonition.success { --admonition-accent: var(--vscode-charts-green, #3fb950); }
+    .admonition.warning { --admonition-accent: var(--vscode-charts-yellow, #d29922); }
+    .admonition.danger { --admonition-accent: var(--vscode-charts-red, #f85149); }
+    .admonition.example { --admonition-accent: var(--vscode-charts-purple, #a371f7); }
+    .admonition.quote { --admonition-accent: var(--vscode-charts-lines, #8b949e); }
     [data-source-line] {
       scroll-margin-top: 8px;
     }
@@ -317,8 +401,38 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
     code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
     .mermaid { background: transparent; text-align: center; }
     table { border-collapse: collapse; }
-    th, td { border: 1px solid rgba(127,127,127,0.4); padding: 4px 8px; }
+    th, td { border: 1px solid rgba(127,127,127,0.4); padding: 5px 10px; }
+    thead th { background: rgba(127,127,127,0.12); }
+    tbody tr:nth-child(even) { background: rgba(127,127,127,0.06); }
     blockquote { margin-left: 0; padding-left: 16px; border-left: 3px solid rgba(127,127,127,0.5); }
+    h1, h2 { border-bottom: 1px solid rgba(127,127,127,0.3); padding-bottom: 0.2em; }
+    img { max-width: 100%; height: auto; }
+    :not(pre) > code { padding: 0.1em 0.35em; border-radius: 4px; background: rgba(127,127,127,0.12); }
+    .math.display { display: block; overflow-x: auto; text-align: center; margin: 1em 0; }
+    mark { background: rgba(234,179,8,0.4); color: inherit; }
+    ins { text-decoration: none; background: color-mix(in srgb, #3fb950 22%, transparent); }
+    del { background: color-mix(in srgb, #f85149 22%, transparent); }
+    dl dt { font-weight: 600; margin-top: 0.6em; }
+    dl dd { margin: 0 0 0 1.5em; }
+    .mention, .tag { text-decoration: none; padding: 0 0.35em; border-radius: 999px; font-weight: 500; }
+    .mention, .mention strong { color: #3b82f6; }
+    .mention { background: color-mix(in srgb, #3b82f6 14%, transparent); }
+    .tag, .tag strong { color: #a371f7; }
+    .tag { background: color-mix(in srgb, #a371f7 14%, transparent); }
+    .admonition {
+      --admonition-accent: #4a9eff;
+      margin: 1em 0; padding: 12px 16px;
+      border-left: 4px solid var(--admonition-accent); border-radius: 4px;
+      background: color-mix(in srgb, var(--admonition-accent) 9%, transparent);
+    }
+    .admonition > .admonition-title { margin: 0 0 0.5em; font-weight: 600; text-transform: capitalize; color: var(--admonition-accent); }
+    .admonition > :last-child { margin-bottom: 0; }
+    .admonition.note, .admonition.info { --admonition-accent: #4a9eff; }
+    .admonition.tip, .admonition.success { --admonition-accent: #3fb950; }
+    .admonition.warning { --admonition-accent: #d29922; }
+    .admonition.danger { --admonition-accent: #f85149; }
+    .admonition.example { --admonition-accent: #a371f7; }
+    .admonition.quote { --admonition-accent: #8b949e; }
     @media print { body { padding: 0; } a { color: inherit; } }
   </style>
   <title>${title}</title>
