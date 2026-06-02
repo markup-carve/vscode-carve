@@ -1,0 +1,172 @@
+{
+  "Frontmatter": {
+    "prefix": "frontmatter",
+    "body": ["---", "title: ${1:Title}", "date: ${2:2026-01-01}", "---", "", "$0"],
+    "description": "Document frontmatter block"
+  },
+  "Heading 1": {
+    "prefix": "h1",
+    "body": ["# ${1:Heading}", "", "$0"],
+    "description": "Level 1 heading"
+  },
+  "Heading 2": {
+    "prefix": "h2",
+    "body": ["## ${1:Heading}", "", "$0"],
+    "description": "Level 2 heading"
+  },
+  "Heading 3": {
+    "prefix": "h3",
+    "body": ["### ${1:Heading}", "", "$0"],
+    "description": "Level 3 heading"
+  },
+  "Bold": {
+    "prefix": "bold",
+    "body": ["*${1:text}*$0"],
+    "description": "Bold (strong)"
+  },
+  "Italic": {
+    "prefix": "italic",
+    "body": ["/${1:text}/$0"],
+    "description": "Italic (emphasis)"
+  },
+  "Bold italic": {
+    "prefix": "bolditalic",
+    "body": ["***${1:text}***$0"],
+    "description": "Bold italic"
+  },
+  "Underline": {
+    "prefix": "underline",
+    "body": ["_${1:text}_$0"],
+    "description": "Underline"
+  },
+  "Strikethrough": {
+    "prefix": "strike",
+    "body": ["~${1:text}~$0"],
+    "description": "Strikethrough"
+  },
+  "Highlight": {
+    "prefix": "highlight",
+    "body": ["==${1:text}==$0"],
+    "description": "Highlight / mark"
+  },
+  "Insert": {
+    "prefix": "insert",
+    "body": ["++${1:text}++$0"],
+    "description": "Inserted text"
+  },
+  "Delete": {
+    "prefix": "delete",
+    "body": ["--${1:text}--$0"],
+    "description": "Deleted text"
+  },
+  "Superscript": {
+    "prefix": "sup",
+    "body": ["^${1:text}^$0"],
+    "description": "Superscript"
+  },
+  "Subscript": {
+    "prefix": "sub",
+    "body": [",,${1:text},,$0"],
+    "description": "Subscript"
+  },
+  "Inline code": {
+    "prefix": "code",
+    "body": ["`${1:code}`$0"],
+    "description": "Inline code span"
+  },
+  "Code block": {
+    "prefix": "codeblock",
+    "body": ["```${1:lang}", "$0", "```"],
+    "description": "Fenced code block"
+  },
+  "Raw block": {
+    "prefix": "rawblock",
+    "body": ["%%%${1:html}", "$0", "%%%"],
+    "description": "Raw passthrough block"
+  },
+  "Link": {
+    "prefix": "link",
+    "body": ["[${1:text}](${2:https://example.com})$0"],
+    "description": "Inline link"
+  },
+  "Reference link": {
+    "prefix": "reflink",
+    "body": ["[${1:text}][${2:ref}]$0"],
+    "description": "Reference-style link"
+  },
+  "Link definition": {
+    "prefix": "linkdef",
+    "body": ["[${1:ref}]: ${2:https://example.com}$0"],
+    "description": "Link reference definition"
+  },
+  "Image": {
+    "prefix": "image",
+    "body": ["![${1:alt}](${2:path/to/image.png})$0"],
+    "description": "Inline image"
+  },
+  "Footnote": {
+    "prefix": "footnote",
+    "body": ["[^${1:id}]", "", "[^${1:id}]: ${2:Footnote text}$0"],
+    "description": "Footnote reference and definition"
+  },
+  "Comment": {
+    "prefix": "comment",
+    "body": ["{% ${1:comment} %}$0"],
+    "description": "Block comment"
+  },
+  "Math inline": {
+    "prefix": "math",
+    "body": ["$${1:x}$$0"],
+    "description": "Inline math"
+  },
+  "Math block": {
+    "prefix": "mathblock",
+    "body": ["$$", "$0", "$$"],
+    "description": "Display math block"
+  },
+  "Div": {
+    "prefix": "div",
+    "body": [":::${1:name}", "$0", ":::"],
+    "description": "Fenced div container"
+  },
+  "Blockquote": {
+    "prefix": "quote",
+    "body": ["> ${1:quote}$0"],
+    "description": "Blockquote"
+  },
+  "Unordered list": {
+    "prefix": "ul",
+    "body": ["- ${1:item}", "- ${2:item}", "$0"],
+    "description": "Bullet list"
+  },
+  "Ordered list": {
+    "prefix": "ol",
+    "body": ["1. ${1:item}", "2. ${2:item}", "$0"],
+    "description": "Numbered list"
+  },
+  "Task list": {
+    "prefix": "task",
+    "body": ["- [ ] ${1:todo}", "- [x] ${2:done}", "$0"],
+    "description": "Task list"
+  },
+  "Table": {
+    "prefix": "table",
+    "body": [
+      "| ${1:Column A} | ${2:Column B} |",
+      "|---|---|",
+      "| ${3:cell} | ${4:cell} |",
+      "$0"
+    ],
+    "description": "Table with header row"
+  },
+  "Definition list": {
+    "prefix": "deflist",
+    "body": ["${1:Term}", ": ${2:Definition}", "$0"],
+    "description": "Definition list entry"
+  },
+  "Attributes": {
+    "prefix": "attr",
+    "body": ["{#${1:id} .${2:class}}$0"],
+    "description": "Attribute block"
+  }
+}

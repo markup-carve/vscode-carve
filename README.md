@@ -12,6 +12,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Djot 
   - hover help for common Carve syntax,
   - document symbols generated from heading structure.
   - semantic tokens for parser-aware highlighting in themes that support LSP semantic colorization.
+- Snippets for common constructs: headings, emphasis, links, images, tables, lists, code/raw blocks, footnotes, math, divs, attributes, and frontmatter (type `h2`, `link`, `table`, `codeblock`, etc.).
 - Preview command: **Carve: Open Preview** renders the active document in a VS Code webview.
 - Editor rules for comments, brackets, autoclosing pairs, folding markers, and word patterns.
 
