@@ -94,24 +94,26 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "node scripts/copy-assets.mjs",
     "prepare": "npm run build",
+    "vscode:prepublish": "npm run build",
     "test": "node --test dist/*.test.js",
     "typecheck": "tsc --noEmit",
     "package": "vsce package"
   },
   "dependencies": {
-    "@highlightjs/cdn-assets": "^11.11.1",
     "@markup-carve/carve": "github:markup-carve/carve-js",
     "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp",
-    "katex": "^0.17.0",
-    "mermaid": "^11.15.0",
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
+    "@highlightjs/cdn-assets": "^11.11.1",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.2.2",
+    "katex": "^0.17.0",
+    "mermaid": "^11.15.0",
     "typescript": "^5.7.2"
   }
 }

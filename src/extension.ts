@@ -130,13 +130,13 @@ function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview
     webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, ...segments)).toString()
 
   return {
-    mermaid: asset('node_modules', 'mermaid', 'dist', 'mermaid.min.js'),
-    katexJs: asset('node_modules', 'katex', 'dist', 'katex.min.js'),
-    katexCss: asset('node_modules', 'katex', 'dist', 'katex.min.css'),
-    katexAutoRender: asset('node_modules', 'katex', 'dist', 'contrib', 'auto-render.min.js'),
-    hljsJs: asset('node_modules', '@highlightjs', 'cdn-assets', 'highlight.min.js'),
-    hljsLightCss: asset('node_modules', '@highlightjs', 'cdn-assets', 'styles', 'github.min.css'),
-    hljsDarkCss: asset('node_modules', '@highlightjs', 'cdn-assets', 'styles', 'github-dark.min.css'),
+    mermaid: asset('media', 'mermaid.min.js'),
+    katexJs: asset('media', 'katex', 'katex.min.js'),
+    katexCss: asset('media', 'katex', 'katex.min.css'),
+    katexAutoRender: asset('media', 'katex', 'auto-render.min.js'),
+    hljsJs: asset('media', 'hljs', 'highlight.min.js'),
+    hljsLightCss: asset('media', 'hljs', 'github.min.css'),
+    hljsDarkCss: asset('media', 'hljs', 'github-dark.min.css'),
   }
 }
 
