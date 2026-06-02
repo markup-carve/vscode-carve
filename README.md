@@ -17,11 +17,24 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Djot 
   - renders [Mermaid](https://mermaid.js.org/) diagrams from ` ```mermaid ` code blocks,
   - typesets inline and display math with [KaTeX](https://katex.org/),
   - syntax-highlights fenced code blocks with highlight.js (light/dark aware),
-  - follows the active Carve editor and keeps scroll position in sync.
+  - follows the active Carve editor, syncs scrolling line-by-line in both directions, and highlights the block under the cursor,
+  - links `@mentions` and `#tags` and renders `:emoji:` shortcodes when configured (see settings below).
+- Export commands:
+  - **Carve: Export to HTML** writes a self-contained HTML file (Mermaid, KaTeX, and highlight.js load from a CDN; theming follows the reader's color scheme).
+  - **Carve: Print Preview / Export PDF** opens the system print dialog on the preview, so you can save to PDF.
 - Editor rules for comments, brackets, autoclosing pairs, folding markers, and word patterns.
 - An example document in the repository, `examples/demo.crv`, exercising every supported construct - open it and run **Carve: Open Preview** to see the rendering features in action.
 
 The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-carve`](https://github.com/markup-carve/tree-sitter-carve). VS Code extensions currently use TextMate grammars for built-in syntax colorization, so this extension ships a TextMate grammar aligned with the Tree-sitter grammar and uses the LSP for semantic behavior.
+
+## Settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `carve.lsp.enabled` | `true` | Enable the Carve language server. |
+| `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
+| `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
+| `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
 
 ## Development
 

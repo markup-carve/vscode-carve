@@ -7,7 +7,12 @@ import {
   type ServerOptions,
 } from 'vscode-languageclient/node.js'
 import { serverModulePath } from './paths.js'
-import { previewDocument, type PreviewAssets } from './preview.js'
+import {
+  exportHtmlDocument,
+  previewDocument,
+  type PreviewAssets,
+  type PreviewRenderOptions,
+} from './preview.js'
 
 const RENDER_DEBOUNCE_MS = 250
 
@@ -20,6 +25,8 @@ let renderTimer: ReturnType<typeof setTimeout> | undefined
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   context.subscriptions.push(
     vscode.commands.registerCommand('carve.openPreview', () => openPreview(context)),
+    vscode.commands.registerCommand('carve.exportHtml', () => exportHtml()),
+    vscode.commands.registerCommand('carve.printPreview', () => printPreview(context)),
     vscode.commands.registerCommand('carve.restartLanguageServer', async () => {
       await stopLanguageServer()
       await startLanguageServer(context)
@@ -28,6 +35,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (event.affectsConfiguration('carve.lsp.enabled')) {
         await stopLanguageServer()
         await startLanguageServer(context)
+      }
+      if (event.affectsConfiguration('carve.preview') && previewPanel && previewUri) {
+        const document = vscode.workspace.textDocuments.find(
+          (doc) => doc.uri.toString() === previewUri?.toString(),
+        )
+        if (document) renderPreview(context, document)
       }
     }),
     vscode.workspace.onDidChangeTextDocument((event) => {
@@ -47,6 +60,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
       syncPreviewToEditor(event.textEditor, event.visibleRanges)
+    }),
+    vscode.window.onDidChangeTextEditorSelection((event) => {
+      highlightPreviewLine(event.textEditor, event.selections)
     }),
   )
 
@@ -89,8 +105,8 @@ function openPreview(context: vscode.ExtensionContext): void {
       }
     }, undefined, context.subscriptions)
     previewPanel.webview.onDidReceiveMessage((message) => {
-      if (message?.type === 'scroll') {
-        syncEditorToPreview(message.ratio)
+      if (message?.type === 'reveal') {
+        revealEditorLine(message.line)
       }
     }, undefined, context.subscriptions)
   }
@@ -122,7 +138,65 @@ function renderPreview(context: vscode.ExtensionContext, document: vscode.TextDo
     nonce: nonce(),
     cspSource: previewPanel.webview.cspSource,
     assets: previewAssets(context, previewPanel.webview),
+    render: previewRenderOptions(),
   })
+}
+
+function previewRenderOptions(): PreviewRenderOptions {
+  const config = vscode.workspace.getConfiguration('carve.preview')
+  const mentionUrl = config.get<string>('mentionUrl')?.trim()
+  const tagUrl = config.get<string>('tagUrl')?.trim()
+  const emoji = config.get<Record<string, string>>('emoji')
+  const options: PreviewRenderOptions = {}
+  if (mentionUrl) options.mentionUrl = mentionUrl
+  if (tagUrl) options.tagUrl = tagUrl
+  if (emoji && Object.keys(emoji).length) options.emoji = emoji
+  return options
+}
+
+async function exportHtml(): Promise<void> {
+  const editor = vscode.window.activeTextEditor
+  if (!editor || editor.document.languageId !== 'carve') {
+    void vscode.window.showWarningMessage('Open a Carve document to export it.')
+    return
+  }
+  const name = editor.document.fileName.split(/[\\/]/).pop() ?? 'Carve document'
+  const html = exportHtmlDocument(editor.document.getText(), {
+    title: name,
+    render: previewRenderOptions(),
+  })
+  const defaultPath = editor.document.uri.path.replace(/\.(crv|carve)$/i, '') + '.html'
+  const target = await vscode.window.showSaveDialog({
+    defaultUri: editor.document.uri.with({ path: defaultPath }),
+    filters: { HTML: ['html'] },
+    saveLabel: 'Export HTML',
+  })
+  if (!target) {
+    return
+  }
+  await vscode.workspace.fs.writeFile(target, new TextEncoder().encode(html))
+  const pick = await vscode.window.showInformationMessage(
+    `Exported ${target.path.split('/').pop()}`,
+    'Open in Browser',
+  )
+  if (pick === 'Open in Browser') {
+    await vscode.env.openExternal(target)
+  }
+}
+
+function printPreview(context: vscode.ExtensionContext): void {
+  if (!previewPanel) {
+    const editor = vscode.window.activeTextEditor
+    if (!editor || editor.document.languageId !== 'carve') {
+      void vscode.window.showWarningMessage('Open a Carve document to print it.')
+      return
+    }
+    openPreview(context)
+    // Give the freshly created webview time to load before printing.
+    setTimeout(() => void previewPanel?.webview.postMessage({ type: 'print' }), 700)
+    return
+  }
+  void previewPanel.webview.postMessage({ type: 'print' })
 }
 
 function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview): PreviewAssets {
@@ -140,8 +214,9 @@ function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview
   }
 }
 
-function syncEditorToPreview(ratio: number): void {
-  if (!previewUri) {
+/** Webview reported its top block's source line; scroll the editor to match. */
+function revealEditorLine(line: number): void {
+  if (!previewUri || typeof line !== 'number') {
     return
   }
   const editor = vscode.window.visibleTextEditors.find(
@@ -150,13 +225,15 @@ function syncEditorToPreview(ratio: number): void {
   if (!editor) {
     return
   }
-  const line = Math.round(ratio * Math.max(0, editor.document.lineCount - 1))
-  const range = new vscode.Range(line, 0, line, 0)
+  // data-source-line is 1-based; editor lines are 0-based.
+  const target = Math.min(Math.max(0, line - 1), Math.max(0, editor.document.lineCount - 1))
+  const range = new vscode.Range(target, 0, target, 0)
   suppressEditorScroll = true
   editor.revealRange(range, vscode.TextEditorRevealType.AtTop)
   setTimeout(() => { suppressEditorScroll = false }, 100)
 }
 
+/** Editor scrolled; tell the webview which source line is at the top. */
 function syncPreviewToEditor(
   editor: vscode.TextEditor,
   visibleRanges: readonly vscode.Range[],
@@ -167,9 +244,23 @@ function syncPreviewToEditor(
   if (editor.document.uri.toString() !== previewUri.toString() || visibleRanges.length === 0) {
     return
   }
-  const topLine = visibleRanges[0].start.line
-  const ratio = topLine / Math.max(1, editor.document.lineCount - 1)
-  void previewPanel.webview.postMessage({ type: 'scrollTo', ratio })
+  const line = visibleRanges[0].start.line + 1
+  void previewPanel.webview.postMessage({ type: 'scrollToLine', line })
+}
+
+/** Cursor moved; highlight the block under the caret in the preview. */
+function highlightPreviewLine(
+  editor: vscode.TextEditor,
+  selections: readonly vscode.Selection[],
+): void {
+  if (!previewPanel || !previewUri || selections.length === 0) {
+    return
+  }
+  if (editor.document.uri.toString() !== previewUri.toString()) {
+    return
+  }
+  const line = selections[0].active.line + 1
+  void previewPanel.webview.postMessage({ type: 'highlightLine', line })
 }
 
 async function startLanguageServer(context: vscode.ExtensionContext): Promise<void> {

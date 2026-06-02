@@ -69,6 +69,24 @@
           "type": "boolean",
           "default": true,
           "description": "Enable the Carve language server."
+        },
+        "carve.preview.mentionUrl": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "URL template for `@mention` links in the preview. Use `{name}` as the placeholder, e.g. `https://example.com/u/{name}`. Leave empty to render mentions as plain text."
+        },
+        "carve.preview.tagUrl": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "URL template for `#tag` links in the preview. Use `{name}` as the placeholder, e.g. `https://example.com/t/{name}`. Leave empty to render tags as plain text."
+        },
+        "carve.preview.emoji": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": {
+            "type": "string"
+          },
+          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"😄\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
         }
       }
     },
@@ -77,6 +95,14 @@
         "command": "carve.openPreview",
         "title": "Carve: Open Preview",
         "icon": "$(open-preview)"
+      },
+      {
+        "command": "carve.exportHtml",
+        "title": "Carve: Export to HTML"
+      },
+      {
+        "command": "carve.printPreview",
+        "title": "Carve: Print Preview / Export PDF"
       },
       {
         "command": "carve.restartLanguageServer",
