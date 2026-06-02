@@ -15,7 +15,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Djot 
   - context-aware completion: admonition kinds after `:::`, heading ids after `</#`, footnote labels after `[^`, and link reference labels after `][`,
   - document formatting (and format-on-save) that trims trailing whitespace, collapses blank-line runs, and normalizes the final newline without touching code, raw, or comment blocks.
 - Snippets for common constructs: headings, emphasis, links, images, tables, lists, code/raw blocks, footnotes, math, divs, attributes, and frontmatter (type `h2`, `link`, `table`, `codeblock`, etc.).
-- Preview command: **Carve: Open Preview** renders the active document in a VS Code webview, reachable from the editor title bar button or the command palette. The preview:
+- Preview command: **Carve: Open Preview** renders the active document in a VS Code webview, reachable from the editor title bar button, the command palette, or `ctrl+shift+v` (`cmd+shift+v` on macOS). The preview:
   - renders [Mermaid](https://mermaid.js.org/) diagrams from ` ```mermaid ` code blocks,
   - typesets inline and display math with [KaTeX](https://katex.org/),
   - syntax-highlights fenced code blocks with highlight.js (light/dark aware),
@@ -34,6 +34,7 @@ The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-c
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `carve.lsp.enabled` | `true` | Enable the Carve language server. |
+| `carve.trace.server` | `"off"` | Trace VS Code ↔ language-server communication (`off`/`messages`/`verbose`) in the output channel, for debugging. |
 | `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
 | `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
 | `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |

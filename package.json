@@ -87,6 +87,16 @@
             "type": "string"
           },
           "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"😄\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
+        },
+        "carve.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Trace the communication between VS Code and the Carve language server (shown in the 'Carve Language Server' output channel). Useful for debugging."
         }
       }
     },
@@ -117,7 +127,48 @@
           "group": "navigation"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "carve.openPreview",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorLangId == carve"
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "carve.gettingStarted",
+        "title": "Get Started with Carve",
+        "description": "Author, preview, and export Carve markup documents.",
+        "steps": [
+          {
+            "id": "carve.openDocument",
+            "title": "Open a Carve document",
+            "description": "Create or open a file ending in `.crv` or `.carve`. Syntax highlighting, diagnostics, and completion activate automatically.",
+            "media": {
+              "markdown": "walkthroughs/open-document.md"
+            }
+          },
+          {
+            "id": "carve.preview",
+            "title": "Open the live preview",
+            "description": "Run __Carve: Open Preview__ from the editor title bar or press `ctrl+shift+v` (`cmd+shift+v` on macOS). The preview renders Mermaid diagrams, math, and highlighted code, and stays in sync as you scroll.\n[Open Preview](command:carve.openPreview)",
+            "media": {
+              "markdown": "walkthroughs/preview.md"
+            }
+          },
+          {
+            "id": "carve.export",
+            "title": "Export to HTML or PDF",
+            "description": "Run __Carve: Export to HTML__ for a self-contained file, or __Carve: Print Preview / Export PDF__ to save a PDF.",
+            "media": {
+              "markdown": "walkthroughs/export.md"
+            }
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
     "build": "tsc && npm run copy-assets",
