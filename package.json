@@ -42,7 +42,11 @@
           ".carve"
         ],
         "filenames": [],
-        "configuration": "./language-configuration/carve.json"
+        "configuration": "./language-configuration/carve.json",
+        "icon": {
+          "light": "./icons/carve-file.svg",
+          "dark": "./icons/carve-file.svg"
+        }
       }
     ],
     "grammars": [
@@ -71,13 +75,23 @@
     "commands": [
       {
         "command": "carve.openPreview",
-        "title": "Carve: Open Preview"
+        "title": "Carve: Open Preview",
+        "icon": "$(open-preview)"
       },
       {
         "command": "carve.restartLanguageServer",
         "title": "Carve: Restart Language Server"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "carve.openPreview",
+          "when": "resourceLangId == carve",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "build": "tsc",
