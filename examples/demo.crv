@@ -144,10 +144,12 @@ Heed this warning.
 Critical information.
 :::
 
-A generic div carries only attributes:
+A bare `:::` fence with only `{#id .class}` and no admonition type is a
+generic styled container, not a colored callout:
 
 ::: {#callout .highlight}
-Content inside an attributed container.
+This block has only an id and classes, so it renders as a plain
+`<div id="callout" class="highlight">` wrapper you can target with your own CSS.
 :::
 
 ## Mentions, tags, and inline extensions {#tokens}
