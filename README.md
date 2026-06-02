@@ -13,8 +13,13 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Djot 
   - document symbols generated from heading structure.
   - semantic tokens for parser-aware highlighting in themes that support LSP semantic colorization.
 - Snippets for common constructs: headings, emphasis, links, images, tables, lists, code/raw blocks, footnotes, math, divs, attributes, and frontmatter (type `h2`, `link`, `table`, `codeblock`, etc.).
-- Preview command: **Carve: Open Preview** renders the active document in a VS Code webview, reachable from the editor title bar button or the command palette.
+- Preview command: **Carve: Open Preview** renders the active document in a VS Code webview, reachable from the editor title bar button or the command palette. The preview:
+  - renders [Mermaid](https://mermaid.js.org/) diagrams from ` ```mermaid ` code blocks,
+  - typesets inline and display math with [KaTeX](https://katex.org/),
+  - syntax-highlights fenced code blocks with highlight.js (light/dark aware),
+  - follows the active Carve editor and keeps scroll position in sync.
 - Editor rules for comments, brackets, autoclosing pairs, folding markers, and word patterns.
+- An example document in the repository, `examples/demo.crv`, exercising every supported construct - open it and run **Carve: Open Preview** to see the rendering features in action.
 
 The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-carve`](https://github.com/markup-carve/tree-sitter-carve). VS Code extensions currently use TextMate grammars for built-in syntax colorization, so this extension ships a TextMate grammar aligned with the Tree-sitter grammar and uses the LSP for semantic behavior.
 

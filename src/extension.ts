@@ -7,11 +7,12 @@ import {
   type ServerOptions,
 } from 'vscode-languageclient/node.js'
 import { serverModulePath } from './paths.js'
-import { previewDocument } from './preview.js'
+import { previewDocument, type PreviewAssets } from './preview.js'
 
 let client: LanguageClient | undefined
 let previewPanel: vscode.WebviewPanel | undefined
 let previewUri: vscode.Uri | undefined
+let suppressEditorScroll = false
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   context.subscriptions.push(
@@ -28,8 +29,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.workspace.onDidChangeTextDocument((event) => {
       if (previewPanel && previewUri && event.document.uri.toString() === previewUri.toString()) {
-        renderPreview(event.document)
+        renderPreview(context, event.document)
       }
+    }),
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      if (previewPanel && editor && editor.document.languageId === 'carve') {
+        previewUri = editor.document.uri
+        renderPreview(context, editor.document)
+      }
+    }),
+    vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
+      syncPreviewToEditor(event.textEditor, event.visibleRanges)
     }),
   )
 
@@ -48,30 +58,89 @@ function openPreview(context: vscode.ExtensionContext): void {
     return
   }
 
-  previewPanel ??= vscode.window.createWebviewPanel(
-    'carvePreview',
-    'Carve Preview',
-    vscode.ViewColumn.Beside,
-    {
-      enableScripts: false,
-      retainContextWhenHidden: true,
-    },
-  )
-  previewPanel.onDidDispose(() => {
-    previewPanel = undefined
-    previewUri = undefined
-  }, undefined, context.subscriptions)
+  if (!previewPanel) {
+    previewPanel = vscode.window.createWebviewPanel(
+      'carvePreview',
+      'Carve Preview',
+      vscode.ViewColumn.Beside,
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+        localResourceRoots: [context.extensionUri],
+      },
+    )
+    previewPanel.onDidDispose(() => {
+      previewPanel = undefined
+      previewUri = undefined
+    }, undefined, context.subscriptions)
+    previewPanel.webview.onDidReceiveMessage((message) => {
+      if (message?.type === 'scroll') {
+        syncEditorToPreview(message.ratio)
+      }
+    }, undefined, context.subscriptions)
+  }
 
   previewUri = editor.document.uri
-  renderPreview(editor.document)
+  renderPreview(context, editor.document)
 }
 
-function renderPreview(document: vscode.TextDocument): void {
+function renderPreview(context: vscode.ExtensionContext, document: vscode.TextDocument): void {
   if (!previewPanel) {
     return
   }
   previewPanel.title = `Preview ${document.fileName.split(/[\\/]/).pop() ?? 'Carve'}`
-  previewPanel.webview.html = previewDocument(document.getText(), nonce())
+  previewPanel.webview.html = previewDocument(document.getText(), {
+    nonce: nonce(),
+    cspSource: previewPanel.webview.cspSource,
+    assets: previewAssets(context, previewPanel.webview),
+  })
+}
+
+function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview): PreviewAssets {
+  const asset = (...segments: string[]): string =>
+    webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, ...segments)).toString()
+
+  return {
+    mermaid: asset('node_modules', 'mermaid', 'dist', 'mermaid.min.js'),
+    katexJs: asset('node_modules', 'katex', 'dist', 'katex.min.js'),
+    katexCss: asset('node_modules', 'katex', 'dist', 'katex.min.css'),
+    katexAutoRender: asset('node_modules', 'katex', 'dist', 'contrib', 'auto-render.min.js'),
+    hljsJs: asset('node_modules', '@highlightjs', 'cdn-assets', 'highlight.min.js'),
+    hljsLightCss: asset('node_modules', '@highlightjs', 'cdn-assets', 'styles', 'github.min.css'),
+    hljsDarkCss: asset('node_modules', '@highlightjs', 'cdn-assets', 'styles', 'github-dark.min.css'),
+  }
+}
+
+function syncEditorToPreview(ratio: number): void {
+  if (!previewUri) {
+    return
+  }
+  const editor = vscode.window.visibleTextEditors.find(
+    (candidate) => candidate.document.uri.toString() === previewUri?.toString(),
+  )
+  if (!editor) {
+    return
+  }
+  const line = Math.round(ratio * Math.max(0, editor.document.lineCount - 1))
+  const range = new vscode.Range(line, 0, line, 0)
+  suppressEditorScroll = true
+  editor.revealRange(range, vscode.TextEditorRevealType.AtTop)
+  setTimeout(() => { suppressEditorScroll = false }, 100)
+}
+
+function syncPreviewToEditor(
+  editor: vscode.TextEditor,
+  visibleRanges: readonly vscode.Range[],
+): void {
+  if (suppressEditorScroll || !previewPanel || !previewUri) {
+    return
+  }
+  if (editor.document.uri.toString() !== previewUri.toString() || visibleRanges.length === 0) {
+    return
+  }
+  const topLine = visibleRanges[0].start.line
+  const ratio = topLine / Math.max(1, editor.document.lineCount - 1)
+  void previewPanel.webview.postMessage({ type: 'scrollTo', ratio })
 }
 
 async function startLanguageServer(context: vscode.ExtensionContext): Promise<void> {
@@ -95,7 +164,10 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
   }
 
   const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', language: 'carve' }],
+    documentSelector: [
+      { scheme: 'file', language: 'carve' },
+      { scheme: 'untitled', language: 'carve' },
+    ],
     synchronize: {
       fileEvents: vscode.workspace.createFileSystemWatcher('**/*.{crv,carve}'),
     },

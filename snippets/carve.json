@@ -81,7 +81,7 @@
   },
   "Raw block": {
     "prefix": "rawblock",
-    "body": ["%%%${1:html}", "$0", "%%%"],
+    "body": ["```raw ${1:html}", "$0", "```"],
     "description": "Raw passthrough block"
   },
   "Link": {
@@ -109,19 +109,24 @@
     "body": ["[^${1:id}]", "", "[^${1:id}]: ${2:Footnote text}$0"],
     "description": "Footnote reference and definition"
   },
-  "Comment": {
+  "Comment line": {
     "prefix": "comment",
-    "body": ["{% ${1:comment} %}$0"],
+    "body": ["%% ${1:comment}$0"],
+    "description": "Line comment"
+  },
+  "Comment block": {
+    "prefix": "commentblock",
+    "body": ["%%%", "$0", "%%%"],
     "description": "Block comment"
   },
   "Math inline": {
     "prefix": "math",
-    "body": ["$${1:x}$$0"],
+    "body": ["$`${1:x}`$0"],
     "description": "Inline math"
   },
   "Math block": {
     "prefix": "mathblock",
-    "body": ["$$", "$0", "$$"],
+    "body": ["$$`${1:x}`$0"],
     "description": "Display math block"
   },
   "Div": {
@@ -161,7 +166,7 @@
   },
   "Definition list": {
     "prefix": "deflist",
-    "body": ["${1:Term}", ": ${2:Definition}", "$0"],
+    "body": [":: ${1:Term}", ":  ${2:Definition}", "$0"],
     "description": "Definition list entry"
   },
   "Attributes": {

@@ -1,7 +1,9 @@
 .github/**
 .gitignore
+.playwright-mcp/**
 .vscode/**
 .vscode-test/**
+examples/**
 src/**
 scripts/**
 tsconfig.json
@@ -11,6 +13,8 @@ dist/**/*.d.ts
 *.log
 *.vsix
 node_modules/**/{test,tests,__tests__,docs,doc,example,examples}/**
+node_modules/**/.github/**
+node_modules/**/spec/**
 node_modules/**/src/**
 node_modules/**/tsconfig.json
 node_modules/**/*.map
