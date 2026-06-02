@@ -6,6 +6,7 @@
   "private": true,
   "publisher": "markup-carve",
   "license": "MIT",
+  "icon": "icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/markup-carve/vscode-carve.git"
@@ -49,6 +50,12 @@
         "language": "carve",
         "scopeName": "text.carve",
         "path": "./syntaxes/carve.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "carve",
+        "path": "./snippets/carve.json"
       }
     ],
     "configuration": {

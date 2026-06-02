@@ -11,6 +11,7 @@ import { previewDocument } from './preview.js'
 
 let client: LanguageClient | undefined
 let previewPanel: vscode.WebviewPanel | undefined
+let previewUri: vscode.Uri | undefined
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   context.subscriptions.push(
@@ -23,6 +24,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (event.affectsConfiguration('carve.lsp.enabled')) {
         await stopLanguageServer()
         await startLanguageServer(context)
+      }
+    }),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      if (previewPanel && previewUri && event.document.uri.toString() === previewUri.toString()) {
+        renderPreview(event.document)
       }
     }),
   )
@@ -53,10 +59,19 @@ function openPreview(context: vscode.ExtensionContext): void {
   )
   previewPanel.onDidDispose(() => {
     previewPanel = undefined
+    previewUri = undefined
   }, undefined, context.subscriptions)
 
-  previewPanel.title = `Preview ${editor.document.fileName.split(/[\\/]/).pop() ?? 'Carve'}`
-  previewPanel.webview.html = previewDocument(editor.document.getText(), nonce())
+  previewUri = editor.document.uri
+  renderPreview(editor.document)
+}
+
+function renderPreview(document: vscode.TextDocument): void {
+  if (!previewPanel) {
+    return
+  }
+  previewPanel.title = `Preview ${document.fileName.split(/[\\/]/).pop() ?? 'Carve'}`
+  previewPanel.webview.html = previewDocument(document.getText(), nonce())
 }
 
 async function startLanguageServer(context: vscode.ExtensionContext): Promise<void> {
