@@ -13,7 +13,10 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Djot 
   - document symbols generated from heading structure,
   - semantic tokens for parser-aware highlighting in themes that support LSP semantic colorization,
   - context-aware completion: admonition kinds after `:::`, heading ids after `</#`, footnote labels after `[^`, and link reference labels after `][`,
-  - document formatting (and format-on-save) that trims trailing whitespace, collapses blank-line runs, and normalizes the final newline without touching code, raw, or comment blocks.
+  - document formatting (and format-on-save) that trims trailing whitespace, collapses blank-line runs, and normalizes the final newline without touching code, raw, or comment blocks,
+  - folding for headings/sections and multi-line blocks,
+  - rename for footnote and link reference labels (definition and all references),
+  - code lens showing the reference count above each footnote definition.
 - Snippets for common constructs: headings, emphasis, links, images, tables, lists, code/raw blocks, footnotes, math, divs, attributes, and frontmatter (type `h2`, `link`, `table`, `codeblock`, etc.).
 - Preview command: **Carve: Open Preview** renders the active document in a VS Code webview, reachable from the editor title bar button, the command palette, or `ctrl+shift+v` (`cmd+shift+v` on macOS). The preview:
   - renders [Mermaid](https://mermaid.js.org/) diagrams from ` ```mermaid ` code blocks,
