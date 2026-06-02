@@ -9,10 +9,13 @@ import {
 import { serverModulePath } from './paths.js'
 import { previewDocument, type PreviewAssets } from './preview.js'
 
+const RENDER_DEBOUNCE_MS = 250
+
 let client: LanguageClient | undefined
 let previewPanel: vscode.WebviewPanel | undefined
 let previewUri: vscode.Uri | undefined
 let suppressEditorScroll = false
+let renderTimer: ReturnType<typeof setTimeout> | undefined
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   context.subscriptions.push(
@@ -29,11 +32,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.workspace.onDidChangeTextDocument((event) => {
       if (previewPanel && previewUri && event.document.uri.toString() === previewUri.toString()) {
-        renderPreview(context, event.document)
+        scheduleRender(context, event.document)
       }
     }),
     vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (previewPanel && editor && editor.document.languageId === 'carve') {
+        if (renderTimer) {
+          clearTimeout(renderTimer)
+          renderTimer = undefined
+        }
         previewUri = editor.document.uri
         renderPreview(context, editor.document)
       }
@@ -47,6 +54,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 }
 
 export async function deactivate(): Promise<void> {
+  if (renderTimer) {
+    clearTimeout(renderTimer)
+    renderTimer = undefined
+  }
   previewPanel?.dispose()
   await stopLanguageServer()
 }
@@ -72,6 +83,10 @@ function openPreview(context: vscode.ExtensionContext): void {
     previewPanel.onDidDispose(() => {
       previewPanel = undefined
       previewUri = undefined
+      if (renderTimer) {
+        clearTimeout(renderTimer)
+        renderTimer = undefined
+      }
     }, undefined, context.subscriptions)
     previewPanel.webview.onDidReceiveMessage((message) => {
       if (message?.type === 'scroll') {
@@ -82,6 +97,20 @@ function openPreview(context: vscode.ExtensionContext): void {
 
   previewUri = editor.document.uri
   renderPreview(context, editor.document)
+}
+
+function scheduleRender(context: vscode.ExtensionContext, document: vscode.TextDocument): void {
+  if (renderTimer) {
+    clearTimeout(renderTimer)
+  }
+  renderTimer = setTimeout(() => {
+    renderTimer = undefined
+    // The preview may have switched to another document during the debounce
+    // window; only render if this document is still the one being previewed.
+    if (previewUri && document.uri.toString() === previewUri.toString()) {
+      renderPreview(context, document)
+    }
+  }, RENDER_DEBOUNCE_MS)
 }
 
 function renderPreview(context: vscode.ExtensionContext, document: vscode.TextDocument): void {
