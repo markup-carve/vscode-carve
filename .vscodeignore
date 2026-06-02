@@ -3,9 +3,11 @@
 .vscode/**
 .vscode-test/**
 src/**
+scripts/**
 tsconfig.json
 dist/*.test.*
 dist/**/*.map
+dist/**/*.d.ts
 *.log
 *.vsix
 node_modules/**/{test,tests,__tests__,docs,doc,example,examples}/**
