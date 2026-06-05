@@ -18,6 +18,7 @@
     { "include": "#footnotes" },
     { "include": "#attributes" },
     { "include": "#inline-code" },
+    { "include": "#trailing-comment" },
     { "include": "#math" },
     { "include": "#emphasis" },
     { "include": "#mentions-tags" },
@@ -45,8 +46,20 @@
       "patterns": [
         {
           "name": "comment.block.carve",
-          "begin": "\\{%",
-          "end": "%\\}"
+          "begin": "^\\s*%%%\\s*$",
+          "end": "^\\s*%%%\\s*$"
+        },
+        {
+          "name": "comment.line.percent.carve",
+          "match": "^\\s*%%(?!%).*$"
+        }
+      ]
+    },
+    "trailing-comment": {
+      "patterns": [
+        {
+          "name": "comment.line.percent.carve",
+          "match": "(?<=[ \\t])%%.*$"
         }
       ]
     },
