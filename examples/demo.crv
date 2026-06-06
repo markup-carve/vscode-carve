@@ -11,7 +11,7 @@ tags: [demo, reference]
 # Carve Feature Demo {#top}
 
 A single document touching every core construct, plus a few renderer-dependent
-extensions at the end. Open it with **Carve: Open Preview** to see it rendered.
+extensions at the end. Open it with *Carve: Open Preview* to see it rendered.
 
 ## Headings and attributes {#headings .featured}
 
@@ -34,6 +34,23 @@ Editorial markup: {+ added text +}, {- deleted text -},
 {~ old phrase ~> new phrase ~}, and an {# editorial note #}.
 
 Escapes keep specials literal: \*not bold\*, \/not italic\/, \#not-a-tag.
+
+## Comments {#comments}
+
+A `%%` line is a whole-line comment and does not render.
+
+%% This whole line is a comment.
+
+A trailing `%%` after text on any line is also a comment %% like this tail note
+and is stripped from the rendered output. It works after a heading, in a
+blockquote, in a table cell, and after a caption too.
+
+A `%%%` fence opens a block comment, closed by a fence of the same length:
+
+%%%
+Everything inside this block is a comment
+and does not render.
+%%%
 
 ## Links and images {#links}
 
