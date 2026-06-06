@@ -17,6 +17,7 @@
     { "include": "#images" },
     { "include": "#footnotes" },
     { "include": "#attributes" },
+    { "include": "#raw-inline" },
     { "include": "#inline-code" },
     { "include": "#trailing-comment" },
     { "include": "#math" },
@@ -331,6 +332,22 @@
                 { "name": "string.quoted.single.attribute.carve", "match": "'[^']*'" }
               ]
             }
+          }
+        }
+      ]
+    },
+    "raw-inline": {
+      "patterns": [
+        {
+          "name": "markup.raw.inline.passthrough.carve",
+          "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)(\\{=)([A-Za-z_][\\w-]*)(\\})",
+          "captures": {
+            "1": { "name": "punctuation.definition.raw.carve" },
+            "2": { "name": "markup.raw.inline.content.carve" },
+            "3": { "name": "punctuation.definition.raw.carve" },
+            "4": { "name": "punctuation.definition.raw.format.begin.carve" },
+            "5": { "name": "entity.name.type.format.carve" },
+            "6": { "name": "punctuation.definition.raw.format.end.carve" }
           }
         }
       ]
