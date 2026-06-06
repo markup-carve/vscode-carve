@@ -66,6 +66,14 @@
         }
       ]
     },
+    "trailing-comment-cell": {
+      "patterns": [
+        {
+          "name": "comment.line.percent.carve",
+          "match": "(?<=[ \\t])%%[^|]*"
+        }
+      ]
+    },
     "headings": {
       "patterns": [
         {
@@ -73,7 +81,10 @@
           "match": "^(#{1,6})(\\s+)(.+)$",
           "captures": {
             "1": { "name": "punctuation.definition.heading.carve" },
-            "3": { "name": "entity.name.section.carve" }
+            "3": {
+              "name": "entity.name.section.carve",
+              "patterns": [{ "include": "#trailing-comment" }]
+            }
           }
         }
       ]
@@ -149,6 +160,7 @@
               "match": "\\|",
               "name": "punctuation.separator.table.carve"
             },
+            { "include": "#trailing-comment-cell" },
             { "include": "#inline-code" },
             { "include": "#extension-inline" },
             { "include": "#critic-markup" },
@@ -171,7 +183,10 @@
           "match": "^\\s*(\\^)\\s+(.+)$",
           "captures": {
             "1": { "name": "punctuation.definition.caption.carve" },
-            "2": { "name": "string.unquoted.caption.carve" }
+            "2": {
+              "name": "string.unquoted.caption.carve",
+              "patterns": [{ "include": "#trailing-comment" }]
+            }
           }
         }
       ]
@@ -180,10 +195,12 @@
       "patterns": [
         {
           "name": "markup.quote.carve",
-          "match": "^\\s*(>+)\\s?.*$",
-          "captures": {
+          "begin": "^\\s*(>+)\\s?",
+          "beginCaptures": {
             "1": { "name": "punctuation.definition.quote.carve" }
-          }
+          },
+          "end": "$",
+          "patterns": [{ "include": "#trailing-comment" }]
         }
       ]
     },
@@ -259,6 +276,15 @@
             "2": { "name": "string.other.link.title.carve" },
             "5": { "name": "constant.other.reference.link.carve" }
           }
+        },
+        {
+          "name": "meta.span.inline.carve",
+          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{)",
+          "captures": {
+            "1": { "name": "punctuation.definition.span.begin.carve" },
+            "2": { "name": "string.other.span.carve" },
+            "3": { "name": "punctuation.definition.span.end.carve" }
+          }
         }
       ]
     },
@@ -325,13 +351,30 @@
     "math": {
       "patterns": [
         {
-          "name": "markup.other.math.block.carve",
-          "begin": "\\$\\$",
-          "end": "\\$\\$"
+          "name": "markup.other.math.display.carve",
+          "begin": "(\\$\\$)(`+)",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.math.carve" },
+            "2": { "name": "punctuation.definition.raw.carve" }
+          },
+          "end": "(\\2)",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.raw.carve" }
+          },
+          "contentName": "markup.other.math.content.carve"
         },
         {
           "name": "markup.other.math.inline.carve",
-          "match": "\\$[^$\\n]+\\$"
+          "begin": "(\\$)(`+)",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.math.carve" },
+            "2": { "name": "punctuation.definition.raw.carve" }
+          },
+          "end": "(\\2)",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.raw.carve" }
+          },
+          "contentName": "markup.other.math.content.carve"
         }
       ]
     },
@@ -402,15 +445,6 @@
             "3": { "name": "punctuation.definition.critic.carve" },
             "4": { "name": "markup.inserted.carve" },
             "5": { "name": "punctuation.definition.critic.carve" }
-          }
-        },
-        {
-          "name": "markup.highlight.critic.carve",
-          "match": "(\\{=)([^}]*)(=\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.critic.carve" },
-            "2": { "name": "markup.highlight.carve" },
-            "3": { "name": "punctuation.definition.critic.carve" }
           }
         },
         {
