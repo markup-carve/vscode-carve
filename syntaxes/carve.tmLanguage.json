@@ -583,7 +583,11 @@
         },
         {
           "name": "constant.character.typography.carve",
-          "match": "\\.\\.\\.|---|--|<-|->|<->|=>|<="
+          "match": "\\.\\.\\.|---|--|<->|<-|->|=>|!=|<=|>=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\)"
+        },
+        {
+          "name": "punctuation.definition.smartquote.carve",
+          "match": "\""
         }
       ]
     }
