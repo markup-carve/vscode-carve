@@ -208,8 +208,16 @@
     "lists": {
       "patterns": [
         {
+          "comment": "A lone `+` at the marker column is the list-continuation marker, not a bullet (`+` is never a bullet in Carve).",
+          "name": "markup.list.continuation.carve",
+          "match": "^(\\s*)(\\+)(\\s*)$",
+          "captures": {
+            "2": { "name": "punctuation.definition.list.continuation.carve" }
+          }
+        },
+        {
           "name": "markup.list.unnumbered.carve",
-          "match": "^(\\s*)([-+*])\\s+(\\[[ xX]\\]\\s+)?",
+          "match": "^(\\s*)([-*])\\s+(\\[[ xX]\\]\\s+)?",
           "captures": {
             "2": { "name": "punctuation.definition.list.begin.carve" },
             "3": { "name": "constant.language.task-list.carve" }
