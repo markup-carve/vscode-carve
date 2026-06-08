@@ -224,8 +224,9 @@
           }
         },
         {
+          "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`.",
           "name": "markup.list.numbered.carve",
-          "match": "^(\\s*)(\\(?[0-9]+[.)]|\\(?[A-Za-z][.)]|\\(?[ivxlcdmIVXLCDM]+[.)])\\s+",
+          "match": "^(\\s*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)])\\s+",
           "captures": {
             "2": { "name": "punctuation.definition.list.begin.carve" }
           }
