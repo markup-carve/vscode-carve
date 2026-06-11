@@ -533,7 +533,7 @@
         },
         {
           "name": "markup.highlight.carve",
-          "match": "(==)([^=\\n]+?)(==)",
+          "match": "(?<![\\w=])(=)(?=\\S)([^=\\n]+?)(?<=\\S)(=)(?![\\w=])",
           "captures": {
             "1": { "name": "punctuation.definition.highlight.carve" },
             "2": { "name": "markup.highlight.carve" },
@@ -551,7 +551,7 @@
         },
         {
           "name": "markup.subscript.carve",
-          "match": "(,,)(?=\\S)([^,\\n]+?)(,,)",
+          "match": "(?<![\\w,])(,)(?=\\S)([^,\\n]+?)(?<=\\S)(,)(?![\\w,])",
           "captures": {
             "1": { "name": "punctuation.definition.subscript.carve" },
             "2": { "name": "markup.subscript.carve" },
