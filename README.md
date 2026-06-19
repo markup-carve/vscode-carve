@@ -45,6 +45,7 @@ The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-c
 ## Development
 
 ```bash
+git submodule update --init   # check out the shared Carve corpus (spec/)
 npm install
 npm run build
 npm test
@@ -52,6 +53,33 @@ npm run package
 ```
 
 Open this folder in VS Code and press `F5` to launch an Extension Development Host.
+
+### Grammar token-snapshot tests
+
+The TextMate grammar (`syntaxes/carve.tmLanguage.json`) is verified against the
+shared [markup-carve/carve](https://github.com/markup-carve/carve) corpus, which
+is vendored as the `spec/` git submodule (pinned to a specific commit). For each
+covered corpus category, the representative `.crv` file is tokenized with
+[vscode-tmgrammar-test](https://github.com/PanAeon/vscode-tmgrammar-test) and the
+resulting scopes are stored as golden `.snap` files under `tests/snapshots/`.
+
+```bash
+npm run test:grammar          # verify scopes against committed snapshots
+npm run test:grammar:update   # regenerate snapshots after a deliberate grammar change
+```
+
+`tests/categories.json` is the coverage matrix: every corpus category is listed
+under `covered` (snapshot-tested) or `skip` (with a reason TextMate highlighting
+does not produce a distinct scope, e.g. block-structure or "stays literal"
+cases). The coverage test fails if a new corpus category is neither covered nor
+skipped, so spec growth forces a deliberate decision.
+
+To bump the pinned corpus:
+
+```bash
+git -C spec fetch origin main && git -C spec checkout origin/main
+npm run test:grammar:update   # review the snapshot diff, then commit spec + snapshots
+```
 
 To install the local VSIX after packaging:
 

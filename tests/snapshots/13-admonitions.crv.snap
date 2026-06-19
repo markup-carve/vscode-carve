@@ -1,0 +1,9 @@
+>::: note
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>Heads up — this is important.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>

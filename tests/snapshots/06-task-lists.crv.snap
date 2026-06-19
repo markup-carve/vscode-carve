@@ -1,0 +1,11 @@
+>- [ ] todo
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ text.carve
+>- [x] done
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ text.carve
+>

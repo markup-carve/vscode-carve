@@ -1,0 +1,37 @@
+>|= Category |= Item    |= Price |
+#^^ text.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^^ text.carve markup.table.row.carve keyword.operator.table.header.carve
+#              ^^^^^^^^^ text.carve markup.table.row.carve
+#                       ^^ text.carve markup.table.row.carve keyword.operator.table.header.carve
+#                         ^^^^^^^ text.carve markup.table.row.carve
+#                                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| Fruit     | Apple    | $1     |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^^^^^^^^^^ text.carve markup.table.row.carve
+#                       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#                        ^^^^^^^^ text.carve markup.table.row.carve
+#                                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| ^         | Banana   | $0.50  |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.carve
+#  ^ text.carve markup.table.row.carve keyword.operator.table.rowspan.carve
+#   ^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^^^^^^^^^^ text.carve markup.table.row.carve
+#                       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#                        ^^^^^^^^ text.carve markup.table.row.carve
+#                                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| Total     | <        | $1.50  |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^ text.carve markup.table.row.carve
+#              ^ text.carve markup.table.row.carve keyword.operator.table.colspan.carve
+#               ^^^^^^^^ text.carve markup.table.row.carve
+#                       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#                        ^^^^^^^^ text.carve markup.table.row.carve
+#                                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>

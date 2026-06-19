@@ -1,0 +1,20 @@
+>a {+ins+} {-del-} {~old~>new~} b{# note #}
+#^^ text.carve
+#  ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#    ^^^ text.carve markup.inserted.critic.carve markup.inserted.carve
+#       ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#         ^ text.carve
+#          ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#            ^^^ text.carve markup.deleted.critic.carve markup.deleted.carve
+#               ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                 ^ text.carve
+#                  ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#                    ^^^ text.carve markup.changed.critic.carve markup.deleted.carve
+#                       ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#                         ^^^ text.carve markup.changed.critic.carve markup.inserted.carve
+#                            ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#                              ^^ text.carve
+#                                ^^ text.carve comment.block.critic.carve punctuation.definition.critic.carve
+#                                  ^^^^^^ text.carve comment.block.critic.carve comment.block.content.carve
+#                                        ^^ text.carve comment.block.critic.carve punctuation.definition.critic.carve
+>

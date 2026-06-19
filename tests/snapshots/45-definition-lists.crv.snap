@@ -1,0 +1,13 @@
+>:: color
+#^^^^^^^^^ text.carve
+>:: colour
+#^^^^^^^^^^ text.carve
+>:  The visual property of objects.
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^^ text.carve markup.list.definition.carve
+#   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>:  A pigment or paint.
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^^ text.carve markup.list.definition.carve
+#   ^^^^^^^^^^^^^^^^^^^^ text.carve
+>

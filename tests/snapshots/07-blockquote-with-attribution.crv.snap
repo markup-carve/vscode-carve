@@ -1,0 +1,9 @@
+>> Stay hungry, stay foolish.
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.quote.carve
+>^ Steve Jobs
+#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ text.carve markup.table.caption.carve
+#  ^^^^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>

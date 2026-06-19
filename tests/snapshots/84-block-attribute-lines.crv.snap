@@ -1,0 +1,8 @@
+>{#id}
+#^ text.carve meta.attributes.carve
+# ^^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#    ^ text.carve meta.attributes.carve
+>
+>Text
+#^^^^^ text.carve
+>

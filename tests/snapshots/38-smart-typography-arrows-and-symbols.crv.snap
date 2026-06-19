@@ -1,0 +1,26 @@
+>Flow: a -> b <- c <-> d => e; x != y, p <= q, r >= s, +-1.
+#^^^^^^^^ text.carve
+#        ^^ text.carve constant.character.typography.carve
+#          ^^^ text.carve
+#             ^^ text.carve constant.character.typography.carve
+#               ^^^ text.carve
+#                  ^^^ text.carve constant.character.typography.carve
+#                     ^^^ text.carve
+#                        ^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                         ^^^^^^^^ text.carve markup.highlight.carve markup.highlight.carve
+#                                 ^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                                  ^^^^^^ text.carve
+#                                        ^^ text.carve constant.character.typography.carve
+#                                          ^^^^^^ text.carve
+#                                                ^^ text.carve constant.character.typography.carve
+#                                                  ^^^^ text.carve
+#                                                      ^^ text.carve constant.character.typography.carve
+#                                                        ^^^ text.carve
+>(c) 2024, (r), (tm). Dates like 1/2/2024 stay literal.
+#^^^ text.carve constant.character.typography.carve
+#   ^^^^^^^ text.carve
+#          ^^^ text.carve constant.character.typography.carve
+#             ^^ text.carve
+#               ^^^^ text.carve constant.character.typography.carve
+#                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>

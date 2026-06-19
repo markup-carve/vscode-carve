@@ -1,0 +1,11 @@
+>Great :rocket: and :kbd[Ctrl] is an extension.
+#^^^^^^ text.carve
+#      ^^^^^^^^ text.carve constant.character.emoji.carve
+#              ^^^^^ text.carve
+#                   ^ text.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                    ^^^ text.carve meta.extension.inline.carve entity.name.function.extension.carve
+#                       ^ text.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                        ^^^^ text.carve meta.extension.inline.carve string.unquoted.extension.carve
+#                            ^ text.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                             ^^^^^^^^^^^^^^^^^^ text.carve
+>

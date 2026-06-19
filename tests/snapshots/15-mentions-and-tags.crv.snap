@@ -1,0 +1,9 @@
+>Hey @alice, see #release-1.0.
+#^^^^ text.carve
+#    ^ text.carve constant.other.symbol.mention.carve punctuation.definition.mention.carve
+#     ^^^^^ text.carve constant.other.symbol.mention.carve variable.other.mention.carve
+#          ^^^^^^ text.carve
+#                ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#                 ^^^^^^^^^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#                          ^^^^ text.carve
+>
