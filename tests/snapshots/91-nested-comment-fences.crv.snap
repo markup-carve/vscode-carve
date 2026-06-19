@@ -1,0 +1,13 @@
+>before
+#^^^^^^^ text.carve
+>
+>%%%%
+#^^^^ text.carve markup.raw.block.carve punctuation.definition.raw.begin.carve
+>hidden %%% inner fence stays hidden
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.carve
+>%%%%
+#^^^^ text.carve markup.raw.block.carve punctuation.definition.raw.end.carve
+>
+>after
+#^^^^^^ text.carve
+>

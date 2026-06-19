@@ -1,0 +1,13 @@
+>He paused -- then ran --- fast... "Stop!" it's over.
+#^^^^^^^^^^ text.carve
+#          ^^ text.carve constant.character.typography.carve
+#            ^^^^^^^^^^ text.carve
+#                      ^^^ text.carve constant.character.typography.carve
+#                         ^^^^^ text.carve
+#                              ^^^ text.carve constant.character.typography.carve
+#                                 ^ text.carve
+#                                  ^ text.carve punctuation.definition.smartquote.carve
+#                                   ^^^^^ text.carve
+#                                        ^ text.carve punctuation.definition.smartquote.carve
+#                                         ^^^^^^^^^^^^ text.carve
+>

@@ -1,0 +1,13 @@
+>-{.c} A classed item.
+#^ text.carve
+# ^ text.carve meta.attributes.carve
+#  ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#    ^ text.carve meta.attributes.carve
+#     ^^^^^^^^^^^^^^^^^ text.carve
+>-{#intro} An item with an id.
+#^ text.carve
+# ^ text.carve meta.attributes.carve
+#  ^^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#        ^ text.carve meta.attributes.carve
+#         ^^^^^^^^^^^^^^^^^^^^^ text.carve
+>

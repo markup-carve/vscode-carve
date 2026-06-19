@@ -1,0 +1,9 @@
+>3. third
+#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.numbered.carve
+#   ^^^^^^ text.carve
+>4. fourth
+#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.numbered.carve
+#   ^^^^^^^ text.carve
+>

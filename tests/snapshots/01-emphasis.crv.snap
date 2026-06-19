@@ -1,0 +1,33 @@
+>/italic/  *bold*  /*bold italic*/
+#^ text.carve markup.italic.carve punctuation.definition.italic.carve
+# ^^^^^^ text.carve markup.italic.carve markup.italic.carve
+#       ^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#        ^^ text.carve
+#          ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#           ^^^^ text.carve markup.bold.carve markup.bold.carve
+#               ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#                ^^ text.carve
+#                  ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#                    ^^^^^^^^^^^ text.carve markup.bold.italic.carve markup.bold.italic.carve
+#                               ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+>_underline_  ~strikethrough~
+#^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+# ^^^^^^^^^ text.carve markup.underline.text.carve markup.underline.text.carve
+#          ^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#           ^^ text.carve
+#             ^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#              ^^^^^^^^^^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#                           ^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+>^super^  ,sub,  =highlight=
+#^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+# ^^^^^ text.carve markup.superscript.carve markup.superscript.carve
+#      ^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+#       ^^ text.carve
+#         ^ text.carve markup.subscript.carve punctuation.definition.subscript.carve
+#          ^^^ text.carve markup.subscript.carve markup.subscript.carve
+#             ^ text.carve markup.subscript.carve punctuation.definition.subscript.carve
+#              ^^ text.carve
+#                ^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                 ^^^^^^^^^ text.carve markup.highlight.carve markup.highlight.carve
+#                          ^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+>

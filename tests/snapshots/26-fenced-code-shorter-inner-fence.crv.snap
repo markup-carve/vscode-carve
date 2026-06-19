@@ -1,0 +1,11 @@
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>line
+#^^^^^ text.carve markup.raw.block.fenced.code.carve
+>``
+#^^^ text.carve markup.raw.block.fenced.code.carve
+>still code
+#^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>

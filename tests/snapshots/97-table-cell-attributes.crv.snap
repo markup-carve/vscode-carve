@@ -1,0 +1,22 @@
+>|{.highlight} Total | 99 |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.carve meta.attributes.carve
+#  ^^^^^^^^^^ text.carve markup.table.row.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#            ^ text.carve markup.table.row.carve meta.attributes.carve
+#             ^^^^^^^ text.carve markup.table.row.carve
+#                    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#                     ^^^^ text.carve markup.table.row.carve
+#                         ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>|---|---|
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ text.carve markup.table.row.carve
+#    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ text.carve markup.table.row.carve
+#        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| a | b |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ text.carve markup.table.row.carve
+#    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ text.carve markup.table.row.carve
+#        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>

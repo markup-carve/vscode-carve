@@ -1,0 +1,20 @@
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>A plain box.
+#^^^^^^^^^^^^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>{#s .sidebar}
+#^ text.carve meta.attributes.carve
+# ^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#   ^ text.carve meta.attributes.carve
+#    ^^^^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#            ^ text.carve meta.attributes.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>A div with attributes.
+#^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>

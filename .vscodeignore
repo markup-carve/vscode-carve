@@ -3,7 +3,10 @@
 .playwright-mcp/**
 .vscode/**
 .vscode-test/**
+.gitmodules
 examples/**
+spec/**
+tests/**
 src/**
 scripts/**
 tsconfig.json

@@ -16,6 +16,7 @@
     { "include": "#links" },
     { "include": "#images" },
     { "include": "#footnotes" },
+    { "include": "#critic-markup" },
     { "include": "#attributes" },
     { "include": "#raw-inline" },
     { "include": "#inline-code" },
@@ -23,7 +24,6 @@
     { "include": "#math" },
     { "include": "#autolink" },
     { "include": "#extension-inline" },
-    { "include": "#critic-markup" },
     { "include": "#emphasis" },
     { "include": "#mentions-tags" },
     { "include": "#smart-typography" }

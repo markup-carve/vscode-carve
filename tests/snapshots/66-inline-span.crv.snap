@@ -1,0 +1,10 @@
+>A [styled run]{.hl} here.
+#^^ text.carve
+#  ^ text.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#   ^^^^^^^^^^ text.carve meta.span.inline.carve string.other.span.carve
+#             ^ text.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#              ^ text.carve meta.attributes.carve
+#               ^^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                  ^ text.carve meta.attributes.carve
+#                   ^^^^^^^ text.carve
+>

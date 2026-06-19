@@ -1,0 +1,18 @@
+>- Build the image
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^^^^^^^^^^^^ text.carve
+>+
+#^ text.carve markup.table.continuation.carve keyword.operator.table.continuation.carve
+>```sh
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>docker build -t app .
+#^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>- Push it
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^^^^ text.carve
+>

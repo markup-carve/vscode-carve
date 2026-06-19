@@ -1,0 +1,8 @@
+>```c++
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>int main() {}
+#^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>

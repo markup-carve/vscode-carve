@@ -1,0 +1,11 @@
+># Getting Started
+#^ text.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ text.carve markup.heading.carve
+#  ^^^^^^^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+>
+>See </#getting-started>.
+#^^^^^^ text.carve
+#      ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#       ^^^^^^^^^^^^^^^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#                      ^^^ text.carve
+>

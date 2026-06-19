@@ -1,0 +1,17 @@
+>Use `<br>`{=html} to break, and `\foo`{=latex} is dropped.
+#^^^^ text.carve
+#    ^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#     ^^^^ text.carve markup.raw.inline.passthrough.carve markup.raw.inline.content.carve
+#         ^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#          ^^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.begin.carve
+#            ^^^^ text.carve markup.raw.inline.passthrough.carve entity.name.type.format.carve
+#                ^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.end.carve
+#                 ^^^^^^^^^^^^^^^ text.carve
+#                                ^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#                                 ^^^^ text.carve markup.raw.inline.passthrough.carve markup.raw.inline.content.carve
+#                                     ^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#                                      ^^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.begin.carve
+#                                        ^^^^^ text.carve markup.raw.inline.passthrough.carve entity.name.type.format.carve
+#                                             ^ text.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.end.carve
+#                                              ^^^^^^^^^^^^^ text.carve
+>

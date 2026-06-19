@@ -1,0 +1,14 @@
+>---
+#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.begin.carve
+>title: My Document
+#^^^^^^^^^^^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+>author: Jane Doe
+#^^^^^^^^^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+>date: 2026-03-15
+#^^^^^^^^^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+>---
+#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.end.carve
+>
+>Content begins here.
+#^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
