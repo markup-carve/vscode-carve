@@ -8,11 +8,11 @@
 #                 ^^^^^ text.carve markup.table.row.carve meta.attributes.carve entity.other.attribute-name.class.carve
 #                      ^ text.carve markup.table.row.carve meta.attributes.carve
 >|------|-------|
-#^ text.carve markup.table.row.carve punctuation.separator.table.carve
-# ^^^^^^ text.carve markup.table.row.carve
-#       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
-#        ^^^^^^^ text.carve markup.table.row.carve
-#               ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+# ^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#       ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+#        ^^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#               ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
 >| Ann  | 9     |{.win}
 #^ text.carve markup.table.row.carve punctuation.separator.table.carve
 # ^^^^^^ text.carve markup.table.row.carve

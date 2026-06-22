@@ -94,10 +94,14 @@
       "patterns": [
         {
           "name": "markup.raw.block.fenced.code.carve",
-          "begin": "^(`{3,}|~{3,})\\s*([^`~\\s]+)?\\s*$",
+          "begin": "^(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
           "beginCaptures": {
             "1": { "name": "punctuation.definition.raw.begin.carve" },
-            "2": { "name": "entity.name.type.language.carve" }
+            "2": { "name": "entity.name.type.language.carve" },
+            "3": { "name": "string.quoted.double.carve" },
+            "4": { "name": "entity.name.label.carve" },
+            "5": { "name": "entity.name.label.carve" },
+            "6": { "name": "string.quoted.double.carve" }
           },
           "end": "^(`{3,}|~{3,})\\s*$",
           "endCaptures": {
@@ -126,16 +130,38 @@
       "patterns": [
         {
           "name": "markup.other.div.carve",
-          "match": "^\\s*(:::+)\\s*([^\\s{]+)?",
+          "match": "^\\s*(:::+)\\s*([^\\s{\\[\"]+)?\\s*(?:(\"[^\"]*\")\\s*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])\\s*(\"[^\"]*\")?)?",
           "captures": {
             "1": { "name": "punctuation.definition.div.carve" },
-            "2": { "name": "entity.name.type.div.carve" }
+            "2": { "name": "entity.name.type.div.carve" },
+            "3": { "name": "string.quoted.double.carve" },
+            "4": { "name": "entity.name.label.carve" },
+            "5": { "name": "entity.name.label.carve" },
+            "6": { "name": "string.quoted.double.carve" }
           }
         }
       ]
     },
     "tables": {
       "patterns": [
+        {
+          "comment": "GFM delimiter/alignment row: a whole line of only pipes, dashes, optional alignment colons, and whitespace (e.g. `|---|---|`, `|:---:|`). Gated by a full-row lookahead so an ordinary data cell that merely contains dashes is NOT mis-scoped. Each dash/colon cell is the separator; the pipes keep their separator scope. Note: TextMate rules are line-local and do not track table position, so a dash/colon-only row that is NOT the parser's second-row delimiter (e.g. a body row that happens to be all dashes) is also highlighted here. That edge case is rare and cosmetic; modeling exact delimiter-row position would require a full multi-line table state machine.",
+          "name": "markup.table.row.separator.carve",
+          "begin": "^(?=\\s*\\|(?:[ \\t]*:?-+:?[ \\t]*\\|)+[ \\t]*$)",
+          "end": "$",
+          "patterns": [
+            {
+              "match": "(?<=\\|)[ \\t]*(:?-+:?)[ \\t]*(?=\\|)",
+              "captures": {
+                "1": { "name": "punctuation.definition.table.separator.carve" }
+              }
+            },
+            {
+              "match": "\\|",
+              "name": "punctuation.separator.table.carve"
+            }
+          ]
+        },
         {
           "name": "markup.table.row.carve",
           "begin": "^(?=\\s*\\|)",
