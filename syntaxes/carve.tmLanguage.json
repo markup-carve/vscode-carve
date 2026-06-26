@@ -378,14 +378,7 @@
             {
               "comment": "@key: citation key with allowed charset [A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~/-]*",
               "name": "variable.other.citation.key.carve",
-              "match": "@[A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~\\/-]*",
-              "captures": {
-                "0": {
-                  "patterns": [
-                    { "name": "punctuation.definition.citation.key.carve", "match": "^@" }
-                  ]
-                }
-              }
+              "match": "@[A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~\\/-]*"
             },
             {
               "comment": "Semicolon item separator",
