@@ -177,8 +177,8 @@
     "vscode:prepublish": "npm run build",
     "test": "npm run test:unit && npm run test:grammar",
     "test:unit": "node --test dist/*.test.js",
-    "test:grammar": "node --test tests/coverage.test.mjs && node tests/run-snapshots.mjs",
-    "test:grammar:update": "node tests/run-snapshots.mjs -u",
+    "test:grammar": "node --test tests/coverage.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
+    "test:grammar:update": "node tests/run-snapshots.mjs -u && node tests/run-fixtures.mjs -u",
     "typecheck": "tsc --noEmit",
     "package": "vsce package"
   },
