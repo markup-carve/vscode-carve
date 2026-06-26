@@ -16,6 +16,8 @@
     { "include": "#links" },
     { "include": "#images" },
     { "include": "#footnotes" },
+    { "include": "#citations" },
+    { "include": "#code-callouts" },
     { "include": "#critic-markup" },
     { "include": "#attributes" },
     { "include": "#raw-inline" },
@@ -348,6 +350,73 @@
             "2": { "name": "punctuation.definition.footnote.carve" },
             "3": { "name": "constant.other.footnote.carve" },
             "4": { "name": "punctuation.definition.footnote.carve" }
+          }
+        }
+      ]
+    },
+    "citations": {
+      "comment": "Citation group: a bracket whose content contains at least one @key and has no (url)/[ref]/{attrs} tail. A leading + signals an integral/in-text citation. Items are ;-separated; each may carry a -/+ prefix and an optional , locator. The @key and the -/+ per-item markers are scoped distinctly, analogous to @mention but inside the citation bracket.",
+      "patterns": [
+        {
+          "name": "markup.citation.carve",
+          "comment": "Match the whole citation bracket [+?...@key...]  that is NOT followed by (, [, or { (which would make it a link, ref-link, or span). A lookahead for @ inside the brackets discriminates from plain spans and footnote refs.",
+          "begin": "(?<!!)(?<![\\\\])(\\[)(\\+)?(?=[^\\]\\n]*@[A-Za-z0-9_])",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.citation.begin.carve" },
+            "2": { "name": "keyword.operator.citation.integral.carve" }
+          },
+          "end": "(\\])(?!\\(|\\[|\\{)",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.citation.end.carve" }
+          },
+          "patterns": [
+            {
+              "comment": "Optional -/+ per-item modifier immediately before the @key",
+              "name": "keyword.operator.citation.modifier.carve",
+              "match": "(?<=^|;|\\[|\\+)\\s*(-)"
+            },
+            {
+              "comment": "@key: citation key with allowed charset [A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~/-]*",
+              "name": "variable.other.citation.key.carve",
+              "match": "@[A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~\\/-]*",
+              "captures": {
+                "0": {
+                  "patterns": [
+                    { "name": "punctuation.definition.citation.key.carve", "match": "^@" }
+                  ]
+                }
+              }
+            },
+            {
+              "comment": "Semicolon item separator",
+              "name": "punctuation.separator.citation.carve",
+              "match": ";"
+            }
+          ]
+        }
+      ]
+    },
+    "code-callouts": {
+      "comment": "CodeCallout markers: <N> where N is one or more digits. Leading form at the start of a callout annotation line (^<N> prose); trailing form inside fenced-code body lines (code  <N>). Both share the same scope.",
+      "patterns": [
+        {
+          "comment": "Leading callout annotation line: <N> at the very start (with optional leading whitespace), followed by a space and annotation prose.",
+          "name": "markup.callout.annotation.carve",
+          "match": "^(\\s*)(<)([0-9]+)(>)(?=\\s)",
+          "captures": {
+            "2": { "name": "punctuation.definition.callout.carve" },
+            "3": { "name": "constant.numeric.callout.carve" },
+            "4": { "name": "punctuation.definition.callout.carve" }
+          }
+        },
+        {
+          "comment": "Trailing callout marker inside a code line: <N> at the end of the line (optionally preceded by whitespace).",
+          "name": "markup.callout.marker.carve",
+          "match": "(<)([0-9]+)(>)\\s*$",
+          "captures": {
+            "1": { "name": "punctuation.definition.callout.carve" },
+            "2": { "name": "constant.numeric.callout.carve" },
+            "3": { "name": "punctuation.definition.callout.carve" }
           }
         }
       ]

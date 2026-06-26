@@ -1,0 +1,29 @@
+>[@smith2020]
+#^ text.carve markup.citation.carve punctuation.definition.citation.begin.carve
+# ^^^^^^^^^^ text.carve markup.citation.carve variable.other.citation.key.carve
+#           ^ text.carve markup.citation.carve punctuation.definition.citation.end.carve
+>[+@jones1999]
+#^ text.carve markup.citation.carve punctuation.definition.citation.begin.carve
+# ^ text.carve markup.citation.carve keyword.operator.citation.integral.carve
+#  ^^^^^^^^^^ text.carve markup.citation.carve variable.other.citation.key.carve
+#            ^ text.carve markup.citation.carve punctuation.definition.citation.end.carve
+>[@doe2021; @roe2022]
+#^ text.carve markup.citation.carve punctuation.definition.citation.begin.carve
+# ^^^^^^^^ text.carve markup.citation.carve variable.other.citation.key.carve
+#         ^ text.carve markup.citation.carve punctuation.separator.citation.carve
+#          ^ text.carve markup.citation.carve
+#           ^^^^^^^^ text.carve markup.citation.carve variable.other.citation.key.carve
+#                   ^ text.carve markup.citation.carve punctuation.definition.citation.end.carve
+>[@smith2020, p. 42]
+#^ text.carve markup.citation.carve punctuation.definition.citation.begin.carve
+# ^^^^^^^^^^ text.carve markup.citation.carve variable.other.citation.key.carve
+#           ^^^^^^^ text.carve markup.citation.carve
+#                  ^ text.carve markup.citation.carve punctuation.definition.citation.end.carve
+>[@smith2020; -@jones1999]
+#^ text.carve markup.citation.carve punctuation.definition.citation.begin.carve
+# ^^^^^^^^^^ text.carve markup.citation.carve variable.other.citation.key.carve
+#           ^ text.carve markup.citation.carve punctuation.separator.citation.carve
+#            ^^ text.carve markup.citation.carve keyword.operator.citation.modifier.carve
+#              ^^^^^^^^^^ text.carve markup.citation.carve variable.other.citation.key.carve
+#                        ^ text.carve markup.citation.carve punctuation.definition.citation.end.carve
+>

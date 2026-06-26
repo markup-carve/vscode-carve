@@ -1,0 +1,20 @@
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>result = compute()  <1>
+#^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>log(result)         <2>
+#^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+><1> The main computation.
+#^ text.carve markup.callout.annotation.carve punctuation.definition.callout.carve
+# ^ text.carve markup.callout.annotation.carve constant.numeric.callout.carve
+#  ^ text.carve markup.callout.annotation.carve punctuation.definition.callout.carve
+#   ^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+><2> Diagnostic output.
+#^ text.carve markup.callout.annotation.carve punctuation.definition.callout.carve
+# ^ text.carve markup.callout.annotation.carve constant.numeric.callout.carve
+#  ^ text.carve markup.callout.annotation.carve punctuation.definition.callout.carve
+#   ^^^^^^^^^^^^^^^^^^^^ text.carve
+>

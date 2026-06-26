@@ -1,0 +1,7 @@
+```
+result = compute()  <1>
+log(result)         <2>
+```
+
+<1> The main computation.
+<2> Diagnostic output.
