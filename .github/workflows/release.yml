@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    name: Build and publish extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Prefer HTTPS for Git dependencies
+        run: |
+          git config --global url."https://github.com/".insteadOf ssh://git@github.com/
+          git config --global url."https://github.com/".insteadOf git@github.com:
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Publish to VS Code Marketplace
+        run: npx vsce publish --no-dependencies
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX
+        run: npx ovsx publish --no-dependencies
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
