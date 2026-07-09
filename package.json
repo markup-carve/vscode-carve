@@ -38,8 +38,7 @@
           "carve"
         ],
         "extensions": [
-          ".crv",
-          ".carve"
+          ".crv"
         ],
         "filenames": [],
         "configuration": "./language-configuration/carve.json",
@@ -145,7 +144,7 @@
           {
             "id": "carve.openDocument",
             "title": "Open a Carve document",
-            "description": "Create or open a file ending in `.crv` or `.carve`. Syntax highlighting, diagnostics, and completion activate automatically.",
+            "description": "Create or open a file ending in `.crv`. Syntax highlighting, diagnostics, and completion activate automatically.",
             "media": {
               "markdown": "walkthroughs/open-document.md"
             }

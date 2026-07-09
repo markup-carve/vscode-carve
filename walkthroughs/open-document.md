@@ -1,6 +1,6 @@
 # Open a Carve document
 
-Carve files use the `.crv` or `.carve` extension. Open or create one and the
+Carve files use the `.crv` extension. Open or create one and the
 extension activates automatically, giving you:
 
 - syntax highlighting and semantic tokens,

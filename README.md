@@ -1,10 +1,10 @@
 # vscode-carve
 
-VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Djot lightweight markup language.
+VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Markdown lightweight markup language.
 
 ## Features
 
-- Language registration for `.crv` and `.carve` files, with a dedicated file icon in the Explorer.
+- Language registration for `.crv` files, with a dedicated file icon in the Explorer.
 - Syntax highlighting for headings, emphasis, strong, links, images, lists, tables, code, raw blocks, comments, attributes, footnotes, mentions, tags, math, and frontmatter.
 - Language server integration via [`markup-carve/carve-lsp`](https://github.com/markup-carve/carve-lsp):
   - diagnostics for parser errors and Djot/Markdown migration warnings,
