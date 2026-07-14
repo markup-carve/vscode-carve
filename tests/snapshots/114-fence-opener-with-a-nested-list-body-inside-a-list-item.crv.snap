@@ -1,0 +1,15 @@
+>- ::: note
+#^ text.carve markup.other.div.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.other.div.carve
+#  ^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#     ^ text.carve markup.other.div.carve
+#      ^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>  - para text
+#^^ text.carve markup.list.unnumbered.carve
+#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.unnumbered.carve
+#    ^^^^^^^^^^ text.carve
+>  :::
+#^^ text.carve markup.other.div.carve
+#  ^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>

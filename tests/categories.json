@@ -54,7 +54,13 @@
     "98-table-row-attributes": "98-table-row-attributes.crv",
     "99-table-header-cell-rowspan": "99-table-header-cell-rowspan.crv",
     "100-block-quote-continuation-marker": "100-block-quote-continuation-marker.crv",
-    "101-heading-marker-column-zero": "101-heading-marker-column-zero.crv"
+    "101-heading-marker-column-zero": "101-heading-marker-column-zero.crv",
+    "108-empty-link-and-image-titles-are-preserved": "108-empty-link-and-image-titles-are-preserved.crv",
+    "110-unquoted-attribute-values-may-contain-dots-and-colons": "110-unquoted-attribute-values-may-contain-dots-and-colons.crv",
+    "112-adjacent-attribute-blocks-on-one-line-merge": "112-adjacent-attribute-blocks-on-one-line-merge.crv",
+    "114-fence-opener-with-a-nested-list-body-inside-a-list-item": "114-fence-opener-with-a-nested-list-body-inside-a-list-item.crv",
+    "120-footnotes-placement": "120-footnotes-placement.crv",
+    "126-editorial-markup-takes-a-trailing-attribute": "126-editorial-markup-takes-a-trailing-attribute.crv"
   },
   "skip": {
     "20-table-column-alignment": "Column alignment is encoded in the separator-row colons; the grammar scopes the separator as a table header/separator token but does not distinguish per-column alignment, which is a render-time concern, not a highlighting distinction.",
@@ -104,6 +110,24 @@
     "92-strong-emphasis-starting-with-a-link": "Interaction of strong emphasis with a leading link resolves to emphasis and link tokens covered by 01 and 03.",
     "93-abbreviation-definition-interrupts-a-paragraph": "Whether an abbreviation definition interrupts a paragraph is block-structure parsing; the definition token is covered by 14.",
     "94-literal-less-than-in-prose": "A literal less-than in prose deliberately produces no autolink token; the point is the absence of a scope.",
-    "102-paragraph-trailing-whitespace": "Trailing-whitespace stripping is a parser/render concern with no token-scope difference (plain paragraph text)."
+    "102-paragraph-trailing-whitespace": "Trailing-whitespace stripping is a parser/render concern with no token-scope difference (plain paragraph text).",
+    "103-marker-line-nested-lists": "A marker line ('- - A') opens a nested list on one physical line. The grammar's bullet pattern is line-anchored, so only the leading marker takes a list token; the nesting itself is block structure covered by 05-lists and 70-list-nesting-and-looseness.",
+    "104-blocked-span-marker-renders-as-empty-cell": "How a blocked span marker resolves to an empty cell is table-layout resolution; the '^'/'<' marker tokens are covered by 10-tables-with-rowspan-and-colspan and 96.",
+    "105-colspan-marker-scans-left-past-a-consumed-cell": "Left-scanning of a colspan marker across consumed cells is table-layout resolution; the marker tokens are covered by 10 and 96.",
+    "106-security-hardening": "Scheme and attribute sanitization (javascript:, ms-msdt:, onclick=, style=) happens on HTML output. A rejected URL or attribute tokenizes exactly like an accepted one, so there is no highlighting distinction; link/attribute tokens are covered by 03 and 17.",
+    "107-link-destination-stops-at-the-first-parenthesis": "Where the destination ends is link-parsing; the link tokens themselves are covered by 03-links (and the bracket-nesting edge by 72).",
+    "109-cross-references-resolve-inside-footnote-bodies": "Cross-reference resolution scope is a resolver concern; the crossref and footnote tokens are covered by 58 and 43.",
+    "111-a-pipe-pair-with-no-cell-is-not-a-table": "Negative case: '||' must not become a table. TextMate matches on the line shape alone and has no positive scope to assert here; table tokens are covered by 09.",
+    "113-a-continuation-row-needs-a-body-row": "Negative/structural case for table continuation rows; the '+' continuation marker token is covered by the table-continuation pattern exercised in 40/09.",
+    "115-footnote-definition-inside-a-container-is-collected": "Collecting a footnote definition out of a blockquote or list is a resolver concern; the quote/list and footnote-definition tokens are covered by 07, 05 and 43.",
+    "116-cyclic-cross-reference-resolves-to-one-level": "Cycle-breaking during cross-reference resolution is a render-time concern; the crossref token is covered by 58.",
+    "117-trojan-source-heading-ids-are-nfc-normalized-and-strip-invisible-controls": "NFC normalization and invisible-control stripping affect generated ids and output text, not tokens; the heading tokens are covered by 02 and 19.",
+    "118-trojan-source-rendered-text-and-code-strip-bidi-override-controls": "Bidi-override stripping is an output-sanitization concern; the surrounding text/code-span tokens are covered by 12-inline-code.",
+    "119-scheme-probe-strips-unicode-whitespace": "Unicode-whitespace stripping before the scheme probe is URL sanitization on output; the reference-definition token is covered by 34.",
+    "121-classes-are-deduplicated": "Class deduplication happens when emitting the class attribute; both duplicates tokenize identically as class names, which are covered by 17-attributes.",
+    "122-code-span-and-image-trailing-attributes-are-strict": "Negative case: a digit-initial key ('{2=v}') must stay literal. The grammar's attribute-block regex is deliberately lenient and cannot enforce spec-level identifier strictness, so pinning it would freeze a known TextMate approximation rather than assert a correct scope; the attribute tokens are covered by 17 and 110.",
+    "123-a-bare-attribute-block-on-its-own-line-is-literal": "Negative case: '{}' stays literal. The attribute-block pattern requires at least one character, so there is no token to assert; block attribute lines are covered by 84.",
+    "124-a-backslash-in-a-link-destination-is-a-literal-character": "How a backslash inside a destination is interpreted is link parsing; the link tokens are covered by 03 and the escape token by 60.",
+    "125-autolink-display-keeps-the-raw-content": "Keeping the raw autolink content in the display text is a render concern; the autolink tokens (scheme and email forms) are covered by 59-autolinks."
   }
 }
