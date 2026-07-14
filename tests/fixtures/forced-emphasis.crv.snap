@@ -1,0 +1,42 @@
+>foo{*bar*}baz and my{_path_}name and a{/b/}c
+#^^^ text.carve
+#   ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#     ^^^ text.carve markup.bold.carve markup.bold.carve
+#        ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#          ^^^^^^^^^^ text.carve
+#                    ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#                      ^^^^ text.carve markup.underline.text.carve markup.underline.text.carve
+#                          ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#                            ^^^^^^^^^^ text.carve
+#                                      ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#                                        ^ text.carve markup.italic.carve markup.italic.carve
+#                                         ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#                                           ^^ text.carve
+>
+>{/a/b/} and {/italic *bold*/}
+#^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#  ^^^ text.carve markup.italic.carve markup.italic.carve
+#     ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#       ^^^^^ text.carve
+#            ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#              ^^^^^^^^^^^^^ text.carve markup.italic.carve markup.italic.carve
+#                           ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+>
+>{~gone~} but {~old~>new~} stays editorial
+#^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#      ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#        ^^^^^ text.carve
+#             ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#               ^^^ text.carve markup.changed.critic.carve markup.deleted.carve
+#                  ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#                    ^^^ text.carve markup.changed.critic.carve markup.inserted.carve
+#                       ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#                         ^^^^^^^^^^^^^^^^^ text.carve
+>
+>{_path_} is underline, not a boolean attribute
+#^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#  ^^^^ text.carve markup.underline.text.carve markup.underline.text.carve
+#      ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
