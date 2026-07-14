@@ -61,12 +61,12 @@
   },
   "Superscript": {
     "prefix": "sup",
-    "body": ["^${1:text}^$0"],
+    "body": ["{^${1:text}^}$0"],
     "description": "Superscript"
   },
   "Subscript": {
     "prefix": "sub",
-    "body": [",,${1:text},,$0"],
+    "body": ["{,${1:text},}$0"],
     "description": "Subscript"
   },
   "Inline code": {
