@@ -133,14 +133,16 @@
       "patterns": [
         {
           "name": "markup.other.div.carve",
-          "match": "^\\s*(:::+)\\s*([^\\s{\\[\"]+)?\\s*(?:(\"[^\"]*\")\\s*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])\\s*(\"[^\"]*\")?)?",
+          "comment": "A div fence may open directly after a list marker (`- ::: note`), so an optional bullet prefix is consumed here and scoped as a list marker.",
+          "match": "^\\s*(?:([-*])[ \\t]+)?(:::+)\\s*([^\\s{\\[\"]+)?\\s*(?:(\"[^\"]*\")\\s*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])\\s*(\"[^\"]*\")?)?",
           "captures": {
-            "1": { "name": "punctuation.definition.div.carve" },
-            "2": { "name": "entity.name.type.div.carve" },
-            "3": { "name": "string.quoted.double.carve" },
-            "4": { "name": "entity.name.label.carve" },
+            "1": { "name": "punctuation.definition.list.begin.carve" },
+            "2": { "name": "punctuation.definition.div.carve" },
+            "3": { "name": "entity.name.type.div.carve" },
+            "4": { "name": "string.quoted.double.carve" },
             "5": { "name": "entity.name.label.carve" },
-            "6": { "name": "string.quoted.double.carve" }
+            "6": { "name": "entity.name.label.carve" },
+            "7": { "name": "string.quoted.double.carve" }
           }
         }
       ]
@@ -298,7 +300,7 @@
       "patterns": [
         {
           "name": "meta.link.inline.carve",
-          "match": "(\\[)([^\\]]+)(\\])(\\()([^\\s)]+)(?:\\s+\"([^\"]+)\")?(\\))",
+          "match": "(\\[)([^\\]]+)(\\])(\\()([^\\s)]+)(?:\\s+\"([^\"]*)\")?(\\))",
           "captures": {
             "1": { "name": "punctuation.definition.link.begin.carve" },
             "2": { "name": "string.other.link.title.carve" },
@@ -332,7 +334,7 @@
       "patterns": [
         {
           "name": "meta.image.inline.carve",
-          "match": "(!\\[)([^\\]]*)(\\]\\()([^\\s)]+)(?:\\s+\"([^\"]+)\")?(\\))",
+          "match": "(!\\[)([^\\]]*)(\\]\\()([^\\s)]+)(?:\\s+\"([^\"]*)\")?(\\))",
           "captures": {
             "1": { "name": "punctuation.definition.image.begin.carve" },
             "2": { "name": "string.other.image.alt.carve" },
@@ -428,7 +430,12 @@
                 { "name": "entity.other.attribute-name.class.carve", "match": "\\.[A-Za-z_][A-Za-z0-9_-]*" },
                 { "name": "entity.other.attribute-name.carve", "match": "[A-Za-z_:][A-Za-z0-9_:-]*(?==)" },
                 { "name": "string.quoted.double.attribute.carve", "match": "\"[^\"]*\"" },
-                { "name": "string.quoted.single.attribute.carve", "match": "'[^']*'" }
+                { "name": "string.quoted.single.attribute.carve", "match": "'[^']*'" },
+                {
+                  "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class.",
+                  "name": "string.unquoted.attribute.carve",
+                  "match": "(?<==)[^\\s\"'}]+"
+                }
               ]
             }
           }

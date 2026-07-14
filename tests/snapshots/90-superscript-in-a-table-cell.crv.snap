@@ -2,8 +2,12 @@
 #^ text.carve markup.table.row.carve punctuation.separator.table.carve
 # ^^^^^^^ text.carve markup.table.row.carve
 #        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
->| ^2^   |
+>| {^2^} |
 #^ text.carve markup.table.row.carve punctuation.separator.table.carve
-# ^^^^^^^ text.carve markup.table.row.carve
+# ^ text.carve markup.table.row.carve
+#  ^^ text.carve markup.table.row.carve markup.superscript.carve punctuation.definition.superscript.carve
+#    ^ text.carve markup.table.row.carve markup.superscript.carve markup.superscript.carve
+#     ^^ text.carve markup.table.row.carve markup.superscript.carve punctuation.definition.superscript.carve
+#       ^ text.carve markup.table.row.carve
 #        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
 >

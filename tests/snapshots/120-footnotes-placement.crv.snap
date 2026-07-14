@@ -1,0 +1,40 @@
+>Intro[^a] and[^b].
+#^^^^^ text.carve
+#     ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#       ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#        ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#         ^^^^ text.carve
+#             ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#              ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#               ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#                ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                 ^^ text.carve
+>
+>::: footnotes
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>## After
+#^^ text.carve markup.heading.carve punctuation.definition.heading.carve
+#  ^ text.carve markup.heading.carve
+#   ^^^^^ text.carve markup.heading.carve entity.name.section.carve
+>
+>More text.
+#^^^^^^^^^^^ text.carve
+>
+>[^a]: first note
+#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#     ^ text.carve meta.link.reference.definition.carve
+#      ^^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#           ^^^^^^ text.carve
+>
+>[^b]: second note
+#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#     ^ text.carve meta.link.reference.definition.carve
+#      ^^^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#            ^^^^^^ text.carve
+>

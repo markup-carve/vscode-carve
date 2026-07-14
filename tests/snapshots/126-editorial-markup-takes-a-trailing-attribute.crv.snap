@@ -1,0 +1,8 @@
+>{++a++}{.a}
+#^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#  ^^^ text.carve markup.inserted.critic.carve markup.inserted.carve
+#     ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#       ^ text.carve meta.attributes.carve
+#        ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#          ^ text.carve meta.attributes.carve
+>
