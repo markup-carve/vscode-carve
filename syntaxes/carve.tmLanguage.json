@@ -19,6 +19,7 @@
     { "include": "#citations" },
     { "include": "#code-callouts" },
     { "include": "#critic-markup" },
+    { "include": "#sup-sub" },
     { "include": "#attributes" },
     { "include": "#raw-inline" },
     { "include": "#inline-code" },
@@ -193,6 +194,7 @@
             { "include": "#inline-code" },
             { "include": "#extension-inline" },
             { "include": "#critic-markup" },
+            { "include": "#sup-sub" },
             { "include": "#emphasis" },
             { "include": "#links" },
             { "include": "#images" },
@@ -627,10 +629,14 @@
             "2": { "name": "markup.highlight.carve" },
             "3": { "name": "punctuation.definition.highlight.carve" }
           }
-        },
+        }
+      ]
+    },
+    "sup-sub": {
+      "patterns": [
         {
           "name": "markup.superscript.carve",
-          "match": "(\\^)(?=\\S)([^\\s^\\n]+?)(\\^)",
+          "match": "(\\{\\^)([^}\\n]+?)(\\^\\})",
           "captures": {
             "1": { "name": "punctuation.definition.superscript.carve" },
             "2": { "name": "markup.superscript.carve" },
@@ -639,7 +645,7 @@
         },
         {
           "name": "markup.subscript.carve",
-          "match": "(?<![\\w,])(,)(?=\\S)([^,\\n]+?)(?<=\\S)(,)(?![\\w,])",
+          "match": "(\\{,)([^}\\n]+?)(,\\})",
           "captures": {
             "1": { "name": "punctuation.definition.subscript.carve" },
             "2": { "name": "markup.subscript.carve" },
