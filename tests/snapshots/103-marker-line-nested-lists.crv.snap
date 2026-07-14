@@ -1,0 +1,16 @@
+>- - A
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#    ^^ text.carve
+>  - B
+#^^ text.carve markup.list.unnumbered.carve
+#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.unnumbered.carve
+#    ^^ text.carve
+>  - C
+#^^ text.carve markup.list.unnumbered.carve
+#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.unnumbered.carve
+#    ^^ text.carve
+>

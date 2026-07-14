@@ -1,0 +1,20 @@
+>[t](/url "ti\"tle")
+#^ text.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+# ^ text.carve meta.link.inline.carve string.other.link.title.carve
+#  ^ text.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#   ^ text.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#    ^^^^ text.carve meta.link.inline.carve markup.underline.link.carve
+#        ^^ text.carve meta.link.inline.carve
+#          ^^^^^^^ text.carve meta.link.inline.carve string.quoted.double.link-title.carve
+#                 ^ text.carve meta.link.inline.carve
+#                  ^ text.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+>
+>![alt](/img.png "cap\"tion")
+#^^ text.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^^^ text.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve meta.image.inline.carve
+#       ^^^^^^^^ text.carve meta.image.inline.carve markup.underline.link.image.carve
+#               ^^ text.carve meta.image.inline.carve
+#                 ^^^^^^^^^ text.carve meta.image.inline.carve string.quoted.double.image-title.carve
+#                          ^^ text.carve meta.image.inline.carve
+>

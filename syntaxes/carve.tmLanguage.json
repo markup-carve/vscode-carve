@@ -248,11 +248,13 @@
           }
         },
         {
+          "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first.",
           "name": "markup.list.unnumbered.carve",
-          "match": "^(\\s*)([-*])\\s+(\\[[ xX]\\]\\s+)?",
+          "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)(\\[[ xX]\\]\\s+)?",
           "captures": {
             "2": { "name": "punctuation.definition.list.begin.carve" },
-            "3": { "name": "constant.language.task-list.carve" }
+            "4": { "name": "punctuation.definition.list.begin.carve" },
+            "5": { "name": "constant.language.task-list.carve" }
           }
         },
         {
@@ -299,8 +301,9 @@
     "links": {
       "patterns": [
         {
+          "comment": "A quoted title may contain escaped characters (`\"ti\\\"tle\"`), so the title run must consume `\\\\.` pairs instead of stopping at the first backslash - otherwise the whole link loses its scoping.",
           "name": "meta.link.inline.carve",
-          "match": "(\\[)([^\\]]+)(\\])(\\()([^\\s)]+)(?:\\s+\"([^\"]*)\")?(\\))",
+          "match": "(\\[)([^\\]]+)(\\])(\\()([^\\s)]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
           "captures": {
             "1": { "name": "punctuation.definition.link.begin.carve" },
             "2": { "name": "string.other.link.title.carve" },
@@ -333,8 +336,9 @@
     "images": {
       "patterns": [
         {
+          "comment": "Same escaped-title handling as the inline link: consume `\\\\.` pairs inside the quoted title.",
           "name": "meta.image.inline.carve",
-          "match": "(!\\[)([^\\]]*)(\\]\\()([^\\s)]+)(?:\\s+\"([^\"]*)\")?(\\))",
+          "match": "(!\\[)([^\\]]*)(\\]\\()([^\\s)]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
           "captures": {
             "1": { "name": "punctuation.definition.image.begin.carve" },
             "2": { "name": "string.other.image.alt.carve" },
@@ -421,8 +425,9 @@
     "attributes": {
       "patterns": [
         {
+          "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may still contain dots and colons (`{k=v.w}`), and a bare `{}` stays literal.",
           "name": "meta.attributes.carve",
-          "match": "\\{[^}\\n]+\\}",
+          "match": "\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?))*\\s*\\}",
           "captures": {
             "0": {
               "patterns": [
