@@ -1,710 +1,1099 @@
 {
-  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "Carve",
-  "scopeName": "text.carve",
-  "patterns": [
-    { "include": "#frontmatter" },
-    { "include": "#comments" },
-    { "include": "#headings" },
-    { "include": "#code-blocks" },
-    { "include": "#raw-blocks" },
-    { "include": "#divs" },
-    { "include": "#tables" },
-    { "include": "#block-quotes" },
-    { "include": "#lists" },
-    { "include": "#definitions" },
-    { "include": "#links" },
-    { "include": "#images" },
-    { "include": "#footnotes" },
-    { "include": "#citations" },
-    { "include": "#code-callouts" },
-    { "include": "#critic-markup" },
-    { "include": "#sup-sub" },
-    { "include": "#attributes" },
-    { "include": "#raw-inline" },
-    { "include": "#inline-code" },
-    { "include": "#trailing-comment" },
-    { "include": "#math" },
-    { "include": "#autolink" },
-    { "include": "#extension-inline" },
-    { "include": "#emphasis" },
-    { "include": "#mentions-tags" },
-    { "include": "#smart-typography" }
-  ],
-  "repository": {
-    "frontmatter": {
-      "patterns": [
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "Carve",
+    "scopeName": "text.carve",
+    "patterns": [
         {
-          "name": "meta.frontmatter.carve",
-          "begin": "\\A(---)\\s*([A-Za-z0-9_-]+)?\\s*$",
-          "beginCaptures": {
-            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
-            "2": { "name": "entity.name.type.frontmatter.carve" }
-          },
-          "end": "^(---)\\s*$",
-          "endCaptures": {
-            "1": { "name": "punctuation.definition.frontmatter.end.carve" }
-          },
-          "patterns": [{ "name": "string.unquoted.frontmatter.carve", "match": ".+" }]
-        }
-      ]
-    },
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.block.carve",
-          "begin": "^\\s*%%%\\s*$",
-          "end": "^\\s*%%%\\s*$"
+            "include": "#frontmatter"
         },
         {
-          "name": "comment.line.percent.carve",
-          "match": "^\\s*%%(?!%).*$"
-        }
-      ]
-    },
-    "trailing-comment": {
-      "patterns": [
-        {
-          "name": "comment.line.percent.carve",
-          "match": "(?<=[ \\t])%%.*$"
-        }
-      ]
-    },
-    "trailing-comment-cell": {
-      "patterns": [
-        {
-          "name": "comment.line.percent.carve",
-          "match": "(?<=[ \\t])%%[^|]*"
-        }
-      ]
-    },
-    "headings": {
-      "patterns": [
-        {
-          "name": "markup.heading.carve",
-          "match": "^(#{1,6})(\\s+)(.+)$",
-          "captures": {
-            "1": { "name": "punctuation.definition.heading.carve" },
-            "3": {
-              "name": "entity.name.section.carve",
-              "patterns": [{ "include": "#trailing-comment" }]
-            }
-          }
-        }
-      ]
-    },
-    "code-blocks": {
-      "patterns": [
-        {
-          "name": "markup.raw.block.fenced.code.carve",
-          "begin": "^(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
-          "beginCaptures": {
-            "1": { "name": "punctuation.definition.raw.begin.carve" },
-            "2": { "name": "entity.name.type.language.carve" },
-            "3": { "name": "string.quoted.double.carve" },
-            "4": { "name": "entity.name.label.carve" },
-            "5": { "name": "entity.name.label.carve" },
-            "6": { "name": "string.quoted.double.carve" }
-          },
-          "end": "^(`{3,}|~{3,})\\s*$",
-          "endCaptures": {
-            "1": { "name": "punctuation.definition.raw.end.carve" }
-          }
-        }
-      ]
-    },
-    "raw-blocks": {
-      "patterns": [
-        {
-          "name": "markup.raw.block.carve",
-          "begin": "^(%{3,})\\s*([^\\s]+)?\\s*$",
-          "beginCaptures": {
-            "1": { "name": "punctuation.definition.raw.begin.carve" },
-            "2": { "name": "entity.name.type.language.carve" }
-          },
-          "end": "^(%{3,})\\s*$",
-          "endCaptures": {
-            "1": { "name": "punctuation.definition.raw.end.carve" }
-          }
-        }
-      ]
-    },
-    "divs": {
-      "patterns": [
-        {
-          "name": "markup.other.div.carve",
-          "comment": "A div fence may open directly after a list marker (`- ::: note`), so an optional bullet prefix is consumed here and scoped as a list marker.",
-          "match": "^\\s*(?:([-*])[ \\t]+)?(:::+)\\s*([^\\s{\\[\"]+)?\\s*(?:(\"[^\"]*\")\\s*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])\\s*(\"[^\"]*\")?)?",
-          "captures": {
-            "1": { "name": "punctuation.definition.list.begin.carve" },
-            "2": { "name": "punctuation.definition.div.carve" },
-            "3": { "name": "entity.name.type.div.carve" },
-            "4": { "name": "string.quoted.double.carve" },
-            "5": { "name": "entity.name.label.carve" },
-            "6": { "name": "entity.name.label.carve" },
-            "7": { "name": "string.quoted.double.carve" }
-          }
-        }
-      ]
-    },
-    "tables": {
-      "patterns": [
-        {
-          "comment": "GFM delimiter/alignment row: a whole line of only pipes, dashes, optional alignment colons, and whitespace (e.g. `|---|---|`, `|:---:|`). Gated by a full-row lookahead so an ordinary data cell that merely contains dashes is NOT mis-scoped. Each dash/colon cell is the separator; the pipes keep their separator scope. Note: TextMate rules are line-local and do not track table position, so a dash/colon-only row that is NOT the parser's second-row delimiter (e.g. a body row that happens to be all dashes) is also highlighted here. That edge case is rare and cosmetic; modeling exact delimiter-row position would require a full multi-line table state machine.",
-          "name": "markup.table.row.separator.carve",
-          "begin": "^(?=\\s*\\|(?:[ \\t]*:?-+:?[ \\t]*\\|)+[ \\t]*$)",
-          "end": "$",
-          "patterns": [
-            {
-              "match": "(?<=\\|)[ \\t]*(:?-+:?)[ \\t]*(?=\\|)",
-              "captures": {
-                "1": { "name": "punctuation.definition.table.separator.carve" }
-              }
-            },
-            {
-              "match": "\\|",
-              "name": "punctuation.separator.table.carve"
-            }
-          ]
+            "include": "#comments"
         },
         {
-          "name": "markup.table.row.carve",
-          "begin": "^(?=\\s*\\|)",
-          "end": "$",
-          "patterns": [
-            {
-              "match": "\\|=",
-              "name": "keyword.operator.table.header.carve"
-            },
-            {
-              "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
-              "captures": {
-                "1": { "name": "keyword.operator.table.rowspan.carve" }
-              }
-            },
-            {
-              "match": "(?<=\\|)\\s*(<)\\s*(?=\\|)",
-              "captures": {
-                "1": { "name": "keyword.operator.table.colspan.carve" }
-              }
-            },
-            {
-              "match": "\\|",
-              "name": "punctuation.separator.table.carve"
-            },
-            { "include": "#trailing-comment-cell" },
-            { "include": "#inline-code" },
-            { "include": "#extension-inline" },
-            { "include": "#critic-markup" },
-            { "include": "#sup-sub" },
-            { "include": "#emphasis" },
-            { "include": "#links" },
-            { "include": "#images" },
-            { "include": "#autolink" },
-            { "include": "#attributes" }
-          ]
+            "include": "#headings"
         },
         {
-          "name": "markup.table.continuation.carve",
-          "match": "^(\\+)(.*)$",
-          "captures": {
-            "1": { "name": "keyword.operator.table.continuation.carve" }
-          }
+            "include": "#code-blocks"
         },
         {
-          "name": "markup.table.caption.carve",
-          "match": "^\\s*(\\^)\\s+(.+)$",
-          "captures": {
-            "1": { "name": "punctuation.definition.caption.carve" },
-            "2": {
-              "name": "string.unquoted.caption.carve",
-              "patterns": [{ "include": "#trailing-comment" }]
-            }
-          }
-        }
-      ]
-    },
-    "block-quotes": {
-      "patterns": [
-        {
-          "name": "markup.quote.carve",
-          "begin": "^\\s*(>+)\\s?",
-          "beginCaptures": {
-            "1": { "name": "punctuation.definition.quote.carve" }
-          },
-          "end": "$",
-          "patterns": [{ "include": "#trailing-comment" }]
-        }
-      ]
-    },
-    "lists": {
-      "patterns": [
-        {
-          "comment": "A lone `+` at the marker column is the list-continuation marker, not a bullet (`+` is never a bullet in Carve).",
-          "name": "markup.list.continuation.carve",
-          "match": "^(\\s*)(\\+)(\\s*)$",
-          "captures": {
-            "2": { "name": "punctuation.definition.list.continuation.carve" }
-          }
+            "include": "#raw-blocks"
         },
         {
-          "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first.",
-          "name": "markup.list.unnumbered.carve",
-          "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)(\\[[ xX]\\]\\s+)?",
-          "captures": {
-            "2": { "name": "punctuation.definition.list.begin.carve" },
-            "4": { "name": "punctuation.definition.list.begin.carve" },
-            "5": { "name": "constant.language.task-list.carve" }
-          }
+            "include": "#divs"
         },
         {
-          "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`.",
-          "name": "markup.list.numbered.carve",
-          "match": "^(\\s*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)])\\s+",
-          "captures": {
-            "2": { "name": "punctuation.definition.list.begin.carve" }
-          }
+            "include": "#tables"
         },
         {
-          "name": "markup.list.definition.carve",
-          "match": "^(\\s*)(:)\\s+",
-          "captures": {
-            "2": { "name": "punctuation.definition.list.begin.carve" }
-          }
-        }
-      ]
-    },
-    "definitions": {
-      "patterns": [
-        {
-          "name": "meta.link.reference.definition.carve",
-          "match": "^\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)",
-          "captures": {
-            "1": { "name": "constant.other.reference.link.carve" },
-            "2": { "name": "markup.underline.link.carve" }
-          }
+            "include": "#block-quotes"
         },
         {
-          "name": "meta.abbreviation.definition.carve",
-          "match": "^\\s*(\\*)(\\[)([A-Z][A-Z0-9]*)(\\])(:)\\s+(.*)$",
-          "captures": {
-            "1": { "name": "punctuation.definition.abbreviation.carve" },
-            "2": { "name": "punctuation.definition.abbreviation.carve" },
-            "3": { "name": "entity.name.abbreviation.carve" },
-            "4": { "name": "punctuation.definition.abbreviation.carve" },
-            "5": { "name": "punctuation.separator.carve" },
-            "6": { "name": "string.unquoted.abbreviation.carve" }
-          }
-        }
-      ]
-    },
-    "links": {
-      "patterns": [
-        {
-          "comment": "A quoted title may contain escaped characters (`\"ti\\\"tle\"`), so the title run must consume `\\\\.` pairs instead of stopping at the first backslash - otherwise the whole link loses its scoping.",
-          "name": "meta.link.inline.carve",
-          "match": "(\\[)([^\\]]+)(\\])(\\()([^\\s)]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
-          "captures": {
-            "1": { "name": "punctuation.definition.link.begin.carve" },
-            "2": { "name": "string.other.link.title.carve" },
-            "3": { "name": "punctuation.definition.link.end.carve" },
-            "4": { "name": "punctuation.definition.metadata.begin.carve" },
-            "5": { "name": "markup.underline.link.carve" },
-            "6": { "name": "string.quoted.double.link-title.carve" },
-            "7": { "name": "punctuation.definition.metadata.end.carve" }
-          }
+            "include": "#lists"
         },
         {
-          "name": "meta.link.reference.carve",
-          "match": "(\\[)([^\\]]+)(\\])(\\[)([^\\]]*)(\\])",
-          "captures": {
-            "2": { "name": "string.other.link.title.carve" },
-            "5": { "name": "constant.other.reference.link.carve" }
-          }
+            "include": "#definitions"
         },
         {
-          "name": "meta.span.inline.carve",
-          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{)",
-          "captures": {
-            "1": { "name": "punctuation.definition.span.begin.carve" },
-            "2": { "name": "string.other.span.carve" },
-            "3": { "name": "punctuation.definition.span.end.carve" }
-          }
-        }
-      ]
-    },
-    "images": {
-      "patterns": [
-        {
-          "comment": "Same escaped-title handling as the inline link: consume `\\\\.` pairs inside the quoted title.",
-          "name": "meta.image.inline.carve",
-          "match": "(!\\[)([^\\]]*)(\\]\\()([^\\s)]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
-          "captures": {
-            "1": { "name": "punctuation.definition.image.begin.carve" },
-            "2": { "name": "string.other.image.alt.carve" },
-            "4": { "name": "markup.underline.link.image.carve" },
-            "5": { "name": "string.quoted.double.image-title.carve" }
-          }
-        }
-      ]
-    },
-    "footnotes": {
-      "patterns": [
-        {
-          "name": "constant.other.reference.footnote.carve",
-          "match": "(\\[)(\\^)([^\\]]+)(\\])",
-          "captures": {
-            "1": { "name": "punctuation.definition.footnote.carve" },
-            "2": { "name": "punctuation.definition.footnote.carve" },
-            "3": { "name": "constant.other.footnote.carve" },
-            "4": { "name": "punctuation.definition.footnote.carve" }
-          }
-        }
-      ]
-    },
-    "citations": {
-      "comment": "Citation group: a bracket whose content contains at least one @key and has no (url)/[ref]/{attrs} tail. A leading + signals an integral/in-text citation. Items are ;-separated; each may carry a -/+ prefix and an optional , locator. The @key and the -/+ per-item markers are scoped distinctly, analogous to @mention but inside the citation bracket.",
-      "patterns": [
-        {
-          "name": "markup.citation.carve",
-          "comment": "Match the whole citation bracket [+?...@key...]  that is NOT followed by (, [, or { (which would make it a link, ref-link, or span). A lookahead for @ inside the brackets discriminates from plain spans and footnote refs.",
-          "begin": "(?<!!)(?<![\\\\])(\\[)(\\+)?(?=[^\\]\\n]*@[A-Za-z0-9_])",
-          "beginCaptures": {
-            "1": { "name": "punctuation.definition.citation.begin.carve" },
-            "2": { "name": "keyword.operator.citation.integral.carve" }
-          },
-          "end": "(\\])(?!\\(|\\[|\\{)",
-          "endCaptures": {
-            "1": { "name": "punctuation.definition.citation.end.carve" }
-          },
-          "patterns": [
-            {
-              "comment": "Optional -/+ per-item modifier immediately before the @key",
-              "name": "keyword.operator.citation.modifier.carve",
-              "match": "(?<=^|;|\\[|\\+)\\s*(-)"
-            },
-            {
-              "comment": "@key: citation key with allowed charset [A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~/-]*",
-              "name": "variable.other.citation.key.carve",
-              "match": "@[A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~\\/-]*"
-            },
-            {
-              "comment": "Semicolon item separator",
-              "name": "punctuation.separator.citation.carve",
-              "match": ";"
-            }
-          ]
-        }
-      ]
-    },
-    "code-callouts": {
-      "comment": "CodeCallout markers: <N> where N is one or more digits. Leading form at the start of a callout annotation line (^<N> prose); trailing form inside fenced-code body lines (code  <N>). Both share the same scope.",
-      "patterns": [
-        {
-          "comment": "Leading callout annotation line: <N> at the very start (with optional leading whitespace), followed by a space and annotation prose.",
-          "name": "markup.callout.annotation.carve",
-          "match": "^(\\s*)(<)([0-9]+)(>)(?=\\s)",
-          "captures": {
-            "2": { "name": "punctuation.definition.callout.carve" },
-            "3": { "name": "constant.numeric.callout.carve" },
-            "4": { "name": "punctuation.definition.callout.carve" }
-          }
+            "include": "#links"
         },
         {
-          "comment": "Trailing callout marker inside a code line: <N> at the end of the line (optionally preceded by whitespace).",
-          "name": "markup.callout.marker.carve",
-          "match": "(<)([0-9]+)(>)\\s*$",
-          "captures": {
-            "1": { "name": "punctuation.definition.callout.carve" },
-            "2": { "name": "constant.numeric.callout.carve" },
-            "3": { "name": "punctuation.definition.callout.carve" }
-          }
-        }
-      ]
-    },
-    "attributes": {
-      "patterns": [
+            "include": "#images"
+        },
         {
-          "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may still contain dots and colons (`{k=v.w}`), and a bare `{}` stays literal.",
-          "name": "meta.attributes.carve",
-          "match": "\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?))*\\s*\\}",
-          "captures": {
-            "0": {
-              "patterns": [
-                { "name": "entity.other.attribute-name.id.carve", "match": "#[A-Za-z_][A-Za-z0-9_-]*" },
-                { "name": "entity.other.attribute-name.class.carve", "match": "\\.[A-Za-z_][A-Za-z0-9_-]*" },
-                { "name": "entity.other.attribute-name.carve", "match": "[A-Za-z_:][A-Za-z0-9_:-]*(?==)" },
-                { "name": "string.quoted.double.attribute.carve", "match": "\"[^\"]*\"" },
-                { "name": "string.quoted.single.attribute.carve", "match": "'[^']*'" },
+            "include": "#footnotes"
+        },
+        {
+            "include": "#citations"
+        },
+        {
+            "include": "#code-callouts"
+        },
+        {
+            "include": "#critic-markup"
+        },
+        {
+            "include": "#sup-sub"
+        },
+        {
+            "include": "#attributes"
+        },
+        {
+            "include": "#raw-inline"
+        },
+        {
+            "include": "#inline-code"
+        },
+        {
+            "include": "#trailing-comment"
+        },
+        {
+            "include": "#math"
+        },
+        {
+            "include": "#autolink"
+        },
+        {
+            "include": "#extension-inline"
+        },
+        {
+            "include": "#emphasis"
+        },
+        {
+            "include": "#mentions-tags"
+        },
+        {
+            "include": "#smart-typography"
+        }
+    ],
+    "repository": {
+        "frontmatter": {
+            "patterns": [
                 {
-                  "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class.",
-                  "name": "string.unquoted.attribute.carve",
-                  "match": "(?<==)[^\\s\"'}]+"
+                    "name": "meta.frontmatter.carve",
+                    "begin": "\\A(---)\\s*([A-Za-z0-9_-]+)?\\s*$",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.frontmatter.begin.carve"
+                        },
+                        "2": {
+                            "name": "entity.name.type.frontmatter.carve"
+                        }
+                    },
+                    "end": "^(---)\\s*$",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.frontmatter.end.carve"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "name": "string.unquoted.frontmatter.carve",
+                            "match": ".+"
+                        }
+                    ]
                 }
-              ]
-            }
-          }
+            ]
+        },
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.block.carve",
+                    "begin": "^\\s*%%%\\s*$",
+                    "end": "^\\s*%%%\\s*$"
+                },
+                {
+                    "name": "comment.line.percent.carve",
+                    "match": "^\\s*%%(?!%).*$"
+                }
+            ]
+        },
+        "trailing-comment": {
+            "patterns": [
+                {
+                    "name": "comment.line.percent.carve",
+                    "match": "(?<=[ \\t])%%.*$"
+                }
+            ]
+        },
+        "trailing-comment-cell": {
+            "patterns": [
+                {
+                    "name": "comment.line.percent.carve",
+                    "match": "(?<=[ \\t])%%[^|]*"
+                }
+            ]
+        },
+        "headings": {
+            "patterns": [
+                {
+                    "name": "markup.heading.carve",
+                    "match": "^(#{1,6})(\\s+)(.+)$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.heading.carve"
+                        },
+                        "3": {
+                            "name": "entity.name.section.carve",
+                            "patterns": [
+                                {
+                                    "include": "#trailing-comment"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "code-blocks": {
+            "patterns": [
+                {
+                    "name": "markup.raw.block.fenced.code.carve",
+                    "begin": "^(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.begin.carve"
+                        },
+                        "2": {
+                            "name": "entity.name.type.language.carve"
+                        },
+                        "3": {
+                            "name": "string.quoted.double.carve"
+                        },
+                        "4": {
+                            "name": "entity.name.label.carve"
+                        },
+                        "5": {
+                            "name": "entity.name.label.carve"
+                        },
+                        "6": {
+                            "name": "string.quoted.double.carve"
+                        }
+                    },
+                    "end": "^(`{3,}|~{3,})\\s*$",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.end.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "raw-blocks": {
+            "patterns": [
+                {
+                    "name": "markup.raw.block.carve",
+                    "begin": "^(%{3,})\\s*([^\\s]+)?\\s*$",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.begin.carve"
+                        },
+                        "2": {
+                            "name": "entity.name.type.language.carve"
+                        }
+                    },
+                    "end": "^(%{3,})\\s*$",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.end.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "divs": {
+            "patterns": [
+                {
+                    "name": "markup.other.div.carve",
+                    "comment": "A div fence may open directly after a list marker (`- ::: note`), so an optional bullet prefix is consumed here and scoped as a list marker.",
+                    "match": "^\\s*(?:([-*])[ \\t]+)?(:::+)\\s*([^\\s{\\[\"]+)?\\s*(?:(\"[^\"]*\")\\s*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])\\s*(\"[^\"]*\")?)?",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.list.begin.carve"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.div.carve"
+                        },
+                        "3": {
+                            "name": "entity.name.type.div.carve"
+                        },
+                        "4": {
+                            "name": "string.quoted.double.carve"
+                        },
+                        "5": {
+                            "name": "entity.name.label.carve"
+                        },
+                        "6": {
+                            "name": "entity.name.label.carve"
+                        },
+                        "7": {
+                            "name": "string.quoted.double.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "tables": {
+            "patterns": [
+                {
+                    "comment": "GFM delimiter/alignment row: a whole line of only pipes, dashes, optional alignment colons, and whitespace (e.g. `|---|---|`, `|:---:|`). Gated by a full-row lookahead so an ordinary data cell that merely contains dashes is NOT mis-scoped. Each dash/colon cell is the separator; the pipes keep their separator scope. Note: TextMate rules are line-local and do not track table position, so a dash/colon-only row that is NOT the parser's second-row delimiter (e.g. a body row that happens to be all dashes) is also highlighted here. That edge case is rare and cosmetic; modeling exact delimiter-row position would require a full multi-line table state machine.",
+                    "name": "markup.table.row.separator.carve",
+                    "begin": "^(?=\\s*\\|(?:[ \\t]*:?-+:?[ \\t]*\\|)+[ \\t]*$)",
+                    "end": "$",
+                    "patterns": [
+                        {
+                            "match": "(?<=\\|)[ \\t]*(:?-+:?)[ \\t]*(?=\\|)",
+                            "captures": {
+                                "1": {
+                                    "name": "punctuation.definition.table.separator.carve"
+                                }
+                            }
+                        },
+                        {
+                            "match": "\\|",
+                            "name": "punctuation.separator.table.carve"
+                        }
+                    ]
+                },
+                {
+                    "name": "markup.table.row.carve",
+                    "begin": "^(?=\\s*\\|)",
+                    "end": "$",
+                    "patterns": [
+                        {
+                            "match": "\\|=",
+                            "name": "keyword.operator.table.header.carve"
+                        },
+                        {
+                            "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.operator.table.rowspan.carve"
+                                }
+                            }
+                        },
+                        {
+                            "match": "(?<=\\|)\\s*(<)\\s*(?=\\|)",
+                            "captures": {
+                                "1": {
+                                    "name": "keyword.operator.table.colspan.carve"
+                                }
+                            }
+                        },
+                        {
+                            "match": "\\|",
+                            "name": "punctuation.separator.table.carve"
+                        },
+                        {
+                            "include": "#trailing-comment-cell"
+                        },
+                        {
+                            "include": "#inline-code"
+                        },
+                        {
+                            "include": "#extension-inline"
+                        },
+                        {
+                            "include": "#critic-markup"
+                        },
+                        {
+                            "include": "#sup-sub"
+                        },
+                        {
+                            "include": "#emphasis"
+                        },
+                        {
+                            "include": "#links"
+                        },
+                        {
+                            "include": "#images"
+                        },
+                        {
+                            "include": "#autolink"
+                        },
+                        {
+                            "include": "#attributes"
+                        }
+                    ]
+                },
+                {
+                    "name": "markup.table.continuation.carve",
+                    "match": "^(\\+)(.*)$",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator.table.continuation.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.table.caption.carve",
+                    "match": "^\\s*(\\^)\\s+(.+)$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.caption.carve"
+                        },
+                        "2": {
+                            "name": "string.unquoted.caption.carve",
+                            "patterns": [
+                                {
+                                    "include": "#trailing-comment"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "block-quotes": {
+            "patterns": [
+                {
+                    "name": "markup.quote.carve",
+                    "begin": "^\\s*(>+)\\s?",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.quote.carve"
+                        }
+                    },
+                    "end": "$",
+                    "patterns": [
+                        {
+                            "include": "#trailing-comment"
+                        }
+                    ]
+                }
+            ]
+        },
+        "lists": {
+            "patterns": [
+                {
+                    "comment": "A lone `+` at the marker column is the list-continuation marker, not a bullet (`+` is never a bullet in Carve).",
+                    "name": "markup.list.continuation.carve",
+                    "match": "^(\\s*)(\\+)(\\s*)$",
+                    "captures": {
+                        "2": {
+                            "name": "punctuation.definition.list.continuation.carve"
+                        }
+                    }
+                },
+                {
+                    "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first.",
+                    "name": "markup.list.unnumbered.carve",
+                    "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)(\\[[ xX]\\]\\s+)?",
+                    "captures": {
+                        "2": {
+                            "name": "punctuation.definition.list.begin.carve"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.list.begin.carve"
+                        },
+                        "5": {
+                            "name": "constant.language.task-list.carve"
+                        }
+                    }
+                },
+                {
+                    "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`.",
+                    "name": "markup.list.numbered.carve",
+                    "match": "^(\\s*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)])\\s+",
+                    "captures": {
+                        "2": {
+                            "name": "punctuation.definition.list.begin.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.list.definition.carve",
+                    "match": "^(\\s*)(:)\\s+",
+                    "captures": {
+                        "2": {
+                            "name": "punctuation.definition.list.begin.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "definitions": {
+            "patterns": [
+                {
+                    "name": "meta.link.reference.definition.carve",
+                    "match": "^\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)",
+                    "captures": {
+                        "1": {
+                            "name": "constant.other.reference.link.carve"
+                        },
+                        "2": {
+                            "name": "markup.underline.link.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "meta.abbreviation.definition.carve",
+                    "match": "^\\s*(\\*)(\\[)([A-Z][A-Z0-9]*)(\\])(:)\\s+(.*)$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.abbreviation.carve"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.abbreviation.carve"
+                        },
+                        "3": {
+                            "name": "entity.name.abbreviation.carve"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.abbreviation.carve"
+                        },
+                        "5": {
+                            "name": "punctuation.separator.carve"
+                        },
+                        "6": {
+                            "name": "string.unquoted.abbreviation.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "links": {
+            "patterns": [
+                {
+                    "comment": "A quoted title may contain escaped characters (`\"ti\\\"tle\"`), so the title run must consume `\\\\.` pairs instead of stopping at the first backslash - otherwise the whole link loses its scoping.",
+                    "name": "meta.link.inline.carve",
+                    "match": "(\\[)([^\\]]+)(\\])(\\()([^\\s)]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.link.begin.carve"
+                        },
+                        "2": {
+                            "name": "string.other.link.title.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.link.end.carve"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.metadata.begin.carve"
+                        },
+                        "5": {
+                            "name": "markup.underline.link.carve"
+                        },
+                        "6": {
+                            "name": "string.quoted.double.link-title.carve"
+                        },
+                        "7": {
+                            "name": "punctuation.definition.metadata.end.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "meta.link.reference.carve",
+                    "match": "(\\[)([^\\]]+)(\\])(\\[)([^\\]]*)(\\])",
+                    "captures": {
+                        "2": {
+                            "name": "string.other.link.title.carve"
+                        },
+                        "5": {
+                            "name": "constant.other.reference.link.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "meta.span.inline.carve",
+                    "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.span.begin.carve"
+                        },
+                        "2": {
+                            "name": "string.other.span.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.span.end.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "images": {
+            "patterns": [
+                {
+                    "comment": "Same escaped-title handling as the inline link: consume `\\\\.` pairs inside the quoted title.",
+                    "name": "meta.image.inline.carve",
+                    "match": "(!\\[)([^\\]]*)(\\]\\()([^\\s)]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.image.begin.carve"
+                        },
+                        "2": {
+                            "name": "string.other.image.alt.carve"
+                        },
+                        "4": {
+                            "name": "markup.underline.link.image.carve"
+                        },
+                        "5": {
+                            "name": "string.quoted.double.image-title.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "footnotes": {
+            "patterns": [
+                {
+                    "name": "constant.other.reference.footnote.carve",
+                    "match": "(\\[)(\\^)([^\\]]+)(\\])",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.footnote.carve"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.footnote.carve"
+                        },
+                        "3": {
+                            "name": "constant.other.footnote.carve"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.footnote.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "citations": {
+            "comment": "Citation group: a bracket whose content contains at least one @key and has no (url)/[ref]/{attrs} tail. A leading + signals an integral/in-text citation. Items are ;-separated; each may carry a -/+ prefix and an optional , locator. The @key and the -/+ per-item markers are scoped distinctly, analogous to @mention but inside the citation bracket.",
+            "patterns": [
+                {
+                    "name": "markup.citation.carve",
+                    "comment": "Match the whole citation bracket [+?...@key...]  that is NOT followed by (, [, or { (which would make it a link, ref-link, or span). A lookahead for @ inside the brackets discriminates from plain spans and footnote refs.",
+                    "begin": "(?<!!)(?<![\\\\])(\\[)(\\+)?(?=[^\\]\\n]*@[A-Za-z0-9_])",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.citation.begin.carve"
+                        },
+                        "2": {
+                            "name": "keyword.operator.citation.integral.carve"
+                        }
+                    },
+                    "end": "(\\])(?!\\(|\\[|\\{)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.citation.end.carve"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "comment": "Optional -/+ per-item modifier immediately before the @key",
+                            "name": "keyword.operator.citation.modifier.carve",
+                            "match": "(?<=^|;|\\[|\\+)\\s*(-)"
+                        },
+                        {
+                            "comment": "@key: citation key with allowed charset [A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~/-]*",
+                            "name": "variable.other.citation.key.carve",
+                            "match": "@[A-Za-z0-9_][A-Za-z0-9_:.#$%&+?<>~\\/-]*"
+                        },
+                        {
+                            "comment": "Semicolon item separator",
+                            "name": "punctuation.separator.citation.carve",
+                            "match": ";"
+                        }
+                    ]
+                }
+            ]
+        },
+        "code-callouts": {
+            "comment": "CodeCallout markers: <N> where N is one or more digits. Leading form at the start of a callout annotation line (^<N> prose); trailing form inside fenced-code body lines (code  <N>). Both share the same scope.",
+            "patterns": [
+                {
+                    "comment": "Leading callout annotation line: <N> at the very start (with optional leading whitespace), followed by a space and annotation prose.",
+                    "name": "markup.callout.annotation.carve",
+                    "match": "^(\\s*)(<)([0-9]+)(>)(?=\\s)",
+                    "captures": {
+                        "2": {
+                            "name": "punctuation.definition.callout.carve"
+                        },
+                        "3": {
+                            "name": "constant.numeric.callout.carve"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.callout.carve"
+                        }
+                    }
+                },
+                {
+                    "comment": "Trailing callout marker inside a code line: <N> at the end of the line (optionally preceded by whitespace).",
+                    "name": "markup.callout.marker.carve",
+                    "match": "(<)([0-9]+)(>)\\s*$",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.callout.carve"
+                        },
+                        "2": {
+                            "name": "constant.numeric.callout.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.callout.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "attributes": {
+            "patterns": [
+                {
+                    "comment": "An empty attribute block is valid only glued to a preceding `]` (`[x]{}` -> <span>x</span>, corpus 66); a bare `{}` in prose is literal text (corpus 123).",
+                    "name": "meta.attributes.carve",
+                    "match": "(?<=\\])\\{\\s*\\}"
+                },
+                {
+                    "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons (`{k=v.w}`); a quoted value may contain an escaped quote (`{title=\"a\\\"b\"}`); a bare `{}` stays literal.",
+                    "name": "meta.attributes.carve",
+                    "match": "\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}",
+                    "captures": {
+                        "0": {
+                            "patterns": [
+                                {
+                                    "name": "entity.other.attribute-name.id.carve",
+                                    "match": "#[A-Za-z_][A-Za-z0-9_-]*"
+                                },
+                                {
+                                    "name": "entity.other.attribute-name.class.carve",
+                                    "match": "\\.[A-Za-z_][A-Za-z0-9_-]*"
+                                },
+                                {
+                                    "name": "entity.other.attribute-name.carve",
+                                    "match": "[A-Za-z_:][A-Za-z0-9_:-]*(?==)"
+                                },
+                                {
+                                    "name": "string.quoted.double.attribute.carve",
+                                    "match": "\"[^\"]*\""
+                                },
+                                {
+                                    "name": "string.quoted.single.attribute.carve",
+                                    "match": "'[^']*'"
+                                },
+                                {
+                                    "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class.",
+                                    "name": "string.unquoted.attribute.carve",
+                                    "match": "(?<==)[^\\s\"'}]+"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "raw-inline": {
+            "patterns": [
+                {
+                    "name": "markup.raw.inline.passthrough.carve",
+                    "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)(\\{=)([A-Za-z_][\\w-]*)(\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.carve"
+                        },
+                        "2": {
+                            "name": "markup.raw.inline.content.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.raw.carve"
+                        },
+                        "4": {
+                            "name": "punctuation.definition.raw.format.begin.carve"
+                        },
+                        "5": {
+                            "name": "entity.name.type.format.carve"
+                        },
+                        "6": {
+                            "name": "punctuation.definition.raw.format.end.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "inline-code": {
+            "patterns": [
+                {
+                    "name": "markup.raw.inline.carve",
+                    "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.carve"
+                        },
+                        "2": {
+                            "name": "markup.raw.inline.content.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.raw.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "math": {
+            "patterns": [
+                {
+                    "name": "markup.other.math.display.carve",
+                    "begin": "(\\$\\$)(`+)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.math.carve"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.raw.carve"
+                        }
+                    },
+                    "end": "(\\2)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.carve"
+                        }
+                    },
+                    "contentName": "markup.other.math.content.carve"
+                },
+                {
+                    "name": "markup.other.math.inline.carve",
+                    "begin": "(\\$)(`+)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.math.carve"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.raw.carve"
+                        }
+                    },
+                    "end": "(\\2)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.carve"
+                        }
+                    },
+                    "contentName": "markup.other.math.content.carve"
+                }
+            ]
+        },
+        "autolink": {
+            "patterns": [
+                {
+                    "name": "meta.link.autolink.carve",
+                    "match": "(<)([a-zA-Z][a-zA-Z0-9+.\\-]*:[^>\\s]+)(>)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.link.carve"
+                        },
+                        "2": {
+                            "name": "markup.underline.link.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.link.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "meta.link.autolink.email.carve",
+                    "match": "(<)([A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,})(>)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.link.carve"
+                        },
+                        "2": {
+                            "name": "markup.underline.link.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.link.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "extension-inline": {
+            "patterns": [
+                {
+                    "name": "meta.extension.inline.carve",
+                    "match": "(:)([a-zA-Z][\\w-]*)(\\[)([^\\]]*)(\\])(\\{[^}]*\\})?",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.extension.carve"
+                        },
+                        "2": {
+                            "name": "entity.name.function.extension.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.extension.carve"
+                        },
+                        "4": {
+                            "name": "string.unquoted.extension.carve"
+                        },
+                        "5": {
+                            "name": "punctuation.definition.extension.carve"
+                        },
+                        "6": {
+                            "name": "meta.attributes.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "critic-markup": {
+            "patterns": [
+                {
+                    "name": "markup.inserted.critic.carve",
+                    "match": "(\\{\\+)([^}]*)(\\+\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.critic.carve"
+                        },
+                        "2": {
+                            "name": "markup.inserted.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.critic.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.deleted.critic.carve",
+                    "match": "(\\{-)([^}]*)(- \\}|\\-\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.critic.carve"
+                        },
+                        "2": {
+                            "name": "markup.deleted.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.critic.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.changed.critic.carve",
+                    "match": "(\\{~)([^~]*)(~>)([^~]*)(~\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.critic.carve"
+                        },
+                        "2": {
+                            "name": "markup.deleted.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.critic.carve"
+                        },
+                        "4": {
+                            "name": "markup.inserted.carve"
+                        },
+                        "5": {
+                            "name": "punctuation.definition.critic.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "comment.block.critic.carve",
+                    "match": "(\\{#)([^}]*)(#\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.critic.carve"
+                        },
+                        "2": {
+                            "name": "comment.block.content.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.critic.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "emphasis": {
+            "patterns": [
+                {
+                    "name": "markup.bold.italic.carve",
+                    "match": "(/\\*)(?=\\S)([^*]+)(\\*/)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.bold-italic.carve"
+                        },
+                        "2": {
+                            "name": "markup.bold.italic.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.bold-italic.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.bold.carve",
+                    "match": "(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.bold.carve"
+                        },
+                        "2": {
+                            "name": "markup.bold.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.bold.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.italic.carve",
+                    "match": "(?<![\\w/])(/)(?=\\S)([^/\\n]+?)(?<=\\S)(/)(?![\\w/])",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.italic.carve"
+                        },
+                        "2": {
+                            "name": "markup.italic.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.italic.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.underline.text.carve",
+                    "match": "(?<![\\w_])(_)(?=\\S)([^_\\n]+?)(?<=\\S)(_)(?![\\w_])",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.underline.carve"
+                        },
+                        "2": {
+                            "name": "markup.underline.text.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.underline.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.strikethrough.carve",
+                    "match": "(~)(?=\\S)([^~\\n]+?)(?<=\\S)(~)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.strike.carve"
+                        },
+                        "2": {
+                            "name": "markup.strikethrough.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.strike.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.highlight.carve",
+                    "match": "(?<![\\w=])(=)(?=\\S)([^=\\n]+?)(?<=\\S)(=)(?![\\w=])",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.highlight.carve"
+                        },
+                        "2": {
+                            "name": "markup.highlight.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.highlight.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "sup-sub": {
+            "patterns": [
+                {
+                    "name": "markup.superscript.carve",
+                    "match": "(\\{\\^)([^}\\n]+?)(\\^\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.superscript.carve"
+                        },
+                        "2": {
+                            "name": "markup.superscript.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.superscript.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.subscript.carve",
+                    "match": "(\\{,)([^}\\n]+?)(,\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.subscript.carve"
+                        },
+                        "2": {
+                            "name": "markup.subscript.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.subscript.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "mentions-tags": {
+            "patterns": [
+                {
+                    "name": "constant.other.symbol.mention.carve",
+                    "match": "(?<![\\w.])(@)([A-Za-z0-9_][A-Za-z0-9_-]*)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.mention.carve"
+                        },
+                        "2": {
+                            "name": "variable.other.mention.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "constant.other.symbol.tag.carve",
+                    "match": "(?<!\\w)(#)([A-Za-z0-9_][A-Za-z0-9_-]*)",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.tag.carve"
+                        },
+                        "2": {
+                            "name": "variable.other.tag.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "constant.character.emoji.carve",
+                    "match": ":[A-Za-z0-9_+-]+:"
+                }
+            ]
+        },
+        "smart-typography": {
+            "patterns": [
+                {
+                    "name": "constant.character.escape.carve",
+                    "match": "\\\\[\\\\`*_{}\\[\\]()#+\\-.!~^/<>@%|=,]"
+                },
+                {
+                    "name": "constant.character.typography.carve",
+                    "match": "\\.\\.\\.|---|--|<->|<-|->|=>|!=|<=|>=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\)"
+                },
+                {
+                    "name": "punctuation.definition.smartquote.carve",
+                    "match": "\""
+                }
+            ]
         }
-      ]
-    },
-    "raw-inline": {
-      "patterns": [
-        {
-          "name": "markup.raw.inline.passthrough.carve",
-          "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)(\\{=)([A-Za-z_][\\w-]*)(\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.raw.carve" },
-            "2": { "name": "markup.raw.inline.content.carve" },
-            "3": { "name": "punctuation.definition.raw.carve" },
-            "4": { "name": "punctuation.definition.raw.format.begin.carve" },
-            "5": { "name": "entity.name.type.format.carve" },
-            "6": { "name": "punctuation.definition.raw.format.end.carve" }
-          }
-        }
-      ]
-    },
-    "inline-code": {
-      "patterns": [
-        {
-          "name": "markup.raw.inline.carve",
-          "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)",
-          "captures": {
-            "1": { "name": "punctuation.definition.raw.carve" },
-            "2": { "name": "markup.raw.inline.content.carve" },
-            "3": { "name": "punctuation.definition.raw.carve" }
-          }
-        }
-      ]
-    },
-    "math": {
-      "patterns": [
-        {
-          "name": "markup.other.math.display.carve",
-          "begin": "(\\$\\$)(`+)",
-          "beginCaptures": {
-            "1": { "name": "punctuation.definition.math.carve" },
-            "2": { "name": "punctuation.definition.raw.carve" }
-          },
-          "end": "(\\2)",
-          "endCaptures": {
-            "1": { "name": "punctuation.definition.raw.carve" }
-          },
-          "contentName": "markup.other.math.content.carve"
-        },
-        {
-          "name": "markup.other.math.inline.carve",
-          "begin": "(\\$)(`+)",
-          "beginCaptures": {
-            "1": { "name": "punctuation.definition.math.carve" },
-            "2": { "name": "punctuation.definition.raw.carve" }
-          },
-          "end": "(\\2)",
-          "endCaptures": {
-            "1": { "name": "punctuation.definition.raw.carve" }
-          },
-          "contentName": "markup.other.math.content.carve"
-        }
-      ]
-    },
-    "autolink": {
-      "patterns": [
-        {
-          "name": "meta.link.autolink.carve",
-          "match": "(<)([a-zA-Z][a-zA-Z0-9+.\\-]*:[^>\\s]+)(>)",
-          "captures": {
-            "1": { "name": "punctuation.definition.link.carve" },
-            "2": { "name": "markup.underline.link.carve" },
-            "3": { "name": "punctuation.definition.link.carve" }
-          }
-        },
-        {
-          "name": "meta.link.autolink.email.carve",
-          "match": "(<)([A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,})(>)",
-          "captures": {
-            "1": { "name": "punctuation.definition.link.carve" },
-            "2": { "name": "markup.underline.link.carve" },
-            "3": { "name": "punctuation.definition.link.carve" }
-          }
-        }
-      ]
-    },
-    "extension-inline": {
-      "patterns": [
-        {
-          "name": "meta.extension.inline.carve",
-          "match": "(:)([a-zA-Z][\\w-]*)(\\[)([^\\]]*)(\\])(\\{[^}]*\\})?",
-          "captures": {
-            "1": { "name": "punctuation.definition.extension.carve" },
-            "2": { "name": "entity.name.function.extension.carve" },
-            "3": { "name": "punctuation.definition.extension.carve" },
-            "4": { "name": "string.unquoted.extension.carve" },
-            "5": { "name": "punctuation.definition.extension.carve" },
-            "6": { "name": "meta.attributes.carve" }
-          }
-        }
-      ]
-    },
-    "critic-markup": {
-      "patterns": [
-        {
-          "name": "markup.inserted.critic.carve",
-          "match": "(\\{\\+)([^}]*)(\\+\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.critic.carve" },
-            "2": { "name": "markup.inserted.carve" },
-            "3": { "name": "punctuation.definition.critic.carve" }
-          }
-        },
-        {
-          "name": "markup.deleted.critic.carve",
-          "match": "(\\{-)([^}]*)(- \\}|\\-\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.critic.carve" },
-            "2": { "name": "markup.deleted.carve" },
-            "3": { "name": "punctuation.definition.critic.carve" }
-          }
-        },
-        {
-          "name": "markup.changed.critic.carve",
-          "match": "(\\{~)([^~]*)(~>)([^~]*)(~\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.critic.carve" },
-            "2": { "name": "markup.deleted.carve" },
-            "3": { "name": "punctuation.definition.critic.carve" },
-            "4": { "name": "markup.inserted.carve" },
-            "5": { "name": "punctuation.definition.critic.carve" }
-          }
-        },
-        {
-          "name": "comment.block.critic.carve",
-          "match": "(\\{#)([^}]*)(#\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.critic.carve" },
-            "2": { "name": "comment.block.content.carve" },
-            "3": { "name": "punctuation.definition.critic.carve" }
-          }
-        }
-      ]
-    },
-    "emphasis": {
-      "patterns": [
-        {
-          "name": "markup.bold.italic.carve",
-          "match": "(/\\*)(?=\\S)([^*]+)(\\*/)",
-          "captures": {
-            "1": { "name": "punctuation.definition.bold-italic.carve" },
-            "2": { "name": "markup.bold.italic.carve" },
-            "3": { "name": "punctuation.definition.bold-italic.carve" }
-          }
-        },
-        {
-          "name": "markup.bold.carve",
-          "match": "(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)",
-          "captures": {
-            "1": { "name": "punctuation.definition.bold.carve" },
-            "2": { "name": "markup.bold.carve" },
-            "3": { "name": "punctuation.definition.bold.carve" }
-          }
-        },
-        {
-          "name": "markup.italic.carve",
-          "match": "(?<![\\w/])(/)(?=\\S)([^/\\n]+?)(?<=\\S)(/)(?![\\w/])",
-          "captures": {
-            "1": { "name": "punctuation.definition.italic.carve" },
-            "2": { "name": "markup.italic.carve" },
-            "3": { "name": "punctuation.definition.italic.carve" }
-          }
-        },
-        {
-          "name": "markup.underline.text.carve",
-          "match": "(?<![\\w_])(_)(?=\\S)([^_\\n]+?)(?<=\\S)(_)(?![\\w_])",
-          "captures": {
-            "1": { "name": "punctuation.definition.underline.carve" },
-            "2": { "name": "markup.underline.text.carve" },
-            "3": { "name": "punctuation.definition.underline.carve" }
-          }
-        },
-        {
-          "name": "markup.strikethrough.carve",
-          "match": "(~)(?=\\S)([^~\\n]+?)(?<=\\S)(~)",
-          "captures": {
-            "1": { "name": "punctuation.definition.strike.carve" },
-            "2": { "name": "markup.strikethrough.carve" },
-            "3": { "name": "punctuation.definition.strike.carve" }
-          }
-        },
-        {
-          "name": "markup.highlight.carve",
-          "match": "(?<![\\w=])(=)(?=\\S)([^=\\n]+?)(?<=\\S)(=)(?![\\w=])",
-          "captures": {
-            "1": { "name": "punctuation.definition.highlight.carve" },
-            "2": { "name": "markup.highlight.carve" },
-            "3": { "name": "punctuation.definition.highlight.carve" }
-          }
-        }
-      ]
-    },
-    "sup-sub": {
-      "patterns": [
-        {
-          "name": "markup.superscript.carve",
-          "match": "(\\{\\^)([^}\\n]+?)(\\^\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.superscript.carve" },
-            "2": { "name": "markup.superscript.carve" },
-            "3": { "name": "punctuation.definition.superscript.carve" }
-          }
-        },
-        {
-          "name": "markup.subscript.carve",
-          "match": "(\\{,)([^}\\n]+?)(,\\})",
-          "captures": {
-            "1": { "name": "punctuation.definition.subscript.carve" },
-            "2": { "name": "markup.subscript.carve" },
-            "3": { "name": "punctuation.definition.subscript.carve" }
-          }
-        }
-      ]
-    },
-    "mentions-tags": {
-      "patterns": [
-        {
-          "name": "constant.other.symbol.mention.carve",
-          "match": "(?<![\\w.])(@)([A-Za-z0-9_][A-Za-z0-9_-]*)",
-          "captures": {
-            "1": { "name": "punctuation.definition.mention.carve" },
-            "2": { "name": "variable.other.mention.carve" }
-          }
-        },
-        {
-          "name": "constant.other.symbol.tag.carve",
-          "match": "(?<!\\w)(#)([A-Za-z0-9_][A-Za-z0-9_-]*)",
-          "captures": {
-            "1": { "name": "punctuation.definition.tag.carve" },
-            "2": { "name": "variable.other.tag.carve" }
-          }
-        },
-        {
-          "name": "constant.character.emoji.carve",
-          "match": ":[A-Za-z0-9_+-]+:"
-        }
-      ]
-    },
-    "smart-typography": {
-      "patterns": [
-        {
-          "name": "constant.character.escape.carve",
-          "match": "\\\\[\\\\`*_{}\\[\\]()#+\\-.!~^/<>@%|=,]"
-        },
-        {
-          "name": "constant.character.typography.carve",
-          "match": "\\.\\.\\.|---|--|<->|<-|->|=>|!=|<=|>=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\)"
-        },
-        {
-          "name": "punctuation.definition.smartquote.carve",
-          "match": "\""
-        }
-      ]
     }
-  }
 }

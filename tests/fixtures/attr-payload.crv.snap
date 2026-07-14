@@ -1,0 +1,28 @@
+>[x]{}
+#^ text.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+# ^ text.carve meta.span.inline.carve string.other.span.carve
+#  ^ text.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#   ^^ text.carve meta.attributes.carve
+>
+>{title="a\"b"}
+#^ text.carve meta.attributes.carve
+# ^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.carve
+#      ^ text.carve meta.attributes.carve
+#       ^^^^ text.carve meta.attributes.carve string.quoted.double.attribute.carve
+#           ^^^ text.carve meta.attributes.carve
+># H
+#^ text.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ text.carve markup.heading.carve
+#  ^ text.carve markup.heading.carve entity.name.section.carve
+>
+>[y]{.hl}
+#^ text.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+# ^ text.carve meta.span.inline.carve string.other.span.carve
+#  ^ text.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#   ^ text.carve meta.attributes.carve
+#    ^^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#       ^ text.carve meta.attributes.carve
+>
+>{}
+#^^^ text.carve
+>
