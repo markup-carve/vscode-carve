@@ -52,6 +52,9 @@
             "include": "#critic-markup"
         },
         {
+            "include": "#forced-emphasis"
+        },
+        {
             "include": "#sup-sub"
         },
         {
@@ -314,6 +317,9 @@
                         },
                         {
                             "include": "#critic-markup"
+                        },
+                        {
+                            "include": "#forced-emphasis"
                         },
                         {
                             "include": "#sup-sub"
@@ -914,6 +920,71 @@
                         },
                         "3": {
                             "name": "punctuation.definition.critic.carve"
+                        }
+                    }
+                }
+            ]
+        },
+        "forced-emphasis": {
+            "comment": "Forced intraword emphasis (spec PART 9 S22): `{*x*}`, `{/x/}`, `{_x_}`, `{~x~}`. Content runs to the closing delimiter, so it may contain the delimiter itself (`{/a/b/}` -> <em>a/b</em>, corpus 01-emphasis-13). These MUST be listed before `#attributes`, because a forced span like `{_path_}` (corpus 01-emphasis-12) is shape-identical to a boolean attribute block and would otherwise be mis-scoped as one.",
+            "patterns": [
+                {
+                    "name": "markup.bold.carve",
+                    "match": "(\\{\\*)(?=\\S)([^\\n]*?)(\\*\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.bold.carve"
+                        },
+                        "2": {
+                            "name": "markup.bold.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.bold.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.italic.carve",
+                    "match": "(\\{/)(?=\\S)([^\\n]*?)(/\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.italic.carve"
+                        },
+                        "2": {
+                            "name": "markup.italic.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.italic.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.underline.text.carve",
+                    "match": "(\\{_)(?=\\S)([^\\n]*?)(_\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.underline.carve"
+                        },
+                        "2": {
+                            "name": "markup.underline.text.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.underline.carve"
+                        }
+                    }
+                },
+                {
+                    "name": "markup.strikethrough.carve",
+                    "match": "(\\{~)(?=\\S)([^\\n]*?)(~\\})",
+                    "captures": {
+                        "1": {
+                            "name": "punctuation.definition.strike.carve"
+                        },
+                        "2": {
+                            "name": "markup.strikethrough.carve"
+                        },
+                        "3": {
+                            "name": "punctuation.definition.strike.carve"
                         }
                     }
                 }
