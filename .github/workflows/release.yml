@@ -28,12 +28,20 @@ jobs:
 
       - run: npm run build
 
+      # Package once WITH dependencies. The extension is not bundled: the preview
+      # imports @markup-carve/carve at runtime and the language server loads from
+      # node_modules/@markup-carve/carve-lsp, so --no-dependencies would ship a
+      # broken vsix. vsce omits devDependencies automatically; the webview libs
+      # (mermaid/katex/highlight.js/chart.js) ship as prebuilt copies in media/.
+      - name: Package extension
+        run: npx vsce package --out vscode-carve.vsix
+
       - name: Publish to VS Code Marketplace
-        run: npx vsce publish --no-dependencies
+        run: npx vsce publish --packagePath vscode-carve.vsix
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Publish to Open VSX
-        run: npx ovsx publish --no-dependencies
+        run: npx ovsx publish vscode-carve.vsix
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
