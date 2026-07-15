@@ -9,6 +9,12 @@ jobs:
   publish:
     name: Build and publish extension
     runs-on: ubuntu-latest
+    # Map the publish tokens to job env so the steps below can skip themselves
+    # when a token is not configured (e.g. a manual-upload release, or before
+    # one marketplace is set up). A `v*` tag is then always safe to push.
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,12 +42,16 @@ jobs:
       - name: Package extension
         run: npx vsce package --out vscode-carve.vsix
 
+      - name: Upload the packaged vsix as a build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-carve-vsix
+          path: vscode-carve.vsix
+
       - name: Publish to VS Code Marketplace
+        if: ${{ env.VSCE_PAT != '' }}
         run: npx vsce publish --packagePath vscode-carve.vsix
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Publish to Open VSX
+        if: ${{ env.OVSX_PAT != '' }}
         run: npx ovsx publish vscode-carve.vsix
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
