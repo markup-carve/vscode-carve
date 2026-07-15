@@ -1,0 +1,48 @@
+>| Left | Center | Right |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^ text.carve markup.table.row.carve
+#       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#        ^^^^^^^^ text.carve markup.table.row.carve
+#                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#                 ^^^^^^^ text.carve markup.table.row.carve
+#                        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>|:-----|:------:|------:|
+#^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
+#  ^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#       ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+#        ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
+#         ^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#               ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
+#                ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+#                 ^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#                       ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
+#                        ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+>| a    | b      | c     |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^ text.carve markup.table.row.carve
+#       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#        ^^^^^^^^ text.carve markup.table.row.carve
+#                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#                 ^^^^^^^ text.carve markup.table.row.carve
+#                        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>
+>:: Term one %% trailing comment stays a comment
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^^^^^^^^ text.carve
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>:  Definition of term one.
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^^ text.carve markup.list.definition.carve
+#   ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>:: Term two
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^^^^^^^^ text.carve
+>:  Definition of term two.
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^^ text.carve markup.list.definition.carve
+#   ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>

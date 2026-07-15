@@ -1,0 +1,9 @@
+| Left | Center | Right |
+|:-----|:------:|------:|
+| a    | b      | c     |
+
+:: Term one %% trailing comment stays a comment
+:  Definition of term one.
+
+:: Term two
+:  Definition of term two.
