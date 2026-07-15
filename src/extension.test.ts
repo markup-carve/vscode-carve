@@ -108,6 +108,7 @@ test('wraps preview HTML in a CSP-safe document', () => {
     cspSource: 'vscode-resource://test',
     assets: {
       mermaid: 'mermaid.js',
+      chartJs: 'chart.js',
       katexJs: 'katex.js',
       katexCss: 'katex.css',
       katexAutoRender: 'auto-render.js',

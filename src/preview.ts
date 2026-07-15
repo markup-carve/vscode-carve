@@ -1,4 +1,31 @@
-import { carveToHtml } from '@markup-carve/carve'
+import {
+  carveToHtml,
+  chart,
+  codeGroup,
+  details,
+  listTable,
+  mathBlock,
+  mermaid,
+  spoiler,
+  tabs,
+} from '@markup-carve/carve'
+
+// The interactive renderer extensions the preview enables, matching the docs
+// playground. Without these, `:::details`/`:::spoiler`/`:::tabs` degrade to
+// inert `<div>`s, math stays literal, and mermaid/chart fences never hydrate.
+// Constructed fresh per render so no cross-document state leaks.
+function previewExtensions() {
+  return [
+    details(),
+    spoiler(),
+    mermaid(),
+    mathBlock(),
+    tabs(),
+    codeGroup(),
+    listTable(),
+    chart(),
+  ]
+}
 
 export interface PreviewRenderOptions {
   /** URL template for `@mention` links; `{name}` is replaced. */
@@ -12,12 +39,14 @@ export interface PreviewRenderOptions {
 }
 
 export function renderPreviewBody(source: string, render: PreviewRenderOptions = {}): string {
-  return carveToHtml(source, render)
+  return carveToHtml(source, { ...render, extensions: previewExtensions() })
 }
 
 export interface PreviewAssets {
   /** Webview URI for the mermaid UMD bundle. */
   mermaid: string
+  /** Webview URI for the Chart.js UMD bundle. */
+  chartJs: string
   /** Webview URI for the KaTeX script. */
   katexJs: string
   /** Webview URI for the KaTeX stylesheet. */
@@ -192,6 +221,88 @@ export function previewDocument(source: string, options: PreviewOptions): string
     .admonition.danger { --admonition-accent: var(--vscode-charts-red, #f85149); }
     .admonition.example { --admonition-accent: var(--vscode-charts-purple, #a371f7); }
     .admonition.quote { --admonition-accent: var(--vscode-charts-lines, #8b949e); }
+    /* Task lists: carveToHtml emits a plain <ul> with an inline checkbox as the
+       first child of each <li> (no wrapper class), so drop the bullet on those
+       items and pull the box into the marker gutter. */
+    li:has(> input[type="checkbox"]) { list-style: none; }
+    li > input[type="checkbox"] {
+      margin: 0 0.5em 0 -1.4em;
+      vertical-align: middle;
+    }
+    /* Wide tables scroll instead of overflowing the viewport. Alignment comes
+       through as an inline style on each cell, so no extra rule is needed. */
+    table {
+      display: block;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    /* Code block language pill (injected by the script below). Visible on hover. */
+    pre[data-lang] { position: relative; }
+    pre[data-lang] > .code-lang {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-family: var(--vscode-editor-font-family);
+      font-size: 0.72em;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      opacity: 0;
+      transition: opacity 0.15s;
+      color: var(--vscode-descriptionForeground);
+      pointer-events: none;
+    }
+    pre[data-lang]:hover > .code-lang { opacity: 0.85; }
+    /* Details / spoiler disclosure blocks (details() + spoiler() extensions). */
+    details {
+      margin: 1em 0;
+      padding: 8px 14px;
+      border: 1px solid var(--vscode-panel-border);
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--vscode-foreground) 3%, transparent);
+    }
+    details > summary {
+      cursor: pointer;
+      font-weight: 600;
+      list-style: revert;
+    }
+    details[open] > summary { margin-bottom: 0.5em; }
+    details.spoiler {
+      border-style: dashed;
+      border-color: var(--vscode-focusBorder);
+    }
+    /* Inline spoiler: blurred until hovered/focused (span.spoiler). */
+    .spoiler:not(details) {
+      background: color-mix(in srgb, var(--vscode-foreground) 14%, transparent);
+      border-radius: 3px;
+      filter: blur(4px);
+      transition: filter 0.12s;
+      cursor: help;
+    }
+    .spoiler:not(details):hover,
+    .spoiler:not(details):focus-within { filter: none; }
+    /* Tabs / code-group: the extensions emit a labeled group; give it a frame. */
+    .tabs, .code-group {
+      margin: 1em 0;
+      border: 1px solid var(--vscode-panel-border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .tabs > .tab-title, .code-group > .code-group-title,
+    .tabs label, .code-group label {
+      display: inline-block;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 0.92em;
+      border-bottom: 2px solid transparent;
+    }
+    .tabs > .tab-content, .code-group > .code-group-content { padding: 0 12px; }
+    /* Chart.js target: the chart() extension emits <div class="chart"> holding a
+       JSON config; the script below swaps in a <canvas>. */
+    .chart {
+      margin: 1em 0;
+      max-width: 100%;
+    }
+    .chart > canvas { max-width: 100%; }
     [data-source-line] {
       scroll-margin-top: 8px;
     }
@@ -217,6 +328,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
   <script nonce="${nonce}" src="${assets.katexJs}"></script>
   <script nonce="${nonce}" src="${assets.katexAutoRender}"></script>
   <script nonce="${nonce}" src="${assets.mermaid}"></script>
+  <script nonce="${nonce}" src="${assets.chartJs}"></script>
   <script nonce="${nonce}">
     (function () {
       const vscode = typeof acquireVsCodeApi === 'function' ? acquireVsCodeApi() : undefined
@@ -232,24 +344,71 @@ export function previewDocument(source: string, options: PreviewOptions): string
 
       function renderMermaid() {
         if (typeof mermaid === 'undefined') return
-        document.querySelectorAll('pre > code.language-mermaid').forEach((code) => {
-          const pre = code.parentElement
+        // The mermaid() extension emits <pre class="mermaid">…</pre>; the plain
+        // code fence fallback is <pre><code class="language-mermaid">…</code></pre>.
+        // Normalize both into a <div class="mermaid"> that mermaid.run() drives.
+        document.querySelectorAll('pre.mermaid, pre > code.language-mermaid').forEach((node) => {
+          const pre = node.tagName === 'PRE' ? node : node.parentElement
           const div = document.createElement('div')
           div.className = 'mermaid'
           // Carry the source-line anchor over so scroll sync and caret
           // highlight still map to the diagram block.
           const sourceLine = pre.getAttribute('data-source-line')
           if (sourceLine) div.setAttribute('data-source-line', sourceLine)
-          div.textContent = code.textContent || ''
+          div.textContent = node.textContent || ''
           pre.replaceWith(div)
         })
         try {
-          mermaid.initialize({ startOnLoad: false, theme: isDark() ? 'dark' : 'default' })
-          const nodes = document.querySelectorAll('.mermaid')
+          mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: isDark() ? 'dark' : 'default' })
+          const nodes = document.querySelectorAll('div.mermaid')
           if (nodes.length) mermaid.run({ nodes })
         } catch (err) {
           console.error('mermaid render failed', err)
         }
+      }
+
+      // Label each highlighted code block with its language (a hover pill). The
+      // language comes from the core renderer's language- class on the code el.
+      function decorateCodeLangs() {
+        document.querySelectorAll('pre > code[class*="language-"]').forEach((code) => {
+          const pre = code.parentElement
+          if (!pre || pre.querySelector('.code-lang')) return
+          const cls = [...code.classList].find((c) => c.indexOf('language-') === 0)
+          const lang = cls ? cls.slice('language-'.length) : ''
+          if (!lang || lang === 'mermaid') return
+          pre.setAttribute('data-lang', lang)
+          const label = document.createElement('span')
+          label.className = 'code-lang'
+          label.textContent = lang
+          pre.appendChild(label)
+        })
+      }
+
+      // Chart.js: the chart() extension emits <div class="chart"> wrapping a
+      // <script type="application/json"> config. Swap in a <canvas> per block.
+      function renderCharts() {
+        if (typeof Chart === 'undefined') return
+        document.querySelectorAll('div.chart').forEach((el) => {
+          if (el.dataset.chartDone) return
+          const json = el.querySelector('script[type="application/json"]')
+          if (!json) return
+          let config
+          try {
+            config = JSON.parse(json.textContent || '')
+          } catch (err) {
+            console.error('chart config parse failed', err)
+            return
+          }
+          const canvas = document.createElement('canvas')
+          el.textContent = ''
+          el.appendChild(canvas)
+          el.dataset.chartDone = '1'
+          try {
+            new Chart(canvas, config)
+          } catch (err) {
+            console.error('chart render failed', err)
+          }
+        })
       }
 
       function highlightCode() {
@@ -274,7 +433,9 @@ export function previewDocument(source: string, options: PreviewOptions): string
         applyHljsTheme()
         renderMath()
         highlightCode()
+        decorateCodeLangs()
         renderMermaid()
+        renderCharts()
       }
 
       // --- Scroll sync (line-anchored) ---
@@ -361,6 +522,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
 /** Pinned CDN versions for the self-contained HTML export. */
 const CDN = {
   mermaid: 'https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.min.js',
+  chartJs: 'https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js',
   katexJs: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js',
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
@@ -409,6 +571,20 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
     img { max-width: 100%; height: auto; }
     :not(pre) > code { padding: 0.1em 0.35em; border-radius: 4px; background: rgba(127,127,127,0.12); }
     .math.display { display: block; overflow-x: auto; text-align: center; margin: 1em 0; }
+    table { display: block; max-width: 100%; overflow-x: auto; }
+    li:has(> input[type="checkbox"]) { list-style: none; }
+    li > input[type="checkbox"] { margin: 0 0.5em 0 -1.4em; vertical-align: middle; }
+    pre[data-lang] { position: relative; }
+    pre[data-lang] > .code-lang { position: absolute; top: 6px; right: 8px; font-family: ui-monospace, monospace; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.03em; opacity: 0; transition: opacity 0.15s; color: rgba(127,127,127,0.9); pointer-events: none; }
+    pre[data-lang]:hover > .code-lang { opacity: 0.85; }
+    details { margin: 1em 0; padding: 8px 14px; border: 1px solid rgba(127,127,127,0.4); border-radius: 6px; background: rgba(127,127,127,0.04); }
+    details > summary { cursor: pointer; font-weight: 600; }
+    details[open] > summary { margin-bottom: 0.5em; }
+    details.spoiler { border-style: dashed; }
+    .spoiler:not(details) { background: rgba(127,127,127,0.2); border-radius: 3px; filter: blur(4px); transition: filter 0.12s; cursor: help; }
+    .spoiler:not(details):hover, .spoiler:not(details):focus-within { filter: none; }
+    .chart { margin: 1em 0; max-width: 100%; }
+    .chart > canvas { max-width: 100%; }
     mark { background: rgba(234,179,8,0.4); color: inherit; }
     ins { text-decoration: none; background: color-mix(in srgb, #3fb950 22%, transparent); }
     del { background: color-mix(in srgb, #f85149 22%, transparent); }
@@ -443,6 +619,7 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
   <script src="${CDN.katexJs}"></script>
   <script src="${CDN.katexAutoRender}"></script>
   <script src="${CDN.mermaid}"></script>
+  <script src="${CDN.chartJs}"></script>
   <script>
     (function () {
       const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -456,26 +633,50 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
         })
       }
       if (typeof mermaid !== 'undefined') {
-        document.querySelectorAll('pre > code.language-mermaid').forEach((code) => {
-          const pre = code.parentElement
+        document.querySelectorAll('pre.mermaid, pre > code.language-mermaid').forEach((node) => {
+          const pre = node.tagName === 'PRE' ? node : node.parentElement
           const div = document.createElement('div')
           div.className = 'mermaid'
           // Carry the source-line anchor over so scroll sync and caret
           // highlight still map to the diagram block.
           const sourceLine = pre.getAttribute('data-source-line')
           if (sourceLine) div.setAttribute('data-source-line', sourceLine)
-          div.textContent = code.textContent || ''
+          div.textContent = node.textContent || ''
           pre.replaceWith(div)
         })
         try {
-          mermaid.initialize({ startOnLoad: false, theme: dark ? 'dark' : 'default' })
-          const nodes = document.querySelectorAll('.mermaid')
+          mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: dark ? 'dark' : 'default' })
+          const nodes = document.querySelectorAll('div.mermaid')
           if (nodes.length) mermaid.run({ nodes })
         } catch (err) { console.error(err) }
       }
       if (typeof hljs !== 'undefined') {
         document.querySelectorAll('pre code:not(.language-mermaid)').forEach((el) => {
           try { hljs.highlightElement(el) } catch (err) { console.error(err) }
+        })
+      }
+      document.querySelectorAll('pre > code[class*="language-"]').forEach((code) => {
+        const pre = code.parentElement
+        if (!pre || pre.querySelector('.code-lang')) return
+        const cls = [...code.classList].find((c) => c.indexOf('language-') === 0)
+        const lang = cls ? cls.slice('language-'.length) : ''
+        if (!lang || lang === 'mermaid') return
+        pre.setAttribute('data-lang', lang)
+        const label = document.createElement('span')
+        label.className = 'code-lang'
+        label.textContent = lang
+        pre.appendChild(label)
+      })
+      if (typeof Chart !== 'undefined') {
+        document.querySelectorAll('div.chart').forEach((el) => {
+          const json = el.querySelector('script[type="application/json"]')
+          if (!json) return
+          let config
+          try { config = JSON.parse(json.textContent || '') } catch (err) { console.error(err); return }
+          const canvas = document.createElement('canvas')
+          el.textContent = ''
+          el.appendChild(canvas)
+          try { new Chart(canvas, config) } catch (err) { console.error(err) }
         })
       }
     })()
