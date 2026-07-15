@@ -205,6 +205,7 @@ function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview
 
   return {
     mermaid: asset('media', 'mermaid.min.js'),
+    chartJs: asset('media', 'chart.umd.js'),
     katexJs: asset('media', 'katex', 'katex.min.js'),
     katexCss: asset('media', 'katex', 'katex.min.css'),
     katexAutoRender: asset('media', 'katex', 'auto-render.min.js'),

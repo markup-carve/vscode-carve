@@ -13,6 +13,7 @@ const media = join(root, 'media')
 /** @type {Array<[string, string]>} source -> destination, relative to root. */
 const files = [
   [join(nm, 'mermaid', 'dist', 'mermaid.min.js'), join(media, 'mermaid.min.js')],
+  [join(nm, 'chart.js', 'dist', 'chart.umd.js'), join(media, 'chart.umd.js')],
   [join(nm, 'katex', 'dist', 'katex.min.js'), join(media, 'katex', 'katex.min.js')],
   [join(nm, 'katex', 'dist', 'katex.min.css'), join(media, 'katex', 'katex.min.css')],
   [join(nm, 'katex', 'dist', 'contrib', 'auto-render.min.js'), join(media, 'katex', 'auto-render.min.js')],
