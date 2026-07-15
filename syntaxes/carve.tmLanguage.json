@@ -264,10 +264,17 @@
                     "end": "$",
                     "patterns": [
                         {
-                            "match": "(?<=\\|)[ \\t]*(:?-+:?)[ \\t]*(?=\\|)",
+                            "comment": "Separator cell: leading/trailing alignment colons get a dedicated alignment scope; the dash run stays the separator punctuation.",
+                            "match": "(?<=\\|)[ \\t]*(:?)(-+)(:?)[ \\t]*(?=\\|)",
                             "captures": {
                                 "1": {
+                                    "name": "keyword.operator.table.alignment.carve"
+                                },
+                                "2": {
                                     "name": "punctuation.definition.table.separator.carve"
+                                },
+                                "3": {
+                                    "name": "keyword.operator.table.alignment.carve"
                                 }
                             }
                         },
@@ -427,6 +434,17 @@
                     }
                 },
                 {
+                    "comment": "Definition-list TERM line: a leading `::` marker. Only the marker is scoped (mirroring the single-colon definition rule below), so a trailing `%% comment` and any inline markup in the term still tokenize normally. Matched before the single-colon rule; `::` never collides with a `:::+` fenced div, which needs three colons.",
+                    "name": "markup.list.definition.term.carve",
+                    "match": "^(\\s*)(::)(\\s+)",
+                    "captures": {
+                        "2": {
+                            "name": "punctuation.definition.list.begin.carve"
+                        }
+                    }
+                },
+                {
+                    "comment": "Definition-list DEFINITION line: a single `:` marker followed by the definition body.",
                     "name": "markup.list.definition.carve",
                     "match": "^(\\s*)(:)\\s+",
                     "captures": {

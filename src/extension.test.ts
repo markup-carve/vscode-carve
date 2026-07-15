@@ -226,14 +226,24 @@ test('grammar: GFM delimiter row without alignment colons', async () => {
 
 test('grammar: GFM delimiter row with alignment colons', async () => {
   const [row] = await tokenizeLines(['|:-----|----:|'])
+  // The dash run is the separator punctuation; the alignment colons get a
+  // dedicated alignment scope (matching the canonical carve-grammars grammar).
   assert.ok(
-    findScoped(row, ':-----', 'punctuation.definition.table.separator.carve'),
-    'left-aligned cell should be scoped',
+    findScoped(row, '-----', 'punctuation.definition.table.separator.carve'),
+    'dash run should be the separator',
   )
   assert.ok(
-    findScoped(row, '----:', 'punctuation.definition.table.separator.carve'),
-    'right-aligned cell should be scoped',
+    findScoped(row, ':', 'keyword.operator.table.alignment.carve'),
+    'leading alignment colon should be scoped',
   )
+  assert.ok(
+    findScoped(row, '----', 'punctuation.definition.table.separator.carve'),
+    'right-cell dash run should be the separator',
+  )
+  const colons = row.filter((t) =>
+    t.scopes.some((s) => s.includes('keyword.operator.table.alignment.carve')),
+  )
+  assert.equal(colons.length, 2, 'both alignment colons should be scoped')
 })
 
 test('grammar: dash-only data cell is NOT scoped as a delimiter', async () => {
