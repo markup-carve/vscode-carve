@@ -1,0 +1,78 @@
+>An unclosed literal opener !`oops leaks nothing.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>This paragraph must stay *ordinary* prose, not literal content.
+#^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                         ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#                          ^^^^^^^^ text.carve markup.bold.carve markup.bold.carve
+#                                  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>An unclosed math opener $`oops leaks nothing either.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>This paragraph must stay /ordinary/ prose, not math content.
+#^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                         ^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#                          ^^^^^^^^ text.carve markup.italic.carve markup.italic.carve
+#                                  ^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>Closed forms still work: !`/kaet/` and $`x^2` and $$`E=mc^2`.
+#^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                         ^ text.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#                          ^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                           ^^^^^^ text.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                                 ^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                                  ^^^^^ text.carve
+#                                       ^ text.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#                                        ^ text.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                         ^^^ text.carve markup.other.math.inline.carve markup.other.math.content.carve
+#                                            ^ text.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                             ^^^^^ text.carve
+#                                                  ^^ text.carve markup.other.math.display.carve punctuation.definition.math.carve
+#                                                    ^ text.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#                                                     ^^^^^^ text.carve markup.other.math.display.carve markup.other.math.content.carve
+#                                                           ^ text.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#                                                            ^^ text.carve
+>
+>Multi-backtick fences: !``a`b`` and $``a`b``.
+#^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                       ^ text.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#                        ^^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                          ^^^ text.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                             ^^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                               ^^^^^ text.carve
+#                                    ^ text.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#                                     ^^ text.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                       ^^^ text.carve markup.other.math.inline.carve markup.other.math.content.carve
+#                                          ^^ text.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                            ^^ text.carve
+>
+>Attributes still attach: !`x`{.ipa} and $`y`{.big}.
+#^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                         ^ text.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#                          ^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                           ^ text.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                            ^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                             ^ text.carve meta.attributes.carve
+#                              ^^^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                  ^ text.carve meta.attributes.carve
+#                                   ^^^^^ text.carve
+#                                        ^ text.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#                                         ^ text.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                          ^ text.carve markup.other.math.inline.carve markup.other.math.content.carve
+#                                           ^ text.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                            ^ text.carve meta.attributes.carve
+#                                             ^^^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                                 ^ text.carve meta.attributes.carve
+#                                                  ^^ text.carve
+>
+>Escaped bang is a plain code span: \!`x`.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                                   ^^ text.carve constant.character.escape.carve
+#                                     ^ text.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                      ^ text.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                                       ^ text.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                        ^^ text.carve
+>
