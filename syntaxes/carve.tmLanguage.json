@@ -64,6 +64,9 @@
             "include": "#raw-inline"
         },
         {
+            "include": "#inline-literal"
+        },
+        {
             "include": "#inline-code"
         },
         {
@@ -766,6 +769,29 @@
                             "name": "punctuation.definition.raw.carve"
                         }
                     }
+                }
+            ]
+        },
+        "inline-literal": {
+            "patterns": [
+                {
+                    "name": "markup.raw.inline.literal.carve",
+                    "begin": "(!)(`+)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.literal.carve"
+                        },
+                        "2": {
+                            "name": "punctuation.definition.raw.carve"
+                        }
+                    },
+                    "end": "(\\2)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.raw.carve"
+                        }
+                    },
+                    "contentName": "markup.raw.inline.content.carve"
                 }
             ]
         },

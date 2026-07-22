@@ -124,6 +124,11 @@
     "body": ["$`${1:x}`$0"],
     "description": "Inline math"
   },
+  "Inline literal": {
+    "prefix": "literal",
+    "body": ["!`${1:text}`$0"],
+    "description": "Inline literal (verbatim prose, no code styling)"
+  },
   "Math block": {
     "prefix": "mathblock",
     "body": ["$$`${1:x}`$0"],

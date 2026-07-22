@@ -1,0 +1,7 @@
+The word cat is !`/kaet/` in IPA.
+
+An attributed literal: !`/kaet/`{.ipa} and escaped bang \!`x`.
+
+Verbatim inside: !`*not bold*` and !`a<b>` stay literal.
+
+Image still binds: ![alt](/img.png). Math sibling: $`x^2`.
