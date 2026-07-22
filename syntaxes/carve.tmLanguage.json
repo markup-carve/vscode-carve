@@ -784,65 +784,64 @@
         "inline-literal": {
             "patterns": [
                 {
+                    "comment": "Closed span, like #inline-code: a match rule is line-bounded, so an unclosed opener cannot leak literal scoping into the rest of the document.",
                     "name": "markup.raw.inline.literal.carve",
-                    "begin": "(!)(`+)",
-                    "beginCaptures": {
+                    "match": "(!)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\2)",
+                    "captures": {
                         "1": {
                             "name": "punctuation.definition.literal.carve"
                         },
                         "2": {
                             "name": "punctuation.definition.raw.carve"
-                        }
-                    },
-                    "end": "(\\2)",
-                    "endCaptures": {
-                        "1": {
+                        },
+                        "3": {
+                            "name": "markup.raw.inline.content.carve"
+                        },
+                        "4": {
                             "name": "punctuation.definition.raw.carve"
                         }
-                    },
-                    "contentName": "markup.raw.inline.content.carve"
+                    }
                 }
             ]
         },
         "math": {
             "patterns": [
                 {
+                    "comment": "Closed span, like #inline-code: a match rule is line-bounded, so an unclosed opener cannot leak math scoping into the rest of the document. Display ($$) is tried before inline ($).",
                     "name": "markup.other.math.display.carve",
-                    "begin": "(\\$\\$)(`+)",
-                    "beginCaptures": {
+                    "match": "(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\2)",
+                    "captures": {
                         "1": {
                             "name": "punctuation.definition.math.carve"
                         },
                         "2": {
                             "name": "punctuation.definition.raw.carve"
-                        }
-                    },
-                    "end": "(\\2)",
-                    "endCaptures": {
-                        "1": {
+                        },
+                        "3": {
+                            "name": "markup.other.math.content.carve"
+                        },
+                        "4": {
                             "name": "punctuation.definition.raw.carve"
                         }
-                    },
-                    "contentName": "markup.other.math.content.carve"
+                    }
                 },
                 {
                     "name": "markup.other.math.inline.carve",
-                    "begin": "(\\$)(`+)",
-                    "beginCaptures": {
+                    "match": "(\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\2)",
+                    "captures": {
                         "1": {
                             "name": "punctuation.definition.math.carve"
                         },
                         "2": {
                             "name": "punctuation.definition.raw.carve"
-                        }
-                    },
-                    "end": "(\\2)",
-                    "endCaptures": {
-                        "1": {
+                        },
+                        "3": {
+                            "name": "markup.other.math.content.carve"
+                        },
+                        "4": {
                             "name": "punctuation.definition.raw.carve"
                         }
-                    },
-                    "contentName": "markup.other.math.content.carve"
+                    }
                 }
             ]
         },

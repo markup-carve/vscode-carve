@@ -1,0 +1,15 @@
+An unclosed literal opener !`oops leaks nothing.
+
+This paragraph must stay *ordinary* prose, not literal content.
+
+An unclosed math opener $`oops leaks nothing either.
+
+This paragraph must stay /ordinary/ prose, not math content.
+
+Closed forms still work: !`/kaet/` and $`x^2` and $$`E=mc^2`.
+
+Multi-backtick fences: !``a`b`` and $``a`b``.
+
+Attributes still attach: !`x`{.ipa} and $`y`{.big}.
+
+Escaped bang is a plain code span: \!`x`.
