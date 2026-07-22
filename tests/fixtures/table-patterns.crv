@@ -14,3 +14,5 @@ then a flush-left block joined with +.
 | [@key] | @user |
 | #tag | :tada: |
 | :smile: mid | a:b:c |
+
+| \^[x] | ok |

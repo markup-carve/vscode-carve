@@ -603,7 +603,7 @@
                 {
                     "comment": "Inline footnote `^[content]` (core Carve). Its content is inline-parsed (spec `inline_footnote = '^[', inline_content, ']'`), so nested emphasis and code still tokenize. The `(?=$)` alternative in `end` bounds the span to one line so an unclosed `^[` cannot leak into following paragraphs.",
                     "name": "meta.footnote.inline.carve",
-                    "begin": "(\\^\\[)",
+                    "begin": "(?<!\\\\)(\\^\\[)",
                     "beginCaptures": {
                         "1": {
                             "name": "punctuation.definition.footnote.carve"
