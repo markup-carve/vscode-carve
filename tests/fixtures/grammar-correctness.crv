@@ -1,0 +1,12 @@
+foo*bar*baz and foo~bar~baz stay literal
+a:b:c and 10:30: and :_bad: stay literal
+A *bold* and ~strike~ and /*bold italic*/ still work
+Symbols :tada: and (:smile:) and :+1: and :-1: still work
+An inline ^[note here] footnote and a [^ref] reference
+- [-] dropped
+- [>] forward
+- [_] paused
+- [?] question
+- [x] done
+- [ ] todo
+Attr {title="a\"b"} keeps the whole quoted value

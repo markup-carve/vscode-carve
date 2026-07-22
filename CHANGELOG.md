@@ -9,9 +9,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Syntax highlighting for the inline literal `` !`…` `` (#25): a `!` before a verbatim backtick span, which renders as escaped prose rather than code.
+- Syntax highlighting for inline footnotes `^[content]`, which had no rule at all. Its content is inline-parsed per the spec, so nested emphasis and code still highlight, and the span is bounded to one line so an unclosed `^[` cannot leak.
+- The task-list marker now accepts every documented state. Only `[ ]`, `[x]` and `[X]` were recognized; the spec also defines `[-]`, `[_]`, `[>]` and `[?]`.
 
 ### Fixed
 
+- Bare `*` and `~` emphasis no longer highlight intraword. The rules carried the word-boundary guard for `/`, `_` and `=` but not for `*` or `~`, so `foo*bar*baz` and `foo~bar~baz` highlighted as emphasis; the spec applies the restriction to every bare delimiter and the corpus pins both strings as literal.
+- Symbols now honor the boundary rule. `:name:` matched with no left-boundary guard and allowed a leading underscore, so `a:b:c`, `10:30:` and `:_bad:` were wrongly highlighted; `(:tada:)`, `:+1:` and `:-1:` still parse.
+- A quoted attribute value containing an escaped quote is scoped in full. `{title="a\"b"}` scoped only `"a\"`, leaving the rest of the value unstyled.
 - Table cells now highlight the sigil-prefixed verbatim constructs. The table-row pattern list included `#inline-code` but omitted `#inline-literal`, `#math` and `#raw-inline`, so `` | !`x` | ``, `` | $`x` | `` and `` | `x`{=html} | `` were left unscoped inside a table.
 - An unclosed `` !` `` or `` $` `` opener no longer leaks its highlighting into the rest of the document. Both rules used `begin`/`end`, so the scope stayed open until the next matching backtick run anywhere later in the file; they are now closed-span `match` rules with a run-length backreference, matching how inline code already worked.
 

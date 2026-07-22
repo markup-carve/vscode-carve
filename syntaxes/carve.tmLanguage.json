@@ -422,7 +422,7 @@
                 {
                     "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first.",
                     "name": "markup.list.unnumbered.carve",
-                    "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)(\\[[ xX]\\]\\s+)?",
+                    "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)(\\[[ xX_>?-]\\]\\s+)?",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
@@ -592,6 +592,36 @@
         "footnotes": {
             "patterns": [
                 {
+                    "comment": "Inline footnote `^[content]` (core Carve). Its content is inline-parsed (spec `inline_footnote = '^[', inline_content, ']'`), so nested emphasis and code still tokenize. The `(?=$)` alternative in `end` bounds the span to one line so an unclosed `^[` cannot leak into following paragraphs.",
+                    "name": "meta.footnote.inline.carve",
+                    "begin": "(\\^\\[)",
+                    "beginCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.footnote.carve"
+                        }
+                    },
+                    "end": "(\\])|(?=$)",
+                    "endCaptures": {
+                        "1": {
+                            "name": "punctuation.definition.footnote.carve"
+                        }
+                    },
+                    "patterns": [
+                        {
+                            "include": "#inline-code"
+                        },
+                        {
+                            "include": "#links"
+                        },
+                        {
+                            "include": "#emphasis"
+                        },
+                        {
+                            "include": "#mentions-tags"
+                        }
+                    ]
+                },
+                {
                     "name": "constant.other.reference.footnote.carve",
                     "match": "(\\[)(\\^)([^\\]]+)(\\])",
                     "captures": {
@@ -717,11 +747,11 @@
                                 },
                                 {
                                     "name": "string.quoted.double.attribute.carve",
-                                    "match": "\"[^\"]*\""
+                                    "match": "\"(?:[^\"\\\\]|\\\\.)*\""
                                 },
                                 {
                                     "name": "string.quoted.single.attribute.carve",
-                                    "match": "'[^']*'"
+                                    "match": "'(?:[^'\\\\]|\\\\.)*'"
                                 },
                                 {
                                     "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class.",
@@ -1061,7 +1091,7 @@
                 },
                 {
                     "name": "markup.bold.carve",
-                    "match": "(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)",
+                    "match": "(?<![\\w*])(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)(?![\\w*])",
                     "captures": {
                         "1": {
                             "name": "punctuation.definition.bold.carve"
@@ -1106,7 +1136,7 @@
                 },
                 {
                     "name": "markup.strikethrough.carve",
-                    "match": "(~)(?=\\S)([^~\\n]+?)(?<=\\S)(~)",
+                    "match": "(?<![\\w~])(~)(?=\\S)([^~\\n]+?)(?<=\\S)(~)(?![\\w~])",
                     "captures": {
                         "1": {
                             "name": "punctuation.definition.strike.carve"
@@ -1198,7 +1228,7 @@
                 },
                 {
                     "name": "constant.character.emoji.carve",
-                    "match": ":[A-Za-z0-9_+-]+:"
+                    "match": "(?<!\\w):[A-Za-z0-9+-][A-Za-z0-9_+-]*:"
                 }
             ]
         },
