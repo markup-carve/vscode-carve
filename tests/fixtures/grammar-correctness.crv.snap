@@ -1,0 +1,96 @@
+>foo*bar*baz and foo~bar~baz stay literal
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>a:b:c and 10:30: and :_bad: stay literal
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>A *bold* and ~strike~ and /*bold italic*/ still work
+#^^ text.carve
+#  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#   ^^^^ text.carve markup.bold.carve markup.bold.carve
+#       ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#        ^^^^^ text.carve
+#             ^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#              ^^^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#                    ^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#                     ^^^^^ text.carve
+#                          ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#                            ^^^^^^^^^^^ text.carve markup.bold.italic.carve markup.bold.italic.carve
+#                                       ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#                                         ^^^^^^^^^^^^ text.carve
+>Symbols :tada: and (:smile:) and :+1: and :-1: still work
+#^^^^^^^^ text.carve
+#        ^^^^^^ text.carve constant.character.emoji.carve
+#              ^^^^^^ text.carve
+#                    ^^^^^^^ text.carve constant.character.emoji.carve
+#                           ^^^^^^ text.carve
+#                                 ^^^^ text.carve constant.character.emoji.carve
+#                                     ^^^^^ text.carve
+#                                          ^^^^ text.carve constant.character.emoji.carve
+#                                              ^^^^^^^^^^^^ text.carve
+>An inline ^[note here] footnote and a [^ref] reference
+#^^^^^^^^^^ text.carve
+#          ^^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#            ^^^^^^^^^ text.carve meta.footnote.inline.carve
+#                     ^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                      ^^^^^^^^^^^^^^^^ text.carve
+#                                      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                       ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                        ^^^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#                                           ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                            ^^^^^^^^^^^ text.carve
+>- [-] dropped
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^^ text.carve
+>- [>] forward
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^^ text.carve
+>- [_] paused
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^ text.carve
+>- [?] question
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^^^ text.carve
+>- [x] done
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ text.carve
+>- [ ] todo
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ text.carve
+>Attr {title="a\"b"} keeps the whole quoted value
+#^^^^^ text.carve
+#     ^ text.carve meta.attributes.carve
+#      ^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.carve
+#           ^ text.carve meta.attributes.carve
+#            ^^^^^^ text.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                  ^ text.carve meta.attributes.carve
+#                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>An escaped ^[a \] b] footnote keeps going
+#^^^^^^^^^^^ text.carve
+#           ^^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#             ^^ text.carve meta.footnote.inline.carve
+#               ^^ text.carve meta.footnote.inline.carve constant.character.escape.carve
+#                 ^^ text.carve meta.footnote.inline.carve
+#                   ^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                    ^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>| c | ^[cell note] |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ text.carve markup.table.row.carve
+#    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^ text.carve markup.table.row.carve
+#      ^^ text.carve markup.table.row.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#        ^^^^^^^^^ text.carve markup.table.row.carve meta.footnote.inline.carve
+#                 ^ text.carve markup.table.row.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                  ^ text.carve markup.table.row.carve
+#                   ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>

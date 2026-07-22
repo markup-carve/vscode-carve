@@ -1,9 +1,12 @@
 >A note^[see *later*] inline. And a ref[^a].
-#^^^^^^^^^^^^ text.carve
-#            ^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#             ^^^^^ text.carve markup.bold.carve markup.bold.carve
-#                  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#                   ^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^ text.carve
+#      ^^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#        ^^^^ text.carve meta.footnote.inline.carve
+#            ^ text.carve meta.footnote.inline.carve markup.bold.carve punctuation.definition.bold.carve
+#             ^^^^^ text.carve meta.footnote.inline.carve markup.bold.carve markup.bold.carve
+#                  ^ text.carve meta.footnote.inline.carve markup.bold.carve punctuation.definition.bold.carve
+#                   ^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                    ^^^^^^^^^^^^^^^^^^ text.carve
 #                                      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
 #                                       ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
 #                                        ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve

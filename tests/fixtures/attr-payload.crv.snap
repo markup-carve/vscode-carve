@@ -8,8 +8,8 @@
 #^ text.carve meta.attributes.carve
 # ^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.carve
 #      ^ text.carve meta.attributes.carve
-#       ^^^^ text.carve meta.attributes.carve string.quoted.double.attribute.carve
-#           ^^^ text.carve meta.attributes.carve
+#       ^^^^^^ text.carve meta.attributes.carve string.quoted.double.attribute.carve
+#             ^ text.carve meta.attributes.carve
 ># H
 #^ text.carve markup.heading.carve punctuation.definition.heading.carve
 # ^ text.carve markup.heading.carve
