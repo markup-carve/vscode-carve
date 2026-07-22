@@ -353,6 +353,9 @@
                             "include": "#images"
                         },
                         {
+                            "include": "#citations"
+                        },
+                        {
                             "include": "#autolink"
                         },
                         {
@@ -360,12 +363,15 @@
                         },
                         {
                             "include": "#math"
+                        },
+                        {
+                            "include": "#mentions-tags"
                         }
                     ]
                 },
                 {
                     "name": "markup.table.continuation.carve",
-                    "match": "^(\\+)(.*)$",
+                    "match": "^(\\+)(.*\\|\\s*)$",
                     "captures": {
                         "1": {
                             "name": "keyword.operator.table.continuation.carve"

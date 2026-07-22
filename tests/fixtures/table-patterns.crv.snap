@@ -1,0 +1,77 @@
+>> quoted
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^^^^ text.carve markup.quote.carve
+>+
+#^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+>- item
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^ text.carve
+>
+>:: term
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^^^^ text.carve
+>:  A first paragraph,
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^^ text.carve markup.list.definition.carve
+#   ^^^^^^^^^^^^^^^^^^^ text.carve
+>+
+#^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+>then a flush-left block joined with +.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>| a | b |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ text.carve markup.table.row.carve
+#    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ text.carve markup.table.row.carve
+#        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| - | - |
+#^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.separator.carve
+#  ^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#   ^ text.carve markup.table.row.separator.carve
+#    ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+#     ^ text.carve markup.table.row.separator.carve
+#      ^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#       ^ text.carve markup.table.row.separator.carve
+#        ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+>+ cont |
+#^ text.carve markup.table.continuation.carve keyword.operator.table.continuation.carve
+# ^^^^^^^^ text.carve markup.table.continuation.carve
+>
+>| [@key] | @user |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.carve
+#  ^ text.carve markup.table.row.carve markup.citation.carve punctuation.definition.citation.begin.carve
+#   ^^^^ text.carve markup.table.row.carve markup.citation.carve variable.other.citation.key.carve
+#       ^ text.carve markup.table.row.carve markup.citation.carve punctuation.definition.citation.end.carve
+#        ^ text.carve markup.table.row.carve
+#         ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#          ^ text.carve markup.table.row.carve
+#           ^ text.carve markup.table.row.carve constant.other.symbol.mention.carve punctuation.definition.mention.carve
+#            ^^^^ text.carve markup.table.row.carve constant.other.symbol.mention.carve variable.other.mention.carve
+#                ^ text.carve markup.table.row.carve
+#                 ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| #tag | :tada: |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.carve
+#  ^ text.carve markup.table.row.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#   ^^^ text.carve markup.table.row.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#      ^ text.carve markup.table.row.carve
+#       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#        ^ text.carve markup.table.row.carve
+#         ^^^^^^ text.carve markup.table.row.carve constant.character.emoji.carve
+#               ^ text.carve markup.table.row.carve
+#                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| :smile: mid | a:b:c |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.carve
+#  ^^^^^^^ text.carve markup.table.row.carve constant.character.emoji.carve
+#         ^^^^^ text.carve markup.table.row.carve
+#              ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#               ^^^^^^^ text.carve markup.table.row.carve
+#                      ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>

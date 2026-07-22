@@ -1,0 +1,16 @@
+> quoted
++
+- item
+
+:: term
+:  A first paragraph,
++
+then a flush-left block joined with +.
+
+| a | b |
+| - | - |
++ cont |
+
+| [@key] | @user |
+| #tag | :tada: |
+| :smile: mid | a:b:c |
