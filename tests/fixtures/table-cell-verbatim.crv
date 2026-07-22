@@ -1,0 +1,8 @@
+| Construct | Example        |
+|:----------|:---------------|
+| literal   | !`/kaet/`      |
+| attributed| !`x`{.ipa}     |
+| math      | $`x^2`         |
+| raw       | `<br>`{=html}  |
+| code      | `npm install`  |
+| escaped   | \!`x`          |

@@ -320,6 +320,12 @@
                             "include": "#trailing-comment-cell"
                         },
                         {
+                            "include": "#raw-inline"
+                        },
+                        {
+                            "include": "#inline-literal"
+                        },
+                        {
                             "include": "#inline-code"
                         },
                         {
@@ -348,6 +354,9 @@
                         },
                         {
                             "include": "#attributes"
+                        },
+                        {
+                            "include": "#math"
                         }
                     ]
                 },

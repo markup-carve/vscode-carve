@@ -1,0 +1,85 @@
+>| Construct | Example        |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^^^^^^^^^^^^^^^^ text.carve markup.table.row.carve
+#                             ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>|:----------|:---------------|
+#^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+# ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
+#  ^^^^^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#            ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+#             ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
+#              ^^^^^^^^^^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
+#                             ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+>| literal   | !`/kaet/`      |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^ text.carve markup.table.row.carve
+#              ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#               ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                ^^^^^^ text.carve markup.table.row.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                      ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                       ^^^^^^ text.carve markup.table.row.carve
+#                             ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| attributed| !`x`{.ipa}     |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^ text.carve markup.table.row.carve
+#              ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#               ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                 ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                  ^ text.carve markup.table.row.carve meta.attributes.carve
+#                   ^^^^ text.carve markup.table.row.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                       ^ text.carve markup.table.row.carve meta.attributes.carve
+#                        ^^^^^ text.carve markup.table.row.carve
+#                             ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| math      | $`x^2`         |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^ text.carve markup.table.row.carve
+#              ^ text.carve markup.table.row.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#               ^ text.carve markup.table.row.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                ^^^ text.carve markup.table.row.carve markup.other.math.inline.carve markup.other.math.content.carve
+#                   ^ text.carve markup.table.row.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                    ^^^^^^^^^ text.carve markup.table.row.carve
+#                             ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| raw       | `<br>`{=html}  |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^ text.carve markup.table.row.carve
+#              ^ text.carve markup.table.row.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#               ^^^^ text.carve markup.table.row.carve markup.raw.inline.passthrough.carve markup.raw.inline.content.carve
+#                   ^ text.carve markup.table.row.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#                    ^^ text.carve markup.table.row.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.begin.carve
+#                      ^^^^ text.carve markup.table.row.carve markup.raw.inline.passthrough.carve entity.name.type.format.carve
+#                          ^ text.carve markup.table.row.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.end.carve
+#                           ^^ text.carve markup.table.row.carve
+#                             ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| code      | `npm install`  |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^ text.carve markup.table.row.carve
+#              ^ text.carve markup.table.row.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#               ^^^^^^^^^^^ text.carve markup.table.row.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                          ^ text.carve markup.table.row.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                           ^^ text.carve markup.table.row.carve
+#                             ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>| escaped   | \!`x`          |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^^^^^ text.carve markup.table.row.carve
+#            ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#             ^^ text.carve markup.table.row.carve
+#               ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#                ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                 ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                  ^ text.carve markup.table.row.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                   ^^^^^^^^^^ text.carve markup.table.row.carve
+#                             ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>
