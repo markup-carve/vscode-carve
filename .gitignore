@@ -5,3 +5,8 @@ media/
 .vscode-test/
 *.log
 .playwright-mcp/
+
+# Local scratch files and notes (underscore-prefixed), never committed
+_*.crv
+_*.md
+/_*/
