@@ -75,4 +75,22 @@
 #            ^^^^^^ text.carve meta.attributes.carve string.quoted.double.attribute.carve
 #                  ^ text.carve meta.attributes.carve
 #                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>An escaped ^[a \] b] footnote keeps going
+#^^^^^^^^^^^ text.carve
+#           ^^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#             ^^ text.carve meta.footnote.inline.carve
+#               ^^ text.carve meta.footnote.inline.carve constant.character.escape.carve
+#                 ^^ text.carve meta.footnote.inline.carve
+#                   ^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                    ^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>| c | ^[cell note] |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ text.carve markup.table.row.carve
+#    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^ text.carve markup.table.row.carve
+#      ^^ text.carve markup.table.row.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#        ^^^^^^^^^ text.carve markup.table.row.carve meta.footnote.inline.carve
+#                 ^ text.carve markup.table.row.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                  ^ text.carve markup.table.row.carve
+#                   ^ text.carve markup.table.row.carve punctuation.separator.table.carve
 >

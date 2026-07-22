@@ -9,7 +9,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Syntax highlighting for the inline literal `` !`…` `` (#25): a `!` before a verbatim backtick span, which renders as escaped prose rather than code.
-- Syntax highlighting for inline footnotes `^[content]`, which had no rule at all. Its content is inline-parsed per the spec, so nested emphasis and code still highlight, and the span is bounded to one line so an unclosed `^[` cannot leak.
+- Syntax highlighting for inline footnotes `^[content]`, which had no rule at all. Its content is inline-parsed per the spec, so nested emphasis and code still highlight, a backslash escape such as `^[a \] b]` no longer terminates the span early, and the span is bounded to one line so an unclosed `^[` cannot leak. Table cells reach the rule too.
 - The task-list marker now accepts every documented state. Only `[ ]`, `[x]` and `[X]` were recognized; the spec also defines `[-]`, `[_]`, `[>]` and `[?]`.
 
 ### Fixed

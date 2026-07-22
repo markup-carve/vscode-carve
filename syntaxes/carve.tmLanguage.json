@@ -320,6 +320,9 @@
                             "include": "#trailing-comment-cell"
                         },
                         {
+                            "include": "#footnotes"
+                        },
+                        {
                             "include": "#raw-inline"
                         },
                         {
@@ -607,6 +610,11 @@
                         }
                     },
                     "patterns": [
+                        {
+                            "comment": "Consume a backslash escape before the `end` check so `^[a \\] b]` does not terminate at the escaped bracket.",
+                            "name": "constant.character.escape.carve",
+                            "match": "\\\\."
+                        },
                         {
                             "include": "#inline-code"
                         },

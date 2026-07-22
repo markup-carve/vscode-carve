@@ -10,3 +10,5 @@ An inline ^[note here] footnote and a [^ref] reference
 - [x] done
 - [ ] todo
 Attr {title="a\"b"} keeps the whole quoted value
+An escaped ^[a \] b] footnote keeps going
+| c | ^[cell note] |
