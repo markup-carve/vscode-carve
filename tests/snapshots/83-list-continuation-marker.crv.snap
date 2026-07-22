@@ -3,7 +3,7 @@
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^^^^^^^^^^^^^^^ text.carve
 >+
-#^ text.carve markup.table.continuation.carve keyword.operator.table.continuation.carve
+#^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
 >```sh
 #^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
 #   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
