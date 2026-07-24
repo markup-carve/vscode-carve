@@ -18,13 +18,13 @@
 #                                         ^^^^^^^^^^^^ text.carve
 >Symbols :tada: and (:smile:) and :+1: and :-1: still work
 #^^^^^^^^ text.carve
-#        ^^^^^^ text.carve constant.character.emoji.carve
+#        ^^^^^^ text.carve constant.language.symbol.carve
 #              ^^^^^^ text.carve
-#                    ^^^^^^^ text.carve constant.character.emoji.carve
+#                    ^^^^^^^ text.carve constant.language.symbol.carve
 #                           ^^^^^^ text.carve
-#                                 ^^^^ text.carve constant.character.emoji.carve
+#                                 ^^^^ text.carve constant.language.symbol.carve
 #                                     ^^^^^ text.carve
-#                                          ^^^^ text.carve constant.character.emoji.carve
+#                                          ^^^^ text.carve constant.language.symbol.carve
 #                                              ^^^^^^^^^^^^ text.carve
 >An inline ^[note here] footnote and a [^ref] reference
 #^^^^^^^^^^ text.carve
