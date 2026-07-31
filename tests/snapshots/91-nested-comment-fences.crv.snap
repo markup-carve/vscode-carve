@@ -2,11 +2,11 @@
 #^^^^^^^ text.carve
 >
 >%%%%
-#^^^^ text.carve markup.raw.block.carve punctuation.definition.raw.begin.carve
+#^^^^ text.carve comment.block.carve
 >hidden %%% inner fence stays hidden
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.block.carve
 >%%%%
-#^^^^ text.carve markup.raw.block.carve punctuation.definition.raw.end.carve
+#^^^^ text.carve comment.block.carve
 >
 >after
 #^^^^^^ text.carve
