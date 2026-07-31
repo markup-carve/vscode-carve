@@ -5,13 +5,13 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
 >
 >%%%
-#^^^^ text.carve comment.block.carve
+#^^^ text.carve comment.block.carve
 >a hidden
 #^^^^^^^^^ text.carve comment.block.carve
 >block
 #^^^^^^ text.carve comment.block.carve
 >%%%
-#^^^^ text.carve comment.block.carve
+#^^^ text.carve comment.block.carve
 >
 >Also visible.
 #^^^^^^^^^^^^^^ text.carve

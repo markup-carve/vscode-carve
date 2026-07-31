@@ -16,9 +16,6 @@
             "include": "#code-blocks"
         },
         {
-            "include": "#raw-blocks"
-        },
-        {
             "include": "#divs"
         },
         {
@@ -124,8 +121,9 @@
             "patterns": [
                 {
                     "name": "comment.block.carve",
-                    "begin": "^\\s*%%%\\s*$",
-                    "end": "^\\s*%%%\\s*$"
+                    "comment": "A %%% fence line is a delimiter plus an insignificant tail (spec PART 9 section 28): only the leading run of % is structural, so `%%% TODO` opens and `%%% end` closes. %%% carries no info string - a raw passthrough block is a CODE fence with an =FORMAT info string - so `%%% html` is a comment. The end backreference matches the opener width exactly, so %%%% nests %%%.",
+                    "begin": "^\\s*(%{3,})[^\\n]*$",
+                    "end": "^\\s*\\1(?!%)[^\\n]*$"
                 },
                 {
                     "name": "comment.line.percent.carve",
@@ -196,28 +194,6 @@
                         }
                     },
                     "end": "^(`{3,}|~{3,})\\s*$",
-                    "endCaptures": {
-                        "1": {
-                            "name": "punctuation.definition.raw.end.carve"
-                        }
-                    }
-                }
-            ]
-        },
-        "raw-blocks": {
-            "patterns": [
-                {
-                    "name": "markup.raw.block.carve",
-                    "begin": "^(%{3,})\\s*([^\\s]+)?\\s*$",
-                    "beginCaptures": {
-                        "1": {
-                            "name": "punctuation.definition.raw.begin.carve"
-                        },
-                        "2": {
-                            "name": "entity.name.type.language.carve"
-                        }
-                    },
-                    "end": "^(%{3,})\\s*$",
                     "endCaptures": {
                         "1": {
                             "name": "punctuation.definition.raw.end.carve"
