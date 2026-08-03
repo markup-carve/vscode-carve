@@ -85,7 +85,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"😄\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
+          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"\ud83d\ude04\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
         },
         "carve.trace.server": {
           "type": "string",
@@ -182,8 +182,8 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "github:markup-carve/carve-js",
-    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp",
+    "@markup-carve/carve": "github:markup-carve/carve-js#b6c126fbf819376f0394c099352c2d9ee2eb31b7",
+    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#0fb2865944047cd2152cc49e2c655e6bde37ae50",
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {

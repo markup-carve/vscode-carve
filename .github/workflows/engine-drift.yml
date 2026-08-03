@@ -1,0 +1,76 @@
+name: Engine drift
+
+# The engine and the language server are GIT DEPENDENCIES pinned to a revision.
+# A pin makes drift deliberate, but nothing notices when a pin has fallen
+# behind - and a push-only CI reports the state of the day someone last touched
+# the repo.
+#
+# This matters more here than in a library. The extension ships the engine
+# INSIDE the .vsix, so there is no later resolution step a user could inspect:
+# before the pins, two builds a day apart produced different extensions with the
+# same version number, and a bug report could not be traced to an engine
+# revision (#35).
+#
+# It reports rather than gates on lag: upstream moving is not a defect here, and
+# a job that goes red for something outside the repository teaches people to
+# ignore it. It DOES fail when a pinned revision is not a real commit on that
+# repository's main - a typo, a force-pushed branch, a revision that no longer
+# exists - because that is a broken build waiting to happen. carve-js has
+# rewritten history before: three sibling repos pinned revisions that a fresh
+# clone cannot check out (carve#499).
+
+on:
+  schedule:
+    # 05:00 UTC daily, after the upstream repos have had a night to settle.
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dep: "@markup-carve/carve"
+            repo: markup-carve/carve-js
+            path: carve-js
+          - dep: "@markup-carve/carve-lsp"
+            repo: markup-carve/carve-lsp
+            path: carve-lsp
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out ${{ matrix.repo }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.repo }}
+          path: ${{ matrix.path }}
+          fetch-depth: 0
+
+      - name: Compare the pinned revision against ${{ matrix.path }} main
+        env:
+          DEP: ${{ matrix.dep }}
+          DIR: ${{ matrix.path }}
+        run: |
+          set -euo pipefail
+          spec="$(node -p "require('./package.json').dependencies['${DEP}']")"
+          rev="${spec##*#}"
+          if ! printf '%s' "${rev}" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "::error::${DEP} is \"${spec}\" - it must pin a 40-hex revision, or the .vsix bundles whatever was on the default branch at package time"
+            exit 1
+          fi
+          if ! git -C "${DIR}" cat-file -e "${rev}^{commit}" 2>/dev/null; then
+            echo "::error::${DEP} pins ${rev}, which is not a commit in ${DIR}"
+            exit 1
+          fi
+          if ! git -C "${DIR}" merge-base --is-ancestor "${rev}" origin/main; then
+            echo "::error::${DIR} ${rev} is not on main, so the pin came from an unmerged or rewritten branch"
+            exit 1
+          fi
+          behind="$(git -C "${DIR}" rev-list --count "${rev}..origin/main")"
+          echo "bundled ${DEP}: ${rev} ($(git -C "${DIR}" log -1 --format=%s "${rev}"))"
+          echo "${DIR} main is ${behind} commit(s) ahead"
+          if [ "${behind}" -gt 0 ]; then
+            echo "::warning::${DEP} is ${behind} ${DIR} commit(s) behind main"
+          fi
