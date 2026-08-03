@@ -1,0 +1,15 @@
+. first
+. second
+
+1. explicit
+. continues the same list
+
+.{#x} attributed
+
+3.{#k v} valued with attrs
+
+a. alpha
+
+iv. roman
+
+1) paren

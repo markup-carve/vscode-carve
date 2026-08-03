@@ -421,9 +421,9 @@
                     }
                 },
                 {
-                    "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`.",
+                    "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it.",
                     "name": "markup.list.numbered.carve",
-                    "match": "^(\\s*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)])\\s+",
+                    "match": "^(\\s*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.)(?=\\s|\\{)\\s*",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
