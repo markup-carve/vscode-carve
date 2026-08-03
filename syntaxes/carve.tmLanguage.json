@@ -151,7 +151,7 @@
             "patterns": [
                 {
                     "name": "markup.heading.carve",
-                    "match": "^(#{1,6})(\\s+)(.+)$",
+                    "match": "^(#{1,6})([ \\t]+)(?![ \\t]*$)(.+)$",
                     "captures": {
                         "1": {
                             "name": "punctuation.definition.heading.carve"
