@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **The spec submodule is current again** (#37). It sat at 392 corpus documents while the spec had 529, so the coverage matrix and the snapshot suite were measuring a July language. Fifty-five new categories are classified: `symbols` and `inline-literal` are snapshot-covered (they are the only ones producing `constant.language.symbol` and `markup.raw.inline.literal` scopes), the other 49 are skipped with a reason naming the covered representative that already pins their tokens. Three entries were upstream renames, not removals: `emoji` -> `symbols`, `multi-line-headings` -> `single-line-headings`, `link-destination-stops-at-the-first-parenthesis` -> `link-destination-parentheses-balance`. No existing golden's tokens changed.
+
 ### Added
 
 - Syntax highlighting for the inline literal `` !`…` `` (#25): a `!` before a verbatim backtick span, which renders as escaped prose rather than code.

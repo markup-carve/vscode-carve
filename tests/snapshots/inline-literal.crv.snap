@@ -1,0 +1,8 @@
+>The word cat is !`/kaet/` in IPA.
+#^^^^^^^^^^^^^^^^ text.carve
+#                ^ text.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#                 ^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                  ^^^^^^ text.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                        ^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                         ^^^^^^^^^ text.carve
+>
