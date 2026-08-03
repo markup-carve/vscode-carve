@@ -34,8 +34,21 @@ mkdirSync(snapDir, { recursive: true });
 // are NOT deleted here - in verify mode they are what the tool compares against.
 const crvFiles = [];
 const wantedBasenames = new Set();
+// `covered` names the representative example by SLUG; the corpus numbers it.
+// Resolving here rather than storing the number is what keeps an upstream
+// renumbering from touching this file, the matrix and 124 snapshot artifacts.
+const corpusFiles = readdirSync(corpusDir).filter((f) => f.endsWith(".crv"));
+const corpusFileForSlug = (wanted) =>
+  corpusFiles.find((f) => f.replace(/^[0-9]+-/, "") === wanted);
+
 for (const [category, file] of Object.entries(matrix.covered)) {
-  const src = join(corpusDir, file);
+  const numbered = corpusFileForSlug(file);
+  if (!numbered) {
+    console.error(`No corpus file for "${category}": ${file}`);
+    console.error("Is the `spec` submodule checked out? Run: git submodule update --init");
+    throw new Error(`missing corpus file for ${file}`);
+  }
+  const src = join(corpusDir, numbered);
   const dest = join(snapDir, file);
   try {
     copyFileSync(src, dest);

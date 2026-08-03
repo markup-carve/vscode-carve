@@ -18,15 +18,33 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = dirname(here);
 const corpusDir = join(root, "spec", "tests", "corpus");
 
+// A corpus file is `NN-slug.crv` or `NN-slug-VARIANT.crv`. The CATEGORY is the
+// slug alone: the leading number is the spec's ordering, not an identity.
+// Keying the matrix on it meant every upstream renumbering invalidated all 126
+// entries at once, none of which had changed - so a bump read as 126 decisions
+// rather than as the nothing it was.
+const slug = (file) =>
+  file
+    .replace(/^[0-9]+-/, "")
+    .replace(/-[0-9]+\.crv$/, "")
+    .replace(/\.crv$/, "");
+
 function corpusCategories() {
   const categories = new Set();
   for (const file of readdirSync(corpusDir)) {
-    if (!file.endsWith(".crv")) {
-      continue;
+    if (file.endsWith(".crv")) {
+      categories.add(slug(file));
     }
-    categories.add(file.replace(/-[0-9]+\.crv$/, "").replace(/\.crv$/, ""));
   }
   return categories;
+}
+
+// `covered` names its representative example by slug too, so resolve it back to
+// whatever number the corpus currently gives that file.
+function corpusFileForSlug(wanted) {
+  return readdirSync(corpusDir).find(
+    (file) => file.endsWith(".crv") && file.replace(/^[0-9]+-/, "") === wanted,
+  );
 }
 
 const matrix = JSON.parse(readFileSync(join(here, "categories.json"), "utf8"));
@@ -81,7 +99,7 @@ test("covered and skip entries reference real corpus categories", () => {
 test("every covered category points at an existing corpus file", () => {
   const missing = [];
   for (const [category, file] of Object.entries(covered)) {
-    if (!existsSync(join(corpusDir, file))) {
+    if (!corpusFileForSlug(file)) {
       missing.push(`${category} -> ${file}`);
     }
   }
