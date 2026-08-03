@@ -377,7 +377,7 @@
             "patterns": [
                 {
                     "name": "markup.quote.carve",
-                    "begin": "^\\s*(>+)\\s?",
+                    "begin": "^[ \\t]*(>)(?= |$)[ ]?",
                     "beginCaptures": {
                         "1": {
                             "name": "punctuation.definition.quote.carve"
