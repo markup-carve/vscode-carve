@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- **A blockquote marker takes a space** (#42). markup-carve/carve#525 made the separator mandatory; the bundled grammar still matched `^\s*(>+)\s?`, so the editor colored lines the language calls prose. Verified against carve-rs: `>no space`, `>>x`, `>> x` and `>\tx` all render as paragraphs, `>>` is not a nested marker (that is `> > x`, a space per marker), and a tab does not separate. The spec pin moved 10 commits in the same change, which is what surfaced it.
 - **The spec submodule is current again** (#37). It sat at 392 corpus documents while the spec had 529, so the coverage matrix and the snapshot suite were measuring a July language. Fifty-five new categories are classified: `symbols` and `inline-literal` are snapshot-covered (they are the only ones producing `constant.language.symbol` and `markup.raw.inline.literal` scopes), the other 49 are skipped with a reason naming the covered representative that already pins their tokens. Three entries were upstream renames, not removals: `emoji` -> `symbols`, `multi-line-headings` -> `single-line-headings`, `link-destination-stops-at-the-first-parenthesis` -> `link-destination-parentheses-balance`. No existing golden's tokens changed.
 
 ### Added
