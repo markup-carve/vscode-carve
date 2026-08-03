@@ -74,3 +74,46 @@ jobs:
           if [ "${behind}" -gt 0 ]; then
             echo "::warning::${DEP} is ${behind} ${DIR} commit(s) behind main"
           fi
+
+  # The `spec` submodule is a pin too, and it is the one nothing else watches.
+  # carve-js and carve-rs get bump PRs from carve's bump-downstream workflow;
+  # this repo does not, so its corpus quietly fell 178 commits behind - three
+  # weeks - which means the grammar coverage matrix has been measuring an old
+  # language with a green tick (#37).
+  #
+  # Reported, not gated: the spec moving is not a defect here, and bumping it
+  # is a deliberate review (new categories need a covered/skip decision and the
+  # token diff wants reading). Failing on lag would just teach people to ignore
+  # the job. It DOES fail if the pin is not a commit on carve main.
+  spec-pin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out the spec
+        uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve
+          path: carve-spec
+          fetch-depth: 0
+
+      - name: Compare the spec submodule against carve main
+        run: |
+          set -euo pipefail
+          rev="$(git rev-parse HEAD:spec)"
+          if ! git -C carve-spec cat-file -e "${rev}^{commit}" 2>/dev/null; then
+            echo "::error::the spec submodule pins ${rev}, which is not a commit in markup-carve/carve"
+            exit 1
+          fi
+          if ! git -C carve-spec merge-base --is-ancestor "${rev}" origin/main; then
+            echo "::error::spec ${rev} is not on main, so the pin came from an unmerged or rewritten branch"
+            exit 1
+          fi
+          behind="$(git -C carve-spec rev-list --count "${rev}..origin/main")"
+          corpus="$(git -C carve-spec ls-tree -r --name-only "${rev}" tests/corpus | grep -c '\.crv$' || true)"
+          latest="$(git -C carve-spec ls-tree -r --name-only origin/main tests/corpus | grep -c '\.crv$' || true)"
+          echo "spec pin: ${rev} ($(git -C carve-spec log -1 --format=%s "${rev}"))"
+          echo "carve main is ${behind} commit(s) ahead; corpus ${corpus} -> ${latest} documents"
+          if [ "${behind}" -gt 0 ]; then
+            echo "::warning::the spec submodule is ${behind} commit(s) behind carve main (corpus ${corpus} vs ${latest})"
+          fi
