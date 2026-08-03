@@ -38,6 +38,11 @@
 >^ 
 #^^^ text.carve
 >
+>- [ ] 
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^ text.carve
+>
 ># H
 #^ text.carve markup.heading.carve punctuation.definition.heading.carve
 # ^ text.carve markup.heading.carve
@@ -68,4 +73,10 @@
 #^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
 # ^ text.carve markup.table.caption.carve
 #  ^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>- [x] done
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ text.carve
 >

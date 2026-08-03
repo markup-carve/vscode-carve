@@ -407,7 +407,7 @@
                 {
                     "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first.",
                     "name": "markup.list.unnumbered.carve",
-                    "match": "^([ \\t]*)([-*])([ \\t]+)((?:[-*][ \\t]+)*)(?![ \\t]*$)(\\[[ xX_>?-]\\][ \\t]+)?",
+                    "match": "^([ \\t]*)([-*])([ \\t]+)((?:[-*][ \\t]+)*)(\\[[ xX_>?-]\\][ \\t]+)?(?![ \\t]*$)",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
