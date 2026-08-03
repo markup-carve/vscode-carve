@@ -1,0 +1,25 @@
+>>no space
+#^^^^^^^^^^ text.carve
+>
+>>>x
+#^^^^ text.carve
+>
+>>> x
+#^^^^^ text.carve
+>
+>>	x
+#^^^^ text.carve
+>
+>>
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+>
+>> real quote
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^^^^^^^^ text.carve markup.quote.carve
+>
+>> > nested
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^^^^^^ text.carve markup.quote.carve
+>
