@@ -28,4 +28,11 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+
+      # Separate from `npm test` on purpose: this one reaches the network, so a
+      # failure here means the vendored battery is stale (or GitHub is down),
+      # not that the grammar is wrong. Keeping it out of the test script also
+      # means a local run never needs a clone.
+      - name: The vendored block battery still matches carve-grammars
+        run: ./tools/check-battery-drift.sh
       - run: npm run package
