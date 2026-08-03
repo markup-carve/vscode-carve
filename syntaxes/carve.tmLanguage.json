@@ -407,7 +407,7 @@
                 {
                     "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first.",
                     "name": "markup.list.unnumbered.carve",
-                    "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)(\\[[ xX_>?-]\\]\\s+)?",
+                    "match": "^([ \\t]*)([-*])([ \\t]+)((?:[-*][ \\t]+)*)(?![ \\t]*$)(\\[[ xX_>?-]\\][ \\t]+)?",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
@@ -423,7 +423,7 @@
                 {
                     "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it.",
                     "name": "markup.list.numbered.carve",
-                    "match": "^(\\s*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.)(?=\\s|\\{)\\s*",
+                    "match": "^([ \\t]*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.)(?=[ \\t]|\\{)[ \\t]*(?![ \\t]*$)",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
@@ -433,7 +433,7 @@
                 {
                     "comment": "Definition-list TERM line: a leading `::` marker. Only the marker is scoped (mirroring the single-colon definition rule below), so a trailing `%% comment` and any inline markup in the term still tokenize normally. Matched before the single-colon rule; `::` never collides with a `:::+` fenced div, which needs three colons.",
                     "name": "markup.list.definition.term.carve",
-                    "match": "^(\\s*)(::)(\\s+)",
+                    "match": "^([ \\t]*)(::)([ \\t]+)(?![ \\t]*$)",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
@@ -443,7 +443,7 @@
                 {
                     "comment": "Definition-list DEFINITION line: a single `:` marker followed by the definition body.",
                     "name": "markup.list.definition.carve",
-                    "match": "^(\\s*)(:)\\s+",
+                    "match": "^([ \\t]*)(:)[ \\t]+(?![ \\t]*$)",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
