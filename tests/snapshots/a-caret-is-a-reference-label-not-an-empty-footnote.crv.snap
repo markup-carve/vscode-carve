@@ -1,0 +1,14 @@
+>[^]: /u
+#^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ text.carve meta.link.reference.definition.carve
+#     ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>see [text][^].
+#^^^^ text.carve
+#    ^ text.carve meta.link.reference.carve
+#     ^^^^ text.carve meta.link.reference.carve string.other.link.title.carve
+#         ^^ text.carve meta.link.reference.carve
+#           ^ text.carve meta.link.reference.carve constant.other.reference.link.carve
+#            ^ text.carve meta.link.reference.carve
+#             ^^ text.carve
+>
