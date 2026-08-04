@@ -1,0 +1,11 @@
+>%%%
+#^^^ text.carve comment.block.carve
+>[r]: /u
+#^^^^^^^^ text.carve comment.block.carve
+>%%%
+#^^^ text.carve comment.block.carve
+>[r][]
+#^ text.carve meta.link.reference.carve
+# ^ text.carve meta.link.reference.carve string.other.link.title.carve
+#  ^^^ text.carve meta.link.reference.carve
+>
