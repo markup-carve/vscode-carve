@@ -1,0 +1,19 @@
+>see [t][r].
+#^^^^ text.carve
+#    ^ text.carve meta.link.reference.carve
+#     ^ text.carve meta.link.reference.carve string.other.link.title.carve
+#      ^^ text.carve meta.link.reference.carve
+#        ^ text.carve meta.link.reference.carve constant.other.reference.link.carve
+#         ^ text.carve meta.link.reference.carve
+#          ^^ text.carve
+>
+>[r]: /a
+#^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ text.carve meta.link.reference.definition.carve
+#     ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>[r]: /b
+#^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ text.carve meta.link.reference.definition.carve
+#     ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
