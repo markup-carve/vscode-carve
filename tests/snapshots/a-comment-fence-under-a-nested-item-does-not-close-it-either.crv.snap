@@ -1,0 +1,14 @@
+>- - a
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#    ^^ text.carve
+> %%% c
+#^^^^^^ text.carve comment.block.carve
+> x
+#^^^ text.carve comment.block.carve
+> %%%
+#^^^^ text.carve comment.block.carve
+> b
+#^^^ text.carve
+>
