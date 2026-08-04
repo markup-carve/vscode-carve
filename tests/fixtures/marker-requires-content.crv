@@ -37,3 +37,21 @@
 ^ cap
 
 - [x] done
+
+1.{#x}
+
+.{#x}
+
+1.{#x}{.y} item
+
+1.{#x} item
+
+.{#x} attributed
+
+1.{title="a}b"} item
+
+1.{title='a}b'} item
+
+1.{title="a\"b"} item
+
+1.{#x} {*bold*}
