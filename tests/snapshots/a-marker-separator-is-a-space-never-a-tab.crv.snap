@@ -1,0 +1,7 @@
+>::	term
+#^^^^^^^^ text.carve
+>:  d
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^^ text.carve markup.list.definition.carve
+#   ^^ text.carve
+>

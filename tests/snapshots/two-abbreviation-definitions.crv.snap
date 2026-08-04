@@ -1,0 +1,20 @@
+>*[HTML]: HyperText Markup Language
+#^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+# ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#  ^^^^ text.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
+#      ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#       ^ text.carve meta.abbreviation.definition.carve punctuation.separator.carve
+#        ^ text.carve meta.abbreviation.definition.carve
+#         ^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve
+>*[CSS]: Cascading Style Sheets
+#^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+# ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#  ^^^ text.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
+#     ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#      ^ text.carve meta.abbreviation.definition.carve punctuation.separator.carve
+#       ^ text.carve meta.abbreviation.definition.carve
+#        ^^^^^^^^^^^^^^^^^^^^^^ text.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve
+>
+>HTML and CSS.
+#^^^^^^^^^^^^^^ text.carve
+>
