@@ -1,0 +1,11 @@
+>[*bold*]: /x
+#^^^^^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#         ^ text.carve meta.link.reference.definition.carve
+#          ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>see [*bold*][]
+#^^^^ text.carve
+#    ^ text.carve meta.link.reference.carve
+#     ^^^^^^ text.carve meta.link.reference.carve string.other.link.title.carve
+#           ^^^ text.carve meta.link.reference.carve
+>
