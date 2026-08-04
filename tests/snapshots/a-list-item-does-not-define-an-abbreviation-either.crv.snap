@@ -1,0 +1,8 @@
+>- *[HTML]: Hyper Text
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>The HTML spec.
+#^^^^^^^^^^^^^^^ text.carve
+>
