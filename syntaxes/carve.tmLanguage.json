@@ -421,9 +421,9 @@
                     }
                 },
                 {
-                    "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it.",
+                    "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it - but the ATTRIBUTE FORM NEEDS CONTENT TOO: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it. A `\\{[^}]*\\}` run stops in the wrong place, because a quoted value may contain `}` and may escape its own quote, and `{title=\"a}b\"} x` is a valid item (markup-carve/carve-grammars#85).",
                     "name": "markup.list.numbered.carve",
-                    "match": "^([ \\t]*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.)(?= |\\{) *(?![ \\t]*$)",
+                    "match": "^([ \\t]*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.)(?:(?= )|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^}\"'\\n])*\\}[ \\t]+[^ \\t\\n])) *(?![ \\t]*$)",
                     "captures": {
                         "2": {
                             "name": "punctuation.definition.list.begin.carve"
