@@ -1,0 +1,21 @@
+-{#x} an attributed bullet
+
+*{.c} an attributed star bullet
+
+-{} an empty block attaches nothing
+
+-{not attrs} bare keys are two boolean attributes
+
+-{title="a}b"} a brace inside a quoted value
+
+-{.c} [x] a task item carrying a class
+
+-{#x}
+
+-{#x}{.y} two glued blocks are prose even with content
+
+-{+a+} an insertion span is not attributes
+
+-{2=v} a digit-first key is not an attribute
+
+-{a:b} a colon is not an identifier character
