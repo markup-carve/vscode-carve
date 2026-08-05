@@ -389,6 +389,26 @@
           "end": "$",
           "patterns": [
             {
+              "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
+              "name": "meta.link.reference.definition.carve",
+              "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+              "captures": {
+                "1": {
+                  "name": "constant.other.reference.link.carve"
+                },
+                "2": {
+                  "name": "markup.underline.link.carve"
+                },
+                "4": {
+                  "patterns": [
+                    {
+                      "include": "#attributes"
+                    }
+                  ]
+                }
+              }
+            },
+            {
               "include": "#trailing-comment"
             }
           ]
@@ -458,14 +478,22 @@
     "definitions": {
       "patterns": [
         {
+          "comment": "The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
           "name": "meta.link.reference.definition.carve",
-          "match": "^\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)",
+          "match": "^\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "captures": {
             "1": {
               "name": "constant.other.reference.link.carve"
             },
             "2": {
               "name": "markup.underline.link.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
             }
           }
         },
