@@ -500,7 +500,7 @@
         {
           "comment": "An abbreviation definition is recognized only at document level (markup-carve/carve#611), unlike a link/footnote reference definition, which a container also collects. So this pattern is anchored at literal column 0 - no leading whitespace - while the reference-definition pattern above stays column-agnostic. Indenting `*[HTML]: ...` inside a list item, block quote, or any other container makes it inert prose, not a definition (markup-carve/vscode-carve#65).",
           "name": "meta.abbreviation.definition.carve",
-          "match": "^(\\*)(\\[)([A-Z][A-Z0-9]*)(\\])(:)\\s+(.*)$",
+          "match": "^(\\*)(\\[)([A-Za-z0-9]+)(\\])(:)\\s+(.*)$",
           "captures": {
             "1": {
               "name": "punctuation.definition.abbreviation.carve"
