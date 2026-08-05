@@ -76,6 +76,7 @@
     "tables": "tables.crv",
     "tables-with-rowspan-and-colspan": "tables-with-rowspan-and-colspan.crv",
     "task-lists": "task-lists.crv",
+    "thematic-breaks": "thematic-breaks.crv",
     "two-abbreviation-definitions": "two-abbreviation-definitions.crv",
     "unquoted-attribute-values-may-contain-dots-and-colons": "unquoted-attribute-values-may-contain-dots-and-colons.crv"
   },
@@ -182,8 +183,7 @@
     "table-stacked-rowspan": "Stacked rowspan is a layout/parse concern; the rowspan marker token is covered by 10.",
     "table-without-alignment": "Produces the same cell/separator tokens as any table; the absence of alignment markers yields no distinct scope.",
     "tag-requires-a-word-boundary": "Negative/boundary case for tag detection; no distinct positive scope beyond what 15-mentions-and-tags already covers.",
-    "thematic-break-requires-contiguous-markers": "Negative case: a non-contiguous run is not a break. The line-based grammar reads the valid form as a break and the invalid one as list markers or prose; neither adds a scope.",
-    "thematic-breaks": "Thematic breaks (---, ***, ___) are not given a dedicated scope by the grammar; they are block-structure separators (and overlap visually with emphasis/typography runs).",
+    "thematic-break-requires-contiguous-markers": "Negative case: a non-contiguous run is not a break. `* * *` and `_ _ _` stay unscoped, which is correct. The `-3` example is ` ***` with one leading space - NOT a break (the corpus renders it `<p>***</p>`) - and the ported rule DOES scope it, because `^\\s*` cannot tell a top-level indent from a list item's content column, where a break is legitimate (`- item` then `  ---` renders `<hr>`, measured against carve-js). Anchoring at column 0 instead would miss every break inside a list item or quote, which is the commoner shape. Same trade-off carve-grammars carries in the rule this ports, tracked in markup-carve/carve-grammars#94.",
     "tight-list-item-keeps-trailing-text-after-a-block-bare": "Where trailing text attaches is block structure; the list and div tokens are pinned.",
     "trailing-attribute-block-edge-cases": "Trailing attribute-block edges resolve to the attribute tokens covered by 17 and 84.",
     "trailing-attributes-on-a-link-reference-definition": "Not snapshotted because the half the category is about carries no scope: `[ex]: /u {.external}` scopes the definition correctly, and the trailing `{.external}` gets plain text.carve - no meta.attributes.carve, which the grammar does emit for a heading's or a span's attribute block. Filed separately.",
