@@ -1,0 +1,26 @@
+>*x*{.a	.b}
+#^ text.carve markup.bold.carve punctuation.definition.bold.carve
+# ^ text.carve markup.bold.carve markup.bold.carve
+#  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#   ^ text.carve meta.attributes.carve
+#    ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#      ^ text.carve meta.attributes.carve
+#       ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#         ^ text.carve meta.attributes.carve
+>
+>*y*{	.c}
+#^ text.carve markup.bold.carve punctuation.definition.bold.carve
+# ^ text.carve markup.bold.carve markup.bold.carve
+#  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#   ^^ text.carve meta.attributes.carve
+#     ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#       ^ text.carve meta.attributes.carve
+>
+>*z*{.d	}
+#^ text.carve markup.bold.carve punctuation.definition.bold.carve
+# ^ text.carve markup.bold.carve markup.bold.carve
+#  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#   ^ text.carve meta.attributes.carve
+#    ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#      ^^ text.carve meta.attributes.carve
+>
