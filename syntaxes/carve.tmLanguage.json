@@ -745,7 +745,7 @@
         },
         {
           "name": "meta.span.inline.carve",
-          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{)",
+          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{\\s*\\}|\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})",
           "captures": {
             "1": {
               "name": "punctuation.definition.span.begin.carve"
@@ -756,7 +756,8 @@
             "3": {
               "name": "punctuation.definition.span.end.carve"
             }
-          }
+          },
+          "comment": "THE BRACE RUN HAS TO BE A REAL ATTRIBUTE BLOCK. The lookahead was `(?={)`, which asked only that a brace follow - so `[a]{xlink:href=u}` scoped as a span while every engine renders the whole line as literal text, because an attribute name admits no colon (spec markup-carve/carve#870, corpus `an-attribute-name-admits-no-colon`). It now looks ahead for the same block the `attributes` rule matches, including the empty `{}` form that is valid only glued to a preceding `]`."
         }
       ]
     },
@@ -942,7 +943,8 @@
                 },
                 {
                   "name": "entity.other.attribute-name.carve",
-                  "match": "[A-Za-z_:][A-Za-z0-9_:-]*(?==)"
+                  "match": "[A-Za-z_][A-Za-z0-9_-]*(?==)",
+                  "comment": "No colon. The enclosing match already forbids one, so this could never paint a colon-bearing name and the two only disagreed on paper - but a reader checking the rule found the permissive spelling first (spec markup-carve/carve#870)."
                 },
                 {
                   "name": "string.quoted.double.attribute.carve",

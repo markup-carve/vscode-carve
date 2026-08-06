@@ -1,0 +1,5 @@
+>:: 	x
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^^ text.carve
+>

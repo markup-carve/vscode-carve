@@ -1,0 +1,10 @@
+>| a | b |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ text.carve markup.table.row.carve
+#    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ text.carve markup.table.row.carve
+#        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>+ c | d |
+#^ text.carve markup.table.continuation.carve keyword.operator.table.continuation.carve
+# ^^^^^^^^^ text.carve markup.table.continuation.carve
+>
