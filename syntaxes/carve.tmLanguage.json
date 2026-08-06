@@ -428,10 +428,12 @@
           }
         },
         {
-          "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first. A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space comes after the block, not after the marker - so `-{#x} item` and `*{.c} item` went uncoloured on a line that IS a list item, while the ordered rule beside it already had the branch (markup-carve/carve-grammars#126). It is a LOOKAHEAD: consuming the block would make this rule own those characters, so the attribute rule could no longer scope them. KNOWN LIMITATION, shared with every Carve TextMate grammar: the checkbox after a glued block (`-{.c} [x] done`) is not scoped, because the task branch has none; the bullet is. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
-          "name": "markup.list.unnumbered.carve",
-          "match": "^([ \\t]*)([-*])(?:(?= )|(?=\\{\\s*(?:(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))( *)((?:[-*] +)*)(\\[[ xX_>?-]\\] +)?(?![ \\t]*$)",
-          "captures": {
+          "comment": "A LIST ITEM IS A CONTAINER, NOT A LINE (markup-carve/vscode-carve#61, ported from markup-carve/carve-grammars#94). It opens on its marker line, stays open across blank lines, and closes on the first nonblank line indented BELOW its content column - the marker's ACTUAL width, `indent + marker + separator`, not a fixed two columns. That is what tells an indented definition apart from a below-column one: `- a` over `  [r]: /u` keeps its definition, while `- - a` over ` [^f]: x` sits below every open content column and is item TEXT that defines nothing (corpus a-definition-below-every-content-column-folds-as-text, markup-carve/carve#624). A TASK ITEM'S CONTENT COLUMN IS TWO PAST THE INDENT WHATEVER THE SEPARATOR IS - the checkbox absorbs the rest, so it gets its own branch ahead of the plain bullet rather than inheriting the marker-width test. Measured, not assumed: carve-php and carve-js agree that a body line two columns in belongs to the item for every separator width from one space to five, where the same widths under a plain bullet carry the column with them (`-   a` puts its body at column 4, `-   [x] a` keeps it at column 2). The checkbox glued to an attribute block (`-{.c} [x] done`) is still not scoped - the known limitation this branch inherits, not one it adds.",
+          "begin": "^([ \\t]*)([-*])( +)((?:[-*] +)*)(\\[[ xX_>?-]\\] +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.unnumbered.carve"
+            },
             "2": {
               "name": "punctuation.definition.list.begin.carve"
             },
@@ -441,17 +443,163 @@
             "5": {
               "name": "constant.language.task-list.carve"
             }
-          }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2})",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
         },
         {
-          "comment": "Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it - but the ATTRIBUTE FORM NEEDS CONTENT TOO: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it. A `\\{[^}]*\\}` run stops in the wrong place, because a quoted value may contain `}` and may escape its own quote, and `{title=\"a}b\"} x` is a valid item (markup-carve/carve-grammars#85). A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text` and `Mix. text` as lists where carve-js renders paragraphs (markup-carve/carve-grammars#118). `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split rather than rejecting multi-letter words. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
-          "name": "markup.list.numbered.carve",
-          "match": "^([ \\t]*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?:(?= )|(?=\\{\\s*(?:(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])) *(?![ \\t]*$)",
-          "captures": {
+          "comment": "A LIST ITEM IS A CONTAINER, NOT A LINE (markup-carve/vscode-carve#61, ported from markup-carve/carve-grammars#94). It opens on its marker line, stays open across blank lines, and closes on the first nonblank line indented BELOW its content column - the marker's ACTUAL width, `indent + marker + separator`, not a fixed two columns. That is what tells an indented definition apart from a below-column one: `- a` over `  [r]: /u` keeps its definition, while `- - a` over ` [^f]: x` sits below every open content column and is item TEXT that defines nothing (corpus a-definition-below-every-content-column-folds-as-text, markup-carve/carve#624). THE TEST IS EXACT FOR A BULLET at any indent and any separator width: a bullet marker is one column and the separator is captured whitespace, so `\\1[ \\t]\\3` reconstructs the column count from the marker line itself. A TAB counts as one column here rather than advancing to the next tab stop, and a continuation line has to repeat the marker line's own indent characters. A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first. A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space comes after the block, not after the marker - so `-{#x} item` and `*{.c} item` went uncoloured on a line that IS a list item, while the ordered rule beside it already had the branch (markup-carve/carve-grammars#126). It is a LOOKAHEAD: consuming the block would make this rule own those characters, so the attribute rule could no longer scope them. KNOWN LIMITATION, shared with every Carve TextMate grammar: the checkbox after a glued block (`-{.c} [x] done`) is not scoped, because the task branch has none; the bullet is. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
+          "begin": "^([ \\t]*)([-*])( +)((?:[-*] +)*)(\\[[ xX_>?-]\\] +)?(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.unnumbered.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.list.begin.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.list.begin.carve"
+            },
+            "5": {
+              "name": "constant.language.task-list.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "The attribute-glued bullet (`-{#x} item`). Its content column cannot be counted, because the block's width is not whitespace, so this branch uses the MINIMUM content column, indent plus two: the container stays open across a range an exact test would have closed, which is the over-coloring side every block rule in this grammar already takes. A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first. A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space comes after the block, not after the marker - so `-{#x} item` and `*{.c} item` went uncoloured on a line that IS a list item, while the ordered rule beside it already had the branch (markup-carve/carve-grammars#126). It is a LOOKAHEAD: consuming the block would make this rule own those characters, so the attribute rule could no longer scope them. KNOWN LIMITATION, shared with every Carve TextMate grammar: the checkbox after a glued block (`-{.c} [x] done`) is not scoped, because the task branch has none; the bullet is. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
+          "begin": "^([ \\t]*)([-*])(?=\\{\\s*(?:(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.unnumbered.carve"
+            },
             "2": {
               "name": "punctuation.definition.list.begin.carve"
             }
-          }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "A LIST ITEM IS A CONTAINER, NOT A LINE (markup-carve/vscode-carve#61, ported from markup-carve/carve-grammars#94). It opens on its marker line, stays open across blank lines, and closes on the first nonblank line indented BELOW its content column - the marker's ACTUAL width, `indent + marker + separator`, not a fixed two columns. That is what tells an indented definition apart from a below-column one: `- a` over `  [r]: /u` keeps its definition, while `- - a` over ` [^f]: x` sits below every open content column and is item TEXT that defines nothing (corpus a-definition-below-every-content-column-folds-as-text, markup-carve/carve#624). AN ORDERED MARKER IS NOT ONE COLUMN WIDE, and Oniguruma cannot count the width of a captured run - vscode-textmate splices a begin capture into the `end` pattern as literal TEXT, so a backreference reproduces the marker's characters, never its length. The width is therefore spelled out: one branch per marker width, each consuming exactly that many characters and asking its `end` for exactly that many columns. EXACT for widths 1 to 5 (`.`, `1.`, `10.`, `iii.`, `1000.`), which covers every ordered marker in the corpus; the width-5 branch also accepts anything wider and under-counts it, holding the container open a column or two too long rather than closing it early. Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it - but the ATTRIBUTE FORM NEEDS CONTENT TOO: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it. A `\\{[^}]*\\}` run stops in the wrong place, because a quoted value may contain `}` and may escape its own quote, and `{title=\"a}b\"} x` is a valid item (markup-carve/carve-grammars#85). A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text` and `Mix. text` as lists where carve-js renders paragraphs (markup-carve/carve-grammars#118). `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split rather than rejecting multi-letter words. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
+          "begin": "^([ \\t]*)(\\.)( +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.numbered.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.list.begin.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "Ordered marker, width 2. See the width-1 branch above for why the widths are spelled out one branch at a time.",
+          "begin": "^([ \\t]*)([0-9][.)]|[A-Za-z][.)])( +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.numbered.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.list.begin.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t]\\3)",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "Ordered marker, width 3. See the width-1 branch above for why the widths are spelled out one branch at a time.",
+          "begin": "^([ \\t]*)([0-9]{2}[.)]|[ivxlcdm]{2}[.)]|[IVXLCDM]{2}[.)])( +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.numbered.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.list.begin.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t]\\3)",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "Ordered marker, width 4. See the width-1 branch above for why the widths are spelled out one branch at a time.",
+          "begin": "^([ \\t]*)([0-9]{3}[.)]|[ivxlcdm]{3}[.)]|[IVXLCDM]{3}[.)])( +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.numbered.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.list.begin.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "Ordered marker, width 5. See the width-1 branch above for why the widths are spelled out one branch at a time.",
+          "begin": "^([ \\t]*)([0-9]{4,}[.)]|[ivxlcdm]{4,}[.)]|[IVXLCDM]{4,}[.)])( +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.numbered.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.list.begin.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "The attribute-glued ordered marker (`1.{#x} item`, `.{#x} item`), on the minimum content column for the same reason the glued bullet branch is: a block width is not whitespace and cannot be counted. Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it - but the ATTRIBUTE FORM NEEDS CONTENT TOO: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it. A `\\{[^}]*\\}` run stops in the wrong place, because a quoted value may contain `}` and may escape its own quote, and `{title=\"a}b\"} x` is a valid item (markup-carve/carve-grammars#85). A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text` and `Mix. text` as lists where carve-js renders paragraphs (markup-carve/carve-grammars#118). `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split rather than rejecting multi-letter words. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
+          "begin": "^([ \\t]*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?=\\{\\s*(?:(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.numbered.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.list.begin.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
         },
         {
           "comment": "Definition-list TERM line: a leading `::` marker. Only the marker is scoped (mirroring the single-colon definition rule below), so a trailing `%% comment` and any inline markup in the term still tokenize normally. Matched before the single-colon rule; `::` never collides with a `:::+` fenced div, which needs three colons.",
@@ -478,9 +626,38 @@
     "definitions": {
       "patterns": [
         {
-          "comment": "The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
+          "comment": "A FOOTNOTE definition has a BODY, and that body's content column is a FIXED two whatever the label is wide, so it is the one definition shape that opens a container: `[^a]: note` over `  [r]: /u` collects the second definition (corpus a-definition-on-a-footnote-body-s-continuation-line-is-collected), one column in leaves it the document's own text, and three or more is the body's own text. Narrowing the definition rule below to flush-left without this would have dropped the scope from that shape entirely. A LINK reference definition gets no container, deliberately: it has no body at all, so an indented definition under one is a paragraph, not a second definition (measured against carve-php and carve-js - `[r]: /u` over `  [s]: /v` renders the second line as prose). `begin` consumes exactly what the definition rule below consumes and carries the same captures, so a footnote definition line tokenizes as it always did. Capture 0 carries the old rule-level `name`, which a begin/end rule cannot carry itself - a rule-level name spans the whole REGION, so the body lines would be scoped as definition too. A capture-0 name does NOT reach a sibling capture that re-tokenizes with its own patterns (vscode-textmate builds that sub-tokenization from the RULE stack, not from the capture's local stack), so the attribute capture names the scope itself or a trailing `{...}` block silently loses its definition layer. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
+          "begin": "^(\\[\\^[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "beginCaptures": {
+            "0": {
+              "name": "meta.link.reference.definition.carve"
+            },
+            "1": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "2": {
+              "name": "markup.underline.link.carve"
+            },
+            "4": {
+              "name": "meta.link.reference.definition.carve",
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            }
+          },
+          "end": "^(?![ \\t]*$)(?![ \\t]{2})",
+          "patterns": [
+            {
+              "include": "#container-body"
+            }
+          ]
+        },
+        {
+          "comment": "FLUSH-LEFT: an indented definition at document level is prose, not a definition (corpus indented-reference-and-footnote-definitions-stay-literal). Indented spellings are reached through `#definitions-in-container`, which only a container's body can see, so the column question is answered by the container that opened rather than by this line on its own. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
           "name": "meta.link.reference.definition.carve",
-          "match": "^\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "match": "^(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "captures": {
             "1": {
               "name": "constant.other.reference.link.carve"
@@ -1273,6 +1450,119 @@
     "thematic-break": {
       "match": "^\\s*(?:-{3,}|\\*{3,}|_{3,})\\s*$",
       "name": "meta.separator.thematic-break.carve"
+    },
+    "container-body": {
+      "comment": "The pattern set a container's body reaches, shared by every rule that opens one so they cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only, with `#definitions-in-container` standing in for `#definitions`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the container's content column.",
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#thematic-break"
+        },
+        {
+          "include": "#headings"
+        },
+        {
+          "include": "#code-blocks"
+        },
+        {
+          "include": "#divs"
+        },
+        {
+          "include": "#tables"
+        },
+        {
+          "include": "#block-quotes"
+        },
+        {
+          "include": "#lists"
+        },
+        {
+          "include": "#definitions-in-container"
+        },
+        {
+          "include": "#links"
+        },
+        {
+          "include": "#images"
+        },
+        {
+          "include": "#footnotes"
+        },
+        {
+          "include": "#citations"
+        },
+        {
+          "include": "#code-callouts"
+        },
+        {
+          "include": "#critic-markup"
+        },
+        {
+          "include": "#forced-emphasis"
+        },
+        {
+          "include": "#sup-sub"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#trailing-comment"
+        },
+        {
+          "include": "#math"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#extension-inline"
+        },
+        {
+          "include": "#emphasis"
+        },
+        {
+          "include": "#mentions-tags"
+        },
+        {
+          "include": "#smart-typography"
+        }
+      ]
+    },
+    "definitions-in-container": {
+      "comment": "The indented spelling of a link or footnote reference definition, reachable only from a container's body. The container's `end` has already established that the line sits at or beyond that container's content column, which is the part a line-anchored `^[ \\t]*` cannot know on its own. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
+      "patterns": [
+        {
+          "name": "meta.link.reference.definition.carve",
+          "match": "^[ \\t]*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "captures": {
+            "1": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "2": {
+              "name": "markup.underline.link.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   }
 }

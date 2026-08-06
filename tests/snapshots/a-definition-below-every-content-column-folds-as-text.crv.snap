@@ -1,0 +1,13 @@
+>- - a
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#    ^^ text.carve
+> [^f]: x
+#^ text.carve
+# ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#    ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^^^^ text.carve
+>

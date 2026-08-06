@@ -1,0 +1,53 @@
+>- a
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^ text.carve
+>  [r]: /u
+#^^ text.carve meta.link.reference.definition.carve
+#  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#      ^ text.carve meta.link.reference.definition.carve
+#       ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>- [ ] a
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^ text.carve
+>  [r]: /u
+#^^ text.carve meta.link.reference.definition.carve
+#  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#      ^ text.carve meta.link.reference.definition.carve
+#       ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>-   a
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^^^ text.carve markup.list.unnumbered.carve
+#    ^^ text.carve
+>  [r]: /u
+#^^^^^^^^^^ text.carve
+>
+>10. a
+#^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.numbered.carve
+#    ^^ text.carve
+>  [r]: /u
+#^^^^^^^^^^ text.carve
+>
+>- - a
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#    ^^ text.carve
+> [r]: /u
+#^^^^^^^^^ text.carve
+>
+>[^a]: note
+#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#     ^ text.carve meta.link.reference.definition.carve
+#      ^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>  [r]: /u
+#^^ text.carve meta.link.reference.definition.carve
+#  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#      ^ text.carve meta.link.reference.definition.carve
+#       ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
