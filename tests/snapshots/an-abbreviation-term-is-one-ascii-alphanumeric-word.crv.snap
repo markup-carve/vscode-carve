@@ -1,0 +1,28 @@
+>*[dl]: definition list
+#^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+# ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#  ^^ text.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
+#    ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#     ^ text.carve meta.abbreviation.definition.carve punctuation.separator.carve
+#      ^ text.carve meta.abbreviation.definition.carve
+#       ^^^^^^^^^^^^^^^ text.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve
+>*[3D]: three dimensional
+#^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+# ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#  ^^ text.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
+#    ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#     ^ text.carve meta.abbreviation.definition.carve punctuation.separator.carve
+#      ^ text.carve meta.abbreviation.definition.carve
+#       ^^^^^^^^^^^^^^^^^ text.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve
+>*[9]: nine
+#^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+# ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#  ^ text.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
+#   ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#    ^ text.carve meta.abbreviation.definition.carve punctuation.separator.carve
+#     ^ text.carve meta.abbreviation.definition.carve
+#      ^^^^ text.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve
+>
+>A dl, a 3D one, and 9.
+#^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>

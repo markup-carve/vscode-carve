@@ -1,0 +1,14 @@
+>[a@b]: /v
+#^^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#      ^ text.carve meta.link.reference.definition.carve
+#       ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>see [u][a@b].
+#^^^^ text.carve
+#    ^ text.carve meta.link.reference.carve
+#     ^ text.carve meta.link.reference.carve string.other.link.title.carve
+#      ^^ text.carve meta.link.reference.carve
+#        ^^^ text.carve meta.link.reference.carve constant.other.reference.link.carve
+#           ^ text.carve meta.link.reference.carve
+#            ^^ text.carve
+>

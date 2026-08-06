@@ -1,0 +1,18 @@
+>[^a]: note
+#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#     ^ text.carve meta.link.reference.definition.carve
+#      ^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>  ```
+#^^^^^^ text.carve
+>  code
+#^^^^^^^ text.carve
+>  ```
+#^^^^^^ text.carve
+>
+>see[^a]
+#^^^ text.carve
+#   ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+>

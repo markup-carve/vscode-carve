@@ -1,0 +1,22 @@
+>[a]{xlink:href=u}
+#^^^^^^^^^^^^^^^^^^ text.carve
+>
+>[b]{k:v="q"}
+#^^^^^^^^ text.carve
+#        ^ text.carve punctuation.definition.smartquote.carve
+#         ^ text.carve
+#          ^ text.carve punctuation.definition.smartquote.carve
+#           ^^ text.carve
+>
+>[c]{.sm:hover}
+#^^^^^^^^^^^^^^^ text.carve
+>
+>[d]{#a:b}
+#^^^^ text.carve
+#    ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#     ^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#      ^^^^ text.carve
+>
+>[e]{.ok xml:lang=en}
+#^^^^^^^^^^^^^^^^^^^^^ text.carve
+>

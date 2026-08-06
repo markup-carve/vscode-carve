@@ -1,0 +1,17 @@
+>:: term
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^^^^ text.carve
+>:  [r]: /u
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^^ text.carve markup.list.definition.carve
+#   ^^^^^^^^ text.carve
+>
+>see [t][r]
+#^^^^ text.carve
+#    ^ text.carve meta.link.reference.carve
+#     ^ text.carve meta.link.reference.carve string.other.link.title.carve
+#      ^^ text.carve meta.link.reference.carve
+#        ^ text.carve meta.link.reference.carve constant.other.reference.link.carve
+#         ^ text.carve meta.link.reference.carve
+>
