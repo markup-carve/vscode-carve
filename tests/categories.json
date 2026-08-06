@@ -43,6 +43,7 @@
     "an-at-sign-is-a-reference-label-character-everywhere-but-the-first-position": "an-at-sign-is-a-reference-label-character-everywhere-but-the-first-position.crv",
     "an-attribute-name-admits-no-colon": "an-attribute-name-admits-no-colon.crv",
     "an-empty-abbreviation-term-is-not-a-definition": "an-empty-abbreviation-term-is-not-a-definition.crv",
+    "an-inline-attribute-block-does-not-span-lines-but-an-attribute-line-does": "an-inline-attribute-block-does-not-span-lines-but-an-attribute-line-does.crv",
     "an-uppercase-roman-numeral-is-a-list-marker": "an-uppercase-roman-numeral-is-a-list-marker.crv",
     "attributes": "attributes.crv",
     "autolinks": "autolinks.crv",
