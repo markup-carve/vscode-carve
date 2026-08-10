@@ -39,10 +39,10 @@ jobs:
             repo: markup-carve/carve-lsp
             path: carve-lsp
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check out ${{ matrix.repo }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ matrix.repo }}
           path: ${{ matrix.path }}
@@ -88,10 +88,10 @@ jobs:
   spec-pin:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check out the spec
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: markup-carve/carve
           path: carve-spec
