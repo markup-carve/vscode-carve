@@ -1,0 +1,12 @@
+>```js "T" [L]
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+#     ^ text.carve markup.raw.block.fenced.code.carve
+#      ^^^ text.carve markup.raw.block.fenced.code.carve string.quoted.double.carve
+#         ^ text.carve markup.raw.block.fenced.code.carve
+#          ^^^ text.carve markup.raw.block.fenced.code.carve entity.name.label.carve
+>x
+#^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>

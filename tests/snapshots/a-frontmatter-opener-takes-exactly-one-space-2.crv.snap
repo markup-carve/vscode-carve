@@ -1,0 +1,12 @@
+>--- yaml
+#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.begin.carve
+#   ^ text.carve meta.frontmatter.carve
+#    ^^^^ text.carve meta.frontmatter.carve entity.name.type.frontmatter.carve
+>title: T
+#^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+>---
+#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.end.carve
+>
+>body
+#^^^^^ text.carve
+>
