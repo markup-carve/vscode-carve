@@ -183,7 +183,7 @@
   },
   "dependencies": {
     "@markup-carve/carve": "github:markup-carve/carve-js#35c3164bc5b2b42d5bed6eeb6e9105e1c7306431",
-    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#465a0d5988374eccdc88292d677c6b811b3ee405",
+    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#2bbcaf0d1e6483e8caec9662cf1002920433176f",
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {
