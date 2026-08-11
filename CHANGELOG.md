@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-11
+
 ### Changed
 
 - **A bracketed run is a span only when a real attribute block follows it** (markup-carve/carve#870). The rule looked ahead for a brace and nothing more, so `[a]{xlink:href=u}` colored as a span where every engine renders the whole line as literal text: an attribute name admits no colon, and a block that fails that rule is not an attribute block. The lookahead now requires the same block the attribute rule matches, including the empty `{}` form that is valid only when glued to a preceding `]`. Valid spans - `[a]{.c}`, `[a]{k=v.w}`, `[a]{disabled}` - are unchanged.
