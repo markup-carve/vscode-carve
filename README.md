@@ -86,7 +86,3 @@ To install the local VSIX after packaging:
 ```bash
 code --install-extension vscode-carve-0.1.0.vsix
 ```
-
-## License
-
-MIT
