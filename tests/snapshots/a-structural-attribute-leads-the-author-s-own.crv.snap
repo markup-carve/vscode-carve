@@ -1,0 +1,13 @@
+>{k=v .attr}
+#^ text.carve meta.attributes.carve
+# ^ text.carve meta.attributes.carve entity.other.attribute-name.carve
+#  ^ text.carve meta.attributes.carve
+#   ^ text.carve meta.attributes.carve string.unquoted.attribute.carve
+#    ^ text.carve meta.attributes.carve
+#     ^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#          ^ text.carve meta.attributes.carve
+>a. alpha
+#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.numbered.carve
+#   ^^^^^^ text.carve
+>

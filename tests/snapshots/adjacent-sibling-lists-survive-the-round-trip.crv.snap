@@ -1,0 +1,11 @@
+>1. a
+#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.numbered.carve
+#   ^^ text.carve
+>
+> 1. b
+#^ text.carve markup.list.numbered.carve
+# ^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.numbered.carve
+#    ^^ text.carve
+>
