@@ -391,7 +391,7 @@
             {
               "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
               "name": "meta.link.reference.definition.carve",
-              "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+              "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
               "captures": {
                 "1": {
                   "name": "constant.other.reference.link.carve"
@@ -477,7 +477,7 @@
         },
         {
           "comment": "The attribute-glued bullet (`-{#x} item`). Its content column cannot be counted, because the block's width is not whitespace, so this branch uses the MINIMUM content column, indent plus two: the container stays open across a range an exact test would have closed, which is the over-coloring side every block rule in this grammar already takes. A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first. A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space comes after the block, not after the marker - so `-{#x} item` and `*{.c} item` went uncoloured on a line that IS a list item, while the ordered rule beside it already had the branch (markup-carve/carve-grammars#126). It is a LOOKAHEAD: consuming the block would make this rule own those characters, so the attribute rule could no longer scope them. KNOWN LIMITATION, shared with every Carve TextMate grammar: the checkbox after a glued block (`-{.c} [x] done`) is not scoped, because the task branch has none; the bullet is. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
-          "begin": "^([ \\t]*)([-*])(?=\\{\\s*(?:(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^([ \\t]*)([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
           "beginCaptures": {
             "0": {
               "name": "markup.list.unnumbered.carve"
@@ -585,7 +585,7 @@
         },
         {
           "comment": "The attribute-glued ordered marker (`1.{#x} item`, `.{#x} item`), on the minimum content column for the same reason the glued bullet branch is: a block width is not whitespace and cannot be counted. Ordered markers use a trailing `.` or `)` only. A parenthesized `(1)` / `(a)` form is NOT a marker in Carve (it is too easily confused with prose), so no leading `(`. The BARE DOT is a marker on its own (carve#472): `.` continues an ordered sequence, and is the only marker allowed to drop its value. The lookahead admits a marker glued to an attribute block (`.{#x}`, `3.{#k v}`), which is how the corpus writes it - but the ATTRIBUTE FORM NEEDS CONTENT TOO: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it. A `\\{[^}]*\\}` run stops in the wrong place, because a quoted value may contain `}` and may escape its own quote, and `{title=\"a}b\"} x` is a valid item (markup-carve/carve-grammars#85). A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text` and `Mix. text` as lists where carve-js renders paragraphs (markup-carve/carve-grammars#118). `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split rather than rejecting multi-letter words. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does (markup-carve/carve-grammars#126).",
-          "begin": "^([ \\t]*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?=\\{\\s*(?:(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^([ \\t]*)([0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
           "beginCaptures": {
             "0": {
               "name": "markup.list.numbered.carve"
@@ -627,7 +627,7 @@
       "patterns": [
         {
           "comment": "A FOOTNOTE definition has a BODY, and that body's content column is a FIXED two whatever the label is wide, so it is the one definition shape that opens a container: `[^a]: note` over `  [r]: /u` collects the second definition (corpus a-definition-on-a-footnote-body-s-continuation-line-is-collected), one column in leaves it the document's own text, and three or more is the body's own text. Narrowing the definition rule below to flush-left without this would have dropped the scope from that shape entirely. A LINK reference definition gets no container, deliberately: it has no body at all, so an indented definition under one is a paragraph, not a second definition (measured against carve-php and carve-js - `[r]: /u` over `  [s]: /v` renders the second line as prose). `begin` consumes exactly what the definition rule below consumes and carries the same captures, so a footnote definition line tokenizes as it always did. Capture 0 carries the old rule-level `name`, which a begin/end rule cannot carry itself - a rule-level name spans the whole REGION, so the body lines would be scoped as definition too. A capture-0 name does NOT reach a sibling capture that re-tokenizes with its own patterns (vscode-textmate builds that sub-tokenization from the RULE stack, not from the capture's local stack), so the attribute capture names the scope itself or a trailing `{...}` block silently loses its definition layer. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
-          "begin": "^(\\[\\^[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "begin": "^(\\[\\^[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "beginCaptures": {
             "0": {
               "name": "meta.link.reference.definition.carve"
@@ -657,7 +657,7 @@
         {
           "comment": "FLUSH-LEFT: an indented definition at document level is prose, not a definition (corpus indented-reference-and-footnote-definitions-stay-literal). Indented spellings are reached through `#definitions-in-container`, which only a container's body can see, so the column question is answered by the container that opened rather than by this line on its own. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
           "name": "meta.link.reference.definition.carve",
-          "match": "^(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "match": "^(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "captures": {
             "1": {
               "name": "constant.other.reference.link.carve"
@@ -745,7 +745,7 @@
         },
         {
           "name": "meta.span.inline.carve",
-          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{\\s*\\}|\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})",
+          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{\\s*\\}|\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})",
           "captures": {
             "1": {
               "name": "punctuation.definition.span.begin.carve"
@@ -929,10 +929,14 @@
         {
           "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons (`{k=v.w}`); a quoted value may contain an escaped quote (`{title=\"a\\\"b\"}`); a bare `{}` stays literal.",
           "name": "meta.attributes.carve",
-          "match": "\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}",
+          "match": "\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}",
           "captures": {
             "0": {
               "patterns": [
+                {
+                  "match": ":(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?",
+                  "name": "entity.other.attribute-name.language.carve"
+                },
                 {
                   "name": "entity.other.attribute-name.id.carve",
                   "match": "#[A-Za-z_][A-Za-z0-9_-]*"
@@ -1547,7 +1551,7 @@
       "patterns": [
         {
           "name": "meta.link.reference.definition.carve",
-          "match": "^[ \\t]*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "match": "^[ \\t]*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "captures": {
             "1": {
               "name": "constant.other.reference.link.carve"
