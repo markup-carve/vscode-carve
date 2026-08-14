@@ -117,7 +117,15 @@
     "two-dashes-are-not-a-thematic-break": "two-dashes-are-not-a-thematic-break.crv",
     "unquoted-attribute-values-may-contain-dots-and-colons": "unquoted-attribute-values-may-contain-dots-and-colons.crv",
     "a-frontmatter-opener-takes-exactly-one-space": "a-frontmatter-opener-takes-exactly-one-space-2.crv",
-    "code-fence-metadata-slots-must-be-a-space-too": "code-fence-metadata-slots-must-be-a-space-too-10.crv"
+    "code-fence-metadata-slots-must-be-a-space-too": "code-fence-metadata-slots-must-be-a-space-too-10.crv",
+    "a-fence-keeps-the-blank-line-at-the-end-of-its-content": "a-fence-keeps-the-blank-line-at-the-end-of-its-content.crv",
+    "a-malformed-language-tag-leaves-the-whole-block-literal": "a-malformed-language-tag-leaves-the-whole-block-literal.crv",
+    "a-marker-glued-to-a-name-opens-nothing": "a-marker-glued-to-a-name-opens-nothing.crv",
+    "a-math-span-s-base-class-keeps-the-class-slot-in-place": "a-math-span-s-base-class-keeps-the-class-slot-in-place.crv",
+    "a-semantic-name-renames-the-span-and-the-leftovers-ride-the-element": "a-semantic-name-renames-the-span-and-the-leftovers-ride-the-element.crv",
+    "the-language-sigil-takes-no-padding": "the-language-sigil-takes-no-padding.crv",
+    "the-semantic-registry-holds-no-element-carve-already-spells": "the-semantic-registry-holds-no-element-carve-already-spells.crv",
+    "two-attributes-need-a-separator-between-them": "two-attributes-need-a-separator-between-them.crv"
   },
   "skip": {
     "a-backslash-in-a-link-destination-is-a-literal-character": "How a backslash inside a destination is interpreted is link parsing; the link tokens are covered by 03 and the escape token by 60.",
@@ -292,6 +300,13 @@
     "the-flush-left-line-after-a-container-a-quoted-line-opened": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. The category changes block structure, resolution, whitespace ownership, or separator validity without adding a distinct highlighting scope; the coverage test re-checks this premise on every run.",
     "the-inline-attribute-interior-is-space-only-the-attribute-line-is-not": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. The category changes block structure, resolution, whitespace ownership, or separator validity without adding a distinct highlighting scope; the coverage test re-checks this premise on every run.",
     "trailing-whitespace-on-a-content-line-is-dropped": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. The category changes block structure, resolution, whitespace ownership, or separator validity without adding a distinct highlighting scope; the coverage test re-checks this premise on every run.",
-    "two-blank-lines-detach-a-caption": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. The category changes block structure, resolution, whitespace ownership, or separator validity without adding a distinct highlighting scope; the coverage test re-checks this premise on every run."
+    "two-blank-lines-detach-a-caption": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. The category changes block structure, resolution, whitespace ownership, or separator validity without adding a distinct highlighting scope; the coverage test re-checks this premise on every run.",
+    "a-boolean-and-a-key-value-of-the-same-name-are-one-attribute": "Which of `{a=1 a}`'s two spellings of the same name wins is attribute merging, decided after tokenizing: both items carry the scopes they would carry alone, whichever one the element keeps.",
+    "a-boolean-lang-is-the-third-spelling-of-the-same-key": "That `:fr`, a bare `lang` and `lang=` are one key is merging, not scoping - the items scope the same in either order. That `:fr` scopes as a language at all is asserted by `the-language-sigil-takes-no-padding` and `a-malformed-language-tag-leaves-the-whole-block-literal`.",
+    "a-language-attribute-and-lang-are-one-key": "The same merging question as the boolean spelling: the collision is resolved on the element, and neither item's tokens change with the outcome.",
+    "a-language-attribute-is-exact-sugar-for-lang": "The claim is about the HTML the two spellings produce, not about tokens; the language item's own scope is covered by `the-language-sigil-takes-no-padding`.",
+    "a-derived-title-yields-to-an-authored-one": "Precedence between a derived and an authored title is decided when the element is built. `abbr=` and `title=` are ordinary key-value items here and scope identically whichever one wins.",
+    "an-abbreviation-expands-inside-an-inline-container": "Expansion is a render step over an already-tokenized document; the definition token is covered by `abbreviations` and the span's own tokens by the span patterns.",
+    "an-angle-bracket-is-escaped-only-where-it-opens-markup": "Where a `<` is escaped is an output concern. Every character of `a < b and a <b> c and x > y` is plain text to this grammar, so a snapshot would assert only the default scope."
   }
 }
