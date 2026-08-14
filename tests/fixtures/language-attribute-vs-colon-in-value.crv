@@ -3,3 +3,5 @@
 [b]{url=https://example.com}
 
 [c]{:fr}
+
+[d]{key=:fr}
