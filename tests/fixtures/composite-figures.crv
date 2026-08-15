@@ -1,0 +1,53 @@
+%% Composite figures (PART 9 S4c). A BARE `::: figure` opener is one figure of
+%% ordered panels; the same opener carrying a title or a [label] is not.
+
+::: figure
+
+![One](one.png)
+^ Panel one.
+
+![Two](two.png)
+^ Panel two.
+
+:::
+^ The group caption, an ordinary caption line below the closing fence.
+
+%% A title makes it a generic container, not a group.
+
+::: figure "Titled"
+Generic container.
+:::
+
+%% A label does too.
+
+::: figure [g]
+Generic container.
+:::
+
+%% And both together.
+
+::: figure "Titled" [g]
+Generic container.
+:::
+
+%% The separator is a space run, never a tab: the line below is a paragraph in
+%% Carve, so the group scope must not claim it.
+
+:::	figure
+
+%% A longer fence opens a group just as three colons do.
+
+:::: figure
+Panels.
+::::
+
+%% A group may open directly after a list marker.
+
+- ::: figure
+
+%% Neither `figures` nor a trailing word is the reserved kind word.
+
+::: figures
+Generic container.
+:::
+

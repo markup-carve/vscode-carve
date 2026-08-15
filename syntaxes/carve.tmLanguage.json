@@ -208,8 +208,24 @@
     "divs": {
       "patterns": [
         {
+          "name": "markup.other.figure-group.carve",
+          "comment": "COMPOSITE FIGURE (PART 9 S4c, markup-carve/carve#1215; ported from markup-carve/carve-grammars#223, tracked by markup-carve/carve-grammars#222). The kind word `figure` is reserved among the `:::` types: a BARE opener - the fence, its separator, the word `figure`, and NOTHING else - is ONE figure of ordered panels, not an admonition, so it carries its own scope and this pattern sits BEFORE the generic div pattern below. THE WHOLE DISTINCTION IS THE TAIL of one line: an opener carrying a quoted title or a `[label]` (`::: figure \"T\"`, `::: figure [g]`) is not that production at all, does not match here, and falls through to the div pattern - which is the generic Tier-2 container the clause says it stays, with title and label preserved. THE SEPARATOR IS A SPACE RUN, NEVER A TAB (grammar.ebnf PART 7, MARKER SEPARATORS; corpus 254): `:::<TAB>figure` renders as a paragraph, so it is spelled ` +` rather than the `\\s*` the div pattern beside it uses - a tab-separated opener falls to that pattern and reads exactly as it does today, an over-colouring this rule neither widens nor fixes. Trailing whitespace after the kind word is insignificant and may be a tab. THE GROUP CAPTION NEEDS NO RULE: it is an ordinary `^ ` line one line below the closing fence, which the caption pattern under `#tables` already claims at document level and inside every container body. The optional bullet prefix is carried over from the div pattern, because a group may open directly after a list marker (`- ::: figure`) just as an admonition may. RESIDUAL, written down rather than left to be rediscovered: GROUPS DO NOT NEST - a bare `::: figure` at any depth inside an open group is a generic container - but a `:::` opener here is a per-line `match` with no region, so this grammar has no notion of being inside one and over-colours the inner opener as a group too. carve-grammars carries that rule through a begin/end pair; restructuring the div pattern into begin/end is what it would take here as well, and is deliberately not part of this change.",
+          "match": "^[ \\t]*(?:([-*])[ \\t]+)?(:::+) +(figure)[ \\t]*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.list.begin.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.figure-group.carve"
+            },
+            "3": {
+              "name": "entity.name.type.figure-group.carve"
+            }
+          }
+        },
+        {
           "name": "markup.other.div.carve",
-          "comment": "A div fence may open directly after a list marker (`- ::: note`), so an optional bullet prefix is consumed here and scoped as a list marker.",
+          "comment": "A div fence may open directly after a list marker (`- ::: note`), so an optional bullet prefix is consumed here and scoped as a list marker. A BARE `::: figure` opener never reaches this pattern: it is a composite figure, not a generic container, and the pattern above claims it first (PART 9 S4c). An opener carrying a title or a `[label]` does reach it, which is the point of the split.",
           "match": "^\\s*(?:([-*])[ \\t]+)?(:::+)\\s*([^\\s{\\[\"]+)?\\s*(?:(\"[^\"]*\")\\s*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])\\s*(\"[^\"]*\")?)?",
           "captures": {
             "1": {

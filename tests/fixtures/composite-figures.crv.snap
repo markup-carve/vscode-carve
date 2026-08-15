@@ -1,0 +1,128 @@
+>%% Composite figures (PART 9 S4c). A BARE `::: figure` opener is one figure of
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>%% ordered panels; the same opener carrying a title or a [label] is not.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>::: figure
+#^^^ text.carve markup.other.figure-group.carve punctuation.definition.figure-group.carve
+#   ^ text.carve markup.other.figure-group.carve
+#    ^^^^^^ text.carve markup.other.figure-group.carve entity.name.type.figure-group.carve
+>
+>![One](one.png)
+#^^ text.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^^^ text.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve meta.image.inline.carve
+#       ^^^^^^^ text.carve meta.image.inline.carve markup.underline.link.image.carve
+#              ^ text.carve meta.image.inline.carve
+>^ Panel one.
+#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ text.carve markup.table.caption.carve
+#  ^^^^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>![Two](two.png)
+#^^ text.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^^^ text.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve meta.image.inline.carve
+#       ^^^^^^^ text.carve meta.image.inline.carve markup.underline.link.image.carve
+#              ^ text.carve meta.image.inline.carve
+>^ Panel two.
+#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ text.carve markup.table.caption.carve
+#  ^^^^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>^ The group caption, an ordinary caption line below the closing fence.
+#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ text.carve markup.table.caption.carve
+#  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>%% A title makes it a generic container, not a group.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>::: figure "Titled"
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+#          ^ text.carve markup.other.div.carve
+#           ^^^^^^^^ text.carve markup.other.div.carve string.quoted.double.carve
+>Generic container.
+#^^^^^^^^^^^^^^^^^^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>%% A label does too.
+#^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>::: figure [g]
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+#          ^ text.carve markup.other.div.carve
+#           ^^^ text.carve markup.other.div.carve entity.name.label.carve
+>Generic container.
+#^^^^^^^^^^^^^^^^^^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>%% And both together.
+#^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>::: figure "Titled" [g]
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+#          ^ text.carve markup.other.div.carve
+#           ^^^^^^^^ text.carve markup.other.div.carve string.quoted.double.carve
+#                   ^ text.carve markup.other.div.carve
+#                    ^^^ text.carve markup.other.div.carve entity.name.label.carve
+>Generic container.
+#^^^^^^^^^^^^^^^^^^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>%% The separator is a space run, never a tab: the line below is a paragraph in
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>%% Carve, so the group scope must not claim it.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>:::	figure
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>
+>%% A longer fence opens a group just as three colons do.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>:::: figure
+#^^^^ text.carve markup.other.figure-group.carve punctuation.definition.figure-group.carve
+#    ^ text.carve markup.other.figure-group.carve
+#     ^^^^^^ text.carve markup.other.figure-group.carve entity.name.type.figure-group.carve
+>Panels.
+#^^^^^^^^ text.carve
+>::::
+#^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>%% A group may open directly after a list marker.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>- ::: figure
+#^ text.carve markup.other.figure-group.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.other.figure-group.carve
+#  ^^^ text.carve markup.other.figure-group.carve punctuation.definition.figure-group.carve
+#     ^ text.carve markup.other.figure-group.carve
+#      ^^^^^^ text.carve markup.other.figure-group.carve entity.name.type.figure-group.carve
+>
+>%% Neither `figures` nor a trailing word is the reserved kind word.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+>
+>::: figures
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>Generic container.
+#^^^^^^^^^^^^^^^^^^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>
