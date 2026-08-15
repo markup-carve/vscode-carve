@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **A bare `::: figure` opener is a composite figure, not an admonition** (markup-carve/carve#1215, ported from markup-carve/carve-grammars#223). PART 9 §4c reserves the kind word `figure` among the `:::` types: the fence, its separator, the word, and nothing else is one figure of ordered panels. The same opener carrying a quoted title or a `[label]` is not that production at all and stays the generic container it has always been, with both preserved. Before this the two coloured identically, so the editor could not show which reading a line had - and the whole distinction sits in the tail of one line.
+
+  The opener now carries `markup.other.figure-group.carve`, with `punctuation.definition.figure-group.carve` on the fence and `entity.name.type.figure-group.carve` on the kind word, so a theme can tell the two apart. The separator is a space run and never a tab (`:::<TAB>figure` renders as a paragraph), which is narrower than the generic div rule beside it; a tab-separated opener falls through to that rule and reads exactly as it did.
+
+  The group caption needed no rule: it is an ordinary `^ ` line below the closing fence, which the caption pattern already claims at document level and inside every container body. Known limitation, shared with the flat `:::` rule it sits beside: groups do not nest, but a per-line `match` has no notion of being inside one, so a bare `::: figure` inside an open group still colours as a group. Eight opener spellings and the caption lines around them are pinned in `tests/fixtures/composite-figures.crv`, both outcomes.
+
 ## [0.1.1] - 2026-08-11
 
 ### Changed
