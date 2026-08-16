@@ -803,9 +803,9 @@
     "footnotes": {
       "patterns": [
         {
-          "comment": "Inline footnote `^[content]` (core Carve). Its content is inline-parsed (spec `inline_footnote = '^[', inline_content, ']'`), so nested emphasis and code still tokenize. The `(?=$)` alternative in `end` bounds the span to one line so an unclosed `^[` cannot leak into following paragraphs.",
+          "comment": "Inline footnote `^[content]` (core Carve). Its content is inline-parsed (spec `inline_footnote = '^[', inline_content, ']'`), so nested emphasis and code still tokenize. The `(?=$)` alternative in `end` bounds the span to one line so an unclosed `^[` cannot leak into following paragraphs. The `(?![ \\t]*\\])` guard keeps the opener from firing on an EMPTY note: `inline_content` is not optional, so `x ^[]` and `x ^[ ]` are literal text and `x ^[]{.c}` is a literal caret followed by a SPAN, yet all three used to highlight as a footnote (corpus an-empty-inline-note-is-literal).",
           "name": "meta.footnote.inline.carve",
-          "begin": "(?<!\\\\)(\\^\\[)",
+          "begin": "(?<!\\\\)(\\^\\[)(?![ \\t]*\\])",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.footnote.carve"
@@ -975,9 +975,9 @@
                   "match": "'(?:[^'\\\\]|\\\\.)*'"
                 },
                 {
-                  "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class.",
+                  "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class. The lookbehind carries the KEY as well as the `=`, because a sub-pattern's lookbehind reads the whole line and not just the captured attribute block: a bare `(?<==)` also fired on an `=` sitting immediately BEFORE the opening brace, so a table cell whose attributes follow the header-kind marker (`|={.total}`) matched `{.total` as one unquoted value and lost the class scope. `|{.total}`, `|>{.num}` and `|=<{.h}` all scoped correctly, which is why it read as a table defect rather than an attribute one. A key always ends in an identifier character, so requiring one cannot exclude a real `key=value`.",
                   "name": "string.unquoted.attribute.carve",
-                  "match": "(?<==)[^\\s\"'}]+"
+                  "match": "(?<=[A-Za-z0-9_-]=)[^\\s\"'}]+"
                 }
               ]
             }
