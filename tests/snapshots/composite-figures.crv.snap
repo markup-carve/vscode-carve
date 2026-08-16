@@ -1,0 +1,46 @@
+>{#fig-x .columns-2}
+#^ text.carve meta.attributes.carve
+# ^^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#       ^ text.carve meta.attributes.carve
+#        ^^^^^^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                  ^ text.carve meta.attributes.carve
+>::: figure
+#^^^ text.carve markup.other.figure-group.carve punctuation.definition.figure-group.carve
+#   ^ text.carve markup.other.figure-group.carve
+#    ^^^^^^ text.carve markup.other.figure-group.carve entity.name.type.figure-group.carve
+>{#fig-x-a}
+#^ text.carve meta.attributes.carve
+# ^^^^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#         ^ text.carve meta.attributes.carve
+>![one](a.png)
+#^^ text.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^^^ text.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve meta.image.inline.carve
+#       ^^^^^ text.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ text.carve meta.image.inline.carve
+>^ (a) One
+#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ text.carve markup.table.caption.carve
+#  ^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>{#fig-x-b}
+#^ text.carve meta.attributes.carve
+# ^^^^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#         ^ text.carve meta.attributes.carve
+>![two](b.png)
+#^^ text.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^^^ text.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve meta.image.inline.carve
+#       ^^^^^ text.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ text.carve meta.image.inline.carve
+>^ (b) Two
+#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ text.carve markup.table.caption.carve
+#  ^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>^ Figure #: Group caption
+#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ text.carve markup.table.caption.carve
+#  ^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>
