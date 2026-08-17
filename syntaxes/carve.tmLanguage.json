@@ -1473,9 +1473,22 @@
       "match": "^\\s*(?:-{3,}|\\*{3,}|_{3,})\\s*$",
       "name": "meta.separator.thematic-break.carve"
     },
-    "container-body": {
-      "comment": "The pattern set a container's body reaches, shared by every rule that opens one so they cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only, with `#definitions-in-container` standing in for `#definitions`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the container's content column.",
+    "comment-fence-on-marker-line": {
       "patterns": [
+        {
+          "comment": "A COMMENT FENCE MAY OPEN ON A LIST ITEM'S MARKER LINE (`- %%%`), and then its body is hidden exactly as it is anywhere else: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits, so the whole run from opener to closer is one comment and nothing after it is affected (corpus 337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too, markup-carve/vscode-carve#113). The `#comments` fence cannot reach that shape: its begin is anchored on ^, and the container's own begin match has already consumed `- ` by the time this line is scanned. The result was INVERTED highlighting - the `%%%` fell through to the trailing-comment rule and scoped as a LINE comment so no block opened, the hidden `[r]: /url` came back as a live meta.link.reference.definition.carve, and the REAL closer was then taken for an opener and swallowed the paragraph below. tree-sitter-carve is the reference here (all three carve-grammars highlighters were wrong, each differently): it puts a fenced_comment_block INSIDE list_item_content, beside the list_marker_* rather than over it, with the body as a single opaque content node. Anchored on \\G rather than ^ for the reason markup-carve/vscode-carve#67 gives for the in-quote reference definition - \\G matches at the current scan position, which on a marker line is exactly where the marker ended, and which vscode-textmate resets on every following line so this can never open one. The `(?<=[ \\t])` guard is what keeps it to a marker line specifically: a later match on the same line moves the \\G anchor too, and a `%%%` run glued to the end of one (`- /a/%%%`) is not a fence. The end has TWO branches. The first is the ordinary closer, INDENTED because the closer sits at the item's content column. The second is a zero-width container boundary: a column-0 line ends the item and with it the open fence, so corpus 326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-6 (`- %%%` / `c` / `%%%` / `tail`) keeps `c` and `tail` VISIBLE with the unclosed opener degrading to a line comment. Without it an unclosed opener would run to end of document, which is the failure this rule exists to remove.",
+          "name": "comment.block.carve",
+          "begin": "\\G(?<=[ \\t])(%{3,})(?!%)[^\\n]*$",
+          "end": "^[ \\t]+\\1(?!%)[^\\n]*$|^(?=[^ \\t\\n])"
+        }
+      ]
+    },
+    "container-body": {
+      "comment": "The pattern set a container's body reaches, shared by every rule that opens one so they cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only, with `#definitions-in-container` standing in for `#definitions`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the container's content column. `#comment-fence-on-marker-line` leads, and is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
+      "patterns": [
+        {
+          "include": "#comment-fence-on-marker-line"
+        },
         {
           "include": "#comments"
         },
