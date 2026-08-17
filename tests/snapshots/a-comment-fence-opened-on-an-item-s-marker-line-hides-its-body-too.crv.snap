@@ -1,0 +1,15 @@
+>- %%%
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^ text.carve comment.line.percent.carve
+>  [r]: /url
+#^^ text.carve meta.link.reference.definition.carve
+#  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#      ^ text.carve meta.link.reference.definition.carve
+#       ^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>  %%%
+#^^^^^ text.carve comment.block.carve
+>
+>[r][]
+#^^^^^^ text.carve comment.block.carve
+>
