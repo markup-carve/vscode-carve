@@ -405,6 +405,9 @@
           "end": "$",
           "patterns": [
             {
+              "include": "#comment-fence-on-quote-marker-line"
+            },
+            {
               "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
               "name": "meta.link.reference.definition.carve",
               "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
@@ -1472,6 +1475,16 @@
     "thematic-break": {
       "match": "^\\s*(?:-{3,}|\\*{3,}|_{3,})\\s*$",
       "name": "meta.separator.thematic-break.carve"
+    },
+    "comment-fence-on-quote-marker-line": {
+      "patterns": [
+        {
+          "comment": "A COMMENT FENCE MAY OPEN ON A BLOCK-QUOTE MARKER LINE (`> %%%`) too, and the same rule hides its body: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits (corpus 70-blocks-that-render-to-nothing - `> q` / `> %%%` / `> x` / `> %%%` / `> body` renders the quote with `q` and `body` only, markup-carve/vscode-carve#115). tree-sitter-carve is the reference: it puts a fenced_comment_block INSIDE the quote's content, beside the block_quote_marker rather than over it, with the body as a single opaque content node. This grammar INVERTED it - the `%%%` fell through to #trailing-comment and scoped as a LINE comment so no block opened, and the hidden `[r]: /url` came back as a live meta.link.reference.definition.carve on the line below, which is the same failure #113 fixed one marker over. Reached from #block-quotes rather than from #container-body, and NOT by including #comment-fence-on-marker-line: the begin is identical but the end cannot be shared. That rule's closer is INDENTED (`^[ \\\\t]+`) and its boundary is a column-0 line, and inside a quote both are backwards - the closer carries a `>` marker at column 0 and a column-0 `>` line is the CONTINUATION, not the boundary. Included as-is it closes zero-width on the very next line and hides only the opener. Anchored on \\\\G for the reason markup-carve/vscode-carve#67 gives for the in-quote reference definition beside it: the quote's own begin has already consumed `> `, so ^ can never match again on that line, and vscode-textmate resets \\\\G on every following line so this can never open one. The `(?<=[ \\\\t])` guard keeps it to the marker line - a later match on the same line moves the anchor too, and a percent run glued to the end of one (`> /a/%%%`) is not a fence. Capture 1 is the run of FURTHER markers, so a fence opened at `> > ` is closed at `> > ` and not at `> `; capture 2 is the fence, repeated in the closer so the width matches exactly and `%%%%` does not close `%%%`. The end's second branch is a zero-width quote boundary: an UNMARKED line is where the quote can end, and the engine degrades an unclosed opener to a line comment rather than hiding anything (`> %%%` / `> c` / blank line leaves `c` VISIBLE). Without it an unclosed opener would run to end of document.",
+          "name": "comment.block.carve",
+          "begin": "\\G(?<=[ \\t])((?:> )*)(%{3,})(?!%)[^\\n]*$",
+          "end": "^[ \\t]*> \\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)"
+        }
+      ]
     },
     "comment-fence-on-marker-line": {
       "patterns": [
