@@ -155,3 +155,110 @@ test('a percent run glued to inline content is not a marker-line fence', () => {
     assert.ok(!isComment(t), `nothing here is a comment, got ${t.scopes.join(' ')}`)
   }
 })
+
+/*
+ * THE SAME RULE AT A BLOCK-QUOTE MARKER (markup-carve/vscode-carve#115).
+ *
+ * `> %%%` opens a fence for the same reason `- %%%` does - section 24 S2 with
+ * section 28 hide a comment's body WHEREVER the fence sits - and this grammar
+ * inverted it the same way, scoping the `%%%` as a trailing LINE comment so no
+ * block opened and letting the hidden `[r]: /url` come back live. Corpus 70
+ * pins the spelling:
+ *
+ *     > q
+ *     > %%%
+ *     > x
+ *     > %%%
+ *     > body
+ *
+ * renders `<blockquote><p>q</p><p>body</p></blockquote>`.
+ *
+ * MILDER than the list case in one respect - nothing swallowed the rest of the
+ * document - and the shapes below still assert BOTH directions, because the
+ * hidden-body half and the closes-at-its-closer half fail independently.
+ *
+ * Each shape is measured against the pinned engine, not inferred: an unclosed
+ * `> %%%` degrades to a line comment and leaves its body visible, a closer
+ * repeats the opener's fence width exactly, and a marker run deeper than the
+ * opener's does not close it.
+ */
+const QUOTE_SHAPES = [
+  ['a quote marker', '> %%%\n> [r]: /url\n> %%%\n\n[r][]\n'],
+  ['a nested quote marker', '> > %%%\n> > [r]: /url\n> > %%%\n\n[r][]\n'],
+  ['a wider quote fence', '> %%%%\n> [r]: /url\n> %%%%\n\n[r][]\n'],
+  ['an insignificant tail on a quote fence', '> %%% TODO\n> [r]: /url\n> %%% end\n\n[r][]\n'],
+  ['a marked blank line in the body', '> %%%\n> [r]: /url\n>\n> x\n> %%%\n\n[r][]\n'],
+  ['a quote inside a list item', '- a\n  > %%%\n  > [r]: /url\n  > %%%\n\n[r][]\n'],
+  // The closer matches the opener's width EXACTLY here too: the `> %%%%` in the
+  // middle does not close this fence, so the definition BELOW it is still
+  // hidden and only the real `> %%%` ends the run. Drop the width backreference
+  // and the fence closes early, which shows up as the hidden definition scoping
+  // live - a direction a swallow check cannot see.
+  ['a wider run inside the fence', '> %%%\n> a\n> %%%%\n> [r]: /url\n> %%%\n\n[r][]\n'],
+]
+
+for (const [label, src] of QUOTE_SHAPES) {
+  test(`a fence opened on ${label} hides its body`, () => {
+    const hidden = tokenize(src).filter((t) => t.line.includes('[r]: /url'))
+    assert.ok(hidden.length > 0, 'the fence body was not tokenized at all')
+    for (const t of hidden) {
+      assert.ok(
+        isComment(t),
+        `the hidden definition must be inside a comment, got ${JSON.stringify(t.text)}` +
+          ` as ${t.scopes.join(' ')}`,
+      )
+    }
+  })
+
+  test(`a fence opened on ${label} closes at its closer`, () => {
+    const after = tokenize(src).filter((t) => t.line === '[r][]')
+    assert.ok(after.length > 0, 'the paragraph after the fence was not tokenized at all')
+    for (const t of after) {
+      assert.ok(
+        !isComment(t),
+        `the comment must end at its closer, but ${JSON.stringify(t.text)} carries` +
+          ` ${t.scopes.join(' ')}`,
+      )
+    }
+  })
+
+  test(`a fence opened on ${label} leaves the marker to the quote rule`, () => {
+    // tree-sitter-carve keeps the marker OUTSIDE the comment - the
+    // fenced_comment_block sits inside the quote's content, beside the
+    // block_quote_marker. The fence is anchored on \G after the quote's own
+    // begin match rather than over it, so the marker keeps its quote scope.
+    const marked = tokenize(src).some((t) => t.scopes.some((s) => s.includes('markup.quote')))
+    assert.ok(marked, 'the quote marker lost its quote scope')
+  })
+}
+
+test('the quote continues after the fence closes', () => {
+  // Corpus 70's own shape: the fence opens BELOW quote content and the quote
+  // goes on after the closer, so this is a check on the closer where the shapes
+  // above check the opener.
+  const tokens = tokenize('> q\n> %%%\n> [r]: /url\n> %%%\n> after\n')
+  for (const t of tokens.filter((x) => x.line === '> after')) {
+    assert.ok(!isComment(t), `the comment must end at its closer, got ${t.scopes.join(' ')}`)
+  }
+})
+
+test('an unmarked line ends the quote, so an unclosed fence stops there', () => {
+  // `> %%%` with no closer degrades to a line comment and leaves its body
+  // visible; a TextMate begin sees one line, so this grammar cannot demand the
+  // closer up front and still hides the rest of the QUOTE. What it must never
+  // do is carry past the quote boundary into the document below.
+  const tokens = tokenize('> %%%\n> [r]: /url\n\nvisibleline\n')
+  for (const t of tokens.filter((x) => x.line === 'visibleline')) {
+    assert.ok(!isComment(t), `an unmarked line is past the quote: ${t.scopes.join(' ')}`)
+  }
+})
+
+test('a percent run glued to inline content is not a quote-marker fence', () => {
+  // The \G anchor moves with every match on the line - here the emphasis run
+  // `/a/` moves it right up to the `%%%` - so the fence also asks to be
+  // preceded by whitespace. `> /a/%%% x` renders the percent run literally.
+  const tokens = tokenize('> /a/%%% x\n> b\n\nafter\n')
+  for (const t of tokens.filter((x) => x.line === '> b' || x.line === 'after')) {
+    assert.ok(!isComment(t), `nothing here is a comment, got ${t.scopes.join(' ')}`)
+  }
+})
