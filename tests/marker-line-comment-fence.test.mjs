@@ -207,6 +207,22 @@ for (const [label, src, sibling] of NESTED_SHAPES) {
   })
 }
 
+test('a blank line does not end a fence opened on a marker line', () => {
+  // The other direction of the container boundary. An item spans blank lines
+  // and so does a fence inside it: carve-js renders `- %%%` over a blank line
+  // over `  hidden` over `  %%%` as `<ul><li></li></ul>`. A boundary that fires
+  // on the blank line brings `hidden` back visible AND turns the real closer
+  // into an opener that swallows the paragraph below - the same inversion
+  // markup-carve/vscode-carve#113 removed.
+  const tokens = tokenize('- %%%\n\n  hidden\n  %%%\n\nafter\n')
+  for (const t of tokens.filter((x) => x.line === '  hidden')) {
+    assert.ok(isComment(t), `a blank line ended the fence early: ${t.scopes.join(' ')}`)
+  }
+  for (const t of tokens.filter((x) => x.line === 'after')) {
+    assert.ok(!isComment(t), `the closer was read as an opener: ${t.scopes.join(' ')}`)
+  }
+})
+
 test('a percent run glued to inline content is not a marker-line fence', () => {
   // The \G anchor moves with every match on the line, so the fence also asks to
   // be preceded by whitespace. Without that, `- /a/%%%` opened a fence at the

@@ -410,3 +410,51 @@ test('two dashes on a marker line are not a break', () => {
     assert.ok(!has(t, 'meta.separator.thematic-break'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
   }
 })
+
+/*
+ * THE CONTAINER BOUNDARY ON THE TWO REGION RULES.
+ *
+ * A code fence and a comment fence are the only two rules in this family that
+ * open a region outliving their own line, and vscode-textmate does not test an
+ * enclosing container's `end` while a child region is open. So each of them has
+ * to bound itself, and each gets it wrong in a different direction if the
+ * boundary is written carelessly:
+ *
+ *   - too tight (column 0 only) and an opener on a NESTED marker line swallows
+ *     its sibling, which is markup-carve/vscode-carve#127 for the comment fence
+ *     and was the same defect one rule over for the code fence;
+ *   - too loose (any line at or before the opener's indent) and a BLANK line
+ *     inside the fence ends it, which un-hides a hidden body and turns the real
+ *     closer into an opener.
+ *
+ * Both directions, on both rules.
+ */
+test('a fence on a nested marker line does not swallow its sibling', () => {
+  const tokens = tokenize('- outer\n  - ```\n    code\n  - sibling\n\nafter\n')
+  for (const t of tokens.filter((x) => x.line === '  - sibling')) {
+    assert.ok(!isRaw(t), `the sibling is inside the raw block: ${t.scopes.join(' ')}`)
+  }
+  assert.ok(
+    tokens.filter((x) => x.line === '  - sibling').some((t) => has(t, 'markup.list')),
+    'the sibling lost its list scope',
+  )
+})
+
+test('a fence on a nested marker line still hides a body past its own indent', () => {
+  for (const t of tokenize('- outer\n  - ```\n    code\n  - sibling\n').filter((x) => x.line === '    code')) {
+    assert.ok(isRaw(t), `the body must stay raw, got ${t.scopes.join(' ')}`)
+  }
+})
+
+test('a blank line does not end a fence opened on a marker line', () => {
+  // An item spans blank lines and so does a fence inside it.
+  for (const t of tokenize('- ```\n\n  c\n  ```\n\nafter\n').filter((x) => x.line === '  c')) {
+    assert.ok(isRaw(t), `a blank line ended the fence early: ${t.scopes.join(' ')}`)
+  }
+})
+
+test("a blank line does not end a fence opened at an item's body column", () => {
+  for (const t of tokenize('- x\n  ```\n\n  c\n  ```\n\nafter\n').filter((x) => x.line === '  c')) {
+    assert.ok(isRaw(t), `a blank line ended the fence early: ${t.scopes.join(' ')}`)
+  }
+})
