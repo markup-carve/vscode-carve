@@ -1,0 +1,13 @@
+one\
+two
+
+::: |
+a \
+b
+:::
+
+::: |
+a\
+:::
+
+a \* not a hard break \* b

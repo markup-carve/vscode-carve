@@ -1,0 +1,35 @@
+>one\
+#^^^ text.carve
+#   ^ text.carve constant.character.escape.hard-break.carve
+>two
+#^^^^ text.carve
+>
+>::: |
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^ text.carve markup.other.div.carve entity.name.type.div.carve
+>a \
+#^^ text.carve
+#  ^ text.carve constant.character.escape.hard-break.carve
+>b
+#^^ text.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: |
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^ text.carve markup.other.div.carve entity.name.type.div.carve
+>a\
+#^ text.carve
+# ^ text.carve constant.character.escape.hard-break.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>a \* not a hard break \* b
+#^^ text.carve
+#  ^^ text.carve constant.character.escape.carve
+#    ^^^^^^^^^^^^^^^^^^ text.carve
+#                      ^^ text.carve constant.character.escape.carve
+#                        ^^^ text.carve
+>

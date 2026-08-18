@@ -89,6 +89,9 @@
     },
     {
       "include": "#smart-typography"
+    },
+    {
+      "include": "#hard-break"
     }
   ],
   "repository": {
@@ -1585,6 +1588,9 @@
         },
         {
           "include": "#smart-typography"
+        },
+        {
+          "include": "#hard-break"
         }
       ]
     },
@@ -1611,6 +1617,15 @@
           }
         }
       ]
+    },
+    "hard-break": {
+      "comment": "A trailing backslash is a HARD BREAK, and it survives into the rendered line - the line block cases keep it (corpus a-line-block-s-hard-break-keeps-its-backslash and a-line-block-s-last-body-line-keeps-its-backslash). carve-grammars and the intellij-carve bundle have both scoped it as constant.character.escape.hard-break.carve since before this port; this grammar had no rule for it at all, so the backslash tokenized as ordinary text. Same match and same scope as those two on purpose: a third spelling of one production is how the three grammars drift.",
+      "match": "(\\\\)$",
+      "captures": {
+        "1": {
+          "name": "constant.character.escape.hard-break.carve"
+        }
+      }
     }
   }
 }
