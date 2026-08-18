@@ -133,6 +133,12 @@
     "unquoted-attribute-values-may-contain-dots-and-colons": "unquoted-attribute-values-may-contain-dots-and-colons.crv"
   },
   "skip": {
+    "a-heading-at-an-item-s-content-column-leaves-no-paragraph-open": "Measured against the bundled TextMate grammar: this changes container ownership without introducing a new highlighting scope; the heading and list scopes are already pinned.",
+    "a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one": "Measured against the bundled TextMate grammar: quote reach and definition registration are parser decisions; the quote, list, and reference-definition scopes are already pinned.",
+    "a-raw-block-keeps-the-blank-line-at-the-end-of-its-payload-too": "Measured against the bundled TextMate grammar: trailing payload ownership does not add a distinct scope; raw-block delimiters and content are already pinned.",
+    "a-table-alignment-run-carries-two-independent-axes": "Measured against the bundled TextMate grammar: the alignment sigils use the existing table-cell scopes, so this category adds semantics but no new highlighting scope.",
+    "an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open": "Measured against the bundled TextMate grammar: closer lookahead and paragraph ownership are parser behavior; the fence and list tokens are already pinned.",
+    "table-columns-carry-alignment-vertical-alignment-and-widths": "Measured against the bundled TextMate grammar: positional table metadata uses existing attribute and table scopes, all already pinned by covered fixtures.",
     "a-backslash-in-a-link-destination-is-a-literal-character": "How a backslash inside a destination is interpreted is link parsing; the link tokens are covered by 03 and the escape token by 60.",
     "a-bare-attribute-block-on-its-own-line-is-literal": "Negative case: '{}' stays literal. The attribute-block pattern requires at least one character, so there is no token to assert; block attribute lines are covered by 84.",
     "a-below-column-marker-after-a-comment-where-no-paragraph-is-open": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. The category changes block structure, resolution, whitespace ownership, or separator validity without adding a distinct highlighting scope; the coverage test re-checks this premise on every run.",
