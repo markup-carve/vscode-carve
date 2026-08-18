@@ -411,6 +411,43 @@ test('two dashes on a marker line are not a break', () => {
   }
 })
 
+test('an indented table row at document level stays paragraph text', () => {
+  const tokens = tokenize('para\n\n  | a |\n')
+  for (const t of tokens.filter((x) => x.line === '  | a |')) {
+    assert.ok(!has(t, 'markup.table'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+  }
+})
+
+test('an indented thematic break at document level stays paragraph text', () => {
+  const tokens = tokenize('para\n\n ***\n')
+  for (const t of tokens.filter((x) => x.line === ' ***')) {
+    assert.ok(!has(t, 'meta.separator.thematic-break'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+  }
+})
+
+test('an indented table row and continuation inside an item keep table scopes', () => {
+  const tokens = tokenize('- item\n\n  | a |\n  + b |\n')
+  assert.ok(tokens.some((t) => t.line === '  | a |' && has(t, 'markup.table.row')))
+  assert.ok(tokens.some((t) => t.line === '  + b |' && has(t, 'markup.table.continuation')))
+})
+
+test('a table row inside a block quote gets table scopes', () => {
+  const tokens = tokenize('> | a |\n')
+  assert.ok(tokens.some((t) => t.text.includes('|') && has(t, 'markup.table.row')))
+  assert.ok(tokens.some((t) => t.text === '|' && has(t, 'punctuation.separator.table')))
+})
+
+test('a fenced code block inside a block quote is opaque and closes', () => {
+  const tokens = tokenize('> ```\n> *not emphasis*\n> ```\n\nafter\n')
+  const body = tokens.filter((t) => t.line === '> *not emphasis*')
+  assert.ok(body.length > 0)
+  assert.ok(body.every((t) => has(t, 'markup.raw.block.fenced.code')))
+  assert.ok(body.every((t) => !has(t, 'markup.italic')))
+  const after = tokens.filter((t) => t.line === 'after')
+  assert.ok(after.length > 0)
+  assert.ok(after.every((t) => !has(t, 'markup.raw.block.fenced.code')))
+})
+
 /*
  * THE CONTAINER BOUNDARY ON THE TWO REGION RULES.
  *

@@ -224,9 +224,9 @@ test('a blank line does not end a fence opened on a marker line', () => {
 })
 
 test('a percent run glued to inline content is not a marker-line fence', () => {
-  // The \G anchor moves with every match on the line, so the fence also asks to
-  // be preceded by whitespace. Without that, `- /a/%%%` opened a fence at the
-  // end of an emphasis run and hid the rest of the item.
+  // This pins the \G anchor, not its whitespace lookbehind. vscode-textmate
+  // moves \G only when it pushes a begin/end rule; the inline emphasis match
+  // cannot move the anchor to the glued percent run.
   const tokens = tokenize('- /a/%%% x\n  b\n\nafter\n')
   for (const t of tokens.filter((x) => x.line === '  b' || x.line === 'after')) {
     assert.ok(!isComment(t), `nothing here is a comment, got ${t.scopes.join(' ')}`)
@@ -354,9 +354,8 @@ test('an unmarked line ends the quote, so an unclosed fence stops there', () => 
 })
 
 test('a percent run glued to inline content is not a quote-marker fence', () => {
-  // The \G anchor moves with every match on the line - here the emphasis run
-  // `/a/` moves it right up to the `%%%` - so the fence also asks to be
-  // preceded by whitespace. `> /a/%%% x` renders the percent run literally.
+  // This pins the \G anchor, not its whitespace lookbehind. The inline
+  // emphasis match does not move \G, so the glued percent run is unreachable.
   const tokens = tokenize('> /a/%%% x\n> b\n\nafter\n')
   for (const t of tokens.filter((x) => x.line === '> b' || x.line === 'after')) {
     assert.ok(!isComment(t), `nothing here is a comment, got ${t.scopes.join(' ')}`)
