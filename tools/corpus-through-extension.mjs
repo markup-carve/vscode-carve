@@ -425,8 +425,23 @@ for (const name of documents) {
   server.notify('textDocument/didOpen', {
     textDocument: { uri, languageId: 'carve', version: 1, text: source },
   })
-  const symbols = await server.request('textDocument/documentSymbol', { textDocument: { uri } })
-  const folds = await server.request('textDocument/foldingRange', { textDocument: { uri } })
+  let symbols
+  let folds
+  try {
+    symbols = await server.request('textDocument/documentSymbol', { textDocument: { uri } })
+    folds = await server.request('textDocument/foldingRange', { textDocument: { uri } })
+  } catch (error) {
+    // A server that stops answering makes every later document meaningless, so
+    // this stops rather than accumulating 1200 identical failures - and it
+    // stops with a name, because "the server died" is a different bug report
+    // from "the server died on THIS document".
+    server.stop()
+    fail(
+      `the language server stopped answering on ${name}: ` +
+        `${error instanceof Error ? error.message : String(error)}\n` +
+        `  ${documents.indexOf(name)} document(s) had been driven through it before that.`,
+    )
+  }
   // Diagnostics are published on open, and `documents.onDidOpen` flushes them
   // synchronously, so by the time a later request has answered they have
   // arrived. A document that never publishes is a defect, not an empty list.
