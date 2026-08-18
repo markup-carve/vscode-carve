@@ -102,6 +102,58 @@ test('renders Carve preview HTML', () => {
   assert.match(renderPreviewBody('# Hello'), /<h1>Hello<\/h1>/)
 })
 
+// THE PREVIEW'S EXTENSION SET, PINNED.
+//
+// `renderPreviewBody` passes `extensions: previewExtensions()` into
+// `carveToHtml`, and every Tier-2/Tier-3 construct in the preview depends on
+// it. Drop that one property and nothing throws: the engine renders the same
+// documents as ordinary containers and fenced code, so a `::: details` becomes
+// a plain div and a ```chart fence becomes a code block. The preview just
+// quietly stops being a Carve preview.
+//
+// Measured, not assumed: deleting `extensions: previewExtensions()` from
+// preview.ts left the whole suite green - 18 unit tests and 60 grammar
+// snapshots - because the only assertion that reached this function rendered
+// `# Hello`, which needs no extension at all.
+//
+// So each extension is pinned by an output marker it alone produces. The
+// marker is the point rather than the exact HTML: these assert what the
+// extension DOES (a details element, a mermaid pre, a real table) and not how
+// carve-js spells the rest of the document, so a rendering change upstream
+// does not drag this test with it.
+//
+// `tabs` needs its full shape to discriminate: a bare `::: tabs` holding code
+// fences renders identically either way, because the extension defers to core
+// rendering when it finds no `::: tab` panels inside. Only the nested form
+// tells the two apart, so that is the one pinned - a case that looks like a
+// tab set but is not one would have left this extension unpinned while
+// appearing to cover it.
+const previewExtensionMarkers: Array<[string, string, RegExp]> = [
+  ['details', '::: details "More"\nbody\n:::\n', /<details>/],
+  ['spoiler', '::: spoiler "Peek"\nhidden\n:::\n', /<details class="spoiler">/],
+  ['mermaid', '```mermaid\ngraph TD;\n```\n', /<pre class="mermaid">/],
+  ['mathBlock', '```math\nx^2\n```\n', /<div class="math display">/],
+  ['chart', '```chart\n{"type":"bar"}\n```\n', /<script type="application\/json">/],
+  ['codeGroup', '::: code-group\n```js [One]\nx\n```\n:::\n', /class="code-group-label"/],
+  ['listTable', '::: list-table\n- - a\n  - b\n:::\n', /<table>/],
+  [
+    'tabs',
+    ':::: tabs\n::: tab [Install]\nrun it\n:::\n::: tab [Use]\ncall it\n:::\n::::\n',
+    /class="tabs-label"/,
+  ],
+]
+
+for (const [name, source, marker] of previewExtensionMarkers) {
+  test(`preview passes the ${name} extension through to carveToHtml`, () => {
+    assert.match(
+      renderPreviewBody(source),
+      marker,
+      `The preview rendered ${name} without its extension. renderPreviewBody must pass ` +
+        `extensions: previewExtensions() to carveToHtml.`,
+    )
+  })
+}
+
 test('wraps preview HTML in a CSP-safe document', () => {
   const html = previewDocument('*bold*', {
     nonce: 'abc123',
