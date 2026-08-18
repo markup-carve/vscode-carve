@@ -292,6 +292,8 @@ const parseWith = (engine, source) => {
 // The language server, over stdio, framed the way the client frames it.
 // ---------------------------------------------------------------------------
 
+const REQUEST_TIMEOUT_MS = 30_000
+
 const startServer = () => {
   const child = spawn(execPath, [serverPath, '--stdio'], { cwd: repoRoot, stdio: ['pipe', 'pipe', 'pipe'] })
   const pending = new Map()
@@ -346,7 +348,23 @@ const startServer = () => {
       if (crashed) return Promise.reject(new Error(crashed))
       const id = nextId++
       return new Promise((settle, reject) => {
-        pending.set(id, { resolve: settle, reject })
+        // A server that never answers would otherwise hang the job until the
+        // runner's own timeout, which reads as an infrastructure flake rather
+        // than as the language server having stopped on a document.
+        const timer = setTimeout(() => {
+          pending.delete(id)
+          reject(new Error(`no answer to ${method} within ${REQUEST_TIMEOUT_MS}ms`))
+        }, REQUEST_TIMEOUT_MS)
+        pending.set(id, {
+          resolve: (value) => {
+            clearTimeout(timer)
+            settle(value)
+          },
+          reject: (error) => {
+            clearTimeout(timer)
+            reject(error)
+          },
+        })
         write({ jsonrpc: '2.0', id, method, params })
       })
     },
@@ -368,12 +386,23 @@ const server = startServer()
 const published = new Map()
 server.on('textDocument/publishDiagnostics', (params) => published.set(params.uri, params.diagnostics))
 
-const initialize = await server.request('initialize', {
-  processId: process.pid,
-  rootUri: pathToFileURL(repoRoot).href,
-  capabilities: {},
-  workspaceFolders: null,
-})
+let initialize
+try {
+  initialize = await server.request('initialize', {
+    processId: process.pid,
+    rootUri: pathToFileURL(repoRoot).href,
+    capabilities: {},
+    workspaceFolders: null,
+  })
+} catch (error) {
+  server.stop()
+  fail(
+    `the language server at ${serverPath} did not initialize: ` +
+      `${error instanceof Error ? error.message : String(error)}\n` +
+      '  Nothing below could have been measured, so this is a failure rather than a run with\n' +
+      '  one surface missing.',
+  )
+}
 if (!initialize?.capabilities?.documentSymbolProvider || !initialize?.capabilities?.foldingRangeProvider) {
   fail(
     'the language server advertises neither an outline nor folding ranges, so this run would ' +
@@ -509,6 +538,30 @@ if (!pinsAgree) {
       '  Bump the carve-lsp pin to a revision whose engine pin matches this one.\n',
   )
 }
+/*
+ * THE SECOND SURFACE MUST HAVE PRODUCED SOMETHING.
+ *
+ * Measured: a `documentSymbol` handler stubbed to return `[]` left this runner
+ * printing `documents=1259 rendered=1259/1259 symbols=0` and exiting 0 - 1259
+ * documents driven through a language server that answered nothing, reported as
+ * a pass. That is the population guard's failure wearing different clothes.
+ *
+ * The assertion is that the feature is alive, not what it returns: a corpus of
+ * this size cannot contain no heading and no foldable range, so zero means the
+ * provider is dead. Diagnostics deliberately get no such floor - a language
+ * server that has nothing to warn about is a legitimate state, and the manifest
+ * is where a run-to-run change in them shows up.
+ */
+const deadProviders = []
+if (totalSymbols === 0) deadProviders.push('documentSymbol returned no symbol on any document')
+if (totalFolds === 0) deadProviders.push('foldingRange returned no range on any document')
+if (deadProviders.length > 0) {
+  stdout.write(
+    `FAIL: the language server answered, but produced nothing to compare:\n  ${deadProviders.join('\n  ')}\n` +
+      '  A corpus this size has headings and containers in it, so an empty answer everywhere is\n' +
+      '  a dead provider rather than a quiet document.\n',
+  )
+}
 if (!sharedEngine) {
   stdout.write(
     'FAIL: the preview and the language server resolve DIFFERENT copies of the engine.\n' +
@@ -533,5 +586,11 @@ if (serverErrors > 0) {
 }
 
 const failures =
-  renderMismatches + renderThrew + astMismatches + serverErrors + (sharedEngine ? 0 : 1) + (pinsAgree ? 0 : 1)
+  renderMismatches +
+  renderThrew +
+  astMismatches +
+  serverErrors +
+  deadProviders.length +
+  (sharedEngine ? 0 : 1) +
+  (pinsAgree ? 0 : 1)
 exit(failures === 0 ? 0 : 1)
