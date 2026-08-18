@@ -174,6 +174,28 @@
         }
       ]
     },
+    "headings-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A HEADING IS STILL A HEADING BEHIND A CONTAINER PREFIX (`- # h`, `- [x] # h`, `> # h`, and `- x` over `  # h`), and `#headings` cannot reach any of them: it is a single `match` anchored on a column-0 run of hashes, and the container's own begin match has already consumed `- ` or `> ` by the time the line is scanned, so the heading carried NO heading scope at all (markup-carve/vscode-carve#131). Corpus 363-a-task-item-s-checkbox-is-not-decided-by-its-first-block renders `- [x] # h` as an `<h1>` inside the item. The gap had been measured into three separate `tests/categories.json` skip reasons before it was ever filed, because the `no scope lives only in a skipped category` gate is structurally unable to report an ABSENT rule: a rule that emits no scope can never be an orphan. That is the same blindness that let the missing hard break survive every green run until markup-carve/vscode-carve#119. TWO BRANCHES, and both are needed. The \\\\G branch is the marker line, anchored the way `#block-quote-on-marker-line` and `#comment-fence-on-marker-line` are: \\\\G matches at the current scan position, which on a marker line is exactly where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the `(?<=[ \\\\t])` guard keeps it to a marker rather than to a hash run glued after some earlier match on the same line (carve-js renders `- /a/ # h` as item text, not as a heading). The `^[ \\\\t]+` branch is the container's own body column, where a heading is equally invisible today: carve-js renders `- x` over `  # h` as an `<h1>` inside the item and this grammar scoped it as nothing. REACHABLE ONLY FROM `#container-body` AND `#block-quote-body`, never from the document level, because at the document level an indented hash run is NOT a heading: carve-js renders `  # h` as `<p># h</p>`. Inside a container the indent cannot be counted against the content column from here, so an OVER-indented hash run (`- x`, a blank line, then `      # h`, which carve-js renders as a paragraph) is scoped as a heading. That is the same over-coloring trade-off `#thematic-break` already takes with its `^\\\\s*`, taken here only inside containers rather than at the document level too. The quoted spelling behind an ALTERNATING prefix (`  >     # h`) is deliberately still out of reach: the quote's begin consumes one space only, and accepting the rest of the run would scope `>     # h` as a heading where carve-js renders `<blockquote><p># h</p></blockquote>`.",
+          "name": "markup.heading.carve",
+          "match": "(?:\\G(?<=[ \\t])|^[ \\t]+)(#{1,6})( +)(?![ \\t]*$)(.+)$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.heading.carve"
+            },
+            "3": {
+              "name": "entity.name.section.carve",
+              "patterns": [
+                {
+                  "include": "#trailing-comment"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
     "code-blocks": {
       "patterns": [
         {
@@ -1492,6 +1514,9 @@
           "include": "#thematic-break"
         },
         {
+          "include": "#headings-behind-a-container-prefix"
+        },
+        {
           "include": "#headings"
         },
         {
@@ -1612,6 +1637,9 @@
       "patterns": [
         {
           "include": "#comment-fence-on-quote-marker-line"
+        },
+        {
+          "include": "#headings-behind-a-container-prefix"
         },
         {
           "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
