@@ -195,6 +195,29 @@ const QUOTE_SHAPES = [
   // and the fence closes early, which shows up as the hidden definition scoping
   // live - a direction a swallow check cannot see.
   ['a wider run inside the fence', '> %%%\n> a\n> %%%%\n> [r]: /url\n> %%%\n\n[r][]\n'],
+  // THE QUOTE ITSELF OPENED ON A LIST ITEM'S MARKER LINE
+  // (markup-carve/vscode-carve#125). markup-carve/carve-grammars#246 left this
+  // shape out of its own table, on the ground that a shape one grammar handles
+  // and two do not is drift; tree-sitter-carve models it now
+  // (markup-carve/tree-sitter-carve#218), so the reason has inverted.
+  //
+  // The fence half of it fails the way #113 and #115 both describe: the `%%%`
+  // after the marker scopes as a trailing LINE comment so no block opens, and
+  // the hidden definition comes back live on the line below. These reach it
+  // through `#block-quote-on-marker-line`, whose body includes the same
+  // `#comment-fence-on-quote-marker-line` a line-anchored quote reaches.
+  //
+  // The TASK spelling is deliberately absent. Measured, `- [ ] > %%%` with its
+  // body at the item's content column does NOT hide in the engine - the quote
+  // keeps `> [r]: /url` as literal text - so an entry for it would pin an
+  // answer the language does not give.
+  ['a dash marker before a quote fence', '- > %%%\n  > [r]: /url\n  > %%%\n\n[r][]\n'],
+  ['a star marker before a quote fence', '* > %%%\n  > [r]: /url\n  > %%%\n\n[r][]\n'],
+  ['an ordered marker before a quote fence', '1. > %%%\n   > [r]: /url\n   > %%%\n\n[r][]\n'],
+  ['a marker run before a quote fence', '- - > %%%\n    > [r]: /url\n    > %%%\n\n[r][]\n'],
+  ['a nested quote on a marker line', '- > > %%%\n  > > [r]: /url\n  > > %%%\n\n[r][]\n'],
+  ['a wider fence on a marker-line quote', '- > %%%%\n  > [r]: /url\n  > %%%%\n\n[r][]\n'],
+  ['an insignificant tail on a marker-line quote fence', '- > %%% TODO\n  > [r]: /url\n  > %%% end\n\n[r][]\n'],
 ]
 
 for (const [label, src] of QUOTE_SHAPES) {
