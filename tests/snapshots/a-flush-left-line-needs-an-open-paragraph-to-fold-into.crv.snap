@@ -1,7 +1,7 @@
 >. >
 #^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.numbered.carve
-#  ^^ text.carve
+#  ^ text.carve markup.quote.carve punctuation.definition.quote.carve
 >X
 #^^ text.carve
 >

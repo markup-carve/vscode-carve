@@ -408,30 +408,7 @@
           "end": "$",
           "patterns": [
             {
-              "include": "#comment-fence-on-quote-marker-line"
-            },
-            {
-              "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
-              "name": "meta.link.reference.definition.carve",
-              "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
-              "captures": {
-                "1": {
-                  "name": "constant.other.reference.link.carve"
-                },
-                "2": {
-                  "name": "markup.underline.link.carve"
-                },
-                "4": {
-                  "patterns": [
-                    {
-                      "include": "#attributes"
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "include": "#trailing-comment"
+              "include": "#block-quote-body"
             }
           ]
         }
@@ -1506,6 +1483,9 @@
           "include": "#comment-fence-on-marker-line"
         },
         {
+          "include": "#block-quote-on-marker-line"
+        },
+        {
           "include": "#comments"
         },
         {
@@ -1626,6 +1606,57 @@
           "name": "constant.character.escape.hard-break.carve"
         }
       }
+    },
+    "block-quote-body": {
+      "comment": "The pattern set a block quote's own line reaches, shared by `#block-quotes` and `#block-quote-on-marker-line` so the two cannot drift apart - the same reason `#container-body` exists for containers. Both rules differ only in their anchor: one opens at the line start, the other at the scan position on a list item's marker line.",
+      "patterns": [
+        {
+          "include": "#comment-fence-on-quote-marker-line"
+        },
+        {
+          "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
+          "name": "meta.link.reference.definition.carve",
+          "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "captures": {
+            "1": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "2": {
+              "name": "markup.underline.link.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "include": "#trailing-comment"
+        }
+      ]
+    },
+    "block-quote-on-marker-line": {
+      "patterns": [
+        {
+          "comment": "A BLOCK QUOTE MAY OPEN ON A LIST ITEM'S OWN MARKER LINE (`- > x`, `1. > x`, `- - > x`, `- [ ] > x`), and it takes the rest of that line: carve-js at the pinned engine renders `<ul><li><blockquote><p>x</p></blockquote></li></ul>`. `#block-quotes` cannot reach it - its begin is anchored on ^, and the container's own begin match has already consumed the marker by the time this line is scanned - so the whole line fell through to the list rule and everything after the marker carried NO scope at all, while `- > %%%` inverted the same way `#113` and `#115` describe: the `%%%` scoped as a trailing LINE comment so no block opened, and the hidden `[r]: /url` came back live (markup-carve/vscode-carve#125). Anchored on \\G with the `(?<=[ \\t])` guard for the reasons `#comment-fence-on-marker-line` gives: \\G matches at the current scan position, which on a marker line is where the marker ended, vscode-textmate resets it on every following line so this can never open one, and the guard keeps it to a marker line rather than to a `>` glued after some earlier match. Reachable ONLY from `#container-body`, so a document-level line can never take it. The marker keeps its own quote punctuation scope, which is tree-sitter-carve's split (markup-carve/tree-sitter-carve#218): the `block_quote` sits inside `list_item_content` beside the `list_marker_*` rather than over it.",
+          "name": "markup.quote.carve",
+          "begin": "\\G(?<=[ \\t])(>)(?= |$)[ ]?",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            }
+          },
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#block-quote-body"
+            }
+          ]
+        }
+      ]
     }
   }
 }
