@@ -176,7 +176,7 @@ for (const [label, src, line] of HEADING_SHAPES) {
 const NOT_A_HEADING = [
   ['a hash run glued to its text', '- #h\n', '#h', 'carve-js renders a tag, not a heading'],
   ['a hash run mid-item', '- see # h\n', '# h', 'carve-js renders `see # h` as item text'],
-  ['a hash run after an inline match', '- /a/ # h\n', '# h', 'the anchor moves with every match on the line'],
+  ['a hash run after an inline match', '- /a/ # h\n', '# h', 'the \\G anchor sits at the content column, not here'],
   ['seven hashes', '- ####### h\n', '####### h', 'carve-js renders `####### h` as item text'],
   ['a hash run with no content', '- #\n', '#', 'a marker with no content is not a heading'],
   ['an indented hash run at the document level', 'para\n\n  # h\n', '  # h', 'carve-js renders `  # h` as `<p># h</p>`'],
@@ -322,11 +322,21 @@ test("a continuation row at an item's content column is a continuation row", () 
   )
 })
 
-test('a pipe glued after an inline match on a marker line is not a row', () => {
-  // The \G anchor moves with every match on the line, so the row also asks to
-  // be preceded by whitespace - the same guard `#comment-fence-on-marker-line`
-  // needs. Without it `- /a/| x` would open a table row mid-item.
-  for (const t of tokenize('- /a/| x\n').filter((x) => x.text.includes('|'))) {
+test('a pipe that is not at the content column is not a row', () => {
+  // What the \G anchor buys, stated so it can fail: the row has to start at
+  // the container's content column, not wherever a pipe happens to sit.
+  // carve-js renders `- a | b` as item text. Drop the anchor and this line
+  // becomes a table row.
+  //
+  // The `(?<=[ \t])` guard beside the anchor is NOT pinned by any assertion
+  // here, deliberately. Measured against vscode-textmate: the \G anchor
+  // position is set only where a begin/end rule is PUSHED, and inline match
+  // rules never move it, so no input reaches this rule at a position preceded
+  // by a non-space in the first place. The guard is kept for consistency with
+  // the sibling marker-line rules, not because a test can distinguish it -
+  // see markup-carve/vscode-carve#127 for the same claim made about
+  // `#comment-fence-on-marker-line`.
+  for (const t of tokenize('- a | b\n').filter((x) => x.text.includes('|'))) {
     assert.ok(!has(t, 'markup.table'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
   }
 })
@@ -383,6 +393,14 @@ test('a dash run that is not the whole line stays item text', () => {
   // The trailing `[ \t]*$` is what keeps the rule to a whole line. Without it
   // `- --- x` would become a break where carve-js renders item text.
   for (const t of tokenize('- --- x\n').filter((x) => x.text.includes('---'))) {
+    assert.ok(!has(t, 'meta.separator.thematic-break'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+  }
+})
+
+test('a dash run at the end of item text is not a break', () => {
+  // What the \G anchor buys here: the break has to start at the container's
+  // content column. carve-js renders `- a ---` as item text.
+  for (const t of tokenize('- a ---\n').filter((x) => x.text.includes('---'))) {
     assert.ok(!has(t, 'meta.separator.thematic-break'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
   }
 })
