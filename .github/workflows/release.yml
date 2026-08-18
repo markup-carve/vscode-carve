@@ -69,12 +69,21 @@ jobs:
       # Ask the registries rather than the exit code. `vsce publish` can succeed
       # against a namespace that then serves nothing, and the job would still be
       # green - the same shape as the skip it replaced.
+      # Open VSX serves a 404 from /api/{ns}/{ext} for MINUTES after a publish it
+      # already accepted - measured on the v0.1.1 publish, where the namespace
+      # listing also reported `"extensions":{}` while the search index already
+      # had the extension. A single query here reports a healthy publish as a
+      # failure, so this retries before it says anything.
       - name: The marketplaces actually serve this version
         run: |
           v="${GITHUB_REF_NAME#v}"
-          sleep 30
-          ovsx="$(curl -sS -o /dev/null -w '%{http_code}' https://open-vsx.org/api/markup-carve/vscode-carve)"
+          ovsx=000
+          for _ in $(seq 1 10); do
+            sleep 30
+            ovsx="$(curl -sS -o /dev/null -w '%{http_code}' https://open-vsx.org/api/markup-carve/vscode-carve || echo 000)"
+            [ "$ovsx" = "200" ] && break
+          done
           [ "$ovsx" = "200" ] \
-            || echo "::warning::Open VSX returned $ovsx for markup-carve.vscode-carve; indexing may lag, check before announcing"
-          echo "Open VSX: HTTP $ovsx for version $v"
+            && echo "Open VSX serves markup-carve.vscode-carve (checking $v)" \
+            || echo "::warning::Open VSX still $ovsx after 5 minutes; it lagged on v0.1.1 too, so verify by hand rather than assuming a failed publish"
 
