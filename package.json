@@ -174,10 +174,11 @@
     "copy-assets": "node scripts/copy-assets.mjs",
     "prepare": "npm run build",
     "vscode:prepublish": "npm run build",
-    "test": "npm run test:unit && npm run test:grammar",
+    "test": "npm run test:unit && npm run test:grammar && npm run test:corpus",
     "test:unit": "node --test dist/*.test.js",
     "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
     "test:grammar:update": "node tests/run-snapshots.mjs -u && node tests/run-fixtures.mjs -u",
+    "test:corpus": "node tools/corpus-through-extension.mjs",
     "typecheck": "tsc --noEmit",
     "package": "vsce package"
   },
