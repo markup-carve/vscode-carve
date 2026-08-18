@@ -1533,6 +1533,15 @@
         }
       ]
     },
+    "thematic-break-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A THEMATIC BREAK ON A CONTAINER'S MARKER LINE IS A BREAK, NOT AN EM DASH (markup-carve/vscode-carve#130). `#thematic-break` is `^\\\\s*(?:-{3,}|\\\\*{3,}|_{3,})\\\\s*$`, and on a marker line the container's own begin has already consumed `- ` or `- [ ] ` by the time the line is scanned, so the anchor cannot match and the run of dashes fell through to `#smart-typography`, whose `---` alternative claimed it as `constant.character.typography.carve`. THAT IS WHAT MAKES THIS ONE DIFFERENT from the absent-rule gaps beside it: a scope IS produced, it is the wrong one, and nothing in this repo's invariants looks at whether a produced scope is correct - a presence-only check on the break scope passes the defect unchanged. Corpus 363-a-task-item-s-checkbox-is-not-decided-by-its-first-block renders `- [ ] ---` as an `<hr>` inside the item, and carve-js renders `> ---` as an `<hr>` inside the quote. Anchored on \\\\G with the `(?<=[ \\\\t])` guard for the reasons `#comment-fence-on-marker-line` gives, and ordered ahead of `#smart-typography` in both `#container-body` and `#block-quote-body` so the break wins the line. Reachable ONLY from those two, so a document-level `---` after some inline match can never take it. The trailing `[ \\\\t]*$` keeps it to a whole line: `- --- x` is item text and stays one.",
+          "match": "\\G(?<=[ \\t])(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$",
+          "name": "meta.separator.thematic-break.carve"
+        }
+      ]
+    },
     "thematic-break": {
       "match": "^\\s*(?:-{3,}|\\*{3,}|_{3,})\\s*$",
       "name": "meta.separator.thematic-break.carve"
@@ -1568,6 +1577,9 @@
         },
         {
           "include": "#comments"
+        },
+        {
+          "include": "#thematic-break-behind-a-container-prefix"
         },
         {
           "include": "#thematic-break"
@@ -1702,6 +1714,9 @@
       "patterns": [
         {
           "include": "#comment-fence-on-quote-marker-line"
+        },
+        {
+          "include": "#thematic-break-behind-a-container-prefix"
         },
         {
           "include": "#headings-behind-a-container-prefix"

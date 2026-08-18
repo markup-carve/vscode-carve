@@ -330,3 +330,65 @@ test('a pipe glued after an inline match on a marker line is not a row', () => {
     assert.ok(!has(t, 'markup.table'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
   }
 })
+
+/*
+ * A THEMATIC BREAK BEHIND A CONTAINER PREFIX (markup-carve/vscode-carve#130).
+ *
+ * The odd one out of this family. `#thematic-break` was unreachable on a
+ * marker line for the same reason the others were, but the dashes did not fall
+ * silent: they fell through to `#smart-typography`, which claimed them as
+ * `constant.character.typography.carve`. A scope IS produced and it is the
+ * wrong one, so the ABSENCE assertion below is the one that fails on the
+ * defect - checking that `meta.separator.thematic-break.carve` appears does not.
+ *
+ * carve-js renders `- [ ] ---` as an `<hr>` inside the item (corpus
+ * 363-a-task-item-s-checkbox-is-not-decided-by-its-first-block) and `> ---` as
+ * an `<hr>` inside the quote.
+ */
+const BREAK_SHAPES = [
+  ['a dash marker line', '- ---\n', '---'],
+  ['a task marker line', '- [ ] ---\n', '---'],
+  ['an ordered marker line', '1. ---\n', '---'],
+  ['a star run on a marker line', '- ***\n', '***'],
+  ['an underscore run on a marker line', '- ___\n', '___'],
+  ['a quote marker line', '> ---\n', '---'],
+  ["an item's own body column", '- x\n\n  ---\n', '---'],
+]
+
+for (const [label, src, text] of BREAK_SHAPES) {
+  test(`a break on ${label} is a thematic break`, () => {
+    const tokens = tokenize(src).filter((t) => t.text.trim() === text)
+    assert.ok(tokens.length > 0, 'the break line was not tokenized at all')
+    for (const t of tokens) {
+      assert.ok(
+        has(t, 'meta.separator.thematic-break'),
+        `the break carries ${t.scopes.join(' ')}`,
+      )
+    }
+  })
+
+  test(`a break on ${label} is not smart typography`, () => {
+    const tokens = tokenize(src).filter((t) => t.text.trim() === text)
+    assert.ok(tokens.length > 0, 'the break line was not tokenized at all')
+    for (const t of tokens) {
+      assert.ok(
+        !has(t, 'constant.character.typography'),
+        `the break is scoped as an em dash: ${t.scopes.join(' ')}`,
+      )
+    }
+  })
+}
+
+test('a dash run that is not the whole line stays item text', () => {
+  // The trailing `[ \t]*$` is what keeps the rule to a whole line. Without it
+  // `- --- x` would become a break where carve-js renders item text.
+  for (const t of tokenize('- --- x\n').filter((x) => x.text.includes('---'))) {
+    assert.ok(!has(t, 'meta.separator.thematic-break'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+  }
+})
+
+test('two dashes on a marker line are not a break', () => {
+  for (const t of tokenize('- --\n').filter((x) => x.text.includes('--'))) {
+    assert.ok(!has(t, 'meta.separator.thematic-break'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+  }
+})
