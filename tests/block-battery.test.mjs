@@ -271,3 +271,62 @@ test('an indented fence at the document level is not a fence', () => {
     assert.ok(!isRaw(t), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
   }
 })
+
+/*
+ * A TABLE ROW BEHIND A CONTAINER PREFIX (markup-carve/vscode-carve#129).
+ *
+ * carve-js renders `- | a |` as a table inside the item (corpus
+ * 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-2),
+ * and folds `  + b |` into the row above it. `#tables` begins on a lookahead
+ * that tolerates indentation but not a marker, so the row on the marker line
+ * carried nothing, and its continuation row was column-0 only.
+ */
+const TABLE_SHAPES = [
+  ['a dash marker line', '- | a |\n\nafter\n'],
+  ['a star marker line', '* | a |\n\nafter\n'],
+  ['an ordered marker line', '1. | a |\n\nafter\n'],
+  ['a task marker line', '- [ ] | a |\n\nafter\n'],
+]
+
+for (const [label, src] of TABLE_SHAPES) {
+  test(`a row on ${label} carries the table scope`, () => {
+    const pipes = tokenize(src).filter((t) => t.text === '|')
+    assert.equal(pipes.length, 2, `expected two pipes, got ${pipes.length}`)
+    for (const t of pipes) {
+      assert.ok(
+        has(t, 'punctuation.separator.table'),
+        `the pipe is not a table separator: ${t.scopes.join(' ')}`,
+      )
+      assert.ok(has(t, 'markup.table.row'), `the row scope is missing: ${t.scopes.join(' ')}`)
+    }
+  })
+
+  test(`a row on ${label} ends with its line`, () => {
+    for (const t of tokenize(src).filter((x) => x.line === 'after')) {
+      assert.ok(!has(t, 'markup.table'), `the row must end at its line: ${t.scopes.join(' ')}`)
+    }
+  })
+
+  test(`a row on ${label} leaves the marker to the list rules`, () => {
+    const marked = tokenize(src).some((t) => has(t, 'markup.list'))
+    assert.ok(marked, 'the list marker lost its list scope')
+  })
+}
+
+test("a continuation row at an item's content column is a continuation row", () => {
+  const plus = tokenize('- x\n  | a |\n  + b |\n').filter((t) => t.text === '+')
+  assert.equal(plus.length, 1, 'the continuation marker was not tokenized')
+  assert.ok(
+    has(plus[0], 'keyword.operator.table.continuation'),
+    `the indented continuation marker carries ${plus[0].scopes.join(' ')}`,
+  )
+})
+
+test('a pipe glued after an inline match on a marker line is not a row', () => {
+  // The \G anchor moves with every match on the line, so the row also asks to
+  // be preceded by whitespace - the same guard `#comment-fence-on-marker-line`
+  // needs. Without it `- /a/| x` would open a table row mid-item.
+  for (const t of tokenize('- /a/| x\n').filter((x) => x.text.includes('|'))) {
+    assert.ok(!has(t, 'markup.table'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+  }
+})

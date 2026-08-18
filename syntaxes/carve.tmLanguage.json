@@ -313,6 +313,86 @@
         }
       ]
     },
+    "table-row-cells": {
+      "comment": "The cells of a table ROW, shared by `#tables` and `#table-row-behind-a-container-prefix` so the two cannot drift apart - the same reason `#container-body` and `#block-quote-body` exist. The two rules differ only in their anchor: one opens at the line start, the other at the scan position on a container's own marker line.",
+      "patterns": [
+        {
+          "match": "\\|=",
+          "name": "keyword.operator.table.header.carve"
+        },
+        {
+          "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.table.rowspan.carve"
+            }
+          }
+        },
+        {
+          "match": "(?<=\\|)\\s*(<)\\s*(?=\\|)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.table.colspan.carve"
+            }
+          }
+        },
+        {
+          "match": "\\|",
+          "name": "punctuation.separator.table.carve"
+        },
+        {
+          "include": "#trailing-comment-cell"
+        },
+        {
+          "include": "#footnotes"
+        },
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#extension-inline"
+        },
+        {
+          "include": "#critic-markup"
+        },
+        {
+          "include": "#forced-emphasis"
+        },
+        {
+          "include": "#sup-sub"
+        },
+        {
+          "include": "#emphasis"
+        },
+        {
+          "include": "#links"
+        },
+        {
+          "include": "#images"
+        },
+        {
+          "include": "#citations"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#math"
+        },
+        {
+          "include": "#mentions-tags"
+        }
+      ]
+    },
     "tables": {
       "patterns": [
         {
@@ -348,85 +428,14 @@
           "end": "$",
           "patterns": [
             {
-              "match": "\\|=",
-              "name": "keyword.operator.table.header.carve"
-            },
-            {
-              "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
-              "captures": {
-                "1": {
-                  "name": "keyword.operator.table.rowspan.carve"
-                }
-              }
-            },
-            {
-              "match": "(?<=\\|)\\s*(<)\\s*(?=\\|)",
-              "captures": {
-                "1": {
-                  "name": "keyword.operator.table.colspan.carve"
-                }
-              }
-            },
-            {
-              "match": "\\|",
-              "name": "punctuation.separator.table.carve"
-            },
-            {
-              "include": "#trailing-comment-cell"
-            },
-            {
-              "include": "#footnotes"
-            },
-            {
-              "include": "#raw-inline"
-            },
-            {
-              "include": "#inline-literal"
-            },
-            {
-              "include": "#inline-code"
-            },
-            {
-              "include": "#extension-inline"
-            },
-            {
-              "include": "#critic-markup"
-            },
-            {
-              "include": "#forced-emphasis"
-            },
-            {
-              "include": "#sup-sub"
-            },
-            {
-              "include": "#emphasis"
-            },
-            {
-              "include": "#links"
-            },
-            {
-              "include": "#images"
-            },
-            {
-              "include": "#citations"
-            },
-            {
-              "include": "#autolink"
-            },
-            {
-              "include": "#attributes"
-            },
-            {
-              "include": "#math"
-            },
-            {
-              "include": "#mentions-tags"
+              "include": "#table-row-cells"
             }
           ]
         },
         {
+          "comment": "The continuation row (`+ b |`), which folds into the row above it. INDENT-TOLERANT for the same reason the row rule beside it is: a table inside a list item sits at the item's content column, and a column-0 anchor here left `  + b |` unscoped under a `  | a |` that did scope (markup-carve/vscode-carve#129). It inherits that rule's known over-match at the document level, where carve-js renders an indented pipe row as a paragraph.",
           "name": "markup.table.continuation.carve",
-          "match": "^(\\+)(.*\\|\\s*)$",
+          "match": "^[ \\t]*(\\+)(.*\\|\\s*)$",
           "captures": {
             "1": {
               "name": "keyword.operator.table.continuation.carve"
@@ -449,6 +458,21 @@
               ]
             }
           }
+        }
+      ]
+    },
+    "table-row-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A TABLE ROW MAY OPEN ON A CONTAINER'S OWN MARKER LINE (`- | a |`, `- [ ] | a |`, `1. | a |`), and `#tables` cannot reach it: its begin is `^(?=\\\\s*\\\\|)`, which tolerates indentation but not a marker, and the container's own begin match has already consumed `- ` by the time the line is scanned, so the row carried no table scope at all while carve-js renders a table inside the item (markup-carve/vscode-carve#129, corpus 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-2). Quotes (`#block-quote-on-marker-line`) and divs (the optional marker alternative in `#divs`) both already had a marker-line path; tables did not. Anchored on \\\\G with the `(?<=[ \\\\t])` guard for the reasons `#comment-fence-on-marker-line` gives: \\\\G matches at the current scan position, which on a marker line is where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the guard keeps it to a marker rather than to a pipe glued after some earlier match. The begin is ZERO-WIDTH so the cells rule owns every character of the row, exactly as it does at the line start. Reachable ONLY from `#container-body`. The DELIMITER-row spelling on a marker line is deliberately not duplicated: it cannot arise, because a GFM delimiter row is the second line of its table and a marker line is the first.",
+          "name": "markup.table.row.carve",
+          "begin": "\\G(?<=[ \\t])(?=\\|)",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#table-row-cells"
+            }
+          ]
         }
       ]
     },
@@ -1562,6 +1586,9 @@
         },
         {
           "include": "#divs"
+        },
+        {
+          "include": "#table-row-behind-a-container-prefix"
         },
         {
           "include": "#tables"
