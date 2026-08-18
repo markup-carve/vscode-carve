@@ -389,7 +389,13 @@ server.on('textDocument/publishDiagnostics', (params) => published.set(params.ur
 let initialize
 try {
   initialize = await server.request('initialize', {
-    processId: process.pid,
+    // NOT this process's pid. A numeric processId makes vscode-languageserver
+    // install a watchdog that polls `process.kill(pid, 0)` and exits when the
+    // parent stops being visible - which in a PID namespace where the child
+    // cannot see the runner is immediately, before it answers `initialize`.
+    // The runner owns the child and stops it itself, so the watchdog buys
+    // nothing and costs the whole run in a container.
+    processId: null,
     rootUri: pathToFileURL(repoRoot).href,
     capabilities: {},
     workspaceFolders: null,
