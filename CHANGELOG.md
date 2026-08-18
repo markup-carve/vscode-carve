@@ -6,7 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-19
+
 ### Added
+
+- **The attribute production accepts the language attribute** (#105). `{:fr}` is
+  sugar for `lang=`, so `[Le Bon Usage]{:fr}` highlights as an attribute rather
+  than as prose with stray punctuation.
 
 - **A bare `::: figure` opener is a composite figure, not an admonition** (markup-carve/carve#1215, ported from markup-carve/carve-grammars#223). PART 9 §4c reserves the kind word `figure` among the `:::` types: the fence, its separator, the word, and nothing else is one figure of ordered panels. The same opener carrying a quoted title or a `[label]` is not that production at all and stays the generic container it has always been, with both preserved. Before this the two coloured identically, so the editor could not show which reading a line had - and the whole distinction sits in the tail of one line.
 
@@ -15,6 +21,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   The group caption needed no rule: it is an ordinary `^ ` line below the closing fence, which the caption pattern already claims at document level and inside every container body. Known limitation, shared with the flat `:::` rule it sits beside: groups do not nest, but a per-line `match` has no notion of being inside one, so a bare `::: figure` inside an open group still colours as a group. Eight opener spellings and the caption lines around them are pinned in `tests/fixtures/composite-figures.crv`, both outcomes.
 
 ### Fixed
+
+- **A colon-leading unquoted value is not a language attribute** (#106). `{k::v}`
+  was read as one, so an ordinary value beginning with a colon coloured wrong.
+- **A trailing backslash is a hard break, and the grammar had no rule for it**
+  (#119). It highlighted as an escape of the newline, which is not what it means.
+- **A comment fence opened on a list marker line hides its body** (#114), and the
+  same on a block-quote marker line (#116). The body coloured as live markup, so
+  a commented-out block looked active in the editor.
+- **A quote on a list item's marker line takes the rest of that line** (#126).
+- **Container grammar boundaries** (#142).
 
 - **Five block rules were unreachable behind a container prefix** (#127, #128, #129, #130, #131). A heading, a code fence, a table row and a thematic break all scoped only at column 0, so none of them reached a list item's marker line, its body column, or a quote - and the thematic break was not silent but scoped as an em dash. The fence gap also left the code block's body tokenized as live markup. A comment fence opened on a NESTED marker line ended only at column 0, which a nested line never reaches, so it swallowed its own sibling item.
 
