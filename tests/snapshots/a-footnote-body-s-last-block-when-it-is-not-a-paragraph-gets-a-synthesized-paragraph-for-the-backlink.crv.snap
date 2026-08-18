@@ -3,11 +3,13 @@
 #     ^ text.carve meta.link.reference.definition.carve
 #      ^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
 >  ```
-#^^^^^^ text.carve
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
 >  code
-#^^^^^^^ text.carve
+#^^^^^^^ text.carve markup.raw.block.fenced.code.carve
 >  ```
-#^^^^^^ text.carve
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
 >
 >see[^a]
 #^^^ text.carve

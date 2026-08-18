@@ -230,6 +230,41 @@
         }
       ]
     },
+    "code-block-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A CODE FENCE IS A CODE FENCE BEHIND A CONTAINER PREFIX TOO (`- ```` ` on an item's marker line, and a fence at the item's own body column), and `#code-blocks` could reach neither: its begin is anchored on a COLUMN-0 run of backticks or tildes, with no indent allowance and no marker-line variant (markup-carve/vscode-carve#128). The consequence was worse than a missing colour. Because no block region opened, the fence BODY was tokenized as live markup, so emphasis, links and reference definitions inside a code block all lit up, and the closing fence carried no scope either. corpus 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3 renders `- ```` ` over `  c` over `  ```` ` as a `<pre><code>` inside the item. TWO BEGIN BRANCHES. The \\\\G branch is the marker line, anchored the way `#block-quote-on-marker-line` and `#comment-fence-on-marker-line` are: \\\\G matches at the current scan position, which on a marker line is where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the `(?<=[ \\\\t])` guard keeps it to a marker rather than to a backtick run glued after some earlier match on the line. The `^[ \\\\t]+` branch is the container's body column. REACHABLE ONLY FROM `#container-body`, never from the document level, because at the document level an indented fence is NOT a fence: carve-js renders `  ```` ` over `  code` over `  ```` ` as a paragraph holding an inline code span, and the `indented-code-fence-is-not-a-fence` shapes in tests/block-battery.test.mjs pin that. THE END HAS TWO BRANCHES for the reason `#comment-fence-on-marker-line` gives. The first is the ordinary closer, INDENTED because the closer sits at the container's content column; it is deliberately as loose about the fence character and width as the document-level rule beside it, which also closes a backtick fence on a tilde line. The second is a zero-width container boundary: a column-0 line ends the item and with it an unclosed fence. Without it an unclosed indented fence would run to end of document, and vscode-textmate does not test an enclosing container's `end` while a child region is open, so the item could not stop it. NOT included in `#block-quote-body`: `#block-quotes` ends at `$`, so a multi-line region opened inside it would hold the quote open past its own end and run away. A fence inside a quote is therefore still uncoloured, tracked separately.",
+          "name": "markup.raw.block.fenced.code.carve",
+          "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.raw.begin.carve"
+            },
+            "2": {
+              "name": "entity.name.type.language.carve"
+            },
+            "3": {
+              "name": "string.quoted.double.carve"
+            },
+            "4": {
+              "name": "entity.name.label.carve"
+            },
+            "5": {
+              "name": "entity.name.label.carve"
+            },
+            "6": {
+              "name": "string.quoted.double.carve"
+            }
+          },
+          "end": "^[ \\t]+(`{3,}|~{3,})[ \\t]*$|^(?=[^ \\t\\n])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.raw.end.carve"
+            }
+          }
+        }
+      ]
+    },
     "divs": {
       "patterns": [
         {
@@ -1518,6 +1553,9 @@
         },
         {
           "include": "#headings"
+        },
+        {
+          "include": "#code-block-behind-a-container-prefix"
         },
         {
           "include": "#code-blocks"

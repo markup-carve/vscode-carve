@@ -4,13 +4,16 @@
 #      ^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
 >
 >  ```=html
-#^^^^^^^^^^^ text.carve
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
 >  <b>x</b>
-#^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
 >  <i>y</i>
-#^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
 >  ```
-#^^^^^^ text.carve
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
 >
 >see[^a]
 #^^^ text.carve

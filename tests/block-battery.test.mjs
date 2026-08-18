@@ -195,3 +195,79 @@ for (const [label, src, line, why] of NOT_A_HEADING) {
     }
   })
 }
+
+/*
+ * A CODE FENCE BEHIND A CONTAINER PREFIX (markup-carve/vscode-carve#128).
+ *
+ * carve-js renders corpus
+ * 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3
+ * as a `<pre><code>` inside the item, and the marker-line spelling the same
+ * way. THE BODY DIRECTION IS THE ONE THAT MATTERS: with no region open, the
+ * fence body was tokenized as live markup, so emphasis, links and reference
+ * definitions inside a code block all lit up. A scope-on-the-fence check alone
+ * would pass a rule that colours the backticks and still runs the body through
+ * the inline patterns.
+ */
+const FENCE_SHAPES = [
+  ["an item's marker line", '- ```\n  *c* [l](/u)\n  [r]: /url\n  ```\n\nafter\n'],
+  ["an item's own body column", '- x\n  ```\n  *c* [l](/u)\n  [r]: /url\n  ```\n\nafter\n'],
+  ['a tilde fence on a marker line', '- ~~~\n  *c* [l](/u)\n  [r]: /url\n  ~~~\n\nafter\n'],
+  ['an ordered marker line', '1. ```\n   *c* [l](/u)\n   [r]: /url\n   ```\n\nafter\n'],
+  ['a task marker line', '- [x] ```\n      *c* [l](/u)\n      [r]: /url\n      ```\n\nafter\n'],
+]
+
+const isRaw = (t) => has(t, 'markup.raw.block.fenced.code')
+
+for (const [label, src] of FENCE_SHAPES) {
+  test(`a fence on ${label} opens a raw block`, () => {
+    const fences = tokenize(src).filter((t) => /^(```|~~~)$/.test(t.text))
+    assert.equal(fences.length, 2, `expected an opener and a closer, got ${fences.length}`)
+    assert.ok(
+      fences[0].scopes.some((s) => s.includes('punctuation.definition.raw.begin')),
+      `the opener is not raw-block punctuation: ${fences[0].scopes.join(' ')}`,
+    )
+    assert.ok(
+      fences[1].scopes.some((s) => s.includes('punctuation.definition.raw.end')),
+      `the closer is not raw-block punctuation: ${fences[1].scopes.join(' ')}`,
+    )
+  })
+
+  test(`a fence on ${label} keeps its body opaque`, () => {
+    const body = tokenize(src).filter((t) => t.line.includes('*c*') || t.line.includes('[r]:'))
+    assert.ok(body.length > 0, 'the fence body was not tokenized at all')
+    for (const t of body) {
+      assert.ok(isRaw(t), `the body must be raw, got ${JSON.stringify(t.text)} as ${t.scopes.join(' ')}`)
+      for (const live of ['markup.bold', 'markup.italic', 'meta.link', 'markup.underline.link']) {
+        assert.ok(
+          !has(t, live),
+          `${JSON.stringify(t.text)} is live ${live} inside a code block: ${t.scopes.join(' ')}`,
+        )
+      }
+    }
+  })
+
+  test(`a fence on ${label} ends at its closer`, () => {
+    for (const t of tokenize(src).filter((x) => x.line === 'after')) {
+      assert.ok(!isRaw(t), `the raw block must end at its closer, got ${t.scopes.join(' ')}`)
+    }
+  })
+}
+
+test('an unclosed fence on a marker line stops at the column-0 line that ends the item', () => {
+  // The counterpart to the closer branch, and the reason the end carries a
+  // container boundary: vscode-textmate does not test an enclosing container's
+  // `end` while a child region is open, so without it an unclosed fence inside
+  // an item would run to end of document.
+  for (const t of tokenize('- ```\n  c\n\nafter\n\nmore\n').filter((x) => x.line === 'after' || x.line === 'more')) {
+    assert.ok(!isRaw(t), `a column-0 line is past the item: ${t.scopes.join(' ')}`)
+  }
+})
+
+test('an indented fence at the document level is not a fence', () => {
+  // carve-js renders `  ```` over `  code` over `  ```` as a paragraph holding
+  // an inline code span, which is why the indent allowance is reachable only
+  // from `#container-body`.
+  for (const t of tokenize('para\n\n  ```\n  code\n  ```\n\nafter\n').filter((x) => x.line.includes('code') || x.line.includes('```'))) {
+    assert.ok(!isRaw(t), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+  }
+})
