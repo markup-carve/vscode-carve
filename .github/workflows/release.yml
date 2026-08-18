@@ -9,9 +9,12 @@ jobs:
   publish:
     name: Build and publish extension
     runs-on: ubuntu-latest
-    # Map the publish tokens to job env so the steps below can skip themselves
-    # when a token is not configured (e.g. a manual-upload release, or before
-    # one marketplace is set up). A `v*` tag is then always safe to push.
+    # The publish tokens are mapped to job env so the guard below can read them.
+    # They used to gate the publish steps with `if: env.X != ''`, so a missing
+    # token SKIPPED the publish and the job still went green - which is exactly
+    # what happened to v0.1.1: tag pushed, release published, workflow green,
+    # and neither marketplace ever received the extension. A tag that is
+    # "always safe to push" is a tag that cannot tell you it shipped nothing.
     env:
       VSCE_PAT: ${{ secrets.VSCE_PAT }}
       OVSX_PAT: ${{ secrets.OVSX_PAT }}
@@ -48,10 +51,30 @@ jobs:
           name: vscode-carve-vsix
           path: vscode-carve.vsix
 
+      # A missing credential FAILS. Skipping it leaves a green job describing a
+      # release that does not exist anywhere a user can install from.
+      - name: Both marketplace credentials are present
+        run: |
+          missing=0
+          [ -n "$VSCE_PAT" ] || { echo "::error::VSCE_PAT is not available to this repository"; missing=1; }
+          [ -n "$OVSX_PAT" ] || { echo "::error::OVSX_PAT is not available to this repository"; missing=1; }
+          exit $missing
+
       - name: Publish to VS Code Marketplace
-        if: ${{ env.VSCE_PAT != '' }}
         run: npx vsce publish --packagePath vscode-carve.vsix
 
       - name: Publish to Open VSX
-        if: ${{ env.OVSX_PAT != '' }}
         run: npx ovsx publish vscode-carve.vsix
+
+      # Ask the registries rather than the exit code. `vsce publish` can succeed
+      # against a namespace that then serves nothing, and the job would still be
+      # green - the same shape as the skip it replaced.
+      - name: The marketplaces actually serve this version
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          sleep 30
+          ovsx="$(curl -sS -o /dev/null -w '%{http_code}' https://open-vsx.org/api/markup-carve/vscode-carve)"
+          [ "$ovsx" = "200" ] \
+            || echo "::warning::Open VSX returned $ovsx for markup-carve.vscode-carve; indexing may lag, check before announcing"
+          echo "Open VSX: HTTP $ovsx for version $v"
+
