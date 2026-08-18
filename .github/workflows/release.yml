@@ -3,7 +3,12 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      # NOT `v*`. That matched `vtest`, `v0.1.2-rc1`, `v-wip` and a typo like
+      # `v0.12` - every one of which would have published to two marketplaces,
+      # where a version number can never be reused. GitHub filter patterns
+      # match the WHOLE ref, and `+` means one-or-more of the preceding
+      # character, so this admits exactly vMAJOR.MINOR.PATCH and nothing else.
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
   publish:
