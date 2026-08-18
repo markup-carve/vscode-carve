@@ -14,6 +14,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
   The group caption needed no rule: it is an ordinary `^ ` line below the closing fence, which the caption pattern already claims at document level and inside every container body. Known limitation, shared with the flat `:::` rule it sits beside: groups do not nest, but a per-line `match` has no notion of being inside one, so a bare `::: figure` inside an open group still colours as a group. Eight opener spellings and the caption lines around them are pinned in `tests/fixtures/composite-figures.crv`, both outcomes.
 
+### Fixed
+
+- **Five block rules were unreachable behind a container prefix** (#127, #128, #129, #130, #131). A heading, a code fence, a table row and a thematic break all scoped only at column 0, so none of them reached a list item's marker line, its body column, or a quote - and the thematic break was not silent but scoped as an em dash. The fence gap also left the code block's body tokenized as live markup. A comment fence opened on a NESTED marker line ended only at column 0, which a nested line never reaches, so it swallowed its own sibling item.
+
 ## [0.1.1] - 2026-08-11
 
 ### Changed

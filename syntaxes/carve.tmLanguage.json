@@ -174,6 +174,28 @@
         }
       ]
     },
+    "headings-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A HEADING IS STILL A HEADING BEHIND A CONTAINER PREFIX (`- # h`, `- [x] # h`, `> # h`, and `- x` over `  # h`), and `#headings` cannot reach any of them: it is a single `match` anchored on a column-0 run of hashes, and the container's own begin match has already consumed `- ` or `> ` by the time the line is scanned, so the heading carried NO heading scope at all (markup-carve/vscode-carve#131). Corpus 363-a-task-item-s-checkbox-is-not-decided-by-its-first-block renders `- [x] # h` as an `<h1>` inside the item. The gap had been measured into three separate `tests/categories.json` skip reasons before it was ever filed, because the `no scope lives only in a skipped category` gate is structurally unable to report an ABSENT rule: a rule that emits no scope can never be an orphan. That is the same blindness that let the missing hard break survive every green run until markup-carve/vscode-carve#119. TWO BRANCHES, and both are needed. The \\\\G branch is the marker line, anchored the way `#block-quote-on-marker-line` and `#comment-fence-on-marker-line` are: \\\\G matches at the current scan position, which on a marker line is exactly where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the `(?<=[ \\\\t])` guard keeps it to a marker rather than to a hash run glued after some earlier match on the same line (carve-js renders `- /a/ # h` as item text, not as a heading). The `^[ \\\\t]+` branch is the container's own body column, where a heading is equally invisible today: carve-js renders `- x` over `  # h` as an `<h1>` inside the item and this grammar scoped it as nothing. REACHABLE ONLY FROM `#container-body` AND `#block-quote-body`, never from the document level, because at the document level an indented hash run is NOT a heading: carve-js renders `  # h` as `<p># h</p>`. Inside a container the indent cannot be counted against the content column from here, so an OVER-indented hash run (`- x`, a blank line, then `      # h`, which carve-js renders as a paragraph) is scoped as a heading. That is the same over-coloring trade-off `#thematic-break` already takes with its `^\\\\s*`, taken here only inside containers rather than at the document level too. The quoted spelling behind an ALTERNATING prefix (`  >     # h`) is deliberately still out of reach: the quote's begin consumes one space only, and accepting the rest of the run would scope `>     # h` as a heading where carve-js renders `<blockquote><p># h</p></blockquote>`.",
+          "name": "markup.heading.carve",
+          "match": "(?:\\G(?<=[ \\t])|^[ \\t]+)(#{1,6})( +)(?![ \\t]*$)(.+)$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.heading.carve"
+            },
+            "3": {
+              "name": "entity.name.section.carve",
+              "patterns": [
+                {
+                  "include": "#trailing-comment"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
     "code-blocks": {
       "patterns": [
         {
@@ -200,6 +222,88 @@
             }
           },
           "end": "^(`{3,}|~{3,})\\s*$",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.raw.end.carve"
+            }
+          }
+        }
+      ]
+    },
+    "code-block-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A CODE FENCE IS A CODE FENCE BEHIND A CONTAINER PREFIX TOO (`- ```` ` on an item's marker line, and a fence at the item's own body column), and `#code-blocks` could reach neither: its begin is anchored on a COLUMN-0 run of backticks or tildes, with no indent allowance and no marker-line variant (markup-carve/vscode-carve#128). The consequence was worse than a missing colour. Because no block region opened, the fence BODY was tokenized as live markup, so emphasis, links and reference definitions inside a code block all lit up, and the closing fence carried no scope either. corpus 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3 renders `- ```` ` over `  c` over `  ```` ` as a `<pre><code>` inside the item. THE MARKER-LINE RULE HAS TWO BEGIN BRANCHES. The \\\\G branch is the marker line, anchored the way `#block-quote-on-marker-line` and `#comment-fence-on-marker-line` are: \\\\G matches at the current scan position, which on a marker line is where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the `(?<=[ \\\\t])` guard keeps it to a marker rather than to a backtick run glued after some earlier match on the line. The second branch matches a NESTED marker line WHOLE, for the reason `#comment-fence-on-marker-line` gives: an unclosed fence opened at a nested marker would otherwise swallow its own sibling, because a container boundary written as a column-0 line is one a nested marker never reaches. Capture 1 is the opener's indent, and vscode-textmate splices an unset capture as the empty string, so on the \\\\G branch `^(?![ \\\\t]*$)(?!\\\\1[ \\\\t])` degrades to that column-0 boundary. The blank-line guard is load-bearing: an item spans blank lines and so does a fence inside it, so without it the first blank line inside the block would end it and the real closer would be read as an opener. A fence at the container's own BODY column is the SEPARATE rule below, and it is separate because it needs a different boundary: its body sits AT the opener's indent rather than past it, so `^(?!\\\\1[ \\\\t])` would close it on its own first body line. REACHABLE ONLY FROM `#container-body`, never from the document level, because at the document level an indented fence is NOT a fence: carve-js renders `  ```` ` over `  code` over `  ```` ` as a paragraph holding an inline code span, and the `indented-code-fence-is-not-a-fence` shapes in tests/block-battery.test.mjs pin that. THE END HAS TWO BRANCHES for the reason `#comment-fence-on-marker-line` gives. The first is the ordinary closer, INDENTED because the closer sits at the container's content column; it is deliberately as loose about the fence character and width as the document-level rule beside it, which also closes a backtick fence on a tilde line. The second is a zero-width container boundary: a column-0 line ends the item and with it an unclosed fence. Without it an unclosed indented fence would run to end of document, and vscode-textmate does not test an enclosing container's `end` while a child region is open, so the item could not stop it. NOT included in `#block-quote-body`: `#block-quotes` ends at `$`, so a multi-line region opened inside it would hold the quote open past its own end and run away. A fence inside a quote is therefore still uncoloured, tracked separately.",
+          "name": "markup.raw.block.fenced.code.carve",
+          "begin": "(?:\\G(?<=[ \\t])|^([ \\t]+)((?:(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)[ \\t]+(?:\\[[ xX_>?-]\\][ \\t]+)?)+))(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "beginCaptures": {
+            "2": {
+              "patterns": [
+                {
+                  "match": "[-*]",
+                  "name": "markup.list.unnumbered.carve punctuation.definition.list.begin.carve"
+                },
+                {
+                  "match": "[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.",
+                  "name": "markup.list.numbered.carve punctuation.definition.list.begin.carve"
+                },
+                {
+                  "match": "\\[[ xX_>?-]\\]",
+                  "name": "constant.language.task-list.carve"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.raw.begin.carve"
+            },
+            "4": {
+              "name": "entity.name.type.language.carve"
+            },
+            "5": {
+              "name": "string.quoted.double.carve"
+            },
+            "6": {
+              "name": "entity.name.label.carve"
+            },
+            "7": {
+              "name": "entity.name.label.carve"
+            },
+            "8": {
+              "name": "string.quoted.double.carve"
+            }
+          },
+          "end": "^[ \\t]+(`{3,}|~{3,})[ \\t]*$|^(?![ \\t]*$)(?!\\1[ \\t])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.raw.end.carve"
+            }
+          }
+        },
+        {
+          "comment": "A CODE FENCE AT A CONTAINER'S OWN BODY COLUMN, the other half of markup-carve/vscode-carve#128 and the reason it is a separate rule from the marker-line one above rather than a third branch of it: THE BOUNDARY IS DIFFERENT. A fence opened on a marker line has its body PAST the opener's indent, so `^(?!\\\\1[ \\\\t])` bounds it; a fence opened at the body column has its body AT the opener's indent, so the same test would close it on its own first body line. Here the boundary is `^(?!\\\\1)`, a line that does not even reach the opener's indent, with the same blank-line guard - a code block may hold blank lines, and an item spans them. carve-js renders an indented fence over an indented body over an indented closer as a code block inside the item. REACHABLE ONLY FROM `#container-body`: at the document level an indented fence is not a fence at all, which the `an indented fence at the document level is not a fence` assertion pins.",
+          "name": "markup.raw.block.fenced.code.carve",
+          "begin": "^([ \\t]+)(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.raw.begin.carve"
+            },
+            "3": {
+              "name": "entity.name.type.language.carve"
+            },
+            "4": {
+              "name": "string.quoted.double.carve"
+            },
+            "5": {
+              "name": "entity.name.label.carve"
+            },
+            "6": {
+              "name": "entity.name.label.carve"
+            },
+            "7": {
+              "name": "string.quoted.double.carve"
+            }
+          },
+          "end": "^[ \\t]+(`{3,}|~{3,})[ \\t]*$|^(?![ \\t]*$)(?!\\1)",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.raw.end.carve"
@@ -256,6 +360,86 @@
         }
       ]
     },
+    "table-row-cells": {
+      "comment": "The cells of a table ROW, shared by `#tables` and `#table-row-behind-a-container-prefix` so the two cannot drift apart - the same reason `#container-body` and `#block-quote-body` exist. The two rules differ only in their anchor: one opens at the line start, the other at the scan position on a container's own marker line.",
+      "patterns": [
+        {
+          "match": "\\|=",
+          "name": "keyword.operator.table.header.carve"
+        },
+        {
+          "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.table.rowspan.carve"
+            }
+          }
+        },
+        {
+          "match": "(?<=\\|)\\s*(<)\\s*(?=\\|)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.table.colspan.carve"
+            }
+          }
+        },
+        {
+          "match": "\\|",
+          "name": "punctuation.separator.table.carve"
+        },
+        {
+          "include": "#trailing-comment-cell"
+        },
+        {
+          "include": "#footnotes"
+        },
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#extension-inline"
+        },
+        {
+          "include": "#critic-markup"
+        },
+        {
+          "include": "#forced-emphasis"
+        },
+        {
+          "include": "#sup-sub"
+        },
+        {
+          "include": "#emphasis"
+        },
+        {
+          "include": "#links"
+        },
+        {
+          "include": "#images"
+        },
+        {
+          "include": "#citations"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#math"
+        },
+        {
+          "include": "#mentions-tags"
+        }
+      ]
+    },
     "tables": {
       "patterns": [
         {
@@ -291,85 +475,14 @@
           "end": "$",
           "patterns": [
             {
-              "match": "\\|=",
-              "name": "keyword.operator.table.header.carve"
-            },
-            {
-              "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
-              "captures": {
-                "1": {
-                  "name": "keyword.operator.table.rowspan.carve"
-                }
-              }
-            },
-            {
-              "match": "(?<=\\|)\\s*(<)\\s*(?=\\|)",
-              "captures": {
-                "1": {
-                  "name": "keyword.operator.table.colspan.carve"
-                }
-              }
-            },
-            {
-              "match": "\\|",
-              "name": "punctuation.separator.table.carve"
-            },
-            {
-              "include": "#trailing-comment-cell"
-            },
-            {
-              "include": "#footnotes"
-            },
-            {
-              "include": "#raw-inline"
-            },
-            {
-              "include": "#inline-literal"
-            },
-            {
-              "include": "#inline-code"
-            },
-            {
-              "include": "#extension-inline"
-            },
-            {
-              "include": "#critic-markup"
-            },
-            {
-              "include": "#forced-emphasis"
-            },
-            {
-              "include": "#sup-sub"
-            },
-            {
-              "include": "#emphasis"
-            },
-            {
-              "include": "#links"
-            },
-            {
-              "include": "#images"
-            },
-            {
-              "include": "#citations"
-            },
-            {
-              "include": "#autolink"
-            },
-            {
-              "include": "#attributes"
-            },
-            {
-              "include": "#math"
-            },
-            {
-              "include": "#mentions-tags"
+              "include": "#table-row-cells"
             }
           ]
         },
         {
+          "comment": "The continuation row (`+ b |`), which folds into the row above it. INDENT-TOLERANT for the same reason the row rule beside it is: a table inside a list item sits at the item's content column, and a column-0 anchor here left `  + b |` unscoped under a `  | a |` that did scope (markup-carve/vscode-carve#129). It inherits that rule's known over-match at the document level, where carve-js renders an indented pipe row as a paragraph.",
           "name": "markup.table.continuation.carve",
-          "match": "^(\\+)(.*\\|\\s*)$",
+          "match": "^[ \\t]*(\\+)(.*\\|\\s*)$",
           "captures": {
             "1": {
               "name": "keyword.operator.table.continuation.carve"
@@ -392,6 +505,21 @@
               ]
             }
           }
+        }
+      ]
+    },
+    "table-row-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A TABLE ROW MAY OPEN ON A CONTAINER'S OWN MARKER LINE (`- | a |`, `- [ ] | a |`, `1. | a |`), and `#tables` cannot reach it: its begin is `^(?=\\\\s*\\\\|)`, which tolerates indentation but not a marker, and the container's own begin match has already consumed `- ` by the time the line is scanned, so the row carried no table scope at all while carve-js renders a table inside the item (markup-carve/vscode-carve#129, corpus 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-2). Quotes (`#block-quote-on-marker-line`) and divs (the optional marker alternative in `#divs`) both already had a marker-line path; tables did not. Anchored on \\\\G with the `(?<=[ \\\\t])` guard for the reasons `#comment-fence-on-marker-line` gives: \\\\G matches at the current scan position, which on a marker line is where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the guard keeps it to a marker rather than to a pipe glued after some earlier match. The begin is ZERO-WIDTH so the cells rule owns every character of the row, exactly as it does at the line start. Reachable ONLY from `#container-body`. The DELIMITER-row spelling on a marker line is deliberately not duplicated: it cannot arise, because a GFM delimiter row is the second line of its table and a marker line is the first.",
+          "name": "markup.table.row.carve",
+          "begin": "\\G(?<=[ \\t])(?=\\|)",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#table-row-cells"
+            }
+          ]
         }
       ]
     },
@@ -1452,6 +1580,15 @@
         }
       ]
     },
+    "thematic-break-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A THEMATIC BREAK ON A CONTAINER'S MARKER LINE IS A BREAK, NOT AN EM DASH (markup-carve/vscode-carve#130). `#thematic-break` is `^\\\\s*(?:-{3,}|\\\\*{3,}|_{3,})\\\\s*$`, and on a marker line the container's own begin has already consumed `- ` or `- [ ] ` by the time the line is scanned, so the anchor cannot match and the run of dashes fell through to `#smart-typography`, whose `---` alternative claimed it as `constant.character.typography.carve`. THAT IS WHAT MAKES THIS ONE DIFFERENT from the absent-rule gaps beside it: a scope IS produced, it is the wrong one, and nothing in this repo's invariants looks at whether a produced scope is correct - a presence-only check on the break scope passes the defect unchanged. Corpus 363-a-task-item-s-checkbox-is-not-decided-by-its-first-block renders `- [ ] ---` as an `<hr>` inside the item, and carve-js renders `> ---` as an `<hr>` inside the quote. Anchored on \\\\G with the `(?<=[ \\\\t])` guard for the reasons `#comment-fence-on-marker-line` gives, and ordered ahead of `#smart-typography` in both `#container-body` and `#block-quote-body` so the break wins the line. Reachable ONLY from those two, so a document-level `---` after some inline match can never take it. The trailing `[ \\\\t]*$` keeps it to a whole line: `- --- x` is item text and stays one.",
+          "match": "\\G(?<=[ \\t])(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$",
+          "name": "meta.separator.thematic-break.carve"
+        }
+      ]
+    },
     "thematic-break": {
       "match": "^\\s*(?:-{3,}|\\*{3,}|_{3,})\\s*$",
       "name": "meta.separator.thematic-break.carve"
@@ -1469,10 +1606,28 @@
     "comment-fence-on-marker-line": {
       "patterns": [
         {
-          "comment": "A COMMENT FENCE MAY OPEN ON A LIST ITEM'S MARKER LINE (`- %%%`), and then its body is hidden exactly as it is anywhere else: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits, so the whole run from opener to closer is one comment and nothing after it is affected (corpus 337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too, markup-carve/vscode-carve#113). The `#comments` fence cannot reach that shape: its begin is anchored on ^, and the container's own begin match has already consumed `- ` by the time this line is scanned. The result was INVERTED highlighting - the `%%%` fell through to the trailing-comment rule and scoped as a LINE comment so no block opened, the hidden `[r]: /url` came back as a live meta.link.reference.definition.carve, and the REAL closer was then taken for an opener and swallowed the paragraph below. tree-sitter-carve is the reference here (all three carve-grammars highlighters were wrong, each differently): it puts a fenced_comment_block INSIDE list_item_content, beside the list_marker_* rather than over it, with the body as a single opaque content node. Anchored on \\G rather than ^ for the reason markup-carve/vscode-carve#67 gives for the in-quote reference definition - \\G matches at the current scan position, which on a marker line is exactly where the marker ended, and which vscode-textmate resets on every following line so this can never open one. The `(?<=[ \\t])` guard is what keeps it to a marker line specifically: a later match on the same line moves the \\G anchor too, and a `%%%` run glued to the end of one (`- /a/%%%`) is not a fence. The end has TWO branches. The first is the ordinary closer, INDENTED because the closer sits at the item's content column. The second is a zero-width container boundary: a column-0 line ends the item and with it the open fence, so corpus 326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-6 (`- %%%` / `c` / `%%%` / `tail`) keeps `c` and `tail` VISIBLE with the unclosed opener degrading to a line comment. Without it an unclosed opener would run to end of document, which is the failure this rule exists to remove.",
+          "comment": "A COMMENT FENCE MAY OPEN ON A LIST ITEM'S MARKER LINE (`- %%%`), and then its body is hidden exactly as it is anywhere else: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits, so the whole run from opener to closer is one comment and nothing after it is affected (corpus 337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too, markup-carve/vscode-carve#113). The `#comments` fence cannot reach that shape: its begin is anchored on ^, and the container's own begin match has already consumed `- ` by the time this line is scanned. The result was INVERTED highlighting - the `%%%` fell through to the trailing-comment rule and scoped as a LINE comment so no block opened, the hidden `[r]: /url` came back as a live meta.link.reference.definition.carve, and the REAL closer was then taken for an opener and swallowed the paragraph below. tree-sitter-carve is the reference here (all three carve-grammars highlighters were wrong, each differently): it puts a fenced_comment_block INSIDE list_item_content, beside the list_marker_* rather than over it, with the body as a single opaque content node. Anchored on \\G rather than ^ for the reason markup-carve/vscode-carve#67 gives for the in-quote reference definition - \\G matches at the current scan position, which on a marker line is exactly where the marker ended, and which vscode-textmate resets on every following line so this can never open one. The `(?<=[ \\t])` guard is what keeps it to a marker line specifically: a later match on the same line moves the \\G anchor too, and a `%%%` run glued to the end of one (`- /a/%%%`) is not a fence. The end has TWO branches. The first is the ordinary closer, INDENTED because the closer sits at the item's content column. The second is a zero-width container boundary: a column-0 line ends the item and with it the open fence, so corpus 326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-6 (`- %%%` / `c` / `%%%` / `tail`) keeps `c` and `tail` VISIBLE with the unclosed opener degrading to a line comment. Without it an unclosed opener would run to end of document, which is the failure this rule exists to remove. A NESTED MARKER LINE NEVER REACHES COLUMN 0, so that boundary could not fire for one, and a fence opened at `  - %%%` swallowed its own sibling `  - sibling` (markup-carve/vscode-carve#127). The enclosing `#list_item` does not save it: vscode-textmate only tests the CURRENT rule's `end` alongside its patterns, so an enclosing container's `end` is never reached while the fence is open. THE BEGIN THEREFORE HAS A SECOND BRANCH that matches a nested marker line WHOLE, which is the only way this rule can learn the opener's indent - the \\G branch starts after the container's own begin match, captures nothing before it, and Oniguruma has no variable-length lookbehind to recover it with. The two branches then share one `end`: capture 1 is the opener's indent, and vscode-textmate splices an unset capture as the empty string, so on the \\G branch `^(?![ \\t]*$)(?!\\1[ \\t])` degrades to exactly the column-0 boundary this rule had before. THE BLANK-LINE GUARD IS PART OF THAT EQUIVALENCE and not decoration: an item spans blank lines and so does a fence inside it, so `- %%%` over a blank line over `  hidden` over `  %%%` hides `hidden` (carve-js renders `<ul><li></li></ul>`). Without the guard the boundary fires on the blank line, `hidden` comes back visible, and the real closer is then read as an opener that swallows the paragraph below - the same inversion markup-carve/vscode-carve#113 removed. markup-carve/intellij-carve#74 closed the same gap with `^(?!\\1[ \\t])` and could use it unconditionally because its rule always matches the marker line whole; here that shape is the fallback, not the rule. THE COST of the second branch is that the marker it consumes sits inside `comment.block.carve` rather than beside it, which is not tree-sitter-carve's split - the capture patterns put the list scopes back on top so a theme still colours the marker as a marker, and the \\G branch, which is every column-0 spelling, is unaffected. The boundary the second branch produces is the opener's indent PLUS ONE COLUMN rather than the item's exact content column, for the same reason the glued-attribute list branches use a minimum column: it holds the comment open a column or two too long rather than closing it early.",
           "name": "comment.block.carve",
-          "begin": "\\G(?<=[ \\t])(%{3,})(?!%)[^\\n]*$",
-          "end": "^[ \\t]+\\1(?!%)[^\\n]*$|^(?=[^ \\t\\n])"
+          "begin": "(?:\\G(?<=[ \\t])|^([ \\t]+)((?:(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)[ \\t]+(?:\\[[ xX_>?-]\\][ \\t]+)?)+))(%{3,})(?!%)[^\\n]*$",
+          "beginCaptures": {
+            "2": {
+              "patterns": [
+                {
+                  "match": "[-*]",
+                  "name": "markup.list.unnumbered.carve punctuation.definition.list.begin.carve"
+                },
+                {
+                  "match": "[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.",
+                  "name": "markup.list.numbered.carve punctuation.definition.list.begin.carve"
+                },
+                {
+                  "match": "\\[[ xX_>?-]\\]",
+                  "name": "constant.language.task-list.carve"
+                }
+              ]
+            }
+          },
+          "end": "^[ \\t]+\\3(?!%)[^\\n]*$|^(?![ \\t]*$)(?!\\1[ \\t])"
         }
       ]
     },
@@ -1489,16 +1644,28 @@
           "include": "#comments"
         },
         {
+          "include": "#thematic-break-behind-a-container-prefix"
+        },
+        {
           "include": "#thematic-break"
         },
         {
+          "include": "#headings-behind-a-container-prefix"
+        },
+        {
           "include": "#headings"
+        },
+        {
+          "include": "#code-block-behind-a-container-prefix"
         },
         {
           "include": "#code-blocks"
         },
         {
           "include": "#divs"
+        },
+        {
+          "include": "#table-row-behind-a-container-prefix"
         },
         {
           "include": "#tables"
@@ -1612,6 +1779,12 @@
       "patterns": [
         {
           "include": "#comment-fence-on-quote-marker-line"
+        },
+        {
+          "include": "#thematic-break-behind-a-container-prefix"
+        },
+        {
+          "include": "#headings-behind-a-container-prefix"
         },
         {
           "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",

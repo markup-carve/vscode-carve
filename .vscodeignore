@@ -9,6 +9,7 @@ spec/**
 tests/**
 src/**
 scripts/**
+tools/**
 tsconfig.json
 dist/*.test.*
 dist/**/*.map
