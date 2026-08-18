@@ -146,6 +146,67 @@ test('a column-0 line ends the item, so it is not the fence closer', () => {
   }
 })
 
+/*
+ * A FENCE OPENED ON A NESTED MARKER LINE ENDS AT ITS OWN INDENT
+ * (markup-carve/vscode-carve#127).
+ *
+ * The end's container-boundary branch used to be `^(?=[^ \t\n])`, a COLUMN-0
+ * line - a line a nested marker never reaches. So `- outer` over `  - %%%` over
+ * `  - sibling` swallowed the sibling: the engine renders two nested items, the
+ * unclosed run degrading to a line comment and `sibling` an ordinary second
+ * item.
+ *
+ * Every marker-line case above opens at column 0, which is exactly why the
+ * whole suite was green on this. The enclosing `#list_item` does not save it
+ * either: vscode-textmate only tests the CURRENT rule's `end` alongside its
+ * patterns, so an enclosing container's `end` is never reached while the fence
+ * is open.
+ *
+ * BOTH DIRECTIONS, on a nested opener specifically: the sibling is not inside a
+ * comment AND it still carries its own list scope. A comment-scope-only check
+ * would pass a rule that ended the fence by killing the list.
+ */
+const NESTED_SHAPES = [
+  ['a nested dash marker', '- outer\n  - %%%\n  - sibling\n\nafter\n', '  - sibling'],
+  ['a nested star marker', '- outer\n  * %%%\n  * sibling\n\nafter\n', '  * sibling'],
+  ['a nested ordered marker', '1. outer\n   2. %%%\n   3. sibling\n\nafter\n', '   3. sibling'],
+  ['a nested task marker', '- outer\n  - [ ] %%%\n  - [ ] sibling\n\nafter\n', '  - [ ] sibling'],
+  ['a twice-nested marker', '- a\n  - b\n    - %%%\n    - sibling\n\nafter\n', '    - sibling'],
+]
+
+for (const [label, src, sibling] of NESTED_SHAPES) {
+  test(`a fence opened on ${label} does not swallow its sibling`, () => {
+    const tokens = tokenize(src).filter((t) => t.line === sibling)
+    assert.ok(tokens.length > 0, 'the sibling item was not tokenized at all')
+    for (const t of tokens) {
+      assert.ok(
+        !isComment(t),
+        `the sibling must be outside the comment, but ${JSON.stringify(t.text)} carries` +
+          ` ${t.scopes.join(' ')}`,
+      )
+    }
+  })
+
+  test(`a fence opened on ${label} leaves its sibling a list item`, () => {
+    const tokens = tokenize(src).filter((t) => t.line === sibling)
+    assert.ok(
+      tokens.some((t) => t.scopes.some((s) => s.includes('markup.list'))),
+      `the sibling lost its list scope: ${tokens.map((t) => t.scopes.join(' ')).join(' | ')}`,
+    )
+  })
+
+  test(`a fence opened on ${label} still hides a body past its own indent`, () => {
+    // The other direction of the same boundary. A line indented past the
+    // opener stays hidden, so the fix cannot be "close on the next line".
+    const deep = src.replace('%%%\n', '%%%\n      [r]: /url\n')
+    const hidden = tokenize(deep).filter((t) => t.line.includes('[r]: /url'))
+    assert.ok(hidden.length > 0, 'the fence body was not tokenized at all')
+    for (const t of hidden) {
+      assert.ok(isComment(t), `the body must stay hidden, got ${t.scopes.join(' ')}`)
+    }
+  })
+}
+
 test('a percent run glued to inline content is not a marker-line fence', () => {
   // The \G anchor moves with every match on the line, so the fence also asks to
   // be preceded by whitespace. Without that, `- /a/%%%` opened a fence at the
