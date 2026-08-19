@@ -437,6 +437,33 @@ const astFailures = []
 const diagnosticFailures = []
 const rows = []
 
+// DOCUMENTS THE BUNDLED ENGINE CANNOT YET RENDER, and the pin that fixes them.
+//
+// The spec submodule moves ahead of the published engine routinely: a ruling
+// lands, the corpus gains a document for it, and `@markup-carve/carve` only
+// carries it after its next release. Without this list the bump PR is red for a
+// reason nobody here can fix, and the usual outcome is that the corpus stops
+// being bumped at all.
+//
+// EVERY ENTRY IS TEMPORARY AND MUST BE EMPTIED AT THE NEXT ENGINE BUMP. The
+// list is keyed by ENGINE_PIN below: raise the engine and the key stops
+// matching, so the entries expire loudly rather than quietly becoming
+// permanent. Do not add a document here because it is inconvenient - only
+// because the engine provably predates the rule the document pins.
+const ENGINE_PIN = '61f824d5d5724bfaa26dd07dc5c159249a66c977'
+const ENGINE_LAG = {
+  '373-a-vertical-table-marker-needs-a-horizontal-partner.crv':
+    'horizontal-first alignment pairs (markup-carve/carve#1405, #1407)',
+  '374-a-collected-definition-closes-the-item-paragraph.crv':
+    'a collected definition closes the item paragraph (markup-carve/carve#1409)',
+  '374-a-collected-definition-closes-the-item-paragraph-2.crv':
+    'a collected definition closes the item paragraph (markup-carve/carve#1409)',
+  '375-a-table-cell-can-inherit-horizontal-alignment.crv':
+    'inherited horizontal alignment (markup-carve/carve#1408)',
+}
+const lagWaived = []
+const lagStale = []
+
 for (const name of documents) {
   const source = readFileSync(join(corpusDir, name), 'utf8')
   const expected = readFileSync(join(corpusDir, name.replace(/\.crv$/, '.html')), 'utf8').trim()
@@ -452,8 +479,16 @@ for (const name of documents) {
     renderThrew++
   }
   if (renderState === 'render-differs') {
-    renderMismatches++
-    renderFailures.push(`${name}: ${expected.length} expected bytes, ${rendered.length} rendered`)
+    if (ENGINE_LAG[name] && previewPin === ENGINE_PIN) {
+      lagWaived.push(`${name}: ${ENGINE_LAG[name]}`)
+    } else {
+      renderMismatches++
+      renderFailures.push(`${name}: ${expected.length} expected bytes, ${rendered.length} rendered`)
+    }
+  } else if (ENGINE_LAG[name]) {
+    // It renders now. The waiver outlived the lag and has to go, or it will sit
+    // here hiding a future regression on the same document.
+    lagStale.push(name)
   }
 
   const uri = pathToFileURL(join(corpusDir, name)).href
@@ -527,6 +562,8 @@ stdout.write(`rendered=${documents.length - renderMismatches - renderThrew}/${do
 stdout.write(`renderThrew=${renderThrew}\n`)
 stdout.write(`previewEngine=${previewEngineDir}\n`)
 stdout.write(`serverEngine=${serverEngineDir}\n`)
+stdout.write(`engineLagWaived=${lagWaived.length}\n`)
+for (const line of lagWaived) stdout.write(`  waived (engine behind spec): ${line}\n`)
 stdout.write(`engineCopies=${sharedEngine ? 1 : 2}\n`)
 stdout.write(`enginePinPreview=${previewPin}\n`)
 stdout.write(`enginePinServer=${serverPin}\n`)
@@ -585,6 +622,22 @@ if (renderMismatches > 0 || renderThrew > 0) {
 if (astMismatches > 0) {
   stdout.write('FAIL: the two engine copies parse the documents above differently.\n')
 }
+if (lagStale.length > 0) {
+  stdout.write(
+    'FAIL: an engine-lag waiver is no longer needed. These documents render correctly\n' +
+      '  now, so their entries in ENGINE_LAG are hiding nothing except a future regression\n' +
+      '  on the same document. Delete them:\n' +
+      lagStale.map((n) => `    ${n}\n`).join(''),
+  )
+}
+if (Object.keys(ENGINE_LAG).length > 0 && previewPin !== ENGINE_PIN) {
+  stdout.write(
+    'FAIL: the engine pin moved and ENGINE_LAG was not emptied. Every waiver in it was\n' +
+      `  written against ${ENGINE_PIN.slice(0, 12)} and says nothing about ${String(previewPin).slice(0, 12)}.\n` +
+      '  Re-run without the list, keep only the documents that still mismatch, and point\n' +
+      '  ENGINE_PIN at the new revision.\n',
+  )
+}
 if (serverErrors > 0) {
   stdout.write(
     'FAIL: the language server reports errors on documents the corpus says are well-formed.\n',
@@ -598,5 +651,10 @@ const failures =
   serverErrors +
   deadProviders.length +
   (sharedEngine ? 0 : 1) +
-  (pinsAgree ? 0 : 1)
+  (pinsAgree ? 0 : 1) +
+  // A waiver that outlived its lag, or a pin that moved without the list being
+  // emptied, has to fail the run. Printing FAIL without reaching the exit code
+  // is the shape this tool exists to catch everywhere else.
+  lagStale.length +
+  (Object.keys(ENGINE_LAG).length > 0 && previewPin !== ENGINE_PIN ? 1 : 0)
 exit(failures === 0 ? 0 : 1)
