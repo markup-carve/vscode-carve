@@ -70,6 +70,9 @@
       "include": "#inline-code"
     },
     {
+      "include": "#inline-comment"
+    },
+    {
       "include": "#trailing-comment"
     },
     {
@@ -134,6 +137,15 @@
         {
           "name": "comment.line.percent.carve",
           "match": "^\\s*%%(?!%).*$"
+        }
+      ]
+    },
+    "inline-comment": {
+      "patterns": [
+        {
+          "comment": "A DELIMITED INLINE COMMENT, `{% ... %}` (spec PART 9 section 21a, markup-carve/carve#1239). It hides its payload the way `%%` hides the rest of a line, so it is scoped WHOLE rather than letting the emphasis and attribute rules reach inside - `{% *not bold* %}` must not render a bold run. It sits after the code and literal inline rules so a `{%` inside a code span stays code, and before #trailing-comment so a `%%` in the payload does not open a second comment.",
+          "name": "comment.block.inline.carve",
+          "match": "\\{%[^\\n]*?%\\}"
         }
       ]
     },
@@ -386,6 +398,9 @@
         {
           "match": "\\|",
           "name": "punctuation.separator.table.carve"
+        },
+        {
+          "include": "#inline-comment"
         },
         {
           "include": "#trailing-comment-cell"

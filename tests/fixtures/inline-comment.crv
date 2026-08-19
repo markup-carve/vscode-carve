@@ -1,0 +1,7 @@
+A paragraph with {% a hidden note %} in the middle.
+
+{% *not bold* and `not code` and {.not-an-attribute} %}
+
+`{% stays code %}` and a trailing %% line comment
+
+| a {% cell note %} | b |

@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Highlight the delimited inline comment `{% ... %}` (markup-carve/carve#1239). The
+  payload is scoped as a comment whole, in paragraphs and in table cells, so
+  emphasis and attribute markers inside it no longer highlight.
+
 ## [0.1.2] - 2026-08-19
 
 ### Added
