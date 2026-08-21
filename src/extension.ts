@@ -165,7 +165,7 @@ async function exportHtml(): Promise<void> {
     title: name,
     render: previewRenderOptions(),
   })
-  const defaultPath = editor.document.uri.path.replace(/\.(crv|carve)$/i, '') + '.html'
+  const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.html'
   const target = await vscode.window.showSaveDialog({
     defaultUri: editor.document.uri.with({ path: defaultPath }),
     filters: { HTML: ['html'] },
@@ -290,7 +290,7 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
       { scheme: 'untitled', language: 'carve' },
     ],
     synchronize: {
-      fileEvents: vscode.workspace.createFileSystemWatcher('**/*.{crv,carve}'),
+      fileEvents: vscode.workspace.createFileSystemWatcher('**/*.crv'),
     },
   }
 
