@@ -213,28 +213,28 @@
       "patterns": [
         {
           "name": "markup.raw.block.fenced.code.carve",
-          "begin": "^(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "begin": "^((`|~)\\2{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.raw.begin.carve"
             },
-            "2": {
+            "3": {
               "name": "entity.name.type.language.carve"
             },
-            "3": {
-              "name": "string.quoted.double.carve"
-            },
             "4": {
-              "name": "entity.name.label.carve"
+              "name": "string.quoted.double.carve"
             },
             "5": {
               "name": "entity.name.label.carve"
             },
             "6": {
+              "name": "entity.name.label.carve"
+            },
+            "7": {
               "name": "string.quoted.double.carve"
             }
           },
-          "end": "^(`{3,}|~{3,})\\s*$",
+          "end": "^(\\1\\2*)[ \\t]*$",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.raw.end.carve"
@@ -248,7 +248,7 @@
         {
           "comment": "A CODE FENCE IS A CODE FENCE BEHIND A CONTAINER PREFIX TOO (`- ```` ` on an item's marker line, and a fence at the item's own body column), and `#code-blocks` could reach neither: its begin is anchored on a COLUMN-0 run of backticks or tildes, with no indent allowance and no marker-line variant (markup-carve/vscode-carve#128). The consequence was worse than a missing colour. Because no block region opened, the fence BODY was tokenized as live markup, so emphasis, links and reference definitions inside a code block all lit up, and the closing fence carried no scope either. corpus 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3 renders `- ```` ` over `  c` over `  ```` ` as a `<pre><code>` inside the item. THE MARKER-LINE RULE HAS TWO BEGIN BRANCHES. The \\\\G branch is the marker line, anchored the way `#block-quote-on-marker-line` and `#comment-fence-on-marker-line` are: \\\\G matches at the current scan position, which on a marker line is where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the `(?<=[ \\\\t])` guard keeps it to a marker rather than to a backtick run glued after some earlier match on the line. The second branch matches a NESTED marker line WHOLE, for the reason `#comment-fence-on-marker-line` gives: an unclosed fence opened at a nested marker would otherwise swallow its own sibling, because a container boundary written as a column-0 line is one a nested marker never reaches. Capture 1 is the opener's indent, and vscode-textmate splices an unset capture as the empty string, so on the \\\\G branch `^(?![ \\\\t]*$)(?!\\\\1[ \\\\t])` degrades to that column-0 boundary. The blank-line guard is load-bearing: an item spans blank lines and so does a fence inside it, so without it the first blank line inside the block would end it and the real closer would be read as an opener. A fence at the container's own BODY column is the SEPARATE rule below, and it is separate because it needs a different boundary: its body sits AT the opener's indent rather than past it, so `^(?!\\\\1[ \\\\t])` would close it on its own first body line. REACHABLE ONLY FROM `#container-body`, never from the document level, because at the document level an indented fence is NOT a fence: carve-js renders `  ```` ` over `  code` over `  ```` ` as a paragraph holding an inline code span, and the `indented-code-fence-is-not-a-fence` shapes in tests/block-battery.test.mjs pin that. THE END HAS TWO BRANCHES for the reason `#comment-fence-on-marker-line` gives. The first is the ordinary closer, INDENTED because the closer sits at the container's content column; it is deliberately as loose about the fence character and width as the document-level rule beside it, which also closes a backtick fence on a tilde line. The second is a zero-width container boundary: a column-0 line ends the item and with it an unclosed fence. Without it an unclosed indented fence would run to end of document, and vscode-textmate does not test an enclosing container's `end` while a child region is open, so the item could not stop it. NOT included in `#block-quote-body`: `#block-quotes` ends at `$`, so a multi-line region opened inside it would hold the quote open past its own end and run away. A fence inside a quote is therefore still uncoloured, tracked separately.",
           "name": "markup.raw.block.fenced.code.carve",
-          "begin": "(?:\\G(?<=[ \\t])|^([ \\t]+)((?:(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)[ \\t]+(?:\\[[ xX_>?-]\\][ \\t]+)?)+))(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "begin": "(?:\\G(?<=[ \\t])|^([ \\t]+)((?:(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)[ \\t]+(?:\\[[ xX_>?-]\\][ \\t]+)?)+))((`|~)\\4{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
           "beginCaptures": {
             "2": {
               "patterns": [
@@ -269,6 +269,37 @@
             "3": {
               "name": "punctuation.definition.raw.begin.carve"
             },
+            "5": {
+              "name": "entity.name.type.language.carve"
+            },
+            "6": {
+              "name": "string.quoted.double.carve"
+            },
+            "7": {
+              "name": "entity.name.label.carve"
+            },
+            "8": {
+              "name": "entity.name.label.carve"
+            },
+            "9": {
+              "name": "string.quoted.double.carve"
+            }
+          },
+          "end": "^[ \\t]+(\\3\\4*)[ \\t]*$|^(?![ \\t]*$)(?!\\1[ \\t])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.raw.end.carve"
+            }
+          }
+        },
+        {
+          "comment": "A CODE FENCE AT A CONTAINER'S OWN BODY COLUMN, the other half of markup-carve/vscode-carve#128 and the reason it is a separate rule from the marker-line one above rather than a third branch of it: THE BOUNDARY IS DIFFERENT. A fence opened on a marker line has its body PAST the opener's indent, so `^(?!\\\\1[ \\\\t])` bounds it; a fence opened at the body column has its body AT the opener's indent, so the same test would close it on its own first body line. Here the boundary is `^(?!\\\\1)`, a line that does not even reach the opener's indent, with the same blank-line guard - a code block may hold blank lines, and an item spans them. carve-js renders an indented fence over an indented body over an indented closer as a code block inside the item. REACHABLE ONLY FROM `#container-body`: at the document level an indented fence is not a fence at all, which the `an indented fence at the document level is not a fence` assertion pins.",
+          "name": "markup.raw.block.fenced.code.carve",
+          "begin": "^([ \\t]+)((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.raw.begin.carve"
+            },
             "4": {
               "name": "entity.name.type.language.carve"
             },
@@ -285,38 +316,7 @@
               "name": "string.quoted.double.carve"
             }
           },
-          "end": "^[ \\t]+(`{3,}|~{3,})[ \\t]*$|^(?![ \\t]*$)(?!\\1[ \\t])",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.raw.end.carve"
-            }
-          }
-        },
-        {
-          "comment": "A CODE FENCE AT A CONTAINER'S OWN BODY COLUMN, the other half of markup-carve/vscode-carve#128 and the reason it is a separate rule from the marker-line one above rather than a third branch of it: THE BOUNDARY IS DIFFERENT. A fence opened on a marker line has its body PAST the opener's indent, so `^(?!\\\\1[ \\\\t])` bounds it; a fence opened at the body column has its body AT the opener's indent, so the same test would close it on its own first body line. Here the boundary is `^(?!\\\\1)`, a line that does not even reach the opener's indent, with the same blank-line guard - a code block may hold blank lines, and an item spans them. carve-js renders an indented fence over an indented body over an indented closer as a code block inside the item. REACHABLE ONLY FROM `#container-body`: at the document level an indented fence is not a fence at all, which the `an indented fence at the document level is not a fence` assertion pins.",
-          "name": "markup.raw.block.fenced.code.carve",
-          "begin": "^([ \\t]+)(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
-          "beginCaptures": {
-            "2": {
-              "name": "punctuation.definition.raw.begin.carve"
-            },
-            "3": {
-              "name": "entity.name.type.language.carve"
-            },
-            "4": {
-              "name": "string.quoted.double.carve"
-            },
-            "5": {
-              "name": "entity.name.label.carve"
-            },
-            "6": {
-              "name": "entity.name.label.carve"
-            },
-            "7": {
-              "name": "string.quoted.double.carve"
-            }
-          },
-          "end": "^[ \\t]+(`{3,}|~{3,})[ \\t]*$|^(?![ \\t]*$)(?!\\1)",
+          "end": "^[ \\t]+(\\2\\3*)[ \\t]*$|^(?![ \\t]*$)(?!\\1)",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.raw.end.carve"
@@ -534,9 +534,15 @@
             {
               "match": "(?<=\\|)[ \\t]*(:?)(-+)(:?)[ \\t]*(?=\\|)",
               "captures": {
-                "1": { "name": "keyword.operator.table.alignment.carve" },
-                "2": { "name": "punctuation.definition.table.separator.carve" },
-                "3": { "name": "keyword.operator.table.alignment.carve" }
+                "1": {
+                  "name": "keyword.operator.table.alignment.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.table.separator.carve"
+                },
+                "3": {
+                  "name": "keyword.operator.table.alignment.carve"
+                }
               }
             },
             {
@@ -560,7 +566,9 @@
           "name": "markup.table.continuation.carve",
           "match": "(?:\\G(?<=[ \\t])|^[ \\t]+)(\\+)(.*\\|\\s*)$",
           "captures": {
-            "1": { "name": "keyword.operator.table.continuation.carve" }
+            "1": {
+              "name": "keyword.operator.table.continuation.carve"
+            }
           }
         }
       ]
@@ -1413,7 +1421,7 @@
             }
           }
         },
-{
+        {
           "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment written across a break coloured the markup inside it - 87 of 286 generated documents (markup-carve/carve-grammars#320). AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\\\{#` alone claimed it and every line after it. The guard refuses the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}`, and leaves a multi-line comment - whose first line holds no `}` at all - opening as it should. A BLANK LINE ENDS IT, which is the bound Prism uses for this construct too. A TextMate begin sees one line and cannot look ahead for its own closer, so without a bound an unclosed opener would scope the rest of the document. One paragraph is where the engine stops reading this construct as well.",
           "name": "comment.block.critic.carve",
           "begin": "(\\{#)(?![^}\\n]*(?<!#)\\})",
@@ -1681,7 +1689,7 @@
         },
         {
           "name": "constant.character.typography.carve",
-          "match": "\\.\\.\\.|---|--|<->|<-|->|=>|!=|<=|>=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\)"
+          "match": "<-->|<--|-->|<=>|<==|==>|\\.\\.\\.|---|--|<->|<-|->|!=|<=|>=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\)"
         },
         {
           "name": "punctuation.definition.smartquote.carve",
@@ -1717,18 +1725,32 @@
         {
           "comment": "A fenced code block inside a quote needs a quote-aware region. A normal multi-line fence child would prevent the enclosing one-line quote rule from ending, so this rule repeats the quote prefix in its closer and stops at the first unmarked line.",
           "name": "markup.raw.block.fenced.code.carve",
-          "begin": "\\G((?:> )*)(`{3,}|~{3,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "begin": "\\G((?:> )*)((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
           "beginCaptures": {
-            "2": { "name": "punctuation.definition.raw.begin.carve" },
-            "3": { "name": "entity.name.type.language.carve" },
-            "4": { "name": "string.quoted.double.carve" },
-            "5": { "name": "entity.name.label.carve" },
-            "6": { "name": "entity.name.label.carve" },
-            "7": { "name": "string.quoted.double.carve" }
+            "2": {
+              "name": "punctuation.definition.raw.begin.carve"
+            },
+            "4": {
+              "name": "entity.name.type.language.carve"
+            },
+            "5": {
+              "name": "string.quoted.double.carve"
+            },
+            "6": {
+              "name": "entity.name.label.carve"
+            },
+            "7": {
+              "name": "entity.name.label.carve"
+            },
+            "8": {
+              "name": "string.quoted.double.carve"
+            }
           },
-          "end": "^[ \\t]*> \\1(`{3,}|~{3,})[ \\t]*$|^(?![ \\t]*>)",
+          "end": "^[ \\t]*> \\1(\\2\\3*)[ \\t]*$|^(?![ \\t]*>)",
           "endCaptures": {
-            "2": { "name": "punctuation.definition.raw.end.carve" }
+            "1": {
+              "name": "punctuation.definition.raw.end.carve"
+            }
           }
         }
       ]

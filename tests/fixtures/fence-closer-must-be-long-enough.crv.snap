@@ -1,0 +1,15 @@
+>````
+#^^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>```
+#^^^^ text.carve markup.raw.block.fenced.code.carve
+>not a closer
+#^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>````
+#^^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>~~~
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>longer closer is fine
+#^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>~~~~~
+#^^^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
