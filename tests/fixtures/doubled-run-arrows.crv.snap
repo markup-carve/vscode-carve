@@ -1,0 +1,29 @@
+>Canonical: <-- --> <--> and <== ==> <=>
+#^^^^^^^^^^^ text.carve
+#           ^^^ text.carve constant.character.typography.carve
+#              ^ text.carve
+#               ^^^ text.carve constant.character.typography.carve
+#                  ^ text.carve
+#                   ^^^^ text.carve constant.character.typography.carve
+#                       ^^^^^ text.carve
+#                            ^^^ text.carve constant.character.typography.carve
+#                               ^ text.carve
+#                                ^^^ text.carve constant.character.typography.carve
+#                                   ^ text.carve
+#                                    ^^^ text.carve constant.character.typography.carve
+>
+>Deprecated but still rendered: <- -> <->
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                               ^^ text.carve constant.character.typography.carve
+#                                 ^ text.carve
+#                                  ^^ text.carve constant.character.typography.carve
+#                                    ^ text.carve
+#                                     ^^^ text.carve constant.character.typography.carve
+>
+>Not an arrow: key => value stays literal, and p <= q is a comparison.
+#^^^^^^^^^^^^^^^^^^ text.carve
+#                  ^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.highlight.carve markup.highlight.carve
+#                                                 ^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                                                  ^^^^^^^^^^^^^^^^^^^^ text.carve
+>
