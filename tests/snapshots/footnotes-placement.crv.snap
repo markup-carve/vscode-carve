@@ -27,14 +27,12 @@
 #^^^^^^^^^^^ text.carve
 >
 >[^a]: first note
-#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#     ^ text.carve meta.link.reference.definition.carve
-#      ^^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^^^^^^ text.carve meta.footnote.definition.carve
 #           ^^^^^^ text.carve
 >
 >[^b]: second note
-#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#     ^ text.carve meta.link.reference.definition.carve
-#      ^^^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^^^^^^^ text.carve meta.footnote.definition.carve
 #            ^^^^^^ text.carve
 >

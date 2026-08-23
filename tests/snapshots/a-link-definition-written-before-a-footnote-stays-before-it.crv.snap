@@ -17,7 +17,6 @@
 #     ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
 >
 >[^a]: note
-#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#     ^ text.carve meta.link.reference.definition.carve
-#      ^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^^^^^ text.carve meta.footnote.definition.carve
 >

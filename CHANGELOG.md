@@ -8,9 +8,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **A reference image is highlighted as an image** (markup-carve/carve-grammars#307). `![alt][ref]` and the collapsed `![alt][]` had no rule, so they fell through to the reference-LINK rule, which matches from the `[` and leaves the `!` as prose - the alt text carried a link title scope, and the output said the document held a link where it holds an image.
+
+- **A cross-reference with auto text is highlighted** (markup-carve/carve-grammars#308). `</#id>` had no rule and the id was not left alone: it begins with `#`, so the tag rule claimed it and every crossref coloured as a hashtag.
+
+- **The braced highlight `{=text=}` has a rule of its own.** The forced-emphasis context carried the other four braced spellings; what stood in for the fifth was the bare `=` rule matching the run inside the braces, which scoped nothing at all once the content held a delimiter (`{=a=b=}`).
+
 - Highlight the delimited inline comment `{% ... %}` (#147, markup-carve/carve#1239).
   The payload is scoped as a comment whole, in paragraphs and in table cells, so
   emphasis and attribute markers inside it no longer highlight.
+
+### Fixed
+
+- **A footnote definition no longer highlights as a link reference definition.** The rule was right and every scope on it named the other construct, so `[^a]: note text` scoped the whole line `meta.link.reference.definition.carve` and coloured `note` - the first word of the prose - as a URL. It carries `meta.footnote.definition.carve` and `constant.other.reference.footnote.carve` now, and the body has no destination scope (markup-carve/carve-grammars#307).
+- **A `{% ... %}` comment and a `{# ... #}` editorial comment spanning a line break are one comment.** Both were line-bounded, so a comment written across a break was not recognized at all and the markup inside it coloured - 144 of 469 and 87 of 286 generated documents (markup-carve/carve-grammars#320).
+- **An unpartnered verbatim run is a code span to the end of its paragraph,** as it is in the engine, instead of leaving the rest of the paragraph live markup. The same rule closes a code span opened on one line and closed on the next, which nothing scoped before (markup-carve/carve-grammars#320).
 
 ## [0.1.2] - 2026-08-19
 

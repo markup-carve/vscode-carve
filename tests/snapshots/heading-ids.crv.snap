@@ -33,17 +33,21 @@
 #  ^^^ text.carve markup.heading.carve entity.name.section.carve
 >
 >See </#cafe-notes>, </#section-2024-recap>, </#setup-2>, and </#api-v2>.
-#^^^^^ text.carve
-#     ^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#      ^^^^^^^^^^^^^^^ text.carve markup.italic.carve markup.italic.carve
-#                     ^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#                      ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
-#                       ^^^^^^^^^^^^^^^^^^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
-#                                         ^^^^ text.carve
-#                                             ^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#                                              ^^^^^^^^^^^^^^^^ text.carve markup.italic.carve markup.italic.carve
-#                                                              ^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#                                                               ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
-#                                                                ^^^^^^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
-#                                                                      ^^^ text.carve
+#^^^^ text.carve
+#    ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#       ^^^^^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                 ^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                  ^^ text.carve
+#                    ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                       ^^^^^^^^^^^^^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                                         ^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                          ^^ text.carve
+#                                            ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                               ^^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                                                      ^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                                       ^^^^^^ text.carve
+#                                                             ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                                                ^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                                                                      ^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                                                       ^^ text.carve
 >
