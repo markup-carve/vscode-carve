@@ -1,0 +1,16 @@
+>> ![a](i.png)
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^^^^^^^^^ text.carve markup.quote.carve
+>> ^ cap
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^ text.carve markup.quote.carve markup.table.caption.carve punctuation.definition.caption.carve
+#   ^ text.carve markup.quote.carve markup.table.caption.carve
+#    ^^^ text.carve markup.quote.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>> plain
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^^^ text.carve markup.quote.carve
+>
