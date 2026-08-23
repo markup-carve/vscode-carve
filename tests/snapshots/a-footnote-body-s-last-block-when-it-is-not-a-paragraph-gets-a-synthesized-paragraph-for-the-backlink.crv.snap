@@ -1,7 +1,6 @@
 >[^a]: note
-#^^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#     ^ text.carve meta.link.reference.definition.carve
-#      ^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^^^^^ text.carve meta.footnote.definition.carve
 >  ```
 #^^ text.carve markup.raw.block.fenced.code.carve
 #  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve

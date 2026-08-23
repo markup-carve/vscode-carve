@@ -1,7 +1,7 @@
 >``
-#^^^ text.carve
+#^^ text.carve markup.raw.inline.carve punctuation.definition.raw.carve
 >code
-#^^^^^ text.carve
+#^^^^^ text.carve markup.raw.inline.carve markup.raw.inline.content.carve
 >``
-#^^^ text.carve
+#^^ text.carve markup.raw.inline.carve punctuation.definition.raw.carve
 >

@@ -1,0 +1,12 @@
+An image takes a reference the way a link does: ![alt][r], and the collapsed
+form ![alt][] uses its alt text as the label. The alt text may be empty: ![][r].
+
+A cross-reference with auto text is </#section-id>, and #section-id on its own
+is a tag.
+
+The fifth braced spelling is {=highlighted=}, and it holds its own delimiter in
+{=a=b=} the way the other four do.
+
+[^n]: a footnote definition whose first word is prose, not a destination
+
+[r]: /i.png

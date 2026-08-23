@@ -70,7 +70,7 @@
       "include": "#inline-code"
     },
     {
-      "include": "#inline-comment"
+      "include": "#braced-comment"
     },
     {
       "include": "#trailing-comment"
@@ -140,12 +140,13 @@
         }
       ]
     },
-    "inline-comment": {
+    "braced-comment": {
       "patterns": [
         {
-          "comment": "A DELIMITED INLINE COMMENT, `{% ... %}` (spec PART 9 section 21a, markup-carve/carve#1239). It hides its payload the way `%%` hides the rest of a line, so it is scoped WHOLE rather than letting the emphasis and attribute rules reach inside - `{% *not bold* %}` must not render a bold run. It sits after the code and literal inline rules so a `{%` inside a code span stays code, and before #trailing-comment so a `%%` in the payload does not open a second comment.",
+          "comment": "A DELIMITED INLINE COMMENT, `{% ... %}` (spec PART 9 section 21a, markup-carve/carve#1239). It hides its payload the way `%%` hides the rest of a line, so it is scoped WHOLE rather than letting the emphasis and attribute rules reach inside - `{% *not bold* %}` must not render a bold run. It sits after the code and literal inline rules so a `{%` inside a code span stays code, and before #trailing-comment so a `%%` in the payload does not open a second comment. IT MAY SPAN A LINE BREAK, and this was a single-line `match`, so a comment written across one was not recognized at all and the markup inside it coloured: `a {% *b*` over ` %} z` scoped a strong run inside a comment - carve#1239 again, one line further on. 144 of 469 generated documents leaked (markup-carve/carve-grammars#320). Prism and highlight.js were given the multi-line reading in markup-carve/carve-grammars#312. The region carries the scope and offers no patterns, so everything between the delimiters is comment. A BLANK LINE ENDS IT, which is the bound Prism uses for this construct too. A TextMate begin sees one line and cannot look ahead for its own closer, so without a bound an unclosed opener would scope the rest of the document. One paragraph is where the engine stops reading this construct as well.",
           "name": "comment.block.inline.carve",
-          "match": "\\{%[^\\n]*?%\\}"
+          "begin": "\\{%",
+          "end": "%\\}|^(?=[ \\t]*$)"
         }
       ]
     },
@@ -400,7 +401,7 @@
           "name": "punctuation.separator.table.carve"
         },
         {
-          "include": "#inline-comment"
+          "include": "#braced-comment"
         },
         {
           "include": "#trailing-comment-cell"
@@ -794,20 +795,17 @@
     "definitions": {
       "patterns": [
         {
-          "comment": "A FOOTNOTE definition has a BODY, and that body's content column is a FIXED two whatever the label is wide, so it is the one definition shape that opens a container: `[^a]: note` over `  [r]: /u` collects the second definition (corpus a-definition-on-a-footnote-body-s-continuation-line-is-collected), one column in leaves it the document's own text, and three or more is the body's own text. Narrowing the definition rule below to flush-left without this would have dropped the scope from that shape entirely. A LINK reference definition gets no container, deliberately: it has no body at all, so an indented definition under one is a paragraph, not a second definition (measured against carve-php and carve-js - `[r]: /u` over `  [s]: /v` renders the second line as prose). `begin` consumes exactly what the definition rule below consumes and carries the same captures, so a footnote definition line tokenizes as it always did. Capture 0 carries the old rule-level `name`, which a begin/end rule cannot carry itself - a rule-level name spans the whole REGION, so the body lines would be scoped as definition too. A capture-0 name does NOT reach a sibling capture that re-tokenizes with its own patterns (vscode-textmate builds that sub-tokenization from the RULE stack, not from the capture's local stack), so the attribute capture names the scope itself or a trailing `{...}` block silently loses its definition layer. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
+          "comment": "A FOOTNOTE definition, and until markup-carve/carve-grammars#307 every scope on it said LINK REFERENCE DEFINITION. The rule is right - it is anchored on `[^label]:` and it is the one definition shape that opens a container - but it was copied from the link definition below and kept that construct's names, so `[^a]: note text` scoped the whole line `meta.link.reference.definition.carve` and put `markup.underline.link.carve` on `note`, the first WORD of the prose, as though it were a URL. A footnote body is inline content and has no destination, so that capture carries no scope at all now. The construct ledger read this row as a GAP the whole time, because the only name the rule had was another construct's. A FOOTNOTE definition has a BODY, and that body's content column is a FIXED two whatever the label is wide, so it is the one definition shape that opens a container: `[^a]: note` over `  [r]: /u` collects the second definition (corpus a-definition-on-a-footnote-body-s-continuation-line-is-collected), one column in leaves it the document's own text, and three or more is the body's own text. Narrowing the definition rule below to flush-left without this would have dropped the scope from that shape entirely. A LINK reference definition gets no container, deliberately: it has no body at all, so an indented definition under one is a paragraph, not a second definition (measured against carve-php and carve-js - `[r]: /u` over `  [s]: /v` renders the second line as prose). `begin` consumes exactly what the definition rule below consumes and carries the same captures, so a footnote definition line tokenizes as it always did. Capture 0 carries the old rule-level `name`, which a begin/end rule cannot carry itself - a rule-level name spans the whole REGION, so the body lines would be scoped as definition too. A capture-0 name does NOT reach a sibling capture that re-tokenizes with its own patterns (vscode-textmate builds that sub-tokenization from the RULE stack, not from the capture's local stack), so the attribute capture names the scope itself or a trailing `{...}` block silently loses its definition layer. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
           "begin": "^(\\[\\^[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "beginCaptures": {
             "0": {
-              "name": "meta.link.reference.definition.carve"
+              "name": "meta.footnote.definition.carve"
             },
             "1": {
-              "name": "constant.other.reference.link.carve"
-            },
-            "2": {
-              "name": "markup.underline.link.carve"
+              "name": "constant.other.reference.footnote.carve"
             },
             "4": {
-              "name": "meta.link.reference.definition.carve",
+              "name": "meta.footnote.definition.carve",
               "patterns": [
                 {
                   "include": "#attributes"
@@ -947,6 +945,25 @@
             },
             "5": {
               "name": "string.quoted.double.image-title.carve"
+            }
+          }
+        },
+        {
+          "comment": "THE OTHER TWO IMAGE SPELLINGS. The spec gives an image the same three forms a link has (grammar.ebnf `reference_image`, `collapsed_reference_image`) and says only the leading `!` and the `<img src>` output differ. This file had a rule for the inline form alone, so `![alt][ref]` and `![alt][]` fell through to `meta.link.reference.carve`, which matches from the `[` and leaves the `!` as prose - the alt text carrying a LINK title scope. That is worse than leaving them unscoped: the output says the document holds a link where it holds an image. It wins over the reference-link rule without reordering the pattern list, because it matches one character earlier and vscode-textmate takes the leftmost match. ONE RULE FOR BOTH FORMS: the label body is starred, so the collapsed spelling is this rule with an empty label - the fold vim-carve and sublime-carve make for the link (markup-carve/carve-grammars#318), and the one `meta.link.reference.carve` beside it already makes. The label may not span a line (corpus 352-a-bracketed-construct-s-identifiers-stay-on-one-line-3), and the alt text may be EMPTY, so it carries no non-empty guard: `![][r]` is an image where `[][r]` is not a link.",
+          "name": "meta.image.reference.carve",
+          "match": "(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.image.begin.carve"
+            },
+            "2": {
+              "name": "string.other.image.alt.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.image.end.carve"
+            },
+            "5": {
+              "name": "constant.other.reference.link.carve"
             }
           }
         }
@@ -1181,6 +1198,23 @@
               "name": "punctuation.definition.raw.carve"
             }
           }
+        },
+        {
+          "comment": "AN UNPARTNERED RUN IS A CODE SPAN TO THE END OF ITS PARAGRAPH, which is what the engine does with it and what Prism was taught in markup-carve/carve-grammars#312. Without this rule the run was not a code span at all here, so `a `*b*` coloured a strong inside a verbatim payload - 75 of 111 generated documents, and 37 of 73 on a wide run (markup-carve/carve-grammars#320). Second in this context, so a run that finds its partner is still the closed span above; this one only sees the runs that rule cannot match. A BLANK LINE ENDS IT: the paragraph is where the engine stops the span, and a TextMate begin has no way to look ahead for a closer it already knows is not there. IT ALSO CLOSES ON A MATCHING RUN, which is what makes it the MULTI-LINE code span as well as the unpartnered one: the rule above is a `match` and a TextMate match sees one line, so a span opened on one line and closed on the next was scoped by nothing at all - corpus two-backticks-are-not-a-code-fence-opening-or-closing is three lines the engine reads as one code span and this grammar read as prose.",
+          "name": "markup.raw.inline.carve",
+          "begin": "(`+)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.raw.carve"
+            }
+          },
+          "end": "(\\1)|^(?=[ \\t]*$)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.raw.carve"
+            }
+          },
+          "contentName": "markup.raw.inline.content.carve"
         }
       ]
     },
@@ -1279,6 +1313,22 @@
               "name": "punctuation.definition.link.carve"
             }
           }
+        },
+        {
+          "comment": "CROSS-REFERENCE WITH AUTO TEXT, `</#id>` (grammar.ebnf `auto_text_link`). This file had no rule for it and the run was not left alone: the id begins with `#`, so `#mentions-tags` claimed it and every crossref coloured as a hashtag - the shape markup-carve/tree-sitter-carve#245 found, where a construct parsed as the wrong node made every editor colour a crossref as a web address. It matches at the `<`, two characters before the tag rule can, so it wins on position without reordering anything. The id charset is the spec's `crossref_id` - anything that is not `>`, whitespace or a newline - because an automatic heading id PRESERVES Unicode and case, so `</#Cafe-Notes>` has to scope.",
+          "name": "meta.link.cross-reference.carve",
+          "match": "(</#)([^>\\s]+)(>)",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "markup.underline.link.cross-reference.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            }
+          }
         }
       ]
     },
@@ -1363,20 +1413,22 @@
             }
           }
         },
-        {
+{
+          "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment written across a break coloured the markup inside it - 87 of 286 generated documents (markup-carve/carve-grammars#320). AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\\\{#` alone claimed it and every line after it. The guard refuses the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}`, and leaves a multi-line comment - whose first line holds no `}` at all - opening as it should. A BLANK LINE ENDS IT, which is the bound Prism uses for this construct too. A TextMate begin sees one line and cannot look ahead for its own closer, so without a bound an unclosed opener would scope the rest of the document. One paragraph is where the engine stops reading this construct as well.",
           "name": "comment.block.critic.carve",
-          "match": "(\\{#)([^}]*)(#\\})",
-          "captures": {
+          "begin": "(\\{#)(?![^}\\n]*(?<!#)\\})",
+          "beginCaptures": {
             "1": {
               "name": "punctuation.definition.critic.carve"
-            },
-            "2": {
-              "name": "comment.block.content.carve"
-            },
-            "3": {
+            }
+          },
+          "end": "(#\\})|^(?=[ \\t]*$)",
+          "endCaptures": {
+            "1": {
               "name": "punctuation.definition.critic.carve"
             }
-          }
+          },
+          "contentName": "comment.block.content.carve"
         }
       ]
     },
@@ -1440,6 +1492,22 @@
             },
             "3": {
               "name": "punctuation.definition.strike.carve"
+            }
+          }
+        },
+        {
+          "comment": "THE FIFTH BRACED SPELLING. `{=x=}` is forced HIGHLIGHT (grammar.ebnf `forced_highlight`, spec PART 9 S22), and this context carried the other four and not it. What stood in for it was an accident: the bare `=` rule in `#emphasis` matched the `=x=` INSIDE the braces and left them as prose, which looks right until the content holds the delimiter - `{=a=b=}` scoped nothing at all. Distinct from the raw-inline `{=format}` attribute on a code span, which has no trailing `=` before the `}`.",
+          "name": "markup.highlight.carve",
+          "match": "(\\{=)(?=\\S)([^\\n]*?)(=\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.highlight.carve"
+            },
+            "2": {
+              "name": "markup.highlight.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.highlight.carve"
             }
           }
         }

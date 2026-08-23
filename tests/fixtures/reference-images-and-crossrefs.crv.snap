@@ -1,0 +1,57 @@
+>An image takes a reference the way a link does: ![alt][r], and the collapsed
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                                                ^^ text.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#                                                  ^^^ text.carve meta.image.reference.carve string.other.image.alt.carve
+#                                                     ^ text.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#                                                      ^ text.carve meta.image.reference.carve
+#                                                       ^ text.carve meta.image.reference.carve constant.other.reference.link.carve
+#                                                        ^ text.carve meta.image.reference.carve
+#                                                         ^^^^^^^^^^^^^^^^^^^^ text.carve
+>form ![alt][] uses its alt text as the label. The alt text may be empty: ![][r].
+#^^^^^ text.carve
+#     ^^ text.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#       ^^^ text.carve meta.image.reference.carve string.other.image.alt.carve
+#          ^ text.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#           ^^ text.carve meta.image.reference.carve
+#             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                                                                         ^^ text.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#                                                                           ^ text.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#                                                                            ^ text.carve meta.image.reference.carve
+#                                                                             ^ text.carve meta.image.reference.carve constant.other.reference.link.carve
+#                                                                              ^ text.carve meta.image.reference.carve
+#                                                                               ^^ text.carve
+>
+>A cross-reference with auto text is </#section-id>, and #section-id on its own
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                                    ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                       ^^^^^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                                                 ^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                                  ^^^^^^ text.carve
+#                                                        ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#                                                         ^^^^^^^^^^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#                                                                   ^^^^^^^^^^^^ text.carve
+>is a tag.
+#^^^^^^^^^^ text.carve
+>
+>The fifth braced spelling is {=highlighted=}, and it holds its own delimiter in
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                             ^^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                               ^^^^^^^^^^^ text.carve markup.highlight.carve markup.highlight.carve
+#                                          ^^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>{=a=b=} the way the other four do.
+#^^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#  ^^^ text.carve markup.highlight.carve markup.highlight.carve
+#     ^^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
+#       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>[^n]: a footnote definition whose first word is prose, not a destination
+#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^^ text.carve meta.footnote.definition.carve
+#       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>[r]: /i.png
+#^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ text.carve meta.link.reference.definition.carve
+#     ^^^^^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
