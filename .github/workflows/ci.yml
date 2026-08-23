@@ -20,10 +20,15 @@ jobs:
           node-version: 22
           cache: npm
 
+      # `--add` on both lines, and `--get-all` to prove it. Without `--add`, the
+      # second `git config` REPLACES the first rather than appending to it, so
+      # only `git@github.com:` is ever rewritten and the `ssh://` form is left
+      # uncovered. Nothing fails when that happens, which is why it is printed.
       - name: Prefer HTTPS for Git dependencies
         run: |
-          git config --global url."https://github.com/".insteadOf ssh://git@github.com/
-          git config --global url."https://github.com/".insteadOf git@github.com:
+          git config --global --add url."https://github.com/".insteadOf ssh://git@github.com/
+          git config --global --add url."https://github.com/".insteadOf git@github.com:
+          git config --global --get-all url."https://github.com/".insteadOf
 
       - run: npm ci
       - run: npm run build
