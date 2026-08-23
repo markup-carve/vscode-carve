@@ -506,13 +506,36 @@
           }
         },
         {
+          "comment": "CAPTION. THE MARKER SEPARATOR IS A RUN, AND NONE OF IT IS CONTENT (PART 7 MARKER SEPARATOR, markup-carve/carve#1583). The separator gets its own capture and the content capture may not start with a space, so `^   cap` captions `cap` rather than ` cap`. The `(?![ \\t]*$)` guard is what makes a marker with NOTHING after its run a paragraph instead of a caption: on `^   ` the old ` +(.+)$` let ` +` give one space back so `(.+)` could match it, scoping a caption whose content was a single space, while carve-js renders `<p>^</p>`. The guard is the same one `#headings` carries for the same reason - the two constructs share the rule and had drifted apart on it. A TAB IS NOT PART OF THE SEPARATOR, so `^ \\tsecond` captions `\\tsecond` with the tab kept, which is why the content capture excludes a space rather than all whitespace.",
           "name": "markup.table.caption.carve",
-          "match": "^[ \\t]*(\\^) +(.+)$",
+          "match": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$",
           "captures": {
             "1": {
               "name": "punctuation.definition.caption.carve"
             },
-            "2": {
+            "3": {
+              "name": "string.unquoted.caption.carve",
+              "patterns": [
+                {
+                  "include": "#trailing-comment"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "caption-behind-a-container-prefix": {
+      "patterns": [
+        {
+          "comment": "A CAPTION IS STILL A CAPTION BEHIND A CONTAINER PREFIX (`> ^ cap`), and the caption rule in `#tables` cannot reach it: that rule is anchored on `^[ \\t]*`, which tolerates indentation but not a marker, and the quote's own begin match has already consumed `> ` by the time the line is scanned - so the caption carried NO caption scope at all. Corpus 405-a-quote-holding-a-captioned-block-indents-it-like-any-other-nested-block renders `> ![a](i.png)` over `> ^ cap` as a figure inside the quote. `#block-quote-body` already reaches headings, thematic breaks, table rows, fences and reference definitions this way; the caption was the construct left out, and an ABSENT rule is exactly what the coverage gate cannot report, because a rule that emits no scope can never be an orphan (the blindness `#headings-behind-a-container-prefix` was filed for). Anchored on \\G with the `(?<=[ \\t])` guard for the reasons `#table-row-behind-a-container-prefix` gives. Reachable ONLY from `#block-quote-body`: containers reach the caption through `#tables`, whose `^[ \\t]*` anchor already matches at a container's own body column.",
+          "name": "markup.table.caption.carve",
+          "match": "\\G(?<=[ \\t])(\\^)( +)(?![ \\t]*$)([^ ].*)$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.caption.carve"
+            },
+            "3": {
               "name": "string.unquoted.caption.carve",
               "patterns": [
                 {
@@ -1943,6 +1966,9 @@
         },
         {
           "include": "#table-row-behind-a-container-prefix"
+        },
+        {
+          "include": "#caption-behind-a-container-prefix"
         },
         {
           "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",

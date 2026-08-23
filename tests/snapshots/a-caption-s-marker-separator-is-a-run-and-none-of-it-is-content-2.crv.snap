@@ -1,0 +1,17 @@
+>> q
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^ text.carve markup.quote.carve
+>
+>^   
+#^^^^^ text.carve
+>
+>![a](i.png)
+#^^ text.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^ text.carve meta.image.inline.carve string.other.image.alt.carve
+#   ^^ text.carve meta.image.inline.carve
+#     ^^^^^ text.carve meta.image.inline.carve markup.underline.link.image.carve
+#          ^ text.carve meta.image.inline.carve
+>^ 
+#^^^ text.carve
+>
