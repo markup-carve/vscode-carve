@@ -1689,7 +1689,7 @@
         },
         {
           "name": "constant.character.typography.carve",
-          "match": "\\.\\.\\.|---|--|<->|<-|->|=>|!=|<=|>=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\)"
+          "match": "<-->|<--|-->|<=>|<==|==>|\\.\\.\\.|---|--|<->|<-|->|!=|<=|>=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\)"
         },
         {
           "name": "punctuation.definition.smartquote.carve",
