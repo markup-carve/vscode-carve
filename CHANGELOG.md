@@ -8,24 +8,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- **A reference image is highlighted as an image** (markup-carve/carve-grammars#307). `![alt][ref]` and the collapsed `![alt][]` had no rule, so they fell through to the reference-LINK rule, which matches from the `[` and leaves the `!` as prose - the alt text carried a link title scope, and the output said the document held a link where it holds an image.
+- **A reference image is highlighted as an image** (#151, markup-carve/carve-grammars#307). `![alt][ref]` and the collapsed `![alt][]` had no rule, so they fell through to the reference-LINK rule: the `!` stayed prose and the alt text carried a link title scope, so the output said the document held a link where it holds an image.
+- **A cross-reference with auto text is highlighted** (#151, markup-carve/carve-grammars#308). `</#id>` had no rule, and because the id begins with `#` the tag rule claimed it, so every crossref colored as a hashtag.
+- **The braced highlight `{=text=}` has a rule of its own** (#151). The forced-emphasis context carried the other four braced spellings; what stood in for the fifth was the bare `=` rule matching the run inside the braces, which scoped nothing at all once the content held a delimiter (`{=a=b=}`).
+- **The delimited inline comment `{% ... %}` is highlighted** (#147, markup-carve/carve#1239). The payload is scoped as a comment whole, in paragraphs and in table cells, so emphasis and attribute markers inside it no longer highlight.
 
-- **A cross-reference with auto text is highlighted** (markup-carve/carve-grammars#308). `</#id>` had no rule and the id was not left alone: it begins with `#`, so the tag rule claimed it and every crossref coloured as a hashtag.
+### Changed
 
-- **The braced highlight `{=text=}` has a rule of its own.** The forced-emphasis context carried the other four braced spellings; what stood in for the fifth was the bare `=` rule matching the run inside the braces, which scoped nothing at all once the content held a delimiter (`{=a=b=}`).
-
-- Highlight the delimited inline comment `{% ... %}` (#147, markup-carve/carve#1239).
-  The payload is scoped as a comment whole, in paragraphs and in table cells, so
-  emphasis and attribute markers inside it no longer highlight.
+- **The extension watches and exports `.crv` only** (#148). It is the one Carve extension, so the language server's file watcher no longer globs `.carve`, and the HTML export strips only `.crv` when it proposes a filename.
 
 ### Fixed
 
-- **A caption marker followed only by spaces is not a caption.** The separator after `^` is a RUN and none of it is content (markup-carve/carve#1583), but the rule let the run give a space back so the content capture could take it, so `^   ` highlighted as a caption whose text was a single space where the engine renders a paragraph. The heading rule already carried the guard that prevents this; the caption rule now carries the same one, and a tab after the separator stays content.
-- **A caption inside a block quote is highlighted.** `> ^ cap` carried no caption scope at all: the caption rule is anchored on a column-0 or indented `^`, and the quote's own match has already consumed `> ` by the time the line is scanned. Quotes already reached headings, thematic breaks, table rows, fences and reference definitions that way and the caption was the construct left out (markup-carve/carve#1564).
-
-- **A footnote definition no longer highlights as a link reference definition.** The rule was right and every scope on it named the other construct, so `[^a]: note text` scoped the whole line `meta.link.reference.definition.carve` and coloured `note` - the first word of the prose - as a URL. It carries `meta.footnote.definition.carve` and `constant.other.reference.footnote.carve` now, and the body has no destination scope (markup-carve/carve-grammars#307).
-- **A `{% ... %}` comment and a `{# ... #}` editorial comment spanning a line break are one comment.** Both were line-bounded, so a comment written across a break was not recognized at all and the markup inside it coloured - 144 of 469 and 87 of 286 generated documents (markup-carve/carve-grammars#320).
-- **An unpartnered verbatim run is a code span to the end of its paragraph,** as it is in the engine, instead of leaving the rest of the paragraph live markup. The same rule closes a code span opened on one line and closed on the next, which nothing scoped before (markup-carve/carve-grammars#320).
+- **A caption marker followed only by spaces is not a caption** (#146, markup-carve/carve#1583). The separator after `^` is a run and none of it is content, but the rule let the run give a space back so the content capture could take it, so `^   ` highlighted as a caption whose text was a single space where the engine renders a paragraph. A tab after the separator stays content.
+- **A caption inside a block quote is highlighted** (#146, markup-carve/carve#1564). `> ^ cap` carried no caption scope at all: the caption rule is anchored on a column-0 or indented `^`, and the quote's own match has already consumed `> ` by the time the line is scanned.
+- **A footnote definition no longer highlights as a link reference definition** (#151, markup-carve/carve-grammars#307). The rule was right and every scope on it named the other construct, so `[^a]: note text` scoped the whole line as a link reference definition and colored `note`, the first word of the prose, as a URL. The body has no destination scope now.
+- **A `{% ... %}` comment and a `{# ... #}` editorial comment spanning a line break are one comment** (#151, markup-carve/carve-grammars#320). Both were line-bounded, so a comment written across a break was not recognized at all and the markup inside it colored.
+- **An unpartnered verbatim run is a code span to the end of its paragraph,** as it is in the engine, instead of leaving the rest of the paragraph live markup (#151, markup-carve/carve-grammars#320). The same rule closes a code span opened on one line and closed on the next, which nothing scoped before.
+- **A code fence closes on its own character, at its own length or wider** (#153, #152). The closer carried no backreference to the opener, so any delimiter line closed any block: a tilde fence holding a backtick sample ended at the sample and colored the rest of its verbatim body as live markup. A fence holding a fence is what every document describing Carve in Carve is made of.
+- **The doubled runs are the arrows, and a bare `=>` is not one** (#154, markup-carve/carve-grammars#324). `-->` and `==>` had no rule and were mis-split by the shorter dash runs matched ahead of them, while `=>`, which the language keeps literal, was the one run the grammar highlighted. Removing it unmasks a pre-existing over-match in the highlight rule, tracked in markup-carve/carve-grammars#325.
 
 ## [0.1.2] - 2026-08-19
 
