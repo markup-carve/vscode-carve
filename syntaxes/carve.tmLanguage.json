@@ -345,8 +345,8 @@
         },
         {
           "name": "markup.other.div.carve",
-          "comment": "A div fence may open directly after a list marker (`- ::: note`), so an optional bullet prefix is consumed here and scoped as a list marker. A BARE `::: figure` opener never reaches this pattern: it is a composite figure, not a generic container, and the pattern above claims it first (PART 9 S4c). An opener carrying a title or a `[label]` does reach it, which is the point of the split.",
-          "match": "^\\s*(?:([-*])[ \\t]+)?(:::+)\\s*([^\\s{\\[\"]+)?\\s*(?:(\"[^\"]*\")\\s*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])\\s*(\"[^\"]*\")?)?",
+          "comment": "A div fence may open directly after a list marker (`- ::: note`), so an optional bullet prefix is consumed here and scoped as a list marker. A BARE `::: figure` opener never reaches this pattern: it is a composite figure, not a generic container, and the pattern above claims it first (PART 9 S4c). An opener carrying a title or a `[label]` does reach it, which is the point of the split. THE SEPARATOR BEFORE EVERY TOKEN IS A SPACE RUN, never a tab and never nothing: the engines read `:::note`, `:::<TAB>note`, `:::|` and `::: note<TAB>\"T\"` as paragraph text (corpus 254 and 255), and this rule used `\\s*` at every slot, so it coloured all of them as openers. A tab belongs at the start of a line and nowhere else on one. The ONE slot that takes no separator is the bare `[label]`: `:::[l]` does open a div, measured, so that branch alone is zero-or-more spaces. Trailing whitespace after a complete opener stays permissive, tab included, which is what the engines accept - and the line is now anchored, because an unanchored match let a trailing token run claim residue the opener had already been decided against.",
+          "match": "^[ \\t]*(?:([-*])[ \\t]+)?(:::+)(?: +([^\\s{\\[\"]+))?(?: +(\"[^\"]*\")(?: +(\\[[^\\]]*\\]))?| *(\\[[^\\]]*\\])(?: +(\"[^\"]*\"))?)?[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.list.begin.carve"

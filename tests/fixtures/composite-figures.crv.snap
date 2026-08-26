@@ -87,9 +87,7 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
 >
 >:::	figure
-#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
-#   ^ text.carve markup.other.div.carve
-#    ^^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+#^^^^^^^^^^^ text.carve
 >
 >%% A longer fence opens a group just as three colons do.
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
