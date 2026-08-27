@@ -18,6 +18,7 @@ import {
   previewDocument,
   renderConformanceBody,
   renderPreviewBody,
+  renderMarkdown,
 } from './preview.js'
 
 const require = createRequire(import.meta.url)
@@ -840,4 +841,39 @@ test('grammar: |= header row marker still tokenizes (regression)', async () => {
     findScoped(row, '|=', 'keyword.operator.table.header.carve'),
     'header marker should keep its scope',
   )
+})
+
+test('both exports are reachable from the editor, not only the palette', () => {
+  const manifest = JSON.parse(
+    readFileSync(join(here, '..', 'package.json'), 'utf8'),
+  ) as {
+    contributes: {
+      commands: { command: string }[]
+      menus: Record<string, { command: string; when?: string }[]>
+    }
+  }
+
+  // A command that exists only in the Command Palette is a command most people
+  // never find. PhpStorm puts both exports in the editor context menu and the
+  // maintainer went looking for them here.
+  const declared = new Set(manifest.contributes.commands.map((c) => c.command))
+  for (const command of ['carve.exportHtml', 'carve.exportMarkdown']) {
+    assert.ok(declared.has(command), `${command} is not a declared command`)
+    assert.ok(
+      (manifest.contributes.menus['editor/context'] ?? []).some(
+        (entry) => entry.command === command,
+      ),
+      `${command} is missing from the editor context menu, so it is palette-only`,
+    )
+  }
+})
+
+test('the Markdown export writes the engine Markdown, with no HTML wrapper', () => {
+  // The bundle exports ten converters and the extension reached one of them.
+  // What lands on disk has to be what carveToMarkdown writes: the HTML export
+  // builds a standalone page around its output, and wrapping Markdown in one
+  // would corrupt it.
+  const md = renderMarkdown('# Title\n\n- one\n- two\n')
+  assert.match(md, /^# Title/, 'the Markdown export does not render a heading')
+  assert.doesNotMatch(md, /<!DOCTYPE|<html|<body/i, 'the Markdown export wraps its output in HTML')
 })

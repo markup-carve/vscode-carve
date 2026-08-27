@@ -110,6 +110,10 @@
         "title": "Carve: Export to HTML"
       },
       {
+        "command": "carve.exportMarkdown",
+        "title": "Carve: Export to Markdown"
+      },
+      {
         "command": "carve.printPreview",
         "title": "Carve: Print Preview / Export PDF"
       },
@@ -124,6 +128,23 @@
           "command": "carve.openPreview",
           "when": "resourceLangId == carve",
           "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "carve.openPreview",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@1"
+        },
+        {
+          "command": "carve.exportHtml",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@2"
+        },
+        {
+          "command": "carve.exportMarkdown",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@3"
         }
       ]
     },
