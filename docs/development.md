@@ -50,9 +50,14 @@ npm run test:corpus -- --manifest /tmp/before.tsv   # one row per document
   folding ranges are collected.
 - The engine is resolved from BOTH module graphs - the extension's own and
   carve-lsp's - and the run fails if they land on different copies, or if the two
-  packages pin different engine revisions. That is the state the extension
-  shipped in before #133: the language server ran a parser the preview was not
-  using.
+  packages pin different engines. That is the state the extension shipped in
+  before #133: the language server ran a parser the preview was not using.
+- A pin is anything that admits exactly ONE engine: an exact registry version
+  (`0.1.5`) or a 40-hex git revision. Both are accepted and compared by value;
+  `^0.1.5`, `~0.1.5`, `>=0.1.5`, `*` and a branch URL are refused, because a
+  range is what let npm satisfy the two dependents with two different copies.
+  The revision spelling stays available for pinning an engine that has not been
+  released yet (#156).
 
 The run refuses to report anything over a population it did not check the size
 of. The number of documents must equal the number of `::: compare` blocks the
@@ -91,7 +96,8 @@ predates the rule it pins, and name the ruling in the value.
 task for later:
 
 1. Raise the engine dependency.
-2. Set `ENGINE_LAG = {}` and `ENGINE_PIN` to the new revision.
+2. Set `ENGINE_LAG = {}` and `ENGINE_PIN` to whatever `package.json` now
+   declares - the version, or the revision if the pin is a git one.
 3. Run `npm run test:corpus`. Whatever still mismatches goes back in the list,
    with its ruling named; everything else is fixed and stays out.
 
@@ -103,7 +109,7 @@ and both fail the run rather than only printing:
   next regression on that same document;
 - moving the engine pin without emptying the list fails with
   `the engine pin moved and ENGINE_LAG was not emptied`, because every waiver in
-  it was written against the old revision and says nothing about the new one.
+  it was written against the old engine and says nothing about the new one.
 
 A non-empty `ENGINE_LAG` at release time means the shipped extension renders
 those documents differently from the spec. That is acceptable while it is
@@ -113,8 +119,9 @@ recorded and expiring; it is not acceptable as a permanent state.
 
 ```bash
 npm run package
-code --install-extension vscode-carve-0.1.0.vsix
+code --install-extension "$(ls -t vscode-carve-*.vsix | head -1)"
 ```
 
-Use the filename emitted by `npm run package` if its version differs from the
-example above.
+`npm run package` names the file after the version in `package.json`, so the
+command above installs whatever it just wrote rather than a version spelled out
+here, which goes stale at every release.

@@ -248,23 +248,36 @@ if (serverEngineDir === null) fail(`the language server's module graph resolves 
  * npm cannot satisfy with one directory. A run that only compared resolved paths
  * would go green on a tree that happened to hoist and stay green until the next
  * `npm ci` on a different npm version. So compare what the two packages ASK FOR,
- * not only what they got, and require both to name the same 40-hex revision -
+ * not only what they got, and require both to name the SAME SINGLE VERSION -
  * anything softer is a range, and a range is how the incident happened (#133).
+ *
+ * A single version has two spellings, and the property is the same in both: a
+ * 40-hex git revision, and an exact semver with no range operator. `0.1.5`
+ * admits one version just as `#61f824d5...` admits one commit, so both are
+ * accepted and compared by value. What stays rejected is everything that admits
+ * MORE than one - `^0.1.5`, `~0.1.5`, `>=0.1.5`, `*`, `latest`, a branch or tag
+ * URL - because that is the shape npm can satisfy two different ways.
+ *
+ * The engines moved off git URLs onto published versions once both were on npm,
+ * and this check named the older spelling as if it were the requirement rather
+ * than one way of meeting it. That is the check-cannot-pass-a-correct-tree case,
+ * not a pin defect.
  */
 const REVISION = /#([0-9a-f]{40})\b/
+const EXACT_VERSION = /^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$/
 const declaredEngineSpec = (manifestPath, label) => {
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
   const spec = manifest.dependencies?.[ENGINE]
   if (spec === undefined) fail(`${label} declares no ${ENGINE} dependency at all (${manifestPath}).`)
   const revision = REVISION.exec(spec)
-  if (revision === null) {
-    fail(
-      `${label} declares ${ENGINE} as "${spec}", which does not pin a 40-hex git revision.\n` +
-        '  A range lets npm satisfy the two dependents with two different copies, and the\n' +
-        '  language server then runs a parser the preview is not using (#133).',
-    )
-  }
-  return revision[1]
+  if (revision !== null) return revision[1]
+  if (EXACT_VERSION.test(spec)) return spec
+  fail(
+    `${label} declares ${ENGINE} as "${spec}", which is neither an exact version nor a\n` +
+      '  40-hex git revision. A range lets npm satisfy the two dependents with two\n' +
+      '  different copies, and the language server then runs a parser the preview is\n' +
+      '  not using (#133).',
+  )
 }
 
 const previewPin = declaredEngineSpec(join(repoRoot, 'package.json'), 'this extension')
@@ -450,17 +463,12 @@ const rows = []
 // matching, so the entries expire loudly rather than quietly becoming
 // permanent. Do not add a document here because it is inconvenient - only
 // because the engine provably predates the rule the document pins.
-const ENGINE_PIN = '61f824d5d5724bfaa26dd07dc5c159249a66c977'
-const ENGINE_LAG = {
-  '373-a-vertical-table-marker-needs-a-horizontal-partner.crv':
-    'horizontal-first alignment pairs (markup-carve/carve#1405, #1407)',
-  '374-a-collected-definition-closes-the-item-paragraph.crv':
-    'a collected definition closes the item paragraph (markup-carve/carve#1409)',
-  '374-a-collected-definition-closes-the-item-paragraph-2.crv':
-    'a collected definition closes the item paragraph (markup-carve/carve#1409)',
-  '375-a-table-cell-can-inherit-horizontal-alignment.crv':
-    'inherited horizontal alignment (markup-carve/carve#1408)',
-}
+//
+// The key is whatever `package.json` declares - a published version once both
+// packages were on npm, a 40-hex revision before that. Either way it is the one
+// string that changes when the engine moves, which is all this key has to be.
+const ENGINE_PIN = '0.1.5'
+const ENGINE_LAG = {}
 const lagWaived = []
 const lagStale = []
 
@@ -635,7 +643,7 @@ if (Object.keys(ENGINE_LAG).length > 0 && previewPin !== ENGINE_PIN) {
     'FAIL: the engine pin moved and ENGINE_LAG was not emptied. Every waiver in it was\n' +
       `  written against ${ENGINE_PIN.slice(0, 12)} and says nothing about ${String(previewPin).slice(0, 12)}.\n` +
       '  Re-run without the list, keep only the documents that still mismatch, and point\n' +
-      '  ENGINE_PIN at the new revision.\n',
+      '  ENGINE_PIN at the new engine.\n',
   )
 }
 if (serverErrors > 0) {

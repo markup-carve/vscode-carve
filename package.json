@@ -184,8 +184,8 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#61f824d5d5724bfaa26dd07dc5c159249a66c977",
-    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#aaeb72393843aac94fc277ec1dbb0ebb7861498c",
+    "@markup-carve/carve": "0.1.5",
+    "@markup-carve/carve-lsp": "0.1.4",
     "vscode-languageclient": "^9.0.1"
   },
   "devDependencies": {

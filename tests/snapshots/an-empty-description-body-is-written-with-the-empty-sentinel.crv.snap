@@ -1,0 +1,12 @@
+>:: t
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^ text.carve
+>: {empty}
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.definition.carve
+#  ^^^^^^^ text.carve meta.attributes.carve
+>
+>flush
+#^^^^^^ text.carve
+>

@@ -2,17 +2,17 @@
 #^^ text.carve
 >
 >---
-#^^^^ text.carve meta.separator.thematic-break.carve
+#^^^ text.carve meta.separator.thematic-break.carve
 >
 >b
 #^^ text.carve
 >
 >***
-#^^^^ text.carve meta.separator.thematic-break.carve
+#^^^ text.carve meta.separator.thematic-break.carve
 >
 >c
 #^^ text.carve
 >
 >___
-#^^^^ text.carve meta.separator.thematic-break.carve
+#^^^ text.carve meta.separator.thematic-break.carve
 >
