@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-08-27
+
 ### Added
 
 - **A reference image is highlighted as an image** (#151, markup-carve/carve-grammars#307). `![alt][ref]` and the collapsed `![alt][]` had no rule, so they fell through to the reference-LINK rule: the `!` stayed prose and the alt text carried a link title scope, so the output said the document held a link where it holds an image.
@@ -15,10 +17,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- **The bundled engine is carve 0.1.5 and the language server carve-lsp 0.1.4** (#163, #156). Both were pinned to commits that named no release, so the extension shipped 0.1.4 of the engine and 0.1.3 of the server. The preview, the export and the language server now render every one of the 1538 corpus documents byte-identically to the spec, from one shared copy of the engine.
 - **The extension watches and exports `.crv` only** (#148). It is the one Carve extension, so the language server's file watcher no longer globs `.carve`, and the HTML export strips only `.crv` when it proposes a filename.
 
 ### Fixed
 
+- **A colon fence's marker separator is a run of spaces** (#162). `:::note` highlighted as a container where the engine renders a paragraph; only `::: note` opens one.
 - **A caption marker followed only by spaces is not a caption** (#146, markup-carve/carve#1583). The separator after `^` is a run and none of it is content, but the rule let the run give a space back so the content capture could take it, so `^   ` highlighted as a caption whose text was a single space where the engine renders a paragraph. A tab after the separator stays content.
 - **A caption inside a block quote is highlighted** (#146, markup-carve/carve#1564). `> ^ cap` carried no caption scope at all: the caption rule is anchored on a column-0 or indented `^`, and the quote's own match has already consumed `> ` by the time the line is scanned.
 - **A footnote definition no longer highlights as a link reference definition** (#151, markup-carve/carve-grammars#307). The rule was right and every scope on it named the other construct, so `[^a]: note text` scoped the whole line as a link reference definition and colored `note`, the first word of the prose, as a URL. The body has no destination scope now.
