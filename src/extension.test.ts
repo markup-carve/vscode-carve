@@ -11,6 +11,7 @@ const { INITIAL, Registry, parseRawGrammar } = vsctm
 const { OnigScanner, OnigString, loadWASM } = oniguruma
 type IGrammar = vsctm.IGrammar
 import { serverModulePath } from './paths.js'
+import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import {
   EXCLUDED_EXTENSIONS,
   PREVIEW_EXTENSIONS,
@@ -876,4 +877,35 @@ test('the Markdown export writes the engine Markdown, with no HTML wrapper', () 
   const md = renderMarkdown('# Title\n\n- one\n- two\n')
   assert.match(md, /^# Title/, 'the Markdown export does not render a heading')
   assert.doesNotMatch(md, /<!DOCTYPE|<html|<body/i, 'the Markdown export wraps its output in HTML')
+})
+
+// THE PREVIEW SCROLL LOOP, PINNED.
+//
+// Editor and preview each sync to the other, so these guards are the only
+// thing stopping a keystroke from becoming: viewport moves -> preview scrolls
+// -> preview reports its top line -> editor is revealed to it -> viewport
+// moves. That loop is what made the editor jitter while typing.
+
+test('a line already on screen needs no reveal', () => {
+  const visible = [{ start: { line: 10 }, end: { line: 40 } }]
+  assert.equal(isLineOnScreen(10, visible), true)
+  assert.equal(isLineOnScreen(40, visible), true)
+  assert.equal(isLineOnScreen(25, visible), true)
+})
+
+test('a line off screen is still revealed', () => {
+  const visible = [{ start: { line: 10 }, end: { line: 40 } }]
+  assert.equal(isLineOnScreen(9, visible), false)
+  assert.equal(isLineOnScreen(41, visible), false)
+  assert.equal(isLineOnScreen(0, []), false)
+})
+
+test('a viewport change right after an edit is typing, not scrolling', () => {
+  assert.equal(isScrollNotTyping(1_000, 1_000), false)
+  assert.equal(isScrollNotTyping(1_100, 1_000), false)
+})
+
+test('a viewport change well after the last edit is a real scroll', () => {
+  assert.equal(isScrollNotTyping(1_400, 1_000), true)
+  assert.equal(isScrollNotTyping(99_999, 0), true)
 })

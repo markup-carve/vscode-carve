@@ -903,6 +903,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
       // between editor lines and document offsets by interpolating between
       // the nearest anchored blocks.
       let suppressScroll = false
+      let suppressTimer
 
       function anchors() {
         return [...document.querySelectorAll('[data-source-line]')]
@@ -932,9 +933,12 @@ export function previewDocument(source: string, options: PreviewOptions): string
           const frac = Math.min(1, Math.max(0, (line - cur.line) / (next.line - cur.line)))
           top = cur.top + (next.top - cur.top) * frac
         }
+        // A programmatic scroll fires its scroll event after this frame, so
+        // clearing on rAF let the echo through and closed the sync loop.
         suppressScroll = true
+        clearTimeout(suppressTimer)
         window.scrollTo({ top })
-        requestAnimationFrame(() => { suppressScroll = false })
+        suppressTimer = setTimeout(() => { suppressScroll = false }, 150)
       }
 
       function highlightLine(line) {
