@@ -532,14 +532,18 @@ export function previewDocument(source: string, options: PreviewOptions): string
 
     /*
      * carve-css styles the checkbox itself but takes no view on what a DONE
-     * item looks like, and a 13px box is not a state a reader can scan. So a
-     * checked item's own text goes soft and struck while its nested items keep
-     * their own state - a finished parent does not finish its children.
+     * item looks like, and a 13px accent box is not a state a reader can scan.
      *
-     * The strike is withheld from an item that carries a nested list, because
-     * a text decoration set on a block box propagates into every descendant and
-     * CSS gives the descendant no way to take it back. The dimming is inherited
-     * color, which a descendant can and does reset.
+     * So the BOX carries the state and the text is left alone: a checked item
+     * takes the success tone, an unchecked one keeps the accent. Done reads as
+     * a positive state you can still read, which is what a task list is for.
+     *
+     * Nothing sets a text-decoration or an inherited colour, so a nested item
+     * needs no carve-out - a finished parent cannot reach its children, rather
+     * than reaching them and being pushed back. The earlier treatment dimmed
+     * and struck the text, which needed a :not(:has(:is(ul, ol))) guard because
+     * a decoration on a block box propagates into every descendant and CSS
+     * gives the descendant no way to take it back.
      */
     .carve li:has(> input[type="checkbox"]) { list-style: none; }
     .carve li > input[type="checkbox"] {
@@ -547,12 +551,45 @@ export function previewDocument(source: string, options: PreviewOptions): string
       margin-inline-end: var(--carve-space-2);
       vertical-align: middle;
     }
-    .carve li:has(> input[type="checkbox"]:checked) { color: var(--carve-ink-soft); }
-    .carve li:has(> input[type="checkbox"]:checked):not(:has(:is(ul, ol))) {
-      text-decoration: line-through;
-      text-decoration-color: color-mix(in srgb, var(--carve-ink-soft) 55%, transparent);
+    /*
+     * accent-color does NOT work here. The engine emits the box as disabled
+     * (it is a rendered state, not a control), and a disabled checkbox is
+     * painted by the UA in its own grey with accent-color ignored - so both
+     * states came out the same washed square whatever tone was asked for.
+     *
+     * So the box is drawn here instead of asked for: appearance:none removes
+     * the UA rendering entirely, and the two states are a bordered empty
+     * square and a filled success square with a drawn tick. That is the
+     * contrast, and it survives being disabled because nothing about it is
+     * the UA's to grey.
+     */
+    .carve li > input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 1em;
+      height: 1em;
+      border: 1.5px solid var(--carve-border);
+      border-radius: 3px;
+      background: var(--carve-surface);
+      position: relative;
+      top: 0.05em;
     }
-    .carve li:has(> input[type="checkbox"]:checked) :is(ul, ol) { color: var(--carve-ink); }
+    .carve li > input[type="checkbox"]:checked {
+      border-color: var(--carve-success);
+      background: var(--carve-success);
+    }
+    /* The tick, drawn rather than glyphed so it scales with the box. */
+    .carve li > input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 0.3em;
+      top: 0.12em;
+      width: 0.22em;
+      height: 0.48em;
+      border: solid var(--carve-ink-inverse);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
 
     /* --- Scroll sync -------------------------------------------------- */
 
