@@ -1,6 +1,7 @@
 import {
   autolink,
   carveToHtml,
+  carveToMarkdown,
   type CarveExtension,
   chart,
   citations,
@@ -154,6 +155,18 @@ export interface PreviewRenderOptions {
 
 export function renderPreviewBody(source: string, render: PreviewRenderOptions = {}): string {
   return carveToHtml(source, { ...render, extensions: previewExtensions() })
+}
+
+/**
+ * Render to Markdown.
+ *
+ * No extension set: the extensions decorate an HTML render, and the Markdown
+ * target is the engine's own. What lands on disk is what carveToMarkdown
+ * writes, with no wrapper - the HTML export builds a whole standalone page
+ * around its output, and Markdown has nothing to wrap.
+ */
+export function renderMarkdown(source: string): string {
+  return carveToMarkdown(source)
 }
 
 /**

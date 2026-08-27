@@ -9,6 +9,7 @@ import {
 import { serverModulePath } from './paths.js'
 import {
   exportHtmlDocument,
+  renderMarkdown,
   previewDocument,
   type PreviewAssets,
   type PreviewRenderOptions,
@@ -26,6 +27,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     vscode.commands.registerCommand('carve.openPreview', () => openPreview(context)),
     vscode.commands.registerCommand('carve.exportHtml', () => exportHtml()),
+    vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown()),
     vscode.commands.registerCommand('carve.printPreview', () => printPreview(context)),
     vscode.commands.registerCommand('carve.restartLanguageServer', async () => {
       await stopLanguageServer()
@@ -183,6 +185,32 @@ async function exportHtml(): Promise<void> {
   )
   if (pick === 'Open in Browser') {
     await vscode.env.openExternal(target)
+  }
+}
+
+async function exportMarkdown(): Promise<void> {
+  const editor = vscode.window.activeTextEditor
+  if (!editor || editor.document.languageId !== 'carve') {
+    void vscode.window.showWarningMessage('Open a Carve document to export it.')
+    return
+  }
+  const markdown = renderMarkdown(editor.document.getText())
+  const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.md'
+  const target = await vscode.window.showSaveDialog({
+    defaultUri: editor.document.uri.with({ path: defaultPath }),
+    filters: { Markdown: ['md'] },
+    saveLabel: 'Export Markdown',
+  })
+  if (!target) {
+    return
+  }
+  await vscode.workspace.fs.writeFile(target, new TextEncoder().encode(markdown))
+  const pick = await vscode.window.showInformationMessage(
+    `Exported ${target.path.split('/').pop()}`,
+    'Open File',
+  )
+  if (pick === 'Open File') {
+    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(target))
   }
 }
 

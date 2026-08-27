@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Export to Markdown** (#168). The bundled engine exports ten converters and the extension reached one of them, so every other target it renders was unreachable. What lands on disk is the engine's Markdown, with no wrapper - the HTML export builds a standalone page around its output and Markdown has nothing to wrap.
+- **Both exports are in the editor context menu** (#168). `carve.exportHtml` was declared but placed in no menu, so it was Command Palette only. Right-clicking a Carve document now offers the preview and both exports.
+
 ## [0.1.3] - 2026-08-27
 
 ### Added
