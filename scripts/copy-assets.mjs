@@ -20,6 +20,18 @@ const files = [
   [join(nm, '@highlightjs', 'cdn-assets', 'highlight.min.js'), join(media, 'hljs', 'highlight.min.js')],
   [join(nm, '@highlightjs', 'cdn-assets', 'styles', 'github.min.css'), join(media, 'hljs', 'github.min.css')],
   [join(nm, '@highlightjs', 'cdn-assets', 'styles', 'github-dark.min.css'), join(media, 'hljs', 'github-dark.min.css')],
+  // @markup-carve/carve-css - the shared token layer and the rules built on it.
+  // Linked as four separate files rather than through carve.css, because that
+  // entry point pulls its layers in with relative `@import`s and the preview
+  // controls the order itself: tokens first, then the VS Code bridge in the
+  // scaffold's own <style> overrides those tokens with the editor's theme.
+  // recipes.css is opt-in per its own header; the preview opts in so that the
+  // container words it documents (`::: cards`, `::: steps`) render as styled
+  // constructs rather than bare divs.
+  [join(nm, '@markup-carve', 'carve-css', 'src', 'tokens.css'), join(media, 'carve-css', 'tokens.css')],
+  [join(nm, '@markup-carve', 'carve-css', 'src', 'core.css'), join(media, 'carve-css', 'core.css')],
+  [join(nm, '@markup-carve', 'carve-css', 'src', 'extensions.css'), join(media, 'carve-css', 'extensions.css')],
+  [join(nm, '@markup-carve', 'carve-css', 'src', 'recipes.css'), join(media, 'carve-css', 'recipes.css')],
 ]
 
 /** @type {Array<[string, string]>} directory copies (KaTeX fonts). */

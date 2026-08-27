@@ -184,7 +184,7 @@ const distFile = (name) => {
   return path
 }
 
-const { renderPreviewBody } = await import(pathToFileURL(distFile('preview.js')).href)
+const { renderConformanceBody } = await import(pathToFileURL(distFile('preview.js')).href)
 const { serverModulePath } = await import(pathToFileURL(distFile('paths.js')).href)
 
 // Exactly the path the language client hands to the server launcher, so a
@@ -479,7 +479,11 @@ for (const name of documents) {
   let rendered
   let renderState
   try {
-    rendered = renderPreviewBody(source).trim()
+    // renderConformanceBody, not renderPreviewBody: the preview also enables two
+    // extensions that deliberately decorate Tier-1 links (see
+    // TIER1_DECORATING_EXTENSIONS in preview.ts). Anything else that changes
+    // Tier-1 output shows up here as a mismatch, which is the point.
+    rendered = renderConformanceBody(source).trim()
     renderState = rendered === expected ? 'render-ok' : 'render-differs'
   } catch (error) {
     renderState = 'render-threw'
