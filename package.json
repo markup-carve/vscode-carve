@@ -85,7 +85,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"\ud83d\ude04\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
+          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"😄\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
         },
         "carve.trace.server": {
           "type": "string",
@@ -190,6 +190,7 @@
   },
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
+    "@markup-carve/carve-css": "^0.1.0",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.2.2",

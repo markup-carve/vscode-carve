@@ -1,30 +1,144 @@
 import {
+  autolink,
   carveToHtml,
+  type CarveExtension,
   chart,
+  citations,
   codeGroup,
   details,
+  externalLinks,
   listTable,
   mathBlock,
   mermaid,
   spoiler,
   tabs,
+  wikilinks,
 } from '@markup-carve/carve'
 
-// The interactive renderer extensions the preview enables, matching the docs
-// playground. Without these, `:::details`/`:::spoiler`/`:::tabs` degrade to
-// inert `<div>`s, math stays literal, and mermaid/chart fences never hydrate.
-// Constructed fresh per render so no cross-document state leaks.
+/**
+ * The extensions the preview enables.
+ *
+ * Without these, `:::details`/`:::spoiler`/`:::tabs` degrade to inert `<div>`s,
+ * math stays literal, and mermaid/chart fences never hydrate. Constructed fresh
+ * per render so no cross-document state leaks.
+ *
+ * The reference set is the docs playground, whose list lives in
+ * `docs/.vitepress/carve-extensions.js` in markup-carve/carve. That file is in
+ * another repository and the pinned engine package does not export the list, so
+ * there is no honest way to read it from here - `presets` is the fenced-diagram
+ * renderers, not this. The set is therefore pinned locally and reconciled by
+ * hand, and `PREVIEW_EXTENSIONS`/`EXCLUDED_EXTENSIONS` below turn the parts that
+ * CAN be checked locally into a test: that every extension factory the pinned
+ * engine exports is classified one way or the other.
+ *
+ * `citations` is the one that mattered most. It changes the PARSE rather than
+ * the render: without it `[@key]` produces no citation node at all, so
+ * `citation`, `citation_group` and `citation_definition` were unreachable in
+ * this preview while they worked in the docs playground. The other three
+ * degraded quietly - the nodes existed and only the rendering differed.
+ */
+export const PREVIEW_EXTENSIONS = [
+  'details',
+  'spoiler',
+  'mermaid',
+  'mathBlock',
+  'tabs',
+  'codeGroup',
+  'listTable',
+  'chart',
+  'citations',
+  'wikilinks',
+  'autolink',
+  'externalLinks',
+] as const
+
+/**
+ * Every extension factory the pinned engine exports that the preview
+ * deliberately does NOT enable, each with the reason it stays off.
+ *
+ * This is what stops the drift. The list the preview should match is in another
+ * repo, but the thing that actually causes drift is local and checkable: a new
+ * extension lands in the engine and nobody decides about it. The guard in
+ * `extension.test.ts` fails until a new factory is named in one list or the
+ * other, so the decision has to be made rather than defaulted.
+ */
+export const EXCLUDED_EXTENSIONS: Record<string, string> = {
+  // A DECISION, not a gap. The docs playground enables headingPermalinks; this
+  // preview will not. The maintainer found the paragraph anchors noisy in the
+  // IntelliJ preview, where they are now hover-only, and an editor preview is
+  // not a page anyone deep-links into - the reader is looking at their own
+  // document, with the source beside it. Do not "fix" this divergence by
+  // adding it back.
+  headingPermalinks: 'DECISION: the paragraph anchors are noise in an editor preview, which nobody deep-links into',
+
+  // Auto-injects a list that pushes the author's own first block down the page.
+  tableOfContents: 'auto-injects a TOC that displaces the document being edited',
+
+  // Need configuration, or have no visible effect zero-config. A preview gets
+  // no per-document configuration, so these would be inert.
+  defaultAttributes: 'needs per-document default-attribute config',
+  headingLevelShift: 'needs a shift-amount option',
+  headingReference: 'needs config / overlaps core cross-references',
+  headingNumbers: 'needs section-numbering config / overlaps core heading numbering',
+  tabNormalize: 'invisible whitespace transform, nothing to show',
+  glossary: 'needs a ::: glossary block plus :term[] uses, nothing to show zero-config',
+  index: 'needs :index[] markers plus a ::: index block, nothing to show zero-config',
+  tocPlacement: 'needs a ::: toc block, nothing to show zero-config',
+  colorSwatch: 'needs :color[] markers, nothing to show zero-config',
+  codeCallouts: 'needs <n> markers plus a bound list, nothing to show zero-config',
+  imgFence: 'needs an img fence with an SVG body to show anything zero-config',
+  semanticSpan: 'consumes samp/var/cite/dfn, contradicting the corpus-pinned HTML for the core semantic-name examples',
+
+  // Fenced-diagram presets whose client library the preview does not bundle.
+  // Only mermaid and chart are wired up in media/.
+  d2: 'needs the D2 client library, not bundled',
+  graphviz: 'needs a Graphviz/Viz.js client library, not bundled',
+  plantuml: 'needs the PlantUML client library, not bundled',
+  wavedrom: 'needs the WaveDrom client library, not bundled',
+  abc: 'needs the abcjs client library, not bundled',
+  vegaLite: 'needs the Vega-Lite client library, not bundled',
+}
+
+/** Factory per enabled name, so the guard can check the list drives the render. */
+const EXTENSION_FACTORIES: Record<string, () => CarveExtension> = {
+  details,
+  spoiler,
+  mermaid,
+  mathBlock,
+  tabs,
+  codeGroup,
+  listTable,
+  chart,
+  citations,
+  wikilinks,
+  autolink,
+  externalLinks,
+}
+
+/**
+ * The enabled extensions that deliberately change the HTML of a TIER-1
+ * construct, rather than adding one of their own.
+ *
+ * Both decorate ordinary links, which the spec corpus pins byte-for-byte:
+ * `externalLinks` adds `target`/`rel` to an off-site link, and `autolink` turns
+ * a bare URL into one. Measured against the 1538-document corpus: with the rest
+ * of the preview set enabled, externalLinks changes 20 documents and autolink
+ * changes 10, and the other ten extensions change none.
+ *
+ * That divergence is wanted in a preview and unwanted in a conformance
+ * measurement, so the two renders are separated rather than the corpus being
+ * given a waiver list. `renderConformanceBody` is what the corpus tool measures;
+ * `renderPreviewBody` is what a reader sees.
+ *
+ * The separation is also the guard. Any future extension that changes Tier-1
+ * output makes the corpus fail until it is named here - which means saying, in
+ * writing, that the change is intended. A waiver list per document could not
+ * tell "we meant this" from "the engine regressed".
+ */
+export const TIER1_DECORATING_EXTENSIONS = ['autolink', 'externalLinks'] as const
+
 function previewExtensions() {
-  return [
-    details(),
-    spoiler(),
-    mermaid(),
-    mathBlock(),
-    tabs(),
-    codeGroup(),
-    listTable(),
-    chart(),
-  ]
+  return PREVIEW_EXTENSIONS.map((name) => EXTENSION_FACTORIES[name]())
 }
 
 export interface PreviewRenderOptions {
@@ -40,6 +154,19 @@ export interface PreviewRenderOptions {
 
 export function renderPreviewBody(source: string, render: PreviewRenderOptions = {}): string {
   return carveToHtml(source, { ...render, extensions: previewExtensions() })
+}
+
+/**
+ * The preview render with the Tier-1 decorating extensions left out - what the
+ * spec corpus is measured against. See TIER1_DECORATING_EXTENSIONS for why this
+ * is a second function rather than a list of waived documents.
+ */
+export function renderConformanceBody(source: string, render: PreviewRenderOptions = {}): string {
+  const decorating = new Set<string>(TIER1_DECORATING_EXTENSIONS)
+  const extensions = PREVIEW_EXTENSIONS
+    .filter((name) => !decorating.has(name))
+    .map((name) => EXTENSION_FACTORIES[name]())
+  return carveToHtml(source, { ...render, extensions })
 }
 
 export interface PreviewAssets {
@@ -59,6 +186,14 @@ export interface PreviewAssets {
   hljsLightCss: string
   /** Webview URI for the highlight.js dark theme stylesheet. */
   hljsDarkCss: string
+  /** Webview URI for the carve-css token layer. */
+  carveTokensCss: string
+  /** Webview URI for the carve-css core stylesheet. */
+  carveCoreCss: string
+  /** Webview URI for the carve-css extensions stylesheet. */
+  carveExtensionsCss: string
+  /** Webview URI for the carve-css recipes stylesheet. */
+  carveRecipesCss: string
 }
 
 export interface PreviewOptions {
@@ -95,7 +230,118 @@ export function previewDocument(source: string, options: PreviewOptions): string
   <link rel="stylesheet" href="${assets.katexCss}">
   <link id="hljs-light" rel="stylesheet" href="${assets.hljsLightCss}" disabled>
   <link id="hljs-dark" rel="stylesheet" href="${assets.hljsDarkCss}" disabled>
+  <link rel="stylesheet" href="${assets.carveTokensCss}">
+  <link rel="stylesheet" href="${assets.carveCoreCss}">
+  <link rel="stylesheet" href="${assets.carveExtensionsCss}">
+  <link rel="stylesheet" href="${assets.carveRecipesCss}">
   <style nonce="${nonce}">
+    /*
+     * The preview styles nothing that @markup-carve/carve-css already styles.
+     * The four stylesheets above own every construct the engine and its bundled
+     * extensions emit - admonitions, tab sets, code groups, figures, footnotes,
+     * tables, the lot - and they resolve every color through a --carve-* token.
+     *
+     * So this block does three things and nothing else:
+     *   1. Bind those tokens to the editor's own theme.
+     *   2. Lay the page out.
+     *   3. Add the handful of constructs carve-css has no opinion about,
+     *      because they belong to the preview rather than to the document:
+     *      the code tool strip, the task-list states, the scroll-sync anchors.
+     *
+     * There are no color literals here on purpose, and a test enforces it.
+     * A hex in this block is a value that cannot follow the editor theme, which
+     * is the whole defect this scaffold used to have.
+     */
+
+    /*
+     * The token bridge. Every --carve-* color is redefined in terms of the
+     * --vscode-* variable that means the same thing, so the document is themed
+     * by whatever theme the editor is wearing rather than by carve-css's own
+     * neutral palette.
+     *
+     * This also gets the LIVE switch for free: VS Code rewrites the --vscode-*
+     * variables on the root element when the theme changes, so every value
+     * below re-resolves without the preview re-rendering. Only the two things
+     * that are not CSS - the highlight.js stylesheet and the mermaid theme -
+     * need the observer further down.
+     *
+     * The doubled ':root:root' is deliberate. tokens.css ships its dark palette
+     * under ':root:not([data-theme="light"])', which outranks a plain ':root';
+     * a light VS Code theme on a dark OS would otherwise get carve-css's dark
+     * colors. Doubling the selector matches that specificity, and this block
+     * comes after the link tags, so it wins on document order.
+     */
+    :root:root {
+      --carve-surface: var(--vscode-editor-background);
+      --carve-sunk: var(--vscode-textCodeBlock-background);
+      --carve-raised: var(--vscode-editorWidget-background);
+
+      --carve-ink: var(--vscode-editor-foreground);
+      --carve-ink-soft: var(--vscode-descriptionForeground);
+      --carve-ink-inverse: var(--vscode-editor-background);
+
+      --carve-rule: var(--vscode-panel-border);
+      --carve-border: var(--vscode-panel-border);
+
+      --carve-accent: var(--vscode-textLink-foreground);
+      --carve-accent-ink: var(--vscode-textLink-activeForeground);
+      --carve-accent-soft: color-mix(in srgb, var(--carve-accent) 14%, transparent);
+
+      /*
+       * The chart colors are contributed by the theme and a theme may leave
+       * them out, so each falls back to a variable VS Code always defines
+       * rather than to a literal.
+       */
+      --carve-info: var(--vscode-charts-blue, var(--vscode-textLink-foreground));
+      --carve-success: var(--vscode-charts-green, var(--vscode-testing-iconPassed, var(--vscode-textLink-foreground)));
+      --carve-warn: var(--vscode-charts-yellow, var(--vscode-editorWarning-foreground, var(--vscode-descriptionForeground)));
+      --carve-danger: var(--vscode-charts-red, var(--vscode-editorError-foreground, var(--vscode-descriptionForeground)));
+      --carve-neutral: var(--vscode-charts-lines, var(--vscode-descriptionForeground));
+
+      /*
+       * Washes are mixed toward 'transparent' rather than toward a background
+       * color, so the same declaration reads correctly on a light ground and a
+       * dark one. This is what lets one mapping serve all three theme kinds.
+       */
+      --carve-info-wash: color-mix(in srgb, var(--carve-info) 12%, transparent);
+      --carve-success-wash: color-mix(in srgb, var(--carve-success) 12%, transparent);
+      --carve-warn-wash: color-mix(in srgb, var(--carve-warn) 12%, transparent);
+      --carve-danger-wash: color-mix(in srgb, var(--carve-danger) 12%, transparent);
+      --carve-neutral-wash: color-mix(in srgb, var(--carve-neutral) 12%, transparent);
+
+      --carve-font-body: var(--vscode-font-family);
+      --carve-font-heading: var(--vscode-font-family);
+      --carve-font-mono: var(--vscode-editor-font-family);
+    }
+
+    /*
+     * High contrast.
+     *
+     * The instinct is to strip the tints, and that instinct is wrong here.
+     * Measured: collapsing the washes to transparent made tr.ok and tr.warn
+     * compute the SAME background, and the same for a toned badge against a
+     * plain one - in both constructs the wash is the only signal there is, so
+     * removing it does not raise contrast, it deletes the information. And it
+     * buys nothing: a 12% mix toward transparent over a black ground is a very
+     * dark tint, and the high-contrast foreground sitting on it keeps a ratio
+     * far above the threshold.
+     *
+     * What a high-contrast theme actually asks for is EDGES. So the washes stay
+     * exactly as they are and the borders become the theme's own contrast
+     * border, which is the color VS Code publishes for precisely this - it is
+     * defined only in the high-contrast themes, which is why the fallback is
+     * there for the two other kinds.
+     */
+    body.vscode-high-contrast,
+    body.vscode-high-contrast-light {
+      --carve-border: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --carve-rule: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --carve-border-width: 1px;
+      --carve-accent-width: 4px;
+    }
+
+    /* --- Layout ------------------------------------------------------ */
+
     :root {
       color-scheme: light dark;
       font-family: var(--vscode-font-family);
@@ -103,227 +349,230 @@ export function previewDocument(source: string, options: PreviewOptions): string
       color: var(--vscode-editor-foreground);
       background: var(--vscode-editor-background);
     }
-    body {
-      margin: 0;
-      padding: 24px;
-      line-height: 1.55;
-    }
-    main {
-      max-width: 760px;
-      margin: 0 auto;
-    }
-    pre, code {
-      font-family: var(--vscode-editor-font-family);
-    }
-    main > :first-child { margin-top: 0; }
-    a { color: var(--vscode-textLink-foreground); }
-    a:hover { color: var(--vscode-textLink-activeForeground); }
+    body { margin: 0; padding: 24px; }
+    main.carve { max-width: 760px; margin: 0 auto; }
+    main.carve > :first-child { margin-top: 0; }
     img { max-width: 100%; height: auto; }
-    h1, h2 {
-      border-bottom: 1px solid var(--vscode-panel-border);
-      padding-bottom: 0.2em;
-    }
-    pre {
-      overflow-x: auto;
-      padding: 12px;
-      border-radius: 6px;
-      background: var(--vscode-textCodeBlock-background);
-    }
-    :not(pre) > code {
-      padding: 0.1em 0.35em;
-      border-radius: 4px;
-      font-size: 0.92em;
-      background: var(--vscode-textCodeBlock-background);
-    }
-    kbd {
-      font-family: var(--vscode-editor-font-family);
-      font-size: 0.85em;
-      padding: 0.1em 0.4em;
-      border-radius: 4px;
-      border: 1px solid var(--vscode-panel-border);
+
+    /*
+     * kbd is the one construct in this scaffold that carve-css has no rule for,
+     * so it keeps its own - written against the tokens like everything else.
+     */
+    .carve kbd {
+      font-family: var(--carve-font-mono);
+      font-size: var(--carve-font-size-small);
+      padding: 0 var(--carve-space-1);
+      border: var(--carve-border-width) solid var(--carve-border);
       border-bottom-width: 2px;
-      background: var(--vscode-keybindingLabel-background, var(--vscode-textCodeBlock-background));
+      border-radius: var(--carve-radius);
+      background: var(--carve-sunk);
     }
-    .mermaid {
-      background: transparent;
-      text-align: center;
+
+    /* --- Code fences: the tool strip --------------------------------- */
+
+    /*
+     * The strip is a sibling of the <pre>, inside a wrapper, and not a child of
+     * it. A <pre> is the horizontal scroll container for its own code, so an
+     * absolutely-positioned child of it scrolls away with the text the moment a
+     * line is wider than the block - the copy button would slide out of view
+     * exactly on the long lines a reader most wants to copy.
+     *
+     * The strip carries the code surface as its own background for the same
+     * family of reason: it floats over the first line, and a long first line
+     * would otherwise run underneath the icon.
+     */
+    .carve .carve-code {
+      position: relative;
+      margin: var(--carve-space-4) 0;
     }
-    .math.display {
-      display: block;
-      overflow-x: auto;
-      text-align: center;
-      margin: 1em 0;
-    }
-    table {
-      border-collapse: collapse;
-      width: auto;
-    }
-    th, td {
-      border: 1px solid var(--vscode-panel-border);
-      padding: 5px 10px;
-    }
-    thead th { background: var(--vscode-editorWidget-background); }
-    tbody tr:nth-child(even) {
-      background: color-mix(in srgb, var(--vscode-foreground) 4%, transparent);
-    }
-    blockquote {
-      margin-left: 0;
-      padding-left: 16px;
-      border-left: 3px solid var(--vscode-textBlockQuote-border);
-      color: var(--vscode-textBlockQuote-foreground);
-    }
-    mark {
-      background: var(--vscode-editor-findMatchHighlightBackground, rgba(234, 179, 8, 0.4));
-      color: inherit;
-      border-radius: 2px;
-    }
-    ins { text-decoration: none; background: color-mix(in srgb, var(--vscode-charts-green, #3fb950) 22%, transparent); }
-    del { background: color-mix(in srgb, var(--vscode-charts-red, #f85149) 22%, transparent); }
-    .critic-comment { color: var(--vscode-descriptionForeground); font-style: italic; }
-    dl dt { font-weight: 600; margin-top: 0.6em; }
-    dl dd { margin: 0 0 0 1.5em; }
-    /* Mentions and tags: subtle pills whether linked or plain. */
-    .mention, .tag {
-      text-decoration: none;
-      padding: 0 0.35em;
-      border-radius: 999px;
-      font-size: 0.95em;
-    }
-    .mention, .mention strong {
-      color: var(--vscode-charts-blue, #4a9eff);
-      font-weight: 500;
-    }
-    .mention { background: color-mix(in srgb, var(--vscode-charts-blue, #4a9eff) 14%, transparent); }
-    .tag, .tag strong {
-      color: var(--vscode-charts-purple, #a371f7);
-      font-weight: 500;
-    }
-    .tag { background: color-mix(in srgb, var(--vscode-charts-purple, #a371f7) 14%, transparent); }
-    /* Admonitions: callout boxes with a per-type accent. */
-    .admonition {
-      --admonition-accent: var(--vscode-focusBorder);
-      margin: 1em 0;
-      padding: 12px 16px;
-      border-left: 4px solid var(--admonition-accent);
-      border-radius: 4px;
-      background: color-mix(in srgb, var(--admonition-accent) 9%, transparent);
-    }
-    .admonition > .admonition-title {
-      margin: 0 0 0.5em;
-      font-weight: 600;
-      text-transform: capitalize;
-      color: var(--admonition-accent);
-    }
-    .admonition > :last-child { margin-bottom: 0; }
-    .admonition.note, .admonition.info { --admonition-accent: var(--vscode-charts-blue, #4a9eff); }
-    .admonition.tip, .admonition.success { --admonition-accent: var(--vscode-charts-green, #3fb950); }
-    .admonition.warning { --admonition-accent: var(--vscode-charts-yellow, #d29922); }
-    .admonition.danger { --admonition-accent: var(--vscode-charts-red, #f85149); }
-    .admonition.example { --admonition-accent: var(--vscode-charts-purple, #a371f7); }
-    .admonition.quote { --admonition-accent: var(--vscode-charts-lines, #8b949e); }
-    /* Task lists: carveToHtml emits a plain <ul> with an inline checkbox as the
-       first child of each <li> (no wrapper class), so drop the bullet on those
-       items and pull the box into the marker gutter. */
-    li:has(> input[type="checkbox"]) { list-style: none; }
-    li > input[type="checkbox"] {
-      margin: 0 0.5em 0 -1.4em;
-      vertical-align: middle;
-    }
-    /* Wide tables scroll instead of overflowing the viewport. Alignment comes
-       through as an inline style on each cell, so no extra rule is needed. */
-    table {
-      display: block;
-      max-width: 100%;
-      overflow-x: auto;
-    }
-    /* Code block language pill (injected by the script below). Visible on hover. */
-    pre[data-lang] { position: relative; }
-    pre[data-lang] > .code-lang {
+    .carve .carve-code > pre { margin: 0; }
+    .carve .carve-code > .code-tools {
       position: absolute;
-      top: 6px;
-      right: 8px;
-      font-family: var(--vscode-editor-font-family);
-      font-size: 0.72em;
+      top: var(--carve-space-1);
+      right: var(--carve-space-1);
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: var(--carve-space-2);
+      padding: 0 var(--carve-space-1) 0 var(--carve-space-2);
+      border-radius: var(--carve-radius);
+      background: var(--carve-sunk);
+      /*
+       * Findable without hovering. The language was previously readable only
+       * while the pointer was over the block, which is why a reader could not
+       * tell what a fence held; 0.45 is present enough to find and quiet enough
+       * not to compete with the code, and the strip goes solid on hover or on
+       * keyboard focus.
+       */
+      opacity: 0.45;
+      transition: opacity 0.12s ease;
+    }
+    .carve .carve-code:hover > .code-tools,
+    .carve .carve-code:focus-within > .code-tools { opacity: 1; }
+    .carve .code-lang {
+      font-family: var(--carve-font-mono);
+      font-size: 0.7em;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      opacity: 0;
-      transition: opacity 0.15s;
-      color: var(--vscode-descriptionForeground);
+      color: var(--carve-ink-soft);
+      user-select: none;
       pointer-events: none;
     }
-    pre[data-lang]:hover > .code-lang { opacity: 0.85; }
-    /* Details / spoiler disclosure blocks (details() + spoiler() extensions). */
-    details {
-      margin: 1em 0;
-      padding: 8px 14px;
-      border: 1px solid var(--vscode-panel-border);
-      border-radius: 6px;
-      background: color-mix(in srgb, var(--vscode-foreground) 3%, transparent);
-    }
-    details > summary {
+    .carve .code-copy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px;
+      border: 0;
+      border-radius: var(--carve-radius);
+      background: transparent;
+      color: var(--carve-ink-soft);
+      font: inherit;
       cursor: pointer;
-      font-weight: 600;
-      list-style: revert;
+      transition: color 0.12s ease, background-color 0.12s ease;
     }
-    details[open] > summary { margin-bottom: 0.5em; }
-    details.spoiler {
-      border-style: dashed;
-      border-color: var(--vscode-focusBorder);
+    .carve .code-copy > svg {
+      display: block;
+      width: 14px;
+      height: 14px;
     }
-    /* Inline spoiler: blurred until hovered/focused (span.spoiler). */
-    .spoiler:not(details) {
-      background: color-mix(in srgb, var(--vscode-foreground) 14%, transparent);
-      border-radius: 3px;
-      filter: blur(4px);
-      transition: filter 0.12s;
-      cursor: help;
+    .carve .code-copy:hover {
+      color: var(--carve-ink);
+      background: var(--carve-surface);
     }
-    .spoiler:not(details):hover,
-    .spoiler:not(details):focus-within { filter: none; }
-    /* Tabs / code-group: the extensions emit a labeled group; give it a frame. */
-    .tabs, .code-group {
-      margin: 1em 0;
-      border: 1px solid var(--vscode-panel-border);
-      border-radius: 6px;
-      overflow: hidden;
+    .carve .code-copy:focus-visible {
+      outline: 2px solid var(--carve-accent);
+      outline-offset: 1px;
     }
-    .tabs > .tab-title, .code-group > .code-group-title,
-    .tabs label, .code-group label {
-      display: inline-block;
-      padding: 6px 12px;
-      cursor: pointer;
-      font-size: 0.92em;
-      border-bottom: 2px solid transparent;
+    /*
+     * Feedback. The button reports the outcome in place and distinguishes the
+     * two outcomes, so a clipboard write that fails is visible rather than
+     * silent - which is the one thing worse than having no copy button.
+     */
+    .carve .code-copy[data-state="ok"] { color: var(--carve-success); }
+    .carve .code-copy[data-state="fail"] { color: var(--carve-danger); }
+
+    /* --- Tab sets and code groups ------------------------------------- */
+
+    /*
+     * These need no script. The tabs() and codeGroup() extensions emit the
+     * CSS-only shape - a hidden radio per tab, a label bound to it, and a panel
+     * per tab - so the switching is done by :checked, and it stays keyboard
+     * reachable because carve-css clips the radios rather than hiding them.
+     *
+     * What is needed is a corrected SELECTOR. carve-css 0.1.0 matches a panel
+     * with '.tabs-radio:checked + .tabs-label + .tabs-panel', which assumes the
+     * document order
+     *
+     *     radio label panel   radio label panel
+     *
+     * The engine pinned here (@markup-carve/carve 0.1.5) emits all the controls
+     * first and then all the panels:
+     *
+     *     radio label   radio label   panel panel
+     *
+     * so that adjacent-sibling chain matches nothing and EVERY panel keeps the
+     * 'display: none' the same file sets. Measured in the headless probe: with
+     * carve-css alone, both tab panels and both code-group panels computed
+     * 'display: none' in all three themes - the tab set rendered as two labels
+     * above nothing at all.
+     *
+     * Pairing the Nth radio with the Nth panel by type does match the shape the
+     * engine actually emits. The radios are the only <input> children and the
+     * panels the only <div> children, so :nth-of-type counts exactly them.
+     *
+     * This is an upstream mismatch between carve-css 0.1.0 and engine 0.1.5,
+     * not a preview concern; when carve-css takes a fix these rules become
+     * redundant and can go. Nine tabs is well past any real tab set, and the
+     * tenth degrades to the pre-existing behavior rather than breaking.
+     */
+    /*
+     * First, neutralize the upstream rule. It is not merely inert against this
+     * document order - it is actively wrong: with
+     *
+     *     radio1 label1 radio2 label2 panel1 panel2
+     *
+     * the chain 'checked radio + its label + the next panel' matches
+     * radio2 + label2 + PANEL1, so checking the second tab reveals the FIRST
+     * tab's panel. Measured: clicking tab 2 left both panels displayed, because
+     * the correct rule below lit panel 2 while this one still lit panel 1.
+     *
+     * Specificity, not order, decides this: the upstream selector counts six
+     * class-level components, so it is spelled out here with its elements named
+     * to outrank it, and the pairing rules below outrank this in turn.
+     */
+    .carve .tabs > input.tabs-radio:checked + label.tabs-label + div.tabs-panel,
+    .carve .code-group > input.code-group-radio:checked + label.code-group-label + div.code-group-panel {
+      display: none;
     }
-    .tabs > .tab-content, .code-group > .code-group-content { padding: 0 12px; }
-    /* Chart.js target: the chart() extension emits <div class="chart"> holding a
-       JSON config; the script below swaps in a <canvas>. */
-    .chart {
-      margin: 1em 0;
-      max-width: 100%;
+
+    .carve .tabs > input.tabs-radio:nth-of-type(1):checked ~ div.tabs-panel:nth-of-type(1),
+    .carve .tabs > input.tabs-radio:nth-of-type(2):checked ~ div.tabs-panel:nth-of-type(2),
+    .carve .tabs > input.tabs-radio:nth-of-type(3):checked ~ div.tabs-panel:nth-of-type(3),
+    .carve .tabs > input.tabs-radio:nth-of-type(4):checked ~ div.tabs-panel:nth-of-type(4),
+    .carve .tabs > input.tabs-radio:nth-of-type(5):checked ~ div.tabs-panel:nth-of-type(5),
+    .carve .tabs > input.tabs-radio:nth-of-type(6):checked ~ div.tabs-panel:nth-of-type(6),
+    .carve .tabs > input.tabs-radio:nth-of-type(7):checked ~ div.tabs-panel:nth-of-type(7),
+    .carve .tabs > input.tabs-radio:nth-of-type(8):checked ~ div.tabs-panel:nth-of-type(8),
+    .carve .tabs > input.tabs-radio:nth-of-type(9):checked ~ div.tabs-panel:nth-of-type(9),
+    .carve .code-group > input.code-group-radio:nth-of-type(1):checked ~ div.code-group-panel:nth-of-type(1),
+    .carve .code-group > input.code-group-radio:nth-of-type(2):checked ~ div.code-group-panel:nth-of-type(2),
+    .carve .code-group > input.code-group-radio:nth-of-type(3):checked ~ div.code-group-panel:nth-of-type(3),
+    .carve .code-group > input.code-group-radio:nth-of-type(4):checked ~ div.code-group-panel:nth-of-type(4),
+    .carve .code-group > input.code-group-radio:nth-of-type(5):checked ~ div.code-group-panel:nth-of-type(5),
+    .carve .code-group > input.code-group-radio:nth-of-type(6):checked ~ div.code-group-panel:nth-of-type(6),
+    .carve .code-group > input.code-group-radio:nth-of-type(7):checked ~ div.code-group-panel:nth-of-type(7),
+    .carve .code-group > input.code-group-radio:nth-of-type(8):checked ~ div.code-group-panel:nth-of-type(8),
+    .carve .code-group > input.code-group-radio:nth-of-type(9):checked ~ div.code-group-panel:nth-of-type(9) {
+      display: block;
     }
-    .chart > canvas { max-width: 100%; }
-    [data-source-line] {
-      scroll-margin-top: 8px;
+
+    /* --- Task lists --------------------------------------------------- */
+
+    /*
+     * carve-css styles the checkbox itself but takes no view on what a DONE
+     * item looks like, and a 13px box is not a state a reader can scan. So a
+     * checked item's own text goes soft and struck while its nested items keep
+     * their own state - a finished parent does not finish its children.
+     *
+     * The strike is withheld from an item that carries a nested list, because
+     * a text decoration set on a block box propagates into every descendant and
+     * CSS gives the descendant no way to take it back. The dimming is inherited
+     * color, which a descendant can and does reset.
+     */
+    .carve li:has(> input[type="checkbox"]) { list-style: none; }
+    .carve li > input[type="checkbox"] {
+      margin-inline-start: -1.4em;
+      margin-inline-end: var(--carve-space-2);
+      vertical-align: middle;
     }
-    .carve-active {
-      position: relative;
+    .carve li:has(> input[type="checkbox"]:checked) { color: var(--carve-ink-soft); }
+    .carve li:has(> input[type="checkbox"]:checked):not(:has(:is(ul, ol))) {
+      text-decoration: line-through;
+      text-decoration-color: color-mix(in srgb, var(--carve-ink-soft) 55%, transparent);
     }
+    .carve li:has(> input[type="checkbox"]:checked) :is(ul, ol) { color: var(--carve-ink); }
+
+    /* --- Scroll sync -------------------------------------------------- */
+
+    [data-source-line] { scroll-margin-top: 8px; }
+    .carve-active { position: relative; }
     .carve-active::before {
       content: "";
       position: absolute;
       left: -16px;
       top: 0;
       bottom: 0;
-      width: 3px;
+      width: var(--carve-accent-width);
       border-radius: 2px;
-      background: var(--vscode-editorCursor-foreground, var(--vscode-focusBorder));
+      background: var(--vscode-editorCursor-foreground, var(--carve-accent));
     }
   </style>
   <title>Carve Preview</title>
 </head>
 <body>
-  <main>${body}</main>
+  <main class="carve">${body}</main>
   <script nonce="${nonce}" src="${assets.hljsJs}"></script>
   <script nonce="${nonce}" src="${assets.katexJs}"></script>
   <script nonce="${nonce}" src="${assets.katexAutoRender}"></script>
@@ -356,31 +605,157 @@ export function previewDocument(source: string, options: PreviewOptions): string
           const sourceLine = pre.getAttribute('data-source-line')
           if (sourceLine) div.setAttribute('data-source-line', sourceLine)
           div.textContent = node.textContent || ''
+          // Kept so a theme switch can redraw the diagram: mermaid consumes
+          // this element's content when it renders.
+          div.setAttribute('data-mermaid-src', div.textContent)
           pre.replaceWith(div)
         })
         try {
           mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: isDark() ? 'dark' : 'default' })
-          const nodes = document.querySelectorAll('div.mermaid')
+          const nodes = document.querySelectorAll('div.mermaid:not([data-processed])')
           if (nodes.length) mermaid.run({ nodes })
         } catch (err) {
           console.error('mermaid render failed', err)
         }
       }
 
-      // Label each highlighted code block with its language (a hover pill). The
-      // language comes from the core renderer's language- class on the code el.
-      function decorateCodeLangs() {
-        document.querySelectorAll('pre > code[class*="language-"]').forEach((code) => {
+      // Feather-shaped inline SVG. 'stroke="currentColor"' is what lets the
+      // three button states color themselves from the tokens.
+      const ICONS = {
+        copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>',
+        ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+        fail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>',
+      }
+
+      // --- Clipboard ---------------------------------------------------
+      // Three routes, host first.
+      //
+      // 'navigator.clipboard.writeText' is NOT reliable here: a webview runs in
+      // an iframe, and the async clipboard API is gated behind the
+      // 'clipboard-write' permission policy, which the frame is not granted. It
+      // rejects rather than throwing synchronously, so a button wired only to
+      // it fails silently - which is the failure mode this whole strip exists
+      // to avoid.
+      //
+      // The extension host has no such restriction: 'vscode.env.clipboard' is a
+      // first-class API. So the preview asks the host, and only falls back to
+      // the browser routes when there is no host - which is what happens in the
+      // exported HTML, where the same code runs in a plain browser tab.
+      let copySeq = 0
+      const copyWaiting = new Map()
+
+      function copyViaHost(text) {
+        if (!vscode) return Promise.resolve(false)
+        return new Promise((resolve) => {
+          const id = ++copySeq
+          // Keyed by request id, not a single global slot: two quick clicks
+          // must not answer each other's callback.
+          copyWaiting.set(id, resolve)
+          vscode.postMessage({ type: 'copy', id, text })
+          // A round trip through the host. If it never answers, settle false so
+          // the button reports something rather than staying blank forever.
+          setTimeout(() => {
+            if (copyWaiting.has(id)) {
+              copyWaiting.delete(id)
+              resolve(false)
+            }
+          }, 1500)
+        })
+      }
+
+      function copyViaExecCommand(text) {
+        const area = document.createElement('textarea')
+        area.value = text
+        area.setAttribute('readonly', '')
+        area.style.position = 'fixed'
+        area.style.top = '-1000px'
+        document.body.appendChild(area)
+        let ok = false
+        try {
+          area.select()
+          ok = document.execCommand('copy')
+        } catch (err) {
+          ok = false
+        }
+        document.body.removeChild(area)
+        return ok
+      }
+
+      function copyText(text) {
+        return copyViaHost(text).then((ok) => {
+          if (ok) return true
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text)
+              .then(() => true)
+              .catch(() => copyViaExecCommand(text))
+          }
+          return copyViaExecCommand(text)
+        })
+      }
+
+      const flashTimers = new WeakMap()
+
+      function flash(button, state, label) {
+        button.dataset.state = state
+        button.innerHTML = ICONS[state]
+        button.title = label
+        button.setAttribute('aria-label', label)
+        clearTimeout(flashTimers.get(button))
+        flashTimers.set(button, setTimeout(() => {
+          delete button.dataset.state
+          button.innerHTML = ICONS.copy
+          button.title = 'Copy code'
+          button.setAttribute('aria-label', 'Copy code to the clipboard')
+        }, 1400))
+      }
+
+      function copyButton(code) {
+        const button = document.createElement('button')
+        button.type = 'button'
+        button.className = 'code-copy'
+        button.innerHTML = ICONS.copy
+        button.title = 'Copy code'
+        button.setAttribute('aria-label', 'Copy code to the clipboard')
+        button.addEventListener('click', () => {
+          // The <code> element's text, never the wrapper's: the wrapper also
+          // holds the badge and this button, and both would be copied.
+          copyText(code.textContent || '').then((ok) => {
+            flash(button, ok ? 'ok' : 'fail', ok ? 'Copied' : 'Copy failed')
+          })
+        })
+        return button
+      }
+
+      // Wrap each code block and give it a tool strip carrying the language
+      // badge and the copy button. Both are visible at rest; the language used
+      // to appear only on hover, so a reader could not tell what a fence held.
+      function decorateCodeBlocks() {
+        document.querySelectorAll('pre > code').forEach((code) => {
           const pre = code.parentElement
-          if (!pre || pre.querySelector('.code-lang')) return
+          if (!pre || !pre.parentNode) return
+          if (pre.parentElement && pre.parentElement.classList.contains('carve-code')) return
           const cls = [...code.classList].find((c) => c.indexOf('language-') === 0)
           const lang = cls ? cls.slice('language-'.length) : ''
-          if (!lang || lang === 'mermaid') return
-          pre.setAttribute('data-lang', lang)
-          const label = document.createElement('span')
-          label.className = 'code-lang'
-          label.textContent = lang
-          pre.appendChild(label)
+          // A mermaid fence is replaced by its diagram; there is nothing to
+          // label and nothing a reader would want on the clipboard.
+          if (lang === 'mermaid') return
+
+          const wrap = document.createElement('div')
+          wrap.className = 'carve-code'
+          if (lang) wrap.dataset.lang = lang
+          pre.parentNode.insertBefore(wrap, pre)
+
+          const tools = document.createElement('div')
+          tools.className = 'code-tools'
+          if (lang) {
+            const badge = document.createElement('span')
+            badge.className = 'code-lang'
+            badge.textContent = lang
+            tools.appendChild(badge)
+          }
+          tools.appendChild(copyButton(code))
+          wrap.appendChild(tools)
+          wrap.appendChild(pre)
         })
       }
 
@@ -433,10 +808,45 @@ export function previewDocument(source: string, options: PreviewOptions): string
         applyHljsTheme()
         renderMath()
         highlightCode()
-        decorateCodeLangs()
+        decorateCodeBlocks()
         renderMermaid()
         renderCharts()
       }
+
+      // --- Live theme switch -------------------------------------------
+      //
+      // Every COLOR follows the editor on its own: the scaffold binds each
+      // --carve-* token to a --vscode-* variable, and VS Code rewrites those
+      // variables in place on the root element when the theme changes, so the
+      // whole document re-resolves with no work here.
+      //
+      // Two things are not CSS and do not get that for free:
+      //   - the highlight.js theme, which is a pair of stylesheets where one is
+      //     disabled;
+      //   - mermaid, which bakes its palette into the SVG it emits, so a
+      //     switched theme needs the diagram drawn again.
+      //
+      // VS Code signals the change by swapping the class on <body>, so observe
+      // that. Without this the preview kept the old code colors and the old
+      // diagram colors until it happened to re-render for another reason.
+      let themeWasDark = isDark()
+
+      function onThemeChanged() {
+        if (isDark() === themeWasDark) return
+        themeWasDark = isDark()
+        applyHljsTheme()
+        // Mermaid consumed the source <pre> when it rendered, so re-running it
+        // over the existing <div class="mermaid"> nodes needs their source back.
+        document.querySelectorAll('div.mermaid[data-mermaid-src]').forEach((el) => {
+          el.removeAttribute('data-processed')
+          el.innerHTML = ''
+          el.textContent = el.getAttribute('data-mermaid-src') || ''
+        })
+        renderMermaid()
+      }
+
+      new MutationObserver(onThemeChanged)
+        .observe(document.body, { attributes: true, attributeFilter: ['class'] })
 
       // --- Scroll sync (line-anchored) ---
       // Each top-level block carries data-source-line (1-based). We map
@@ -506,6 +916,13 @@ export function previewDocument(source: string, options: PreviewOptions): string
         if (message.type === 'scrollToLine') scrollToLine(message.line)
         else if (message.type === 'highlightLine') highlightLine(message.line)
         else if (message.type === 'print') window.print()
+        else if (message.type === 'copied') {
+          const resolve = copyWaiting.get(message.id)
+          if (resolve) {
+            copyWaiting.delete(message.id)
+            resolve(message.ok === true)
+          }
+        }
       })
 
       if (document.readyState === 'loading') {

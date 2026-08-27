@@ -107,6 +107,8 @@ function openPreview(context: vscode.ExtensionContext): void {
     previewPanel.webview.onDidReceiveMessage((message) => {
       if (message?.type === 'reveal') {
         revealEditorLine(message.line)
+      } else if (message?.type === 'copy') {
+        void copyToClipboard(message.id, message.text)
       }
     }, undefined, context.subscriptions)
   }
@@ -199,6 +201,32 @@ function printPreview(context: vscode.ExtensionContext): void {
   void previewPanel.webview.postMessage({ type: 'print' })
 }
 
+/**
+ * Write a code block to the clipboard on the webview's behalf, and tell it
+ * whether that worked.
+ *
+ * The webview cannot do this itself: it runs in an iframe, and the async
+ * clipboard API is gated behind a `clipboard-write` permission policy the frame
+ * is not granted, so `navigator.clipboard.writeText` rejects there. The host has
+ * `vscode.env.clipboard`, which carries no such restriction.
+ *
+ * The reply is keyed by the request id the webview sent, so two quick clicks
+ * cannot answer each other, and a failure comes back as `ok: false` rather than
+ * as silence - a copy button that quietly does nothing is worse than none.
+ */
+async function copyToClipboard(id: unknown, text: unknown): Promise<void> {
+  let ok = false
+  try {
+    if (typeof text === 'string') {
+      await vscode.env.clipboard.writeText(text)
+      ok = true
+    }
+  } catch {
+    ok = false
+  }
+  void previewPanel?.webview.postMessage({ type: 'copied', id, ok })
+}
+
 function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview): PreviewAssets {
   const asset = (...segments: string[]): string =>
     webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, ...segments)).toString()
@@ -212,6 +240,10 @@ function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview
     hljsJs: asset('media', 'hljs', 'highlight.min.js'),
     hljsLightCss: asset('media', 'hljs', 'github.min.css'),
     hljsDarkCss: asset('media', 'hljs', 'github-dark.min.css'),
+    carveTokensCss: asset('media', 'carve-css', 'tokens.css'),
+    carveCoreCss: asset('media', 'carve-css', 'core.css'),
+    carveExtensionsCss: asset('media', 'carve-css', 'extensions.css'),
+    carveRecipesCss: asset('media', 'carve-css', 'recipes.css'),
   }
 }
 
