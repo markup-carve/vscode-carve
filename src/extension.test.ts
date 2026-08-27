@@ -131,7 +131,10 @@ test('renders Carve preview HTML', () => {
 const previewExtensionMarkers: Array<[string, string, RegExp]> = [
   ['details', '::: details "More"\nbody\n:::\n', /<details>/],
   ['spoiler', '::: spoiler "Peek"\nhidden\n:::\n', /<details class="spoiler">/],
-  ['mermaid', '```mermaid\ngraph TD;\n```\n', /<pre class="mermaid">/],
+  // Not anchored on the closing `>`: carve 0.1.5 added `role="img"` and an
+  // aria-label to this element, and the marker is meant to say the extension
+  // ran, not how the engine spells the rest of the tag.
+  ['mermaid', '```mermaid\ngraph TD;\n```\n', /<pre class="mermaid"[ >]/],
   ['mathBlock', '```math\nx^2\n```\n', /<div class="math display">/],
   ['chart', '```chart\n{"type":"bar"}\n```\n', /<script type="application\/json">/],
   ['codeGroup', '::: code-group\n```js [One]\nx\n```\n:::\n', /class="code-group-label"/],
