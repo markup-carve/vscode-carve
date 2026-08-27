@@ -1,0 +1,15 @@
+>[^a]: intro
+#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^^^^^^ text.carve meta.footnote.definition.carve
+>+
+#^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+> more
+#^^^^^^ text.carve
+>
+>see[^a]
+#^^^ text.carve
+#   ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+>

@@ -1,0 +1,7 @@
+>> +
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^ text.carve markup.quote.carve
+> flush
+#^^^^^^^ text.carve
+>
