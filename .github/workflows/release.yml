@@ -92,24 +92,64 @@ jobs:
       - name: Publish to Open VSX
         run: npx ovsx publish vscode-carve.vsix
 
-      # Ask the registries rather than the exit code. `vsce publish` can succeed
-      # against a namespace that then serves nothing, and the job would still be
-      # green - the same shape as the skip it replaced.
-      # Open VSX serves a 404 from /api/{ns}/{ext} for MINUTES after a publish it
-      # already accepted - measured on the v0.1.1 publish, where the namespace
-      # listing also reported `"extensions":{}` while the search index already
-      # had the extension. A single query here reports a healthy publish as a
-      # failure, so this retries before it says anything.
-      - name: The marketplaces actually serve this version
+      # Ask the registries rather than the exit code, and ask them for the
+      # VERSION. The step this replaced asked Open VSX for an HTTP 200 on the
+      # extension URL, which any previously published version satisfies - so it
+      # printed "checking 0.1.4" while 0.1.3 was the only thing served, reported
+      # the other marketplace it named in its own title without ever querying
+      # it, and ended both branches with an echo, so no outcome could turn the
+      # job red. That is the same shape as the skipped publish it was written
+      # to catch.
+      #
+      # Both registries index asynchronously: Open VSX served a 404 for minutes
+      # after the v0.1.1 publish it had already accepted, and the VS Code
+      # Marketplace runs the vsix through validation before the gallery serves
+      # it. So this retries for a quarter of an hour before it concludes
+      # anything - and then it FAILS, because by that point the publish has
+      # already happened and a red job is the only remaining way to say that
+      # what a user can install is not what was tagged.
+      - name: Both marketplaces actually serve this version
         run: |
-          v="${GITHUB_REF_NAME#v}"
-          ovsx=000
-          for _ in $(seq 1 10); do
-            sleep 30
-            ovsx="$(curl -sS -o /dev/null -w '%{http_code}' https://open-vsx.org/api/markup-carve/vscode-carve || echo 000)"
-            [ "$ovsx" = "200" ] && break
-          done
-          [ "$ovsx" = "200" ] \
-            && echo "Open VSX serves markup-carve.vscode-carve (checking $v)" \
-            || echo "::warning::Open VSX still $ovsx after 5 minutes; it lagged on v0.1.1 too, so verify by hand rather than assuming a failed publish"
+          want="${GITHUB_REF_NAME#v}"
 
+          ovsx_served() {
+            curl -sS --max-time 25 \
+              "https://open-vsx.org/api/markup-carve/vscode-carve/latest" 2>/dev/null \
+              | jq -r '.version // empty' 2>/dev/null || true
+          }
+
+          vsce_served() {
+            curl -sS --max-time 25 -X POST \
+              "https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery" \
+              -H 'Accept: application/json;api-version=7.2-preview.1' \
+              -H 'Content-Type: application/json' \
+              -d '{"filters":[{"criteria":[{"filterType":7,"value":"markup-carve.vscode-carve"}]}],"flags":16}' \
+              2>/dev/null \
+              | jq -r '.results[0].extensions[0].versions[0].version // empty' 2>/dev/null || true
+          }
+
+          ovsx_seen=""
+          vsce_seen=""
+          for _ in $(seq 1 20); do
+            if [ "$ovsx_seen" != "$want" ]; then ovsx_seen="$(ovsx_served)"; fi
+            if [ "$vsce_seen" != "$want" ]; then vsce_seen="$(vsce_served)"; fi
+            if [ "$ovsx_seen" = "$want" ] && [ "$vsce_seen" = "$want" ]; then
+              break
+            fi
+            sleep 45
+          done
+
+          fail=0
+          if [ "$ovsx_seen" = "$want" ]; then
+            echo "Open VSX serves $want"
+          else
+            echo "::error::Open VSX serves ${ovsx_seen:-nothing}, expected $want"
+            fail=1
+          fi
+          if [ "$vsce_seen" = "$want" ]; then
+            echo "VS Code Marketplace serves $want"
+          else
+            echo "::error::VS Code Marketplace serves ${vsce_seen:-nothing}, expected $want"
+            fail=1
+          fi
+          exit $fail
