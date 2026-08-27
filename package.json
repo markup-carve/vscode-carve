@@ -85,7 +85,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"😄\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
+          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"\ud83d\ude04\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
         },
         "carve.trace.server": {
           "type": "string",
@@ -96,6 +96,19 @@
           ],
           "default": "off",
           "description": "Trace the communication between VS Code and the Carve language server (shown in the 'Carve Language Server' output channel). Useful for debugging."
+        },
+        "carve.formatter": {
+          "type": "string",
+          "enum": [
+            "conservative",
+            "migration"
+          ],
+          "enumDescriptions": [
+            "Normalize whitespace and line endings only. Never rewrites your wording or markup.",
+            "Rewrite the document into canonical Carve, the way `carve fmt` does."
+          ],
+          "default": "conservative",
+          "markdownDescription": "What **Format Document** does in a Carve file. `migration` round-trips the document through the AST, so it may rewrite lines you did not touch."
         }
       }
     },
@@ -120,6 +133,10 @@
       {
         "command": "carve.restartLanguageServer",
         "title": "Carve: Restart Language Server"
+      },
+      {
+        "command": "carve.formatCanonical",
+        "title": "Carve: Format Document (canonical)"
       }
     ],
     "menus": {
@@ -145,6 +162,11 @@
           "command": "carve.exportMarkdown",
           "when": "resourceLangId == carve",
           "group": "1_carve@3"
+        },
+        {
+          "command": "carve.formatCanonical",
+          "when": "editorLangId == carve",
+          "group": "1_modification"
         }
       ]
     },

@@ -7,6 +7,7 @@ import {
   type ServerOptions,
 } from 'vscode-languageclient/node.js'
 import { serverModulePath } from './paths.js'
+import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import {
   exportHtmlDocument,
   renderMarkdown,
@@ -21,6 +22,8 @@ let client: LanguageClient | undefined
 let previewPanel: vscode.WebviewPanel | undefined
 let previewUri: vscode.Uri | undefined
 let suppressEditorScroll = false
+/** When the previewed document last changed, to tell typing from scrolling. */
+let lastEditAt = 0
 let renderTimer: ReturnType<typeof setTimeout> | undefined
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -29,12 +32,28 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('carve.exportHtml', () => exportHtml()),
     vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown()),
     vscode.commands.registerCommand('carve.printPreview', () => printPreview(context)),
+    vscode.commands.registerCommand('carve.formatCanonical', async () => {
+      const editor = vscode.window.activeTextEditor
+      if (!editor || editor.document.languageId !== 'carve') return
+      const text = editor.document.getText()
+      const { carveToCarve } = await import('@markup-carve/carve')
+      const formatted = carveToCarve(text)
+      if (formatted === text) {
+        void vscode.window.showInformationMessage('Carve: already canonical.')
+        return
+      }
+      const whole = new vscode.Range(
+        editor.document.positionAt(0),
+        editor.document.positionAt(text.length),
+      )
+      await editor.edit((builder) => builder.replace(whole, formatted))
+    }),
     vscode.commands.registerCommand('carve.restartLanguageServer', async () => {
       await stopLanguageServer()
       await startLanguageServer(context)
     }),
     vscode.workspace.onDidChangeConfiguration(async (event) => {
-      if (event.affectsConfiguration('carve.lsp.enabled')) {
+      if (event.affectsConfiguration('carve.lsp.enabled') || event.affectsConfiguration('carve.formatter')) {
         await stopLanguageServer()
         await startLanguageServer(context)
       }
@@ -47,6 +66,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.workspace.onDidChangeTextDocument((event) => {
       if (previewPanel && previewUri && event.document.uri.toString() === previewUri.toString()) {
+        lastEditAt = Date.now()
         scheduleRender(context, event.document)
       }
     }),
@@ -288,6 +308,7 @@ function revealEditorLine(line: number): void {
   }
   // data-source-line is 1-based; editor lines are 0-based.
   const target = Math.min(Math.max(0, line - 1), Math.max(0, editor.document.lineCount - 1))
+  if (isLineOnScreen(target, editor.visibleRanges)) return
   const range = new vscode.Range(target, 0, target, 0)
   suppressEditorScroll = true
   editor.revealRange(range, vscode.TextEditorRevealType.AtTop)
@@ -300,6 +321,11 @@ function syncPreviewToEditor(
   visibleRanges: readonly vscode.Range[],
 ): void {
   if (suppressEditorScroll || !previewPanel || !previewUri) {
+    return
+  }
+  // Sync on a real scroll, not on the viewport shifting because a line was
+  // added. Syncing on typing is what starts the editor-preview-editor loop.
+  if (!isScrollNotTyping(Date.now(), lastEditAt)) {
     return
   }
   if (editor.document.uri.toString() !== previewUri.toString() || visibleRanges.length === 0) {
@@ -351,6 +377,11 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
     ],
     synchronize: {
       fileEvents: vscode.workspace.createFileSystemWatcher('**/*.crv'),
+    },
+    initializationOptions: {
+      carve: {
+        formatter: vscode.workspace.getConfiguration('carve').get('formatter', 'conservative'),
+      },
     },
   }
 
