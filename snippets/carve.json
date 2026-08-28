@@ -81,7 +81,7 @@
   },
   "Raw block": {
     "prefix": "rawblock",
-    "body": ["```raw ${1:html}", "$0", "```"],
+    "body": ["```=${1:html}", "$0", "```"],
     "description": "Raw passthrough block"
   },
   "Link": {
@@ -136,8 +136,23 @@
   },
   "Div": {
     "prefix": "div",
-    "body": [":::${1:name}", "$0", ":::"],
+    "body": ["::: ${1:name}", "$0", ":::"],
     "description": "Fenced div container"
+  },
+  "Line block": {
+    "prefix": "lineblock",
+    "body": ["::: |", "$0", ":::"],
+    "description": "Line block: every line keeps its own break"
+  },
+  "Fenced block quote": {
+    "prefix": "quotefence",
+    "body": ["::: >", "$0", ":::"],
+    "description": "Block quote as a fence, with no marker on every line"
+  },
+  "Local hard-break block": {
+    "prefix": "hardbreaks",
+    "body": ["::: \\", "$0", ":::"],
+    "description": "Every soft break inside becomes a hard break"
   },
   "Blockquote": {
     "prefix": "quote",
@@ -171,7 +186,7 @@
   },
   "Definition list": {
     "prefix": "deflist",
-    "body": [":: ${1:Term}", ":  ${2:Definition}", "$0"],
+    "body": [":: ${1:Term}", ": ${2:Definition}", "$0"],
     "description": "Definition list entry"
   },
   "Attributes": {
