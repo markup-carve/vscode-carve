@@ -468,7 +468,23 @@ const rows = []
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
 const ENGINE_PIN = '0.1.5'
-const ENGINE_LAG = {}
+const ENGINE_LAG = {
+  // Both entries were measured by rendering the document through the bundled
+  // 0.1.5 and diffing against the corpus HTML, and 0.1.5 is the newest engine
+  // on npm, so there is no version to bump to instead of waiving.
+  //
+  // `data-task-state` is the whole diff on all four items: the engine has no
+  // model for a non-space task marker at all - `parse('- [-] dropped')` gives a
+  // list_item whose keys are type, children, pos and checked - so it cannot
+  // carry the state the corpus now pins.
+  '06-task-lists-2.crv': 'the engine has no taskState on list_item, so every non-space marker renders without data-task-state',
+  // `: ` followed by only a TAB. The corpus reads it as no description at all,
+  // folding the colon into the term; 0.1.5 still builds an empty one and emits
+  // `<dd></dd>`. Isolated to the whitespace-only variant, which is what the
+  // ruling is about: the sibling `-8` is `: \ttext` and renders correctly.
+  '439-a-colon-followed-by-only-whitespace-is-not-a-description-7.crv':
+    'the engine predates the ruling and still opens an empty description for a colon followed by only whitespace',
+}
 const lagWaived = []
 const lagStale = []
 
