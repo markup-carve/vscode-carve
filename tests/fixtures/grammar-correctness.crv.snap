@@ -4,9 +4,9 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >A *bold* and ~strike~ and /*bold italic*/ still work
 #^^ text.carve
-#  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#   ^^^^ text.carve markup.bold.carve markup.bold.carve
-#       ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#  ^ text.carve punctuation.definition.bold.carve
+#   ^^^^ text.carve markup.bold.carve
+#       ^ text.carve punctuation.definition.bold.carve
 #        ^^^^^ text.carve
 #             ^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
 #              ^^^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve

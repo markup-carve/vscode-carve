@@ -5,9 +5,9 @@
 >
 >This paragraph must stay *ordinary* prose, not literal content.
 #^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
-#                         ^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#                          ^^^^^^^^ text.carve markup.bold.carve markup.bold.carve
-#                                  ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#                         ^ text.carve punctuation.definition.bold.carve
+#                          ^^^^^^^^ text.carve markup.bold.carve
+#                                  ^ text.carve punctuation.definition.bold.carve
 #                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >
 >An unclosed math opener $`oops leaks nothing either.

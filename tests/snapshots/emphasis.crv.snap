@@ -3,9 +3,9 @@
 # ^^^^^^ text.carve markup.italic.carve markup.italic.carve
 #       ^ text.carve markup.italic.carve punctuation.definition.italic.carve
 #        ^^ text.carve
-#          ^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#           ^^^^ text.carve markup.bold.carve markup.bold.carve
-#               ^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#          ^ text.carve punctuation.definition.bold.carve
+#           ^^^^ text.carve markup.bold.carve
+#               ^ text.carve punctuation.definition.bold.carve
 #                ^^ text.carve
 #                  ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
 #                    ^^^^^^^^^^^ text.carve markup.bold.italic.carve markup.bold.italic.carve

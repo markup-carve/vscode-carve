@@ -1562,19 +1562,25 @@
           }
         },
         {
-          "name": "markup.bold.carve",
-          "match": "(?<![\\w*])(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)(?![\\w*])",
-          "captures": {
+          "comment": "A bare bold run may cross soft line breaks, so this rule carries TextMate state with begin/end. A blank or whitespace-only line ends an unclosed run at its paragraph boundary instead of letting it colour the rest of the file (markup-carve/vscode-carve#178).",
+          "contentName": "markup.bold.carve",
+          "begin": "(?<![\\w*])(\\*)(?=\\S)",
+          "end": "(?<=\\S)(\\*)(?![\\w*])|^[ \\t]*$",
+          "beginCaptures": {
             "1": {
               "name": "punctuation.definition.bold.carve"
-            },
-            "2": {
-              "name": "markup.bold.carve"
-            },
-            "3": {
+            }
+          },
+          "endCaptures": {
+            "1": {
               "name": "punctuation.definition.bold.carve"
             }
-          }
+          },
+          "patterns": [
+            {
+              "include": "#braced-comment"
+            }
+          ]
         },
         {
           "name": "markup.italic.carve",
@@ -1918,8 +1924,33 @@
       ]
     },
     "definitions-in-container": {
-      "comment": "The indented spelling of a link or footnote reference definition, reachable only from a container's body. The container's `end` has already established that the line sits at or beyond that container's content column, which is the part a line-anchored `^[ \\t]*` cannot know on its own. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
+      "comment": "Definitions reachable only from a container's body. The container's `end` has already established that the line sits at or beyond its content column, which a line-anchored whitespace run cannot know on its own.",
       "patterns": [
+        {
+          "comment": "An abbreviation definition at a container's content column must be consumed before the inline layer can mistake its leading star for bold (markup-carve/vscode-carve#179).",
+          "name": "meta.abbreviation.definition.carve",
+          "match": "^[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.abbreviation.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.abbreviation.carve"
+            },
+            "3": {
+              "name": "entity.name.abbreviation.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.abbreviation.carve"
+            },
+            "5": {
+              "name": "punctuation.separator.carve"
+            },
+            "6": {
+              "name": "string.unquoted.abbreviation.carve"
+            }
+          }
+        },
         {
           "name": "meta.link.reference.definition.carve",
           "match": "^[ \\t]*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",

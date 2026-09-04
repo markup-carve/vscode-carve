@@ -220,7 +220,7 @@
     "test": "npm run test:unit && npm run test:workflows && npm run test:grammar && npm run test:corpus",
     "test:unit": "node --test dist/*.test.js",
     "test:workflows": "node --test tests/workflow-git-config.test.mjs",
-    "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
+    "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/multiline-bold.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
     "test:grammar:update": "node tests/run-snapshots.mjs -u && node tests/run-fixtures.mjs -u",
     "test:corpus": "node tools/corpus-through-extension.mjs",
     "typecheck": "tsc --noEmit",
