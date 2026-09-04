@@ -2,9 +2,9 @@
 #^^^^^^ text.carve
 #      ^^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
 #        ^^^^ text.carve meta.footnote.inline.carve
-#            ^ text.carve meta.footnote.inline.carve markup.bold.carve punctuation.definition.bold.carve
-#             ^^^^^ text.carve meta.footnote.inline.carve markup.bold.carve markup.bold.carve
-#                  ^ text.carve meta.footnote.inline.carve markup.bold.carve punctuation.definition.bold.carve
+#            ^ text.carve meta.footnote.inline.carve punctuation.definition.bold.carve
+#             ^^^^^ text.carve meta.footnote.inline.carve markup.bold.carve
+#                  ^ text.carve meta.footnote.inline.carve punctuation.definition.bold.carve
 #                   ^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
 #                    ^^^^^^^^^^^^^^^^^^ text.carve
 #                                      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
