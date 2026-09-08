@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-09-09
+
 ### Added
 
 - **Canonical formatting is reachable** (#171). A new `carve.formatter` mode and an on-demand `Carve: Format Document (canonical)` command run the full `carve fmt` through the bundled engine, so format-on-save cannot silently canonicalize a document you did not mean to.
