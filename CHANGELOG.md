@@ -6,6 +6,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Canonical formatting is reachable** (#171). A new `carve.formatter` mode and an on-demand `Carve: Format Document (canonical)` command run the full `carve fmt` through the bundled engine, so format-on-save cannot silently canonicalize a document you did not mean to.
+
+### Fixed
+
+- **The preview no longer jitters the editor as you type** (#171). Editor and preview each synced to the other with nothing telling a viewport change caused by typing apart from one caused by scrolling, so a keystroke could start a scroll loop; the three holes that fed it are closed.
+- **Highlighting: `=>` is the arrow, and an escaped `=` does not close a highlight** (#176). The `=` opening `=>` no longer starts a highlight that reaches a later `=`, and `x =\= y` is left uncolored as the engine renders it.
+- **Highlighting: abbreviation definitions and bold across a line break are scoped correctly** (#180). Abbreviation definitions at a container content column are recognized, a bold run carries its scope across a soft line break, and an unclosed bold run stops at a blank line.
+- **Two snippets build the construct they are named for** (#172). The `div` snippet emitted `:::name`, which opens no container, and the raw-block snippet emitted a code fence rather than a raw block.
+
 ## [0.1.4] - 2026-08-27
 
 ### Added
