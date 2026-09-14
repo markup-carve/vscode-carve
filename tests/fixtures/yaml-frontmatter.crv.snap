@@ -1,0 +1,19 @@
+>---
+#^^^ text.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.begin.carve
+>title: YAML
+#^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml entity.name.tag.yaml
+#     ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml punctuation.separator.key-value.yaml
+#      ^^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml
+>draft: false
+#^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml entity.name.tag.yaml
+#     ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml punctuation.separator.key-value.yaml
+#      ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml
+#       ^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml constant.language.yaml
+>---
+#^^^ text.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.end.carve
+>
+># YAML body
+#^ text.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ text.carve markup.heading.carve
+#  ^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+>

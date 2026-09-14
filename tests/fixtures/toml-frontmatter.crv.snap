@@ -1,0 +1,21 @@
+>---toml
+#^^^ text.carve meta.frontmatter.toml.carve punctuation.definition.frontmatter.begin.carve
+#   ^^^^ text.carve meta.frontmatter.toml.carve entity.name.type.frontmatter.carve
+>title = "TOML"
+#^^^^^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml support.type.property-name.toml
+#     ^^^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml
+#        ^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml string.quoted.double.toml
+#         ^^^^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml string.quoted.double.toml
+#             ^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml string.quoted.double.toml
+>draft = false
+#^^^^^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml support.type.property-name.toml
+#     ^^^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml
+#        ^^^^^ text.carve meta.frontmatter.toml.carve meta.embedded.block.toml constant.language.toml
+>---
+#^^^ text.carve meta.frontmatter.toml.carve punctuation.definition.frontmatter.end.carve
+>
+># TOML body
+#^ text.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ text.carve markup.heading.carve
+#  ^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+>

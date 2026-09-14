@@ -1,11 +1,13 @@
 >--- yaml
-#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.begin.carve
-#   ^ text.carve meta.frontmatter.carve
-#    ^^^^ text.carve meta.frontmatter.carve entity.name.type.frontmatter.carve
+#^^^ text.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.begin.carve
+#   ^ text.carve meta.frontmatter.yaml.carve
+#    ^^^^ text.carve meta.frontmatter.yaml.carve entity.name.type.frontmatter.carve
 >title: T
-#^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+#^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml entity.name.tag.yaml
+#     ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml punctuation.separator.key-value.yaml
+#      ^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml
 >---
-#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.end.carve
+#^^^ text.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.end.carve
 >
 >body
 #^^^^^ text.carve
