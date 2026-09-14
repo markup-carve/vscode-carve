@@ -1,13 +1,22 @@
 >---
-#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.begin.carve
+#^^^ text.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.begin.carve
 >title: My Document
-#^^^^^^^^^^^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+#^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml entity.name.tag.yaml
+#     ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml punctuation.separator.key-value.yaml
+#      ^^^^^^^^^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml
 >author: Jane Doe
-#^^^^^^^^^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+#^^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml entity.name.tag.yaml
+#      ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml punctuation.separator.key-value.yaml
+#       ^^^^^^^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml
 >date: 2026-03-15
-#^^^^^^^^^^^^^^^^ text.carve meta.frontmatter.carve string.unquoted.frontmatter.carve
+#^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml entity.name.tag.yaml
+#    ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml punctuation.separator.key-value.yaml
+#     ^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml
+#      ^^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml constant.numeric.yaml
+#          ^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml constant.numeric.yaml
+#             ^^^ text.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml constant.numeric.yaml
 >---
-#^^^ text.carve meta.frontmatter.carve punctuation.definition.frontmatter.end.carve
+#^^^ text.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.end.carve
 >
 >Content begins here.
 #^^^^^^^^^^^^^^^^^^^^^ text.carve

@@ -1,0 +1,26 @@
+>---json
+#^^^ text.carve meta.frontmatter.json.carve punctuation.definition.frontmatter.begin.carve
+#   ^^^^ text.carve meta.frontmatter.json.carve entity.name.type.frontmatter.carve
+>{"title": "JSON", "draft": false}
+#^ text.carve meta.frontmatter.json.carve meta.embedded.block.json punctuation.definition.dictionary.json
+# ^^^^^^^ text.carve meta.frontmatter.json.carve meta.embedded.block.json support.type.property-name.json
+#        ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json punctuation.separator.dictionary.pair.json
+#         ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json
+#          ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json string.quoted.double.json
+#           ^^^^ text.carve meta.frontmatter.json.carve meta.embedded.block.json string.quoted.double.json
+#               ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json string.quoted.double.json
+#                ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json punctuation.definition.dictionary.json
+#                 ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json
+#                  ^^^^^^^ text.carve meta.frontmatter.json.carve meta.embedded.block.json support.type.property-name.json
+#                         ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json punctuation.separator.dictionary.pair.json
+#                          ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json
+#                           ^^^^^ text.carve meta.frontmatter.json.carve meta.embedded.block.json constant.language.json
+#                                ^ text.carve meta.frontmatter.json.carve meta.embedded.block.json punctuation.definition.dictionary.json
+>---
+#^^^ text.carve meta.frontmatter.json.carve punctuation.definition.frontmatter.end.carve
+>
+># JSON body
+#^ text.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ text.carve markup.heading.carve
+#  ^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+>

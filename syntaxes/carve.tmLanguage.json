@@ -101,8 +101,9 @@
     "frontmatter": {
       "patterns": [
         {
-          "name": "meta.frontmatter.carve",
-          "begin": "\\A(---)\\s*([A-Za-z0-9_-]+)?\\s*$",
+          "name": "meta.frontmatter.json.carve",
+          "contentName": "meta.embedded.block.json",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?)(json)[ \\t]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.frontmatter.begin.carve"
@@ -111,18 +112,77 @@
               "name": "entity.name.type.frontmatter.carve"
             }
           },
-          "end": "^(---)\\s*$",
+          "end": "^(---)[ \\t]*$",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.frontmatter.end.carve"
             }
           },
           "patterns": [
-            {
-              "name": "string.unquoted.frontmatter.carve",
-              "match": ".+"
-            }
+            { "name": "support.type.property-name.json", "match": "\"(?:\\\\.|[^\"\\\\])*\"(?=\\s*:)" },
+            { "name": "string.quoted.double.json", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.json", "match": "\\\\(?:[\"\\\\/bfnrt]|u[0-9A-Fa-f]{4})" }] },
+            { "name": "constant.language.json", "match": "\\b(?:false|null|true)\\b" },
+            { "name": "constant.numeric.json", "match": "-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[Ee][+-]?\\d+)?" },
+            { "name": "punctuation.separator.dictionary.pair.json", "match": ":" },
+            { "name": "punctuation.definition.dictionary.json", "match": "[{}\\[\\],]" }
           ]
+        },
+        {
+          "name": "meta.frontmatter.toml.carve",
+          "contentName": "meta.embedded.block.toml",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?)(toml)[ \\t]*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
+            "2": { "name": "entity.name.type.frontmatter.carve" }
+          },
+          "end": "^(---)[ \\t]*$",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.end.carve" }
+          },
+          "patterns": [
+            { "name": "comment.line.number-sign.toml", "begin": "#", "end": "$" },
+            { "name": "entity.name.section.toml", "match": "^\\s*\\[\\[?.*?\\]\\]?\\s*$" },
+            { "name": "support.type.property-name.toml", "match": "^[ \\t]*[A-Za-z_][\\w.-]*(?=[ \\t]*=)" },
+            { "name": "string.quoted.double.toml", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.toml", "match": "\\\\." }] },
+            { "name": "string.quoted.single.toml", "begin": "'", "end": "'" },
+            { "name": "constant.language.toml", "match": "\\b(?:false|true)\\b" },
+            { "name": "constant.numeric.toml", "match": "\\b[+-]?(?:0x[\\dA-Fa-f_]+|0o[0-7_]+|0b[01_]+|\\d[\\d_]*(?:\\.\\d[\\d_]*)?(?:[Ee][+-]?\\d[\\d_]*)?)\\b" }
+          ]
+        },
+        {
+          "name": "meta.frontmatter.yaml.carve",
+          "contentName": "meta.embedded.block.yaml",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?(?:(yaml|yml)))?[ \\t]*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
+            "2": { "name": "entity.name.type.frontmatter.carve" }
+          },
+          "end": "^(---)[ \\t]*$",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.end.carve" }
+          },
+          "patterns": [
+            { "name": "comment.line.number-sign.yaml", "begin": "#", "end": "$" },
+            { "name": "entity.name.tag.yaml", "match": "^[ \\t]*[A-Za-z_][\\w.-]*(?=\\s*:)" },
+            { "name": "string.quoted.double.yaml", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.yaml", "match": "\\\\." }] },
+            { "name": "string.quoted.single.yaml", "begin": "'", "end": "'" },
+            { "name": "constant.language.yaml", "match": "\\b(?:false|null|true)\\b" },
+            { "name": "constant.numeric.yaml", "match": "\\b[+-]?(?:0x[\\dA-Fa-f]+|\\d*\\.?\\d+(?:[Ee][+-]?\\d+)?)\\b" },
+            { "name": "punctuation.separator.key-value.yaml", "match": ":" }
+          ]
+        },
+        {
+          "name": "meta.frontmatter.unknown.carve",
+          "contentName": "meta.embedded.block.frontmatter",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?)([A-Za-z0-9_-]+)[ \\t]*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
+            "2": { "name": "entity.name.type.frontmatter.carve" }
+          },
+          "end": "^(---)[ \\t]*$",
+          "endCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.end.carve" }
+          }
         }
       ]
     },
