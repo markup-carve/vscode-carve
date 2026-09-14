@@ -105,6 +105,42 @@
           "contentName": "meta.embedded.block.json",
           "begin": "\\A\\x{FEFF}?(---)(?: ?)(json)[ \\t]*$",
           "beginCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
+            "2": { "name": "entity.name.type.frontmatter.carve" }
+          },
+          "end": "^(---)[ \\t]*$",
+          "endCaptures": { "1": { "name": "punctuation.definition.frontmatter.end.carve" } },
+          "patterns": [{ "include": "source.json" }]
+        },
+        {
+          "name": "meta.frontmatter.toml.carve",
+          "contentName": "meta.embedded.block.toml",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?)(toml)[ \\t]*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
+            "2": { "name": "entity.name.type.frontmatter.carve" }
+          },
+          "end": "^(---)[ \\t]*$",
+          "endCaptures": { "1": { "name": "punctuation.definition.frontmatter.end.carve" } },
+          "patterns": [{ "include": "source.toml" }]
+        },
+        {
+          "name": "meta.frontmatter.yaml.carve",
+          "contentName": "meta.embedded.block.yaml",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?(?:(yaml|yml)))?[ \\t]*$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.frontmatter.begin.carve" },
+            "2": { "name": "entity.name.type.frontmatter.carve" }
+          },
+          "end": "^(---)[ \\t]*$",
+          "endCaptures": { "1": { "name": "punctuation.definition.frontmatter.end.carve" } },
+          "patterns": [{ "include": "source.yaml" }]
+        },
+        {
+          "name": "meta.frontmatter.json.carve",
+          "contentName": "meta.embedded.block.json",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?)(json)[ \\t]*$",
+          "beginCaptures": {
             "1": {
               "name": "punctuation.definition.frontmatter.begin.carve"
             },
