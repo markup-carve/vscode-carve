@@ -1,0 +1,8 @@
+{{ chapters/intro.crv @label:"two words" }}
+{{ chapters/intro.crv @label:'two words' }}
+{{ chapters/intro.crv @label:"it's here" }}
+{{ chapters/intro.crv @label:'say "hi"' }}
+{{ chapters/intro.crv @label:"a \" b" }}
+{{ chapters/intro.crv @label:"a: b" }}
+{{ chapters/intro.crv @label:"unterminated }}
+{{ chapters/intro.crv #intro @lang:de @depth:2 }}

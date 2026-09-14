@@ -198,6 +198,64 @@ test('the padding is required', () => {
   )
 })
 
+// A QUOTED OPTION VALUE IS ONE VALUE (markup-carve/vscode-carve#189).
+//
+// `include_options` reads an `attribute_value`, which the EBNF admits quoted:
+//
+//     quoted_value = '"', { escaped_char | (character - '"' - '\' - newline) }, '"'
+//                  | "'", { escaped_char | (character - "'" - '\' - newline) }, "'" ;
+//
+// Read as a run of non-space characters the value stopped at the first space,
+// so `@label:"two words"` scoped only `"two`. The quoted alternatives require
+// their closing quote, so an unterminated one falls back to the unquoted
+// reading rather than pairing with a quote further along - CARVE-P4-006 says a
+// quoted value stops at the newline, which a `match` rule gets for free.
+
+/** The text of the token carrying `constant.other.include.carve`, or ''. */
+function optionValue(src) {
+  const token = tokensOf(src).find((t) => t.scopes.includes('constant.other.include.carve'))
+  return token ? token.text : ''
+}
+
+test('a quoted option value holding a space is one value', () => {
+  assert.equal(optionValue('{{ ch.crv @label:"two words" }}'), '"two words"')
+  assert.equal(optionValue("{{ ch.crv @label:'two words' }}"), "'two words'")
+})
+
+test('a quoted option value may hold the other quote character', () => {
+  assert.equal(optionValue(`{{ ch.crv @label:"it's here" }}`), `"it's here"`)
+  assert.equal(optionValue(`{{ ch.crv @label:'say "hi"' }}`), `'say "hi"'`)
+})
+
+test('a backslash-escaped quote stays inside the value', () => {
+  assert.equal(optionValue('{{ ch.crv @label:"a \\" b" }}'), '"a \\" b"')
+})
+
+test('an unterminated quote does not swallow the rest of the line', () => {
+  const src = '{{ ch.crv @label:"unterminated }}'
+  assert.equal(optionValue(src), '"unterminated')
+  assert.ok(
+    scopesOn(src, '}}').has('punctuation.definition.directive.end.carve'),
+    'the unterminated quote ate the closer',
+  )
+})
+
+test('a colon inside a quoted value does not split the value', () => {
+  // The separator capture is anchored to the option key's colon, not a bare
+  // one, so admitting quoted values cannot re-split a value at an interior `:`.
+  assert.equal(optionValue('{{ ch.crv @label:"a: b" }}'), '"a: b"')
+})
+
+// CONTROL: the unquoted form is untouched by the widening.
+test('an unquoted option value scopes exactly as before', () => {
+  const src = 'See {{ chapters/intro.crv #intro @lang:de @depth:2 }} here.'
+  const values = tokensOf(src)
+    .filter((t) => t.scopes.includes('constant.other.include.carve'))
+    .map((t) => t.text)
+  assert.deepEqual(values, ['de', '2'])
+  assert.ok(!anyScope(src, '.mention.carve'), 'a mention scope survives on an option slot')
+})
+
 test('this file is in the grammar test command', () => {
   const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'))
   assert.ok(

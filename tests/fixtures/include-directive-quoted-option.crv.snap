@@ -1,0 +1,87 @@
+>{{ chapters/intro.crv @label:"two words" }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                             ^^^^^^^^^^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                        ^ text.carve meta.directive.include.carve
+#                                         ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>{{ chapters/intro.crv @label:'two words' }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                             ^^^^^^^^^^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                        ^ text.carve meta.directive.include.carve
+#                                         ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>{{ chapters/intro.crv @label:"it's here" }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                             ^^^^^^^^^^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                        ^ text.carve meta.directive.include.carve
+#                                         ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>{{ chapters/intro.crv @label:'say "hi"' }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                             ^^^^^^^^^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                       ^ text.carve meta.directive.include.carve
+#                                        ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>{{ chapters/intro.crv @label:"a \" b" }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                             ^^^^^^^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                     ^ text.carve meta.directive.include.carve
+#                                      ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>{{ chapters/intro.crv @label:"a: b" }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                             ^^^^^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                   ^ text.carve meta.directive.include.carve
+#                                    ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>{{ chapters/intro.crv @label:"unterminated }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                             ^^^^^^^^^^^^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                          ^ text.carve meta.directive.include.carve
+#                                           ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>{{ chapters/intro.crv #intro @lang:de @depth:2 }}
+#^^ text.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ text.carve meta.directive.include.carve
+#   ^^^^^^^^^^^^^^^^^^ text.carve meta.directive.include.carve string.other.link.include.carve
+#                     ^ text.carve meta.directive.include.carve
+#                      ^^^^^^ text.carve meta.directive.include.carve entity.name.section.include.carve
+#                            ^ text.carve meta.directive.include.carve
+#                             ^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                                  ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                                   ^^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                     ^ text.carve meta.directive.include.carve
+#                                      ^^^^^^ text.carve meta.directive.include.carve variable.parameter.include.carve
+#                                            ^ text.carve meta.directive.include.carve punctuation.separator.include.carve
+#                                             ^ text.carve meta.directive.include.carve constant.other.include.carve
+#                                              ^ text.carve meta.directive.include.carve
+#                                               ^^ text.carve meta.directive.include.carve punctuation.definition.directive.end.carve
+>
