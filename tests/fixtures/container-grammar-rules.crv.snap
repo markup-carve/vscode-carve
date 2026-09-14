@@ -1,0 +1,74 @@
+>- # Heading on a marker line
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^ text.carve markup.heading.carve punctuation.definition.heading.carve
+#   ^ text.carve markup.heading.carve
+#    ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+>
+>- ``` js
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#     ^ text.carve markup.raw.block.fenced.code.carve
+#      ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>  code
+#^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>  ```
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>> ``` js
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#     ^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve
+#      ^^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>> quoted code
+#^^^^^^^^^^^^^^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve
+>> ```
+#^^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>- item
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^ text.carve
+>  ^ Caption at its content column
+#^^ text.carve markup.table.caption.carve
+#  ^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
+#   ^ text.carve markup.table.caption.carve
+#    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>- | table | row |
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#   ^^^^^^^ text.carve markup.table.row.carve
+#          ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#           ^^^^^ text.carve markup.table.row.carve
+#                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>
+>| cell %% trailing comment |
+#^ text.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^ text.carve markup.table.row.carve
+#       ^^^^^^^^^^^^^^^^^^^^ text.carve markup.table.row.carve comment.line.percent.carve
+#                           ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+>
+>- %%%
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^ text.carve comment.block.carve
+>  hidden
+#^^^^^^^^^ text.carve comment.block.carve
+>  %%%
+#^^^^^ text.carve comment.block.carve
+>
+>> %%%
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^ text.carve markup.quote.carve comment.block.carve
+>> hidden
+#^^^^^^^^^ text.carve markup.quote.carve comment.block.carve
+>> %%%
+#^^^^^ text.carve markup.quote.carve comment.block.carve
+>
