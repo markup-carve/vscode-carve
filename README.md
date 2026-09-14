@@ -27,6 +27,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Markd
   - links `@mentions` and `#tags` and renders `:emoji:` shortcodes when configured (see settings below).
 - Export commands:
   - **Carve: Export to HTML** writes a self-contained HTML file (Mermaid, KaTeX, and highlight.js load from a CDN; theming follows the reader's color scheme).
+  - **Carve: Export Bundle (document and its includes)** writes the document and every file it pulls in into a folder beside it, keeping the directives and the file boundaries.
   - **Carve: Print Preview / Export PDF** opens the system print dialog on the preview, so you can save to PDF.
 - Editor rules for comments, brackets, autoclosing pairs, folding markers, and word patterns.
 - An example document in the repository, `examples/demo.crv`, exercising every supported construct - open it and run **Carve: Open Preview** to see the rendering features in action.
@@ -60,9 +61,32 @@ exist yet is watched too, so creating it refreshes the document that wanted it.
 The include settings are read when the language server starts, so changing one
 restarts it.
 
-The **preview** does not expand includes yet - it renders the directive as
-written. That half needs an engine the extension cannot pin today; see
-[#185](https://github.com/markup-carve/vscode-carve/issues/185).
+**Bundling** hands the whole document over as a set of files. **Carve: Export
+Bundle** writes the open document and every file it includes, transitively, into
+`name.bundle` beside it, laid out relative to the containment root so the
+directives still resolve. The files are copied, not merged, which is what makes
+it the right shape for "send it to a colleague who will keep editing it". A
+target that could not be read is named in the result rather than quietly left
+out, and nothing outside the containment root is written into the bundle.
+
+The bundle runs the language server's own include walk, through the same gate
+and the same containment root the server enforces, so it cannot reach a file the
+server would have refused. With includes off for a document there is nothing to
+bundle and the command says so.
+
+Two halves are NOT here yet, and both are the same blocker rather than an
+oversight:
+
+- The **preview** does not expand includes - it renders the directive as
+  written.
+- There is no **flatten**: no export or copy of one self-contained `.crv` with
+  the children merged in.
+
+Merging is the engine's expansion pass, and the engine this extension bundles
+carries no include code at all. It cannot be bumped while the pin question is
+open - see [#183](https://github.com/markup-carve/vscode-carve/issues/183) and
+[#185](https://github.com/markup-carve/vscode-carve/issues/185). Bundling needs
+none of that, which is why it is here and flattening is not.
 
 ## Development
 

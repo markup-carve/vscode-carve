@@ -214,8 +214,22 @@ test('the language client is actually handed the include payload', () => {
   const source = readSource(join(projectRoot, 'src', 'extension.ts'), 'utf8')
   assert.match(
     source,
-    /initializationOptions:\s*carveInitializationOptions\(/,
-    'the client still builds initializationOptions by hand, so includes stay off',
+    /initializationOptions:\s*includePayload\(\)/,
+    'the client no longer hands the include payload to the server, so includes stay off',
+  )
+  // The payload is built in one place because two callers need it - the server
+  // start and the bundle command - and two spellings of it would mean two
+  // containment roots. So the tripwire has to follow the indirection instead of
+  // matching the call at the property.
+  assert.match(
+    source,
+    /function includePayload\(\)[^}]*carveInitializationOptions\(/,
+    'includePayload stopped going through carveInitializationOptions, so the payload shape is unchecked',
+  )
+  assert.equal(
+    source.match(/carveInitializationOptions\(/g)?.length,
+    1,
+    'a second place builds the payload; the two can disagree about the containment root',
   )
   assert.match(
     source,
