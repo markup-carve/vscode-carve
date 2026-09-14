@@ -30,6 +30,13 @@ npm run test:grammar:update   # regenerate snapshots after a deliberate change
 either `covered` by a snapshot or `skip`ped with a reason why it has no distinct
 TextMate scope. The coverage test rejects new unclassified categories.
 
+A construct the shared corpus does not carry yet gets a hand-authored pair in
+`tests/fixtures/` instead - a `.crv` source and its committed `.snap` golden,
+verified by the same command. A snapshot only proves the grammar did not
+change, so a construct whose reading is the point of the work also gets an
+assertion test beside it (`tests/*.test.mjs`), registered in the `test:grammar`
+script.
+
 ## Corpus through the extension
 
 The grammar snapshots above measure TextMate scopes and cannot see engine output
