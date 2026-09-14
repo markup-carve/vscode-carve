@@ -5,6 +5,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Markd
 ## Features
 
 - Language registration for `.crv` files, with a dedicated file icon in the Explorer.
+- Carve highlighting in the Markdown editor for fences labeled `carve` or `crv`.
 - Syntax highlighting for headings, emphasis, strong, links, images, lists, tables, code, raw blocks, comments, attributes, footnotes, mentions, tags, math, and frontmatter.
 - Language server integration via [`markup-carve/carve-lsp`](https://github.com/markup-carve/carve-lsp):
   - diagnostics for parser errors and Djot/Markdown migration warnings,
