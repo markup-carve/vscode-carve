@@ -6,6 +6,7 @@ import {
   type LanguageClientOptions,
   type ServerOptions,
 } from 'vscode-languageclient/node.js'
+import { carveInitializationOptions } from './includes.js'
 import { serverModulePath } from './paths.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import {
@@ -53,7 +54,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       await startLanguageServer(context)
     }),
     vscode.workspace.onDidChangeConfiguration(async (event) => {
-      if (event.affectsConfiguration('carve.lsp.enabled') || event.affectsConfiguration('carve.formatter')) {
+      if (
+        event.affectsConfiguration('carve.lsp.enabled') ||
+        event.affectsConfiguration('carve.formatter') ||
+        // The include settings ride in initializationOptions, which is read
+        // once at startup, so a change to them only takes effect on a restart.
+        event.affectsConfiguration('carve.includes')
+      ) {
         await stopLanguageServer()
         await startLanguageServer(context)
       }
@@ -378,11 +385,15 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
     synchronize: {
       fileEvents: vscode.workspace.createFileSystemWatcher('**/*.crv'),
     },
-    initializationOptions: {
-      carve: {
-        formatter: vscode.workspace.getConfiguration('carve').get('formatter', 'conservative'),
+    initializationOptions: carveInitializationOptions({
+      formatter: vscode.workspace.getConfiguration('carve').get('formatter', 'conservative'),
+      includes: {
+        enabled: vscode.workspace.getConfiguration('carve.includes').get('enabled'),
+        includeRoot: vscode.workspace.getConfiguration('carve.includes').get('includeRoot'),
+        allowAbsolute: vscode.workspace.getConfiguration('carve.includes').get('allowAbsolute'),
       },
-    },
+      workspaceTrusted: vscode.workspace.isTrusted,
+    }),
   }
 
   client = new LanguageClient('carve', 'Carve Language Server', serverOptions, clientOptions)

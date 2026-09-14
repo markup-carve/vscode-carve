@@ -41,6 +41,27 @@ The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-c
 | `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
 | `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
 | `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
+| `carve.includes.enabled` | `"auto"` | Resolve `{{ path }}` include directives (`auto`/`on`/`off`). `auto` resolves them in a trusted workspace and leaves them literal in an untrusted one. |
+| `carve.includes.includeRoot` | `""` | Containment root for include targets, the equivalent of `carve --include-root`. Empty uses the workspace folder the document belongs to, then the document's own folder. |
+| `carve.includes.allowAbsolute` | `false` | Allow an absolute include path. Still subject to root containment. |
+
+### Includes
+
+A `{{ chapters/intro.crv }}` directive is resolved against the workspace folder
+the document belongs to, falling back to the document's own folder - never the
+process working directory, so a document here and the same document rendered by
+the `carve` CLI agree on what is reachable. With the gate open you get
+go-to-definition and path completion on the target, headings from an included
+file in the document's symbol list, and a diagnostic where a directive would
+otherwise sit in the page looking like ordinary prose. A target that does not
+exist yet is watched too, so creating it refreshes the document that wanted it.
+
+The include settings are read when the language server starts, so changing one
+restarts it.
+
+The **preview** does not expand includes yet - it renders the directive as
+written. That half needs an engine the extension cannot pin today; see
+[#185](https://github.com/markup-carve/vscode-carve/issues/185).
 
 ## Development
 
