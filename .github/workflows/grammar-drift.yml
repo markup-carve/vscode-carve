@@ -1,0 +1,32 @@
+name: Grammar drift
+
+on:
+  schedule:
+    - cron: "30 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # One shared fetch feeds both independent answers below.
+      - name: Check out carve-grammars
+        uses: actions/checkout@v6
+        with:
+          repository: markup-carve/carve-grammars
+          path: carve-grammars
+
+      # GATED: a stale declaration is bookkeeping owned by this repository.
+      - name: Grammar declarations still describe upstream
+        env:
+          CARVE_GRAMMARS_DIR: carve-grammars
+        run: node tools/check-grammar-drift.mjs declarations
+
+      # REPORTED: upstream moving is not a defect in this repository.
+      - name: Report upstream rules without a local counterpart
+        if: always()
+        env:
+          CARVE_GRAMMARS_DIR: carve-grammars
+        run: tools/report-grammar-drift.sh
