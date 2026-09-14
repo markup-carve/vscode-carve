@@ -76,6 +76,9 @@
       "include": "#trailing-comment"
     },
     {
+      "include": "#include-directive"
+    },
+    {
       "include": "#math"
     },
     {
@@ -261,6 +264,44 @@
           "match": "(?<=[ \\t])%%[^|]*"
         }
       ]
+    },
+    "include-directive": {
+      "comment": "THE RESERVED INCLUDE DIRECTIVE, `{{ path #section @key:value }}` (spec PART 9 section 19, markup-carve/carve#291; ported from markup-carve/carve-grammars#403). The core leaves the directive literal and a processor expands it only when a host supplies a resolver - but a grammar that does not know the shape does not leave it alone, because the selector is spelled with constructs the grammar already claims: `#section` read as a #tag and an `@key` option as a @mention, so the editor said the line held a tag where it holds a reference into another file. Scoped BY PART rather than as one run: the enclosing match is what keeps the tag and mention rules out, and a reader wants the path to look like a path. The padding is a RUN of whitespace with one character required on each side, and a part that is neither a section nor an option is left unscoped rather than refused - the processor leaves a malformed directive as text, so the grammar does too. It sits after the code, literal and comment rules so a `{{` inside a code span stays code, and before #mentions-tags and #smart-typography, which are the rules it exists to keep off the payload. KNOWN LIMIT, shared with the rule upstream: an option VALUE is read as a run of non-space characters, so a quoted value holding a space (`@label:\"two words\"`) scopes only as far as the space. The directive still matches and its selector is still kept off the tag rule, which is what this rule exists for; widening the value belongs upstream in carve-grammars, where every other Carve grammar reads the same shape.",
+      "match": "(\\{\\{)[ \\t]+((?:\"(?:\\\\.|[^\"\\\\])*\"|[^#@}\\s\"][^#@}\\s]*))((?:#[A-Za-z_][A-Za-z0-9_-]*)?(?:[ \\t]+[^\\s}]+)*)[ \\t]+(\\}\\})",
+      "name": "meta.directive.include.carve",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.directive.begin.carve"
+        },
+        "2": {
+          "name": "string.other.link.include.carve"
+        },
+        "3": {
+          "patterns": [
+            {
+              "match": "#[A-Za-z_][A-Za-z0-9_-]*",
+              "name": "entity.name.section.include.carve"
+            },
+            {
+              "match": "(@[A-Za-z_][A-Za-z0-9_-]*)(:)([^\\s}]+)",
+              "captures": {
+                "1": {
+                  "name": "variable.parameter.include.carve"
+                },
+                "2": {
+                  "name": "punctuation.separator.include.carve"
+                },
+                "3": {
+                  "name": "constant.other.include.carve"
+                }
+              }
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.directive.end.carve"
+        }
+      }
     },
     "headings": {
       "patterns": [
@@ -501,6 +542,9 @@
         },
         {
           "include": "#trailing-comment-cell"
+        },
+        {
+          "include": "#include-directive"
         },
         {
           "include": "#footnotes"
@@ -1121,6 +1165,9 @@
             },
             {
               "include": "#inline-code"
+            },
+            {
+              "include": "#include-directive"
             },
             {
               "include": "#links"
@@ -1995,6 +2042,9 @@
         },
         {
           "include": "#trailing-comment"
+        },
+        {
+          "include": "#include-directive"
         },
         {
           "include": "#math"
