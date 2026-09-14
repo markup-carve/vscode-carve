@@ -92,6 +92,34 @@
           },
           "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"\ud83d\ude04\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
         },
+        "carve.includes.enabled": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Resolve includes in a trusted workspace, and leave them literal in an untrusted one.",
+            "Always resolve includes.",
+            "Never resolve includes; every directive stays literal text."
+          ],
+          "default": "auto",
+          "restricted": true,
+          "markdownDescription": "Resolve `{{ path }}` include directives (PART 9 §19). Targets are contained to the workspace root, falling back to the document's own folder - never the process working directory, so a document here and the same document rendered by the `carve` CLI agree."
+        },
+        "carve.includes.includeRoot": {
+          "type": "string",
+          "default": "",
+          "restricted": true,
+          "markdownDescription": "Containment root for include targets, the equivalent of `carve --include-root`. Empty uses the workspace folder the document belongs to, then the document's own folder."
+        },
+        "carve.includes.allowAbsolute": {
+          "type": "boolean",
+          "default": false,
+          "restricted": true,
+          "markdownDescription": "Allow an include path to be absolute. Still subject to root containment: an absolute path outside the root is refused either way."
+        },
         "carve.trace.server": {
           "type": "string",
           "enum": [
