@@ -35,7 +35,8 @@
         "id": "carve",
         "aliases": [
           "Carve",
-          "carve"
+          "carve",
+          "crv"
         ],
         "extensions": [
           ".crv"
@@ -57,6 +58,16 @@
           "meta.embedded.block.yaml": "yaml",
           "meta.embedded.block.toml": "toml",
           "meta.embedded.block.json": "json"
+        }
+      },
+      {
+        "scopeName": "markdown.carve.codeblock",
+        "path": "./syntaxes/carve-markdown-injection.tmLanguage.json",
+        "injectTo": [
+          "text.html.markdown"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.carve": "carve"
         }
       }
     ],
@@ -253,7 +264,7 @@
     "test": "npm run test:unit && npm run test:workflows && npm run test:grammar && npm run test:corpus",
     "test:unit": "node --test dist/*.test.js",
     "test:workflows": "node --test tests/workflow-git-config.test.mjs",
-    "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/multiline-bold.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs tests/frontmatter-delegation.test.mjs tests/include-directive.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
+    "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/multiline-bold.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs tests/frontmatter-delegation.test.mjs tests/include-directive.test.mjs tests/markdown-fence.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
     "test:grammar:update": "node tests/run-snapshots.mjs -u && node tests/run-fixtures.mjs -u",
     "test:corpus": "node tools/corpus-through-extension.mjs",
     "typecheck": "tsc --noEmit",
