@@ -171,6 +171,10 @@
         "title": "Carve: Export to Markdown"
       },
       {
+        "command": "carve.exportBundle",
+        "title": "Carve: Export Bundle (document and its includes)"
+      },
+      {
         "command": "carve.printPreview",
         "title": "Carve: Print Preview / Export PDF"
       },
@@ -206,6 +210,11 @@
           "command": "carve.exportMarkdown",
           "when": "resourceLangId == carve",
           "group": "1_carve@3"
+        },
+        {
+          "command": "carve.exportBundle",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@4"
         },
         {
           "command": "carve.formatCanonical",

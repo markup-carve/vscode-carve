@@ -1,4 +1,6 @@
-import { fileURLToPath } from 'node:url'
+import { existsSync } from 'node:fs'
+import { basename } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import * as vscode from 'vscode'
 import {
   LanguageClient,
@@ -6,8 +8,9 @@ import {
   type LanguageClientOptions,
   type ServerOptions,
 } from 'vscode-languageclient/node.js'
-import { carveInitializationOptions } from './includes.js'
-import { serverModulePath } from './paths.js'
+import { buildBundle, bundleDirectory, bundleSummary, type IncludeWalk } from './bundle.js'
+import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
+import { serverInternalPath, serverModulePath } from './paths.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import {
   exportHtmlDocument,
@@ -32,6 +35,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('carve.openPreview', () => openPreview(context)),
     vscode.commands.registerCommand('carve.exportHtml', () => exportHtml()),
     vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown()),
+    vscode.commands.registerCommand('carve.exportBundle', () => exportBundle(context)),
     vscode.commands.registerCommand('carve.printPreview', () => printPreview(context)),
     vscode.commands.registerCommand('carve.formatCanonical', async () => {
       const editor = vscode.window.activeTextEditor
@@ -215,6 +219,84 @@ async function exportHtml(): Promise<void> {
   }
 }
 
+/**
+ * Run the include walk the language server performs, through the server's own
+ * gate.
+ *
+ * Every piece of this - the settings reader, the trust reader, the gate, the
+ * walk - comes out of the installed carve-lsp rather than being rebuilt here,
+ * so the containment decision the bundle obeys is the one the server is already
+ * enforcing. The gate returns undefined when includes are off for this document
+ * (spec section 19 makes the capability opt-in, and silence means no); the
+ * bundle is then just the document itself.
+ */
+async function walkIncludes(
+  context: vscode.ExtensionContext,
+  document: vscode.TextDocument,
+): Promise<{ walk: IncludeWalk; includeRoot: string } | undefined> {
+  const settings = (await import(
+    pathToFileURL(serverInternalPath(context, 'include-settings.js')).href
+  )) as Record<string, Function>
+  const includes = (await import(
+    pathToFileURL(serverInternalPath(context, 'includes.js')).href
+  )) as Record<string, Function>
+  const sent = includePayload()
+  const options = settings.includeOptionsFor!({
+    uri: document.uri.toString(),
+    settings: settings.readIncludeSettings!(sent),
+    workspaceTrusted: settings.readWorkspaceTrusted!(sent),
+    workspaceRoots: (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath),
+  }) as { includeRoot?: string } | undefined
+  if (!options?.includeRoot) return undefined
+  return {
+    walk: includes.resolveIncludes!(document.getText(), options) as IncludeWalk,
+    includeRoot: options.includeRoot,
+  }
+}
+
+/**
+ * Write the document and every file it includes into a folder beside it.
+ *
+ * Flattening - one self-contained `.crv` - is the other half of this ticket and
+ * is not reachable yet: it needs the engine's expansion pass, and the engine
+ * this extension bundles has no include code at all. Issue 198 carries the
+ * measurement and the unblocking condition.
+ */
+async function exportBundle(context: vscode.ExtensionContext): Promise<void> {
+  const editor = vscode.window.activeTextEditor
+  if (!editor || editor.document.languageId !== 'carve') {
+    void vscode.window.showWarningMessage('Open a Carve document to bundle it.')
+    return
+  }
+  if (editor.document.isUntitled) {
+    void vscode.window.showWarningMessage('Save the document before bundling it: an unsaved file has no folder to resolve its includes against.')
+    return
+  }
+  const walked = await walkIncludes(context, editor.document)
+  if (!walked) {
+    void vscode.window.showWarningMessage('Carve: include resolution is off for this document, so there is nothing to bundle. Trust the workspace, or set carve.includes.enabled.')
+    return
+  }
+  const documentPath = editor.document.uri.fsPath
+  const bundle = buildBundle({
+    documentPath,
+    source: editor.document.getText(),
+    includeRoot: walked.includeRoot,
+    walk: walked.walk,
+  })
+  const directory = bundleDirectory(documentPath, (candidate) => existsSync(candidate))
+  if (directory === null) {
+    void vscode.window.showWarningMessage('Carve: no free name left for a bundle of this document.')
+    return
+  }
+  const root = vscode.Uri.file(directory)
+  for (const file of bundle.files) {
+    await vscode.workspace.fs.writeFile(vscode.Uri.joinPath(root, ...file.path.split('/')), new TextEncoder().encode(file.source))
+  }
+  const pick = await vscode.window.showInformationMessage(bundleSummary(bundle, basename(directory)), 'Reveal')
+  if (pick === 'Reveal') await vscode.commands.executeCommand('revealFileInOS', root)
+}
+
 async function exportMarkdown(): Promise<void> {
   const editor = vscode.window.activeTextEditor
   if (!editor || editor.document.languageId !== 'carve') {
@@ -357,6 +439,25 @@ function highlightPreviewLine(
   void previewPanel.webview.postMessage({ type: 'highlightLine', line })
 }
 
+/**
+ * The payload the language server is started with.
+ *
+ * Anything that asks the server's include gate a question asks it this exact
+ * question, so a second caller cannot end up with a different containment root
+ * than the one the server is enforcing.
+ */
+function includePayload(): CarveInitializationOptions {
+  return carveInitializationOptions({
+    formatter: vscode.workspace.getConfiguration('carve').get('formatter', 'conservative'),
+    includes: {
+      enabled: vscode.workspace.getConfiguration('carve.includes').get('enabled'),
+      includeRoot: vscode.workspace.getConfiguration('carve.includes').get('includeRoot'),
+      allowAbsolute: vscode.workspace.getConfiguration('carve.includes').get('allowAbsolute'),
+    },
+    workspaceTrusted: vscode.workspace.isTrusted,
+  })
+}
+
 async function startLanguageServer(context: vscode.ExtensionContext): Promise<void> {
   if (client || !vscode.workspace.getConfiguration('carve').get('lsp.enabled', true)) {
     return
@@ -385,15 +486,7 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
     synchronize: {
       fileEvents: vscode.workspace.createFileSystemWatcher('**/*.crv'),
     },
-    initializationOptions: carveInitializationOptions({
-      formatter: vscode.workspace.getConfiguration('carve').get('formatter', 'conservative'),
-      includes: {
-        enabled: vscode.workspace.getConfiguration('carve.includes').get('enabled'),
-        includeRoot: vscode.workspace.getConfiguration('carve.includes').get('includeRoot'),
-        allowAbsolute: vscode.workspace.getConfiguration('carve.includes').get('allowAbsolute'),
-      },
-      workspaceTrusted: vscode.workspace.isTrusted,
-    }),
+    initializationOptions: includePayload(),
   }
 
   client = new LanguageClient('carve', 'Carve Language Server', serverOptions, clientOptions)
