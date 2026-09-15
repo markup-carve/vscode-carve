@@ -654,6 +654,24 @@ export function previewDocument(source: string, options: PreviewOptions): string
       border-radius: 2px;
       background: var(--vscode-editorCursor-foreground, var(--carve-accent));
     }
+    /* The {.diff} presentation on a language fence. Core emits
+     * pre.diff > code.language-x; highlightCode() keeps the language
+     * highlighting and marks the leading +/-/space, matching the classes
+     * carve-grammars' Shiki transformer produces. */
+    .carve pre.diff.has-diff {
+      --carve-diff-add-bg: var(--vscode-diffEditor-insertedLineBackground, var(--vscode-diffEditor-insertedTextBackground));
+      --carve-diff-add-marker: var(--vscode-gitDecoration-addedResourceForeground);
+      --carve-diff-remove-bg: var(--vscode-diffEditor-removedLineBackground, var(--vscode-diffEditor-removedTextBackground));
+      --carve-diff-remove-marker: var(--vscode-gitDecoration-deletedResourceForeground);
+    }
+    .carve pre.diff.has-diff code { display: block; }
+    .carve pre.diff.has-diff .line { display: inline-block; width: 100%; }
+    .carve pre.diff.has-diff .line.diff.add { background: var(--carve-diff-add-bg); }
+    .carve pre.diff.has-diff .line.diff.remove { background: var(--carve-diff-remove-bg); }
+    .carve pre.diff.has-diff .diff-marker { display: inline-block; width: 1ch; user-select: none; }
+    .carve pre.diff.has-diff .line.diff.add .diff-marker { color: var(--carve-diff-add-marker); }
+    .carve pre.diff.has-diff .line.diff.remove .diff-marker { color: var(--carve-diff-remove-marker); }
+    .carve pre.diff.has-diff .line:not(.diff) .diff-marker { color: var(--carve-ink-soft); }
   </style>
   <title>Carve Preview</title>
 </head>
@@ -872,9 +890,39 @@ export function previewDocument(source: string, options: PreviewOptions): string
         })
       }
 
+      function escapeHtml(s) {
+        return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+      }
+      // The {.diff} presentation on a language fence: core emits a pre.diff
+      // with a code.language-x whose lines keep their leading +/-/space as
+      // plain text. Keep the language highlighting but present those markers,
+      // the way carve-grammars' Shiki transformer does (same classes). hljs has
+      // no line model, so tokenize each line after stripping its marker.
+      function renderLanguageDiff(code, pre) {
+        const cls = [...code.classList].find((c) => c.indexOf('language-') === 0)
+        const lang = cls ? cls.slice('language-'.length) : ''
+        const canHl = lang && typeof hljs.getLanguage === 'function' && hljs.getLanguage(lang)
+        const text = code.textContent.replace(/\n$/, '')
+        code.innerHTML = text.split('\n').map((line) => {
+          const marker = /^[+\- ]/.test(line) ? line[0] : ''
+          const body = marker ? line.slice(1) : line
+          let inner
+          try { inner = canHl ? hljs.highlight(body, { language: lang }).value : escapeHtml(body) }
+          catch (err) { inner = escapeHtml(body) }
+          const lineCls = marker === '+' ? 'line diff add' : marker === '-' ? 'line diff remove' : 'line'
+          const markerSpan = marker ? '<span class="diff-marker">' + escapeHtml(marker) + '</span>' : ''
+          return '<span class="' + lineCls + '">' + markerSpan + inner + '</span>'
+        }).join('\n')
+        pre.classList.add('has-diff')
+      }
       function highlightCode() {
         if (typeof hljs === 'undefined') return
         document.querySelectorAll('pre code:not(.language-mermaid)').forEach((el) => {
+          const pre = el.parentElement
+          if (pre && pre.classList.contains('diff')) {
+            try { renderLanguageDiff(el, pre) } catch (err) { console.error('diff render failed', err) }
+            return
+          }
           try { hljs.highlightElement(el) } catch (err) { console.error('hljs failed', err) }
         })
       }
