@@ -14,6 +14,7 @@ jobs:
   publish:
     name: Build and publish extension
     runs-on: ubuntu-latest
+    environment: release
     # The publish tokens are mapped to job env so the guard below can read them.
     # They used to gate the publish steps with `if: env.X != ''`, so a missing
     # token SKIPPED the publish and the job still went green - which is exactly
