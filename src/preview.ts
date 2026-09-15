@@ -139,7 +139,17 @@ const EXTENSION_FACTORIES: Record<string, () => CarveExtension> = {
  */
 export const TIER1_DECORATING_EXTENSIONS = ['autolink', 'externalLinks'] as const
 
-function previewExtensions() {
+/**
+ * One fresh instance of each enabled extension.
+ *
+ * Exported because a render that expands includes has to PARSE with the same
+ * set it renders with: several of these change the parse rather than the render,
+ * so a parse made without them reads the document differently (#209). Two fresh
+ * sets for one render is not the same thing either - the set is built fresh per
+ * render so no cross-document state leaks, and an extension that collects during
+ * the parse and emits during the render would be split across two instances.
+ */
+export function previewExtensions(): CarveExtension[] {
   return PREVIEW_EXTENSIONS.map((name) => EXTENSION_FACTORIES[name]())
 }
 
@@ -157,6 +167,12 @@ export interface PreviewRenderOptions {
    * carried for the callers that still want it; the render starts here.
    */
   document?: unknown
+  /**
+   * The extension instances to render with. A caller that expanded includes
+   * passes the SAME set it parsed with; anyone else omits it and gets a fresh
+   * one.
+   */
+  extensions?: CarveExtension[]
 }
 
 /**
@@ -170,8 +186,8 @@ export interface PreviewRenderOptions {
  * the thing this is meant to improve (#190).
  */
 export function renderPreviewBody(source: string, render: PreviewRenderOptions = {}): string {
-  const extensions = previewExtensions()
-  const { document, ...options } = render
+  const { document, extensions: supplied, ...options } = render
+  const extensions = supplied ?? previewExtensions()
   if (document === undefined) return carveToHtml(source, { ...options, extensions })
   return renderDocument(document as Parameters<typeof renderDocument>[0], { ...options, extensions })
 }

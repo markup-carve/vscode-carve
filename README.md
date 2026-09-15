@@ -72,6 +72,13 @@ diagnostic rather than left looking like ordinary prose; and child sources are
 cached on identity plus modification time, so a keystroke does not re-read every
 chapter.
 
+One extension set does the parse and the render, so turning includes on cannot
+change how the document's own text is read. A CHILD is still parsed without that
+set, which is an engine limit rather than a choice here -
+[carve-js#1693](https://github.com/markup-carve/carve-js/issues/1693) - so
+extension syntax in an included file can read differently from the same syntax
+in the parent.
+
 A child's relative links and images are rebased against the CHILD's folder. A
 chapter at `chapters/intro.crv` writing `[see](figures/one.png)` means
 `chapters/figures/one.png`, and that is what the preview and the exports resolve
