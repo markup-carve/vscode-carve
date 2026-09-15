@@ -1,9 +1,9 @@
 name: Engine drift
 
-# The engine and the language server are GIT DEPENDENCIES pinned to a revision.
-# A pin makes drift deliberate, but nothing notices when a pin has fallen
-# behind - and a push-only CI reports the state of the day someone last touched
-# the repo.
+# The engine and the language server are pinned EXACTLY - today as npm versions,
+# earlier as git revisions. A pin makes drift deliberate, but nothing notices
+# when a pin has fallen behind - and a push-only CI reports the state of the day
+# someone last touched the repo.
 #
 # This matters more here than in a library. The extension ships the engine
 # INSIDE the .vsix, so there is no later resolution step a user could inspect:
@@ -13,11 +13,15 @@ name: Engine drift
 #
 # It reports rather than gates on lag: upstream moving is not a defect here, and
 # a job that goes red for something outside the repository teaches people to
-# ignore it. It DOES fail when a pinned revision is not a real commit on that
-# repository's main - a typo, a force-pushed branch, a revision that no longer
-# exists - because that is a broken build waiting to happen. carve-js has
-# rewritten history before: three sibling repos pinned revisions that a fresh
-# clone cannot check out (carve#499).
+# ignore it. It DOES fail when a pin is not exact, or cannot be resolved to a
+# commit on that repository's main - a typo, a force-pushed branch, a revision
+# that no longer exists - because that is a broken build waiting to happen.
+# carve-js has rewritten history before: three sibling repos pinned revisions
+# that a fresh clone cannot check out (carve#499).
+#
+# The rule is EXACTNESS, not one spelling of it. Demanding a 40-hex revision
+# outlived the git dependencies and left this job red on every scheduled run
+# until #202.
 
 on:
   schedule:
@@ -48,32 +52,8 @@ jobs:
           path: ${{ matrix.path }}
           fetch-depth: 0
 
-      - name: Compare the pinned revision against ${{ matrix.path }} main
-        env:
-          DEP: ${{ matrix.dep }}
-          DIR: ${{ matrix.path }}
-        run: |
-          set -euo pipefail
-          spec="$(node -p "require('./package.json').dependencies['${DEP}']")"
-          rev="${spec##*#}"
-          if ! printf '%s' "${rev}" | grep -qE '^[0-9a-f]{40}$'; then
-            echo "::error::${DEP} is \"${spec}\" - it must pin a 40-hex revision, or the .vsix bundles whatever was on the default branch at package time"
-            exit 1
-          fi
-          if ! git -C "${DIR}" cat-file -e "${rev}^{commit}" 2>/dev/null; then
-            echo "::error::${DEP} pins ${rev}, which is not a commit in ${DIR}"
-            exit 1
-          fi
-          if ! git -C "${DIR}" merge-base --is-ancestor "${rev}" origin/main; then
-            echo "::error::${DIR} ${rev} is not on main, so the pin came from an unmerged or rewritten branch"
-            exit 1
-          fi
-          behind="$(git -C "${DIR}" rev-list --count "${rev}..origin/main")"
-          echo "bundled ${DEP}: ${rev} ($(git -C "${DIR}" log -1 --format=%s "${rev}"))"
-          echo "${DIR} main is ${behind} commit(s) ahead"
-          if [ "${behind}" -gt 0 ]; then
-            echo "::warning::${DEP} is ${behind} ${DIR} commit(s) behind main"
-          fi
+      - name: Compare the pin against ${{ matrix.path }} main
+        run: node tools/check-engine-pin.mjs '${{ matrix.dep }}' '${{ matrix.path }}'
 
   # The `spec` submodule is a pin too, and it is the one nothing else watches.
   # carve-js and carve-rs get bump PRs from carve's bump-downstream workflow;
