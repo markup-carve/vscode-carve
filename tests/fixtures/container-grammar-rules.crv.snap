@@ -72,3 +72,10 @@
 >> %%%
 #^^^^^ text.carve markup.quote.carve comment.block.carve
 >
+>> ^ Caption behind a quote marker
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^ text.carve markup.quote.carve markup.table.caption.carve punctuation.definition.caption.carve
+#   ^ text.carve markup.quote.carve markup.table.caption.carve
+#    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.quote.carve markup.table.caption.carve string.unquoted.caption.carve
+>
