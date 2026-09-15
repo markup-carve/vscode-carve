@@ -121,6 +121,14 @@ export interface ExpandInput {
   extensions?: unknown[]
   /** Child sources already read, keyed by canonical path. */
   cache?: IncludeCache
+  /**
+   * Rewrite a child's relative destinations against the parent (#192). On for a
+   * RENDER, where the result is resolved from the parent's folder. Off for a
+   * FLATTEN, where the output must match `carve flatten` byte for byte and the
+   * CLI does not rebase - diverging quietly from it is the failure mode #198
+   * exists to avoid.
+   */
+  rebase?: boolean
 }
 
 /** Every absolute path a render touched, resolved or merely attempted. */
@@ -204,7 +212,7 @@ export function expandForRender(engine: Engine, input: ExpandInput): ExpansionRe
   })
   // After the merge and before the render: the destinations are the child's
   // until something rewrites them, and the renderer has no way to tell.
-  const rebased = rebaseChildDestinations(expanded.doc, input.sourcePath)
+  const rebased = input.rebase === false ? 0 : rebaseChildDestinations(expanded.doc, input.sourcePath)
   return { ...expanded, refusals, rebased }
 }
 
