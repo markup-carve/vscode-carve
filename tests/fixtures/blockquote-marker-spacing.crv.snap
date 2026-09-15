@@ -23,3 +23,10 @@
 # ^ text.carve markup.quote.carve
 #  ^^^^^^^^ text.carve markup.quote.carve
 >
+>- > quote opening on a list item's marker line
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^ text.carve markup.quote.carve punctuation.definition.quote.carve
+#   ^ text.carve markup.quote.carve
+#    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.quote.carve
+>

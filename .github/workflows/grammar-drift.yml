@@ -24,6 +24,17 @@ jobs:
           CARVE_GRAMMARS_DIR: carve-grammars
         run: node tools/check-grammar-drift.mjs declarations
 
+      # GATED: a declaration that is well-formed by NAME can still be false about
+      # the CONSTRUCT, and the arm above cannot see the difference (#200). The
+      # ones false today are enumerated in tools/grammar-construct-baseline.json,
+      # which can only shrink: anything false and unlisted fails here, and so
+      # does a listed entry that has since become true.
+      - name: Grammar declarations are true of the construct, not just the name
+        if: always()
+        env:
+          CARVE_GRAMMARS_DIR: carve-grammars
+        run: node tools/check-grammar-drift.mjs constructs
+
       # REPORTED: upstream moving is not a defect in this repository.
       - name: Report upstream rules without a local counterpart
         if: always()

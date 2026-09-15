@@ -1,0 +1,22 @@
+{
+  "upstream:admonition_in_group": "no fixture holds an admonition nested in a figure group",
+  "upstream:blockquote_in_container": "no fixture holds a quote inside a container",
+  "upstream:abbreviation": "no fixture holds an abbreviation definition",
+  "upstream:abbreviation_in_container": "no fixture holds an abbreviation definition inside a container",
+  "upstream:code_inline_multi": "no fixture holds a code span crossing a line break",
+  "upstream:link_ref": "no fixture holds a reference link at document level",
+  "upstream:critic_del": "no fixture holds a critic deletion",
+  "upstream:critic_comment": "no fixture holds a critic comment",
+  "upstream:attributes_multiline": "no fixture holds an attribute block crossing a line break",
+  "upstream:underline": "no fixture holds a bare underline run",
+  "upstream:highlight": "no fixture holds a bare highlight run",
+  "upstream:heading_tag": "no fixture holds a tag on a heading",
+  "upstream:definition_list": "a definition term is left unscoped locally - a real coverage gap, not bookkeeping",
+  "upstream:block_comment_on_quote_marker_line_in_container": "no fixture holds a comment fence on a quote marker line inside a container",
+  "upstream:block_comment_on_quote_on_marker_line": "no fixture holds a comment fence on a quote on a list marker line",
+  "upstream:heading_in_container": "no fixture holds a heading behind a container prefix that upstream's rule reaches",
+  "upstream:fenced_code_in_container": "no fixture holds a code fence behind a container prefix that upstream's rule reaches",
+  "local:table-row-cells": "upstream leaves the row's leading pipe unscoped - either a grouping delta or a real upstream gap",
+  "local:table-row-behind-a-container-prefix": "upstream leaves the prefixed row's pipe unscoped",
+  "localOnly:raw-inline": "upstream scopes the same backtick, so this is a grouping delta, not a local-only construct"
+}
