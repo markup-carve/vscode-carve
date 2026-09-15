@@ -175,6 +175,14 @@
         "title": "Carve: Export Bundle (document and its includes)"
       },
       {
+        "command": "carve.exportFlattened",
+        "title": "Carve: Export as a self-contained Carve file"
+      },
+      {
+        "command": "carve.copyFlattened",
+        "title": "Carve: Copy as a single document"
+      },
+      {
         "command": "carve.printPreview",
         "title": "Carve: Print Preview / Export PDF"
       },
@@ -215,6 +223,16 @@
           "command": "carve.exportBundle",
           "when": "resourceLangId == carve",
           "group": "1_carve@4"
+        },
+        {
+          "command": "carve.exportFlattened",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@5"
+        },
+        {
+          "command": "carve.copyFlattened",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@6"
         },
         {
           "command": "carve.formatCanonical",

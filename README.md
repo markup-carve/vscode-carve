@@ -91,11 +91,21 @@ and the same containment root the server enforces, so it cannot reach a file the
 server would have refused. With includes off for a document there is nothing to
 bundle and the command says so.
 
-**Flatten** - one self-contained `.crv` with the children merged in - is
-deliberately a separate command rather than a mode of the Carve export: spec I15
-requires writing a document back as Carve to return the author's document, so a
-plain Carve export must never expand. It is tracked in
-[#198](https://github.com/markup-carve/vscode-carve/issues/198).
+**Flattening** hands the whole document over as ONE document. **Carve: Export as
+a self-contained Carve file** writes `name.flat.crv` beside the original, and
+**Carve: Copy as a single document** puts the same text on the clipboard.
+
+It is deliberately a separate command rather than a mode of the Carve export:
+spec I15 requires writing a document back as Carve to return the author's
+document, so a plain Carve export must never expand. Both commands report the
+two side effects that are invisible in the result - the output is canonical
+Carve, so formatting is normalized rather than preserved, and colliding explicit
+ids and footnote labels are renamed (spec I5), so a flattened document can carry
+`intro-2`.
+
+A child's relative links are NOT rebased when flattening, unlike in the preview:
+`carve flatten` does not rewrite them, and matching the CLI byte for byte is
+worth more here than being independently right.
 
 ## Development
 

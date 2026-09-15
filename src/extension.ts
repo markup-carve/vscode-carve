@@ -18,6 +18,7 @@ import {
   type ExpansionResult,
   type ServerResolver,
 } from './include-expansion.js'
+import { flattenDocument, flattenPath, flattenSummary, type Writer } from './flatten.js'
 import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
 import { serverInternalPath, serverModulePath } from './paths.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
@@ -52,6 +53,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('carve.exportHtml', () => exportHtml(context)),
     vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown(context)),
     vscode.commands.registerCommand('carve.exportBundle', () => exportBundle(context)),
+    vscode.commands.registerCommand('carve.exportFlattened', () => exportFlattened(context)),
+    vscode.commands.registerCommand('carve.copyFlattened', () => copyFlattened(context)),
     vscode.commands.registerCommand('carve.printPreview', () => printPreview(context)),
     vscode.commands.registerCommand('carve.formatCanonical', async () => {
       const editor = vscode.window.activeTextEditor
@@ -504,6 +507,77 @@ async function exportBundle(context: vscode.ExtensionContext): Promise<void> {
   }
   const pick = await vscode.window.showInformationMessage(bundleSummary(bundle, basename(directory)), 'Reveal')
   if (pick === 'Reveal') await vscode.commands.executeCommand('revealFileInOS', root)
+}
+
+/**
+ * Flatten the open document, or report why it could not be.
+ *
+ * Returns undefined rather than throwing when includes are off for the
+ * document: flattening a document whose directives may not be resolved would
+ * echo it back unchanged, which looks exactly like a document with no includes.
+ */
+async function flattenOpenDocument(
+  context: vscode.ExtensionContext,
+  document: vscode.TextDocument,
+): Promise<ReturnType<typeof flattenDocument> | undefined> {
+  if (document.isUntitled) {
+    void vscode.window.showWarningMessage(
+      'Save the document first: an unsaved file has no folder to resolve its includes against.',
+    )
+    return undefined
+  }
+  const gate = await includeGateFor(context, document)
+  if (!gate) {
+    void vscode.window.showWarningMessage(
+      'Carve: include resolution is off for this document, so there is nothing to flatten. Trust the workspace, or set carve.includes.enabled.',
+    )
+    return undefined
+  }
+  const engine = (await import('@markup-carve/carve')) as unknown as Engine & Writer
+  return flattenDocument(engine, {
+    source: document.getText(),
+    sourcePath: document.uri.fsPath,
+    resolve: gate.resolver,
+    cache: includeCache,
+  })
+}
+
+/** One self-contained `.crv` beside the original, never overwriting it. */
+async function exportFlattened(context: vscode.ExtensionContext): Promise<void> {
+  const editor = vscode.window.activeTextEditor
+  if (!editor || editor.document.languageId !== 'carve') {
+    void vscode.window.showWarningMessage('Open a Carve document to flatten it.')
+    return
+  }
+  const flattened = await flattenOpenDocument(context, editor.document)
+  if (!flattened) return
+  const destination = flattenPath(editor.document.uri.fsPath, (candidate) => existsSync(candidate))
+  if (destination === null) {
+    void vscode.window.showWarningMessage('Carve: no free name left for a flattened copy of this document.')
+    return
+  }
+  const target = vscode.Uri.file(destination)
+  await vscode.workspace.fs.writeFile(target, new TextEncoder().encode(flattened.text))
+  const pick = await vscode.window.showInformationMessage(
+    flattenSummary(flattened, basename(destination)),
+    'Open File',
+  )
+  if (pick === 'Open File') {
+    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(target))
+  }
+}
+
+/** The same primitive, with the clipboard as the destination. */
+async function copyFlattened(context: vscode.ExtensionContext): Promise<void> {
+  const editor = vscode.window.activeTextEditor
+  if (!editor || editor.document.languageId !== 'carve') {
+    void vscode.window.showWarningMessage('Open a Carve document to copy it.')
+    return
+  }
+  const flattened = await flattenOpenDocument(context, editor.document)
+  if (!flattened) return
+  await vscode.env.clipboard.writeText(flattened.text)
+  void vscode.window.showInformationMessage(flattenSummary(flattened, 'the clipboard'))
 }
 
 async function exportMarkdown(context: vscode.ExtensionContext): Promise<void> {
