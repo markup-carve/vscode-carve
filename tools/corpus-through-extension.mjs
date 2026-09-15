@@ -41,6 +41,11 @@
 //      that discriminates, and the run says which case it is rather than
 //      implying a comparison it did not make.
 //
+//      Since #183 one copy is forced by an `overrides` entry in this package
+//      instead of being demanded of carve-lsp's declaration, and the run scans
+//      the whole install tree for copies rather than only the two the surfaces
+//      resolve.
+//
 //   4. NO ERROR DIAGNOSTIC ON A DOCUMENT THAT RENDERS. Measured over the whole
 //      corpus: 374 warnings, zero errors. A corpus document is by construction
 //      well-formed Carve, so the server calling one broken is either a language
@@ -240,54 +245,95 @@ if (previewEngineDir === null) fail(`the preview's module graph resolves no ${EN
 if (serverEngineDir === null) fail(`the language server's module graph resolves no ${ENGINE}. Run npm ci.`)
 
 /*
- * The resolution above is a statement about THIS install. The pins are a
- * statement about every install.
+ * THE PROPERTY IS ONE COPY IN THE RESOLVED TREE, NOT ONE SPELLING IN A MANIFEST.
  *
- * npm nested the second copy because the carve-lsp revision in use declared its
- * engine as a registry RANGE while this package pins a git revision: two specs
- * npm cannot satisfy with one directory. A run that only compared resolved paths
- * would go green on a tree that happened to hoist and stay green until the next
- * `npm ci` on a different npm version. So compare what the two packages ASK FOR,
- * not only what they got, and require both to name the SAME SINGLE VERSION -
- * anything softer is a range, and a range is how the incident happened (#133).
+ * #133 required the installed carve-lsp to DECLARE its engine as an exact
+ * version or a 40-hex revision, because a registry range is how npm came to nest
+ * a second copy. That was a proxy for the property, not the property: the harm is
+ * two copies, and an exact declaration was only one way of preventing it.
+ * carve-lsp then moved to a range deliberately (markup-carve/carve-lsp#163), so
+ * an engine fix reaches users without a release of that repo - and the proxy
+ * began rejecting trees that hold exactly one copy (#183).
  *
- * A single version has two spellings, and the property is the same in both: a
- * 40-hex git revision, and an exact semver with no range operator. `0.1.5`
- * admits one version just as `#61f824d5...` admits one commit, so both are
- * accepted and compared by value. What stays rejected is everything that admits
- * MORE than one - `^0.1.5`, `~0.1.5`, `>=0.1.5`, `*`, `latest`, a branch or tag
- * URL - because that is the shape npm can satisfy two different ways.
+ * So this package carries an `overrides` entry naming the engine version the
+ * preview bundles. npm applies it to the whole install tree, which forces one
+ * hoisted copy whatever any dependent declares, and the two checks below assert
+ * the OUTCOME: the tree holds one copy, and the two surfaces resolve it.
+ * `overrides` is npm-specific and inherited by nothing downstream, which is sound
+ * here because this package is a leaf - a VS Code extension, not a library. If
+ * that ever changes, this decision needs revisiting.
  *
- * The engines moved off git URLs onto published versions once both were on npm,
- * and this check named the older spelling as if it were the requirement rather
- * than one way of meeting it. That is the check-cannot-pass-a-correct-tree case,
- * not a pin defect.
+ * The declared specs are still read and reported, because a run that says which
+ * copy won is more use than one that only says how many there were. They are no
+ * longer asserted: any spelling npm can resolve is fine now that the override
+ * decides the outcome.
  */
-const REVISION = /#([0-9a-f]{40})\b/
-const EXACT_VERSION = /^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$/
 const declaredEngineSpec = (manifestPath, label) => {
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
   const spec = manifest.dependencies?.[ENGINE]
   if (spec === undefined) fail(`${label} declares no ${ENGINE} dependency at all (${manifestPath}).`)
-  const revision = REVISION.exec(spec)
-  if (revision !== null) return revision[1]
-  if (EXACT_VERSION.test(spec)) return spec
-  fail(
-    `${label} declares ${ENGINE} as "${spec}", which is neither an exact version nor a\n` +
-      '  40-hex git revision. A range lets npm satisfy the two dependents with two\n' +
-      '  different copies, and the language server then runs a parser the preview is\n' +
-      '  not using (#133).',
-  )
+  return spec
 }
 
+const rootManifest = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'))
 const previewPin = declaredEngineSpec(join(repoRoot, 'package.json'), 'this extension')
 const serverPin = declaredEngineSpec(
   join(packageDirFrom(dirname(serverPath), '@markup-carve/carve-lsp') ?? '', 'package.json'),
   'the installed carve-lsp',
 )
-const pinsAgree = previewPin === serverPin
+const engineOverride = rootManifest.overrides?.[ENGINE]
+// The override is what makes one copy a statement about every install rather
+// than about this one, so it has to name the version the preview bundles: any
+// other value hoists a copy the preview did not ask for.
+const overrideForcesOneCopy = engineOverride === previewPin
+
+/*
+ * EVERY copy in the tree, not only the two the surfaces happen to resolve.
+ *
+ * Walking for `node_modules/@markup-carve/carve` from the repository root finds a
+ * copy nested under ANY dependent, including one neither surface resolves today
+ * and both would resolve after the next install on a different npm version.
+ * Symlinked directories are not descended into, so a linked workspace cannot turn
+ * the walk into a cycle; copies are keyed by realpath, so one directory reached
+ * two ways counts once.
+ */
+const installedEngineCopies = (root) => {
+  const found = new Map()
+  const segments = ENGINE.split('/')
+  const walk = (dir) => {
+    let entries
+    try {
+      entries = readdirSync(dir, { withFileTypes: true })
+    } catch {
+      return
+    }
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue
+      if (entry.name === 'node_modules') {
+        const candidate = join(dir, entry.name, ...segments)
+        try {
+          const manifest = JSON.parse(readFileSync(join(candidate, 'package.json'), 'utf8'))
+          found.set(realpathSync(candidate), manifest.version ?? 'no version field')
+        } catch {
+          /* no copy at this level */
+        }
+      }
+      walk(join(dir, entry.name))
+    }
+  }
+  walk(root)
+  return [...found.entries()]
+    .map(([dir, version]) => ({ dir, version }))
+    .sort((a, b) => a.dir.localeCompare(b.dir))
+}
+
+const engineCopies = installedEngineCopies(repoRoot)
+const describeCopy = ({ dir, version }) => `${version} at ${dir.replace(`${repoRoot}/`, '')}`
 
 const sharedEngine = previewEngineDir === serverEngineDir
+const installedVersion = (dir) => JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).version
+const previewEngineVersion = installedVersion(previewEngineDir)
+const serverEngineVersion = installedVersion(serverEngineDir)
 const previewEngine = await import(pathToFileURL(packageEntry(previewEngineDir)).href)
 const serverEngine = sharedEngine
   ? previewEngine
@@ -467,24 +513,11 @@ const rows = []
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = '0.1.5'
-const ENGINE_LAG = {
-  // Both entries were measured by rendering the document through the bundled
-  // 0.1.5 and diffing against the corpus HTML, and 0.1.5 is the newest engine
-  // on npm, so there is no version to bump to instead of waiving.
-  //
-  // `data-task-state` is the whole diff on all four items: the engine has no
-  // model for a non-space task marker at all - `parse('- [-] dropped')` gives a
-  // list_item whose keys are type, children, pos and checked - so it cannot
-  // carry the state the corpus now pins.
-  '06-task-lists-2.crv': 'the engine has no taskState on list_item, so every non-space marker renders without data-task-state',
-  // `: ` followed by only a TAB. The corpus reads it as no description at all,
-  // folding the colon into the term; 0.1.5 still builds an empty one and emits
-  // `<dd></dd>`. Isolated to the whitespace-only variant, which is what the
-  // ruling is about: the sibling `-8` is `: \ttext` and renders correctly.
-  '439-a-colon-followed-by-only-whitespace-is-not-a-description-7.crv':
-    'the engine predates the ruling and still opens an empty description for a colon followed by only whitespace',
-}
+const ENGINE_PIN = '0.1.6'
+// Empty at 0.1.6. Both entries were written against 0.1.5 - no taskState on
+// list_item, and an empty description opened for a colon followed by only
+// whitespace - and 0.1.6 renders both documents the way the corpus pins them.
+const ENGINE_LAG = {}
 const lagWaived = []
 const lagStale = []
 
@@ -592,21 +625,27 @@ stdout.write(`previewEngine=${previewEngineDir}\n`)
 stdout.write(`serverEngine=${serverEngineDir}\n`)
 stdout.write(`engineLagWaived=${lagWaived.length}\n`)
 for (const line of lagWaived) stdout.write(`  waived (engine behind spec): ${line}\n`)
-stdout.write(`engineCopies=${sharedEngine ? 1 : 2}\n`)
+stdout.write(`engineCopies=${engineCopies.length}\n`)
+for (const copy of engineCopies) stdout.write(`  installed copy: ${describeCopy(copy)}\n`)
 stdout.write(`enginePinPreview=${previewPin}\n`)
 stdout.write(`enginePinServer=${serverPin}\n`)
+stdout.write(`enginePinOverride=${engineOverride ?? '(none)'}\n`)
 stdout.write(`astMismatches=${astMismatches}\n`)
 stdout.write(`diagnostics=${totalDiagnostics}\n`)
 stdout.write(`errorDiagnostics=${serverErrors}\n`)
 stdout.write(`symbols=${totalSymbols}\n`)
 stdout.write(`folds=${totalFolds}\n`)
 
-if (!pinsAgree) {
+if (!overrideForcesOneCopy) {
   stdout.write(
-    'FAIL: this extension pins engine ' +
-      `${previewPin} and the installed carve-lsp pins ${serverPin}.\n` +
-      '  npm can satisfy those with one hoisted copy today and two copies on the next install.\n' +
-      '  Bump the carve-lsp pin to a revision whose engine pin matches this one.\n',
+    `FAIL: this package declares engine ${previewPin} but its overrides entry says ` +
+      `${engineOverride ?? 'nothing'}.\n` +
+      '  The copies listed above are a fact about THIS install. What makes it a fact about every\n' +
+      '  install is the overrides entry, which forces one hoisted copy whatever any dependent\n' +
+      '  declares. Without it - or pointed at another version - npm is free to satisfy the two\n' +
+      '  dependents with two copies on the next install, on another npm version, or as soon as\n' +
+      '  carve-lsp declares a range (#183). Set overrides["' + ENGINE + '"] to ' +
+      `${previewPin}.\n`,
   )
 }
 /*
@@ -633,12 +672,24 @@ if (deadProviders.length > 0) {
       '  a dead provider rather than a quiet document.\n',
   )
 }
+if (engineCopies.length !== 1) {
+  stdout.write(
+    `FAIL: the install tree holds ${engineCopies.length} copies of ${ENGINE}, not one:\n` +
+      engineCopies.map((copy) => `    ${describeCopy(copy)}\n`).join('') +
+      '  Two copies is the state #133 was opened about: whichever surface resolves the nested\n' +
+      '  one parses with an engine the other is not using. The overrides entry exists to make\n' +
+      '  this impossible, so a second copy here means it is missing, points at another version,\n' +
+      '  or the tree was installed without it.\n',
+  )
+}
 if (!sharedEngine) {
   stdout.write(
-    'FAIL: the preview and the language server resolve DIFFERENT copies of the engine.\n' +
-      '  Every language-server feature - diagnostics, folds, outline, hover, rename - would run\n' +
-      '  on a parser the preview is not using. Check that carve-lsp declares its engine as the\n' +
-      '  same git revision this package pins, so npm hoists one copy (#133).\n',
+    'FAIL: the preview and the language server resolve DIFFERENT copies of the engine:\n' +
+      `    preview         ${describeCopy({ dir: previewEngineDir, version: previewEngineVersion })}\n` +
+      `    language server ${describeCopy({ dir: serverEngineDir, version: serverEngineVersion })}\n` +
+      '  Every language-server feature - diagnostics, folds, outline, hover, rename - runs on a\n' +
+      '  parser the preview is not using. The documents named above as read by two different\n' +
+      '  parsers are where a user would see it (#133, #183).\n',
   )
 }
 if (renderMismatches > 0 || renderThrew > 0) {
@@ -679,7 +730,8 @@ const failures =
   serverErrors +
   deadProviders.length +
   (sharedEngine ? 0 : 1) +
-  (pinsAgree ? 0 : 1) +
+  (engineCopies.length === 1 ? 0 : 1) +
+  (overrideForcesOneCopy ? 0 : 1) +
   // A waiver that outlived its lag, or a pin that moved without the list being
   // emptied, has to fail the run. Printing FAIL without reaching the exit code
   // is the shape this tool exists to catch everywhere else.

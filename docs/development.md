@@ -56,15 +56,23 @@ npm run test:corpus -- --manifest /tmp/before.tsv   # one row per document
   path `serverModulePath()` hands the client, and its diagnostics, outline and
   folding ranges are collected.
 - The engine is resolved from BOTH module graphs - the extension's own and
-  carve-lsp's - and the run fails if they land on different copies, or if the two
-  packages pin different engines. That is the state the extension shipped in
-  before #133: the language server ran a parser the preview was not using.
-- A pin is anything that admits exactly ONE engine: an exact registry version
-  (`0.1.5`) or a 40-hex git revision. Both are accepted and compared by value;
-  `^0.1.5`, `~0.1.5`, `>=0.1.5`, `*` and a branch URL are refused, because a
-  range is what let npm satisfy the two dependents with two different copies.
-  The revision spelling stays available for pinning an engine that has not been
-  released yet (#156).
+  carve-lsp's - and the whole install tree is scanned for copies. The run fails
+  if the tree holds more than one, or if the two graphs land on different ones.
+  That is the state the extension shipped in before #133: the language server
+  ran a parser the preview was not using.
+- One copy is forced by the `overrides` entry in `package.json`, which has to
+  name the same version the `dependencies` entry does. npm applies an override
+  to the whole install tree, so one copy is hoisted whatever carve-lsp declares.
+  The run fails if the override is missing or points somewhere else, because the
+  override is what makes the single copy a property of every install rather than
+  of this one (#183).
+- What carve-lsp declares is reported, not asserted. Requiring an exact
+  declaration there was a proxy for the single copy, and it deadlocked against
+  carve-lsp#163, which moved that declaration to a range so an engine fix
+  reaches users without a release of that repo.
+- `overrides` is npm-specific and nothing downstream inherits it. That is sound
+  while this package is a leaf - a VS Code extension, not a library. If it ever
+  becomes one, this needs revisiting.
 
 The run refuses to report anything over a population it did not check the size
 of. The number of documents must equal the number of `::: compare` blocks the
@@ -102,7 +110,8 @@ predates the rule it pins, and name the ruling in the value.
 **Empty it at the next engine bump.** This is part of releasing, not a cleanup
 task for later:
 
-1. Raise the engine dependency.
+1. Raise the engine dependency AND the `overrides` entry together - they have
+   to name the same version, and the run fails if they drift apart.
 2. Set `ENGINE_LAG = {}` and `ENGINE_PIN` to whatever `package.json` now
    declares - the version, or the revision if the pin is a git one.
 3. Run `npm run test:corpus`. Whatever still mismatches goes back in the list,
