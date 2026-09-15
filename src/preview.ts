@@ -1,6 +1,7 @@
 import {
   autolink,
   carveToHtml,
+  renderDocument,
   carveToMarkdown,
   type CarveExtension,
   chart,
@@ -151,10 +152,28 @@ export interface PreviewRenderOptions {
   emoji?: Record<string, string>
   /** Stamp blocks with `data-source-line` for scroll sync. */
   sourceLine?: boolean
+  /**
+   * A document whose includes are already expanded. When set, `source` is only
+   * carried for the callers that still want it; the render starts here.
+   */
+  document?: unknown
 }
 
+/**
+ * The preview body.
+ *
+ * With `document` set the render starts from a document the caller already
+ * expanded, through `renderDocument` - the same composition `carveToHtml`
+ * performs, minus the parse it would redo. Composing it by hand instead would
+ * skip `applyTransforms`, and the preview enables fourteen extensions,
+ * `citations` among them, so the result would silently be a degraded render of
+ * the thing this is meant to improve (#190).
+ */
 export function renderPreviewBody(source: string, render: PreviewRenderOptions = {}): string {
-  return carveToHtml(source, { ...render, extensions: previewExtensions() })
+  const extensions = previewExtensions()
+  const { document, ...options } = render
+  if (document === undefined) return carveToHtml(source, { ...options, extensions })
+  return renderDocument(document as Parameters<typeof renderDocument>[0], { ...options, extensions })
 }
 
 /**
@@ -165,8 +184,9 @@ export function renderPreviewBody(source: string, render: PreviewRenderOptions =
  * writes, with no wrapper - the HTML export builds a whole standalone page
  * around its output, and Markdown has nothing to wrap.
  */
-export function renderMarkdown(source: string): string {
-  return carveToMarkdown(source)
+export function renderMarkdown(source: string, document?: unknown): string {
+  if (document === undefined) return carveToMarkdown(source)
+  return renderDocument(document as Parameters<typeof renderDocument>[0], { target: 'markdown' })
 }
 
 /**

@@ -59,7 +59,24 @@ otherwise sit in the page looking like ordinary prose. A target that does not
 exist yet is watched too, so creating it refreshes the document that wanted it.
 
 The include settings are read when the language server starts, so changing one
-restarts it.
+restarts it. The same gate governs the **preview** and the HTML and Markdown
+exports, so one setting answers "may this document read that file" everywhere.
+
+**The preview expands includes.** The children are merged through the engine's
+own expansion pass, so what you see is what `carve` renders. Three things ride
+along, each invisible when it is missing: the preview re-renders when an
+*included* file changes, including a target that did not exist yet, so creating
+it refreshes the page; every refusal the spec names - an unresolved target, a
+cycle, a containment denial, a depth or a size refusal - is published as a
+diagnostic rather than left looking like ordinary prose; and child sources are
+cached on identity plus modification time, so a keystroke does not re-read every
+chapter.
+
+A child's relative links and images are rebased against the CHILD's folder. A
+chapter at `chapters/intro.crv` writing `[see](figures/one.png)` means
+`chapters/figures/one.png`, and that is what the preview and the exports resolve
+- not `figures/one.png` beside the book, which is how a link silently reaches a
+different existing file.
 
 **Bundling** hands the whole document over as a set of files. **Carve: Export
 Bundle** writes the open document and every file it includes, transitively, into
@@ -74,19 +91,11 @@ and the same containment root the server enforces, so it cannot reach a file the
 server would have refused. With includes off for a document there is nothing to
 bundle and the command says so.
 
-Two halves are NOT here yet, and both are the same blocker rather than an
-oversight:
-
-- The **preview** does not expand includes - it renders the directive as
-  written.
-- There is no **flatten**: no export or copy of one self-contained `.crv` with
-  the children merged in.
-
-Merging is the engine's expansion pass, and the engine this extension bundles
-carries no include code at all. It cannot be bumped while the pin question is
-open - see [#183](https://github.com/markup-carve/vscode-carve/issues/183) and
-[#185](https://github.com/markup-carve/vscode-carve/issues/185). Bundling needs
-none of that, which is why it is here and flattening is not.
+**Flatten** - one self-contained `.crv` with the children merged in - is
+deliberately a separate command rather than a mode of the Carve export: spec I15
+requires writing a document back as Carve to return the author's document, so a
+plain Carve export must never expand. It is tracked in
+[#198](https://github.com/markup-carve/vscode-carve/issues/198).
 
 ## Development
 
