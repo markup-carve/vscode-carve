@@ -13,6 +13,7 @@ import {
   expandForRender,
   IncludeCache,
   refusalSummary,
+  utf16Offset,
   watchTargets,
   type Engine,
   type ExpansionResult,
@@ -321,10 +322,12 @@ function publishIncludeDiagnostics(
     return
   }
   const denialFor = new Map(expansion.refusals.map((refusal) => [refusal.path, refusal.denial]))
+  // The engine counts codepoints and `positionAt` counts UTF-16 units (#212).
+  const source = document.getText()
   const diagnostics = expansion.warnings.map((warning) => {
     const range = new vscode.Range(
-      document.positionAt(warning.start),
-      document.positionAt(warning.end),
+      document.positionAt(utf16Offset(source, warning.start)),
+      document.positionAt(utf16Offset(source, warning.end)),
     )
     const diagnostic = new vscode.Diagnostic(range, warning.message, vscode.DiagnosticSeverity.Warning)
     diagnostic.source = 'carve'
