@@ -26,6 +26,7 @@ import {
   exportHtmlDocument,
   renderMarkdown,
   previewDocument,
+  previewExtensions,
   type PreviewAssets,
   type PreviewRenderOptions,
 } from './preview.js'
@@ -215,9 +216,15 @@ async function renderPreviewNow(
   if (!previewPanel) {
     return
   }
-  const expansion = await expandIncludesFor(context, document)
+  // ONE set for the parse and the render. Several of these change the parse
+  // rather than the render, so a parse made without them reads the document
+  // differently - and two fresh sets would split a stateful extension across
+  // two instances (#209).
+  const extensions = previewExtensions()
+  const expansion = await expandIncludesFor(context, document, extensions)
   previewPanel.title = `Preview ${document.fileName.split(/[\\/]/).pop() ?? 'Carve'}`
   const render = previewRenderOptions()
+  render.extensions = extensions
   if (expansion) render.document = expansion.doc
   previewPanel.webview.html = previewDocument(document.getText(), {
     nonce: nonce(),
@@ -270,6 +277,7 @@ async function includeGateFor(
 async function expandIncludesFor(
   context: vscode.ExtensionContext,
   document: vscode.TextDocument,
+  extensions: ReturnType<typeof previewExtensions>,
 ): Promise<ExpansionResult | undefined> {
   // An unsaved buffer has no folder to resolve a relative target against, so
   // there is nothing to expand rather than something to guess.
@@ -281,6 +289,7 @@ async function expandIncludesFor(
       source: document.getText(),
       sourcePath: document.uri.fsPath,
       resolve: gate.resolver,
+      extensions,
       cache: includeCache,
     })
   } catch (error) {
@@ -404,9 +413,11 @@ async function exportHtml(context: vscode.ExtensionContext): Promise<void> {
     return
   }
   const name = editor.document.fileName.split(/[\\/]/).pop() ?? 'Carve document'
-  const expansion = await expandIncludesFor(context, editor.document)
+  const extensions = previewExtensions()
+  const expansion = await expandIncludesFor(context, editor.document, extensions)
   reportRefusals(expansion)
   const render = previewRenderOptions()
+  render.extensions = extensions
   if (expansion) render.document = expansion.doc
   const html = exportHtmlDocument(editor.document.getText(), {
     title: name,
@@ -534,10 +545,14 @@ async function flattenOpenDocument(
     return undefined
   }
   const engine = (await import('@markup-carve/carve')) as unknown as Engine & Writer
+  // No extension set, deliberately: `carve flatten` parses without one, and the
+  // output has to match the CLI byte for byte. A render passes the set it
+  // renders with (#209); this is the other case.
   return flattenDocument(engine, {
     source: document.getText(),
     sourcePath: document.uri.fsPath,
     resolve: gate.resolver,
+    extensions: [],
     cache: includeCache,
   })
 }
@@ -586,7 +601,9 @@ async function exportMarkdown(context: vscode.ExtensionContext): Promise<void> {
     void vscode.window.showWarningMessage('Open a Carve document to export it.')
     return
   }
-  const expansion = await expandIncludesFor(context, editor.document)
+  // The Markdown target is the engine's own and enables no extension set, so
+  // the expansion parses the same way: with none.
+  const expansion = await expandIncludesFor(context, editor.document, [])
   reportRefusals(expansion)
   const markdown = renderMarkdown(editor.document.getText(), expansion?.doc)
   const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.md'
