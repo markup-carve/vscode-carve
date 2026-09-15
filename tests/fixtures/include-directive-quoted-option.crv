@@ -6,3 +6,7 @@
 {{ chapters/intro.crv @label:"a: b" }}
 {{ chapters/intro.crv @label:"unterminated }}
 {{ chapters/intro.crv #intro @lang:de @depth:2 }}
+{{ chapters/intro.crv @label:"a }} more" }} end
+{{ "a }} more.crv" @depth:2 }} end
+{{ chapters/intro.crv @label:"a }} more }} end
+{{ chapters/intro.crv @label:"a } b" }} end
