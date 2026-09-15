@@ -246,6 +246,70 @@ test('a colon inside a quoted value does not split the value', () => {
   assert.equal(optionValue('{{ ch.crv @label:"a: b" }}'), '"a: b"')
 })
 
+// THE CLOSER IS THE FIRST `}}` OUTSIDE A QUOTED RUN (markup-carve/carve#2013).
+//
+// The rule's own comment named this as a KNOWN LIMIT shared with
+// markup-carve/carve-grammars#412 and said widening it was not a local change.
+// The ruling is the decision that was waiting on: a quoted run MAY contain the
+// pair, so the closer falls after the closing quote.
+
+/** The text of every token carrying `meta.directive.include.carve`, joined. */
+function directiveText(src) {
+  return tokensOf(src)
+    .filter((t) => t.scopes.includes('meta.directive.include.carve'))
+    .map((t) => t.text)
+    .join('')
+}
+
+test('a quoted option value may hold the closer pair', () => {
+  const src = '{{ ch.crv @label:"a }} more" }} end'
+  assert.equal(optionValue(src), '"a }} more"')
+  assert.equal(directiveText(src), '{{ ch.crv @label:"a }} more" }}')
+})
+
+test('a quoted path may hold the closer pair', () => {
+  // The path half costs more when it closes early: the directive ends
+  // mid-string and the option that follows goes back to the mention rule,
+  // which is the shredding this whole rule exists to prevent.
+  const src = '{{ "a }} more.crv" @depth:2 }} end'
+  assert.ok(
+    scopesOn(src, '"a }} more.crv"').has('string.other.link.include.carve'),
+    'the quoted path is not one include-path token',
+  )
+  assert.equal(directiveText(src), '{{ "a }} more.crv" @depth:2 }}')
+  assert.ok(!anyScope(src, '.mention.carve'), 'a mention scope survives after a quoted path')
+})
+
+test('an unterminated quote still closes on the first pair', () => {
+  // Preserved deliberately: an unterminated quote opens no run, so it cannot
+  // pair with a quote further along, and a malformed directive stays text.
+  // This is the row that rules out simply letting a quoted run reach as far as
+  // it likes, so it is green on the unwidened rule too.
+  const src = '{{ ch.crv @label:"a }} more }} end'
+  assert.equal(optionValue(src), '"a')
+  assert.equal(directiveText(src), '{{ ch.crv @label:"a }}')
+})
+
+test('a lone brace inside a quoted value scopes', () => {
+  // The old bound read the payload as brace-free runs, so this failed the whole
+  // match and the directive fell back to text - the KNOWN LIMIT itself.
+  const src = '{{ ch.crv @label:"a } b" }} end'
+  assert.equal(optionValue(src), '"a } b"')
+  assert.equal(directiveText(src), '{{ ch.crv @label:"a } b" }}')
+})
+
+test('this fixture is snapshotted too', () => {
+  const fixture = readFileSync(resolve(root, 'tests/fixtures/include-directive-quoted-option.crv'), 'utf8')
+  for (const line of [
+    '{{ chapters/intro.crv @label:"a }} more" }} end',
+    '{{ "a }} more.crv" @depth:2 }} end',
+    '{{ chapters/intro.crv @label:"a }} more }} end',
+    '{{ chapters/intro.crv @label:"a } b" }} end',
+  ]) {
+    assert.ok(fixture.includes(line), `the fixture does not carry ${line}`)
+  }
+})
+
 // CONTROL: the unquoted form is untouched by the widening.
 test('an unquoted option value scopes exactly as before', () => {
   const src = 'See {{ chapters/intro.crv #intro @lang:de @depth:2 }} here.'
