@@ -6,6 +6,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-09-15
+
+### Added
+
+- **The preview expands includes, on by default** (#185, #190, #207). `{{ path }}` is resolved against the workspace root, falling back to the document's own folder, so the preview and the `carve` CLI agree. The preview re-renders when an included file changes - a target that did not exist yet included - every refusal the spec names is published as a diagnostic, and child sources are cached on identity plus modification time. `carve.includes.enabled` turns it off.
+- **HTML and Markdown export with the includes resolved** (#191, #207). Every target except Carve source expands; a plain Carve export must not, per spec I15.
+- **Flatten: one self-contained `.crv`, to a file or to the clipboard** (#191, #198, #208). `Carve: Export as a self-contained Carve file` and `Carve: Copy as a single document`. Both report the two invisible side effects: the output is canonical Carve, and colliding explicit ids and footnote labels are renamed (spec I5).
+- **Export a document together with the files it includes** (#199). `Carve: Export Bundle` writes the document and every file it pulls in into a folder beside it, directives and file boundaries intact.
+- **Include resolution in the language server** (#193). Go-to-definition and path completion on a target, headings from an included file in the symbol list, a diagnostic where a directive would otherwise read as prose, and a watcher over every target it attempted.
+- **Typed frontmatter is highlighted with its own language** (#186, #187). A JSON, TOML or YAML frontmatter block is delegated to that grammar instead of being scoped as Carve.
+
+### Changed
+
+- **The bundled engine carries the include pass** (#183, #201, #207). `@markup-carve/carve` is pinned at a carve-js revision rather than a published version, because `expandIncludes` and the `renderDocument` seam are merged upstream and unreleased. The resolved tree is still required to hold exactly one copy of the engine.
+
+### Fixed
+
+- **A child's relative links and images resolve against the CHILD** (#192, #207). A chapter writing `[see](figures/one.png)` means the chapter's folder; rendered as part of a book it silently meant the book's. A broken image was the good case - the bad one is a link reaching a different existing file.
+- **One extension set does the parse and the render** (#209). Several of the preview's extensions change the parse, so expanding includes could change how the parent's own text was read. A child is still parsed without the set, which is an engine limit - markup-carve/carve-js#1693.
+- **Carve inside a Markdown fence is highlighted** (#194).
+- **An include directive's scope and its quoted options** (#188, #195, #204). The reserved directive is scoped, a quoted option value is read as one value, and the directive closes at the first `}}` outside a quoted run.
+
 ## [0.1.5] - 2026-09-09
 
 ### Added

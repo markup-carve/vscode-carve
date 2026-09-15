@@ -2,7 +2,7 @@
   "name": "vscode-carve",
   "displayName": "Carve",
   "description": "VS Code language support for Carve markup documents.",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "publisher": "markup-carve",
   "license": "MIT",
@@ -101,7 +101,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"\ud83d\ude04\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
+          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"😄\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
         },
         "carve.includes.enabled": {
           "type": "string",
@@ -117,7 +117,7 @@
           ],
           "default": "auto",
           "restricted": true,
-          "markdownDescription": "Resolve `{{ path }}` include directives (PART 9 §19). Targets are contained to the workspace root, falling back to the document's own folder - never the process working directory, so a document here and the same document rendered by the `carve` CLI agree."
+          "markdownDescription": "Resolve `{{ path }}` include directives (PART 9 §19) in the language server AND in the preview and the HTML and Markdown exports. Targets are contained to the workspace root, falling back to the document's own folder - never the process working directory, so a document here and the same document rendered by the `carve` CLI agree."
         },
         "carve.includes.includeRoot": {
           "type": "string",
@@ -175,6 +175,14 @@
         "title": "Carve: Export Bundle (document and its includes)"
       },
       {
+        "command": "carve.exportFlattened",
+        "title": "Carve: Export as a self-contained Carve file"
+      },
+      {
+        "command": "carve.copyFlattened",
+        "title": "Carve: Copy as a single document"
+      },
+      {
         "command": "carve.printPreview",
         "title": "Carve: Print Preview / Export PDF"
       },
@@ -215,6 +223,16 @@
           "command": "carve.exportBundle",
           "when": "resourceLangId == carve",
           "group": "1_carve@4"
+        },
+        {
+          "command": "carve.exportFlattened",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@5"
+        },
+        {
+          "command": "carve.copyFlattened",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@6"
         },
         {
           "command": "carve.formatCanonical",
@@ -272,7 +290,7 @@
     "vscode:prepublish": "npm run build",
     "test": "npm run test:unit && npm run test:workflows && npm run test:grammar && npm run test:corpus",
     "test:unit": "node --test dist/*.test.js",
-    "test:workflows": "node --test tests/workflow-git-config.test.mjs tests/grammar-drift.test.mjs",
+    "test:workflows": "node --test tests/workflow-git-config.test.mjs tests/grammar-drift.test.mjs tests/engine-pin.test.mjs tests/grammar-constructs.test.mjs",
     "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/multiline-bold.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs tests/frontmatter-delegation.test.mjs tests/include-directive.test.mjs tests/markdown-fence.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
     "test:grammar:update": "node tests/run-snapshots.mjs -u && node tests/run-fixtures.mjs -u",
     "test:corpus": "node tools/corpus-through-extension.mjs",
@@ -280,7 +298,7 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "0.1.6",
+    "@markup-carve/carve": "github:markup-carve/carve-js#5ad62d8b8af3b0771ded3f733322882328a3bef2",
     "@markup-carve/carve-lsp": "0.1.4",
     "vscode-languageclient": "^9.0.1"
   },
@@ -294,9 +312,11 @@
     "katex": "^0.17.0",
     "mermaid": "^11.15.0",
     "typescript": "^5.7.2",
+    "vscode-oniguruma": "^1.5.1",
+    "vscode-textmate": "^7.0.1",
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "overrides": {
-    "@markup-carve/carve": "0.1.6"
+    "@markup-carve/carve": "github:markup-carve/carve-js#5ad62d8b8af3b0771ded3f733322882328a3bef2"
   }
 }
