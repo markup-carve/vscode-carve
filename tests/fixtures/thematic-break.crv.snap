@@ -1,0 +1,11 @@
+>Before.
+#^^^^^^^^ text.carve
+>
+>---
+#^^^ text.carve meta.separator.thematic-break.carve
+>
+>- ---
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^ text.carve meta.separator.thematic-break.carve
+>

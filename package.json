@@ -35,7 +35,8 @@
         "id": "carve",
         "aliases": [
           "Carve",
-          "carve"
+          "carve",
+          "crv"
         ],
         "extensions": [
           ".crv"
@@ -52,7 +53,22 @@
       {
         "language": "carve",
         "scopeName": "text.carve",
-        "path": "./syntaxes/carve.tmLanguage.json"
+        "path": "./syntaxes/carve.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.yaml": "yaml",
+          "meta.embedded.block.toml": "toml",
+          "meta.embedded.block.json": "json"
+        }
+      },
+      {
+        "scopeName": "markdown.carve.codeblock",
+        "path": "./syntaxes/carve-markdown-injection.tmLanguage.json",
+        "injectTo": [
+          "text.html.markdown"
+        ],
+        "embeddedLanguages": {
+          "meta.embedded.block.carve": "carve"
+        }
       }
     ],
     "snippets": [
@@ -86,6 +102,34 @@
             "type": "string"
           },
           "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"\ud83d\ude04\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
+        },
+        "carve.includes.enabled": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Resolve includes in a trusted workspace, and leave them literal in an untrusted one.",
+            "Always resolve includes.",
+            "Never resolve includes; every directive stays literal text."
+          ],
+          "default": "auto",
+          "restricted": true,
+          "markdownDescription": "Resolve `{{ path }}` include directives (PART 9 §19). Targets are contained to the workspace root, falling back to the document's own folder - never the process working directory, so a document here and the same document rendered by the `carve` CLI agree."
+        },
+        "carve.includes.includeRoot": {
+          "type": "string",
+          "default": "",
+          "restricted": true,
+          "markdownDescription": "Containment root for include targets, the equivalent of `carve --include-root`. Empty uses the workspace folder the document belongs to, then the document's own folder."
+        },
+        "carve.includes.allowAbsolute": {
+          "type": "boolean",
+          "default": false,
+          "restricted": true,
+          "markdownDescription": "Allow an include path to be absolute. Still subject to root containment: an absolute path outside the root is refused either way."
         },
         "carve.trace.server": {
           "type": "string",
@@ -127,6 +171,10 @@
         "title": "Carve: Export to Markdown"
       },
       {
+        "command": "carve.exportBundle",
+        "title": "Carve: Export Bundle (document and its includes)"
+      },
+      {
         "command": "carve.printPreview",
         "title": "Carve: Print Preview / Export PDF"
       },
@@ -162,6 +210,11 @@
           "command": "carve.exportMarkdown",
           "when": "resourceLangId == carve",
           "group": "1_carve@3"
+        },
+        {
+          "command": "carve.exportBundle",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@4"
         },
         {
           "command": "carve.formatCanonical",
@@ -219,15 +272,15 @@
     "vscode:prepublish": "npm run build",
     "test": "npm run test:unit && npm run test:workflows && npm run test:grammar && npm run test:corpus",
     "test:unit": "node --test dist/*.test.js",
-    "test:workflows": "node --test tests/workflow-git-config.test.mjs",
-    "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/multiline-bold.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
+    "test:workflows": "node --test tests/workflow-git-config.test.mjs tests/grammar-drift.test.mjs",
+    "test:grammar": "node --test tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/multiline-bold.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs tests/frontmatter-delegation.test.mjs tests/include-directive.test.mjs tests/markdown-fence.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
     "test:grammar:update": "node tests/run-snapshots.mjs -u && node tests/run-fixtures.mjs -u",
     "test:corpus": "node tools/corpus-through-extension.mjs",
     "typecheck": "tsc --noEmit",
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "0.1.5",
+    "@markup-carve/carve": "0.1.6",
     "@markup-carve/carve-lsp": "0.1.4",
     "vscode-languageclient": "^9.0.1"
   },
@@ -242,5 +295,8 @@
     "mermaid": "^11.15.0",
     "typescript": "^5.7.2",
     "vscode-tmgrammar-test": "^0.1.3"
+  },
+  "overrides": {
+    "@markup-carve/carve": "0.1.6"
   }
 }

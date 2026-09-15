@@ -1,0 +1,24 @@
+- # Heading on a marker line
+
+- ``` js
+  code
+  ```
+
+> ``` js
+> quoted code
+> ```
+
+- item
+  ^ Caption at its content column
+
+- | table | row |
+
+| cell %% trailing comment |
+
+- %%%
+  hidden
+  %%%
+
+> %%%
+> hidden
+> %%%
