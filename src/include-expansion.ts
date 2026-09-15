@@ -186,6 +186,31 @@ function modifiedAt(id: string): number | undefined {
   }
 }
 
+/**
+ * A codepoint offset as a UTF-16 offset.
+ *
+ * `IncludeWarning.start` and `.end` count CODEPOINTS. Every offset on the VS
+ * Code side - `Position`, `Range`, `TextDocument.positionAt`, `String.slice` -
+ * counts UTF-16 units. The two coincide for every character below U+10000,
+ * which is why feeding one straight into the other shipped: an ASCII fixture
+ * cannot see the difference, and a document with one emoji drifts every later
+ * diagnostic by one unit (#212).
+ *
+ * Translated at the boundary rather than anywhere deeper, so the engine's unit
+ * stays the engine's and the editor's stays the editor's.
+ */
+export function utf16Offset(source: string, codepointOffset: number): number {
+  if (codepointOffset < 0) return 0
+  let codepoints = 0
+  let units = 0
+  for (const character of source) {
+    if (codepoints === codepointOffset) return units
+    codepoints++
+    units += character.length
+  }
+  return units
+}
+
 export function expandForRender(engine: Engine, input: ExpandInput): ExpansionResult {
   const refusals: IncludeRefusal[] = []
   const cache = input.cache
