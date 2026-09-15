@@ -9,6 +9,15 @@ import {
   type ServerOptions,
 } from 'vscode-languageclient/node.js'
 import { buildBundle, bundleDirectory, bundleSummary, type IncludeWalk } from './bundle.js'
+import {
+  expandForRender,
+  IncludeCache,
+  refusalSummary,
+  watchTargets,
+  type Engine,
+  type ExpansionResult,
+  type ServerResolver,
+} from './include-expansion.js'
 import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
 import { serverInternalPath, serverModulePath } from './paths.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
@@ -29,12 +38,19 @@ let suppressEditorScroll = false
 /** When the previewed document last changed, to tell typing from scrolling. */
 let lastEditAt = 0
 let renderTimer: ReturnType<typeof setTimeout> | undefined
+/** Include warnings for the previewed document, cleared when it stops failing. */
+let includeDiagnostics: vscode.DiagnosticCollection | undefined
+/** Watchers over the targets the last render touched, resolved or attempted. */
+let includeWatchers: vscode.FileSystemWatcher[] = []
+const includeCache = new IncludeCache()
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  includeDiagnostics = vscode.languages.createDiagnosticCollection('carve-includes')
   context.subscriptions.push(
+    includeDiagnostics,
     vscode.commands.registerCommand('carve.openPreview', () => openPreview(context)),
-    vscode.commands.registerCommand('carve.exportHtml', () => exportHtml()),
-    vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown()),
+    vscode.commands.registerCommand('carve.exportHtml', () => exportHtml(context)),
+    vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown(context)),
     vscode.commands.registerCommand('carve.exportBundle', () => exportBundle(context)),
     vscode.commands.registerCommand('carve.printPreview', () => printPreview(context)),
     vscode.commands.registerCommand('carve.formatCanonical', async () => {
@@ -107,6 +123,9 @@ export async function deactivate(): Promise<void> {
     clearTimeout(renderTimer)
     renderTimer = undefined
   }
+  for (const watcher of includeWatchers) watcher.dispose()
+  includeWatchers = []
+  includeCache.invalidate()
   previewPanel?.dispose()
   await stopLanguageServer()
 }
@@ -165,16 +184,195 @@ function scheduleRender(context: vscode.ExtensionContext, document: vscode.TextD
 }
 
 function renderPreview(context: vscode.ExtensionContext, document: vscode.TextDocument): void {
+  void renderPreviewNow(context, document)
+}
+
+/**
+ * Render the preview, expanding includes when the document is allowed them.
+ *
+ * On by default, rooted where the editor already is - the containment root the
+ * language server decided, never the process working directory - so a document
+ * previewed here and one rendered by `carve` agree (#185). The gate is the
+ * server's: it returns nothing when includes are off for this document, and the
+ * preview then renders the directive as written, exactly as before.
+ *
+ * Three obligations §19 puts on a host ride along, because each is invisible
+ * when it is missing. INVALIDATION watches every target the expansion touched,
+ * resolved and merely attempted, so creating a previously-missing file
+ * re-renders. DIAGNOSTICS publish the warnings the spec already requires, so an
+ * unresolved target, a cycle, a containment denial, a depth or a size refusal
+ * does not sit on the page looking like ordinary prose. CACHING keys child
+ * sources on identity plus modification time so a keystroke does not re-read
+ * every chapter.
+ */
+async function renderPreviewNow(
+  context: vscode.ExtensionContext,
+  document: vscode.TextDocument,
+): Promise<void> {
   if (!previewPanel) {
     return
   }
+  const expansion = await expandIncludesFor(context, document)
   previewPanel.title = `Preview ${document.fileName.split(/[\\/]/).pop() ?? 'Carve'}`
+  const render = previewRenderOptions()
+  if (expansion) render.document = expansion.doc
   previewPanel.webview.html = previewDocument(document.getText(), {
     nonce: nonce(),
     cspSource: previewPanel.webview.cspSource,
     assets: previewAssets(context, previewPanel.webview),
-    render: previewRenderOptions(),
+    render,
   })
+  publishIncludeDiagnostics(document, expansion)
+  watchIncludeTargets(context, document, expansion)
+}
+
+/**
+ * The engine calls this render performs, as one object so a test can stand in
+ * for them. Imported lazily: the module graph is the extension's own, and the
+ * preview already resolves the engine from it.
+ */
+async function engineForExpansion(): Promise<Engine> {
+  const engine = (await import('@markup-carve/carve')) as unknown as Engine
+  return engine
+}
+
+/**
+ * The server's include gate and its resolver for this document, or undefined
+ * when includes are off for it.
+ *
+ * Everything comes out of the installed carve-lsp - the settings reader, the
+ * trust reader, the gate, the resolver - so the containment decision the
+ * preview obeys is the one the server is already enforcing for diagnostics and
+ * go-to-definition. Two answers to "what may this document read" is one too
+ * many.
+ */
+async function includeGateFor(
+  context: vscode.ExtensionContext,
+  document: vscode.TextDocument,
+): Promise<{ resolver: ServerResolver; includeRoot: string } | undefined> {
+  const settings = (await import(
+    pathToFileURL(serverInternalPath(context, 'include-settings.js')).href
+  )) as Record<string, Function>
+  const sent = includePayload()
+  const options = settings.includeOptionsFor!({
+    uri: document.uri.toString(),
+    settings: settings.readIncludeSettings!(sent),
+    workspaceTrusted: settings.readWorkspaceTrusted!(sent),
+    workspaceRoots: (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath),
+  }) as { includeRoot?: string; resolver?: ServerResolver } | undefined
+  if (!options?.includeRoot || !options.resolver) return undefined
+  return { resolver: options.resolver, includeRoot: options.includeRoot }
+}
+
+async function expandIncludesFor(
+  context: vscode.ExtensionContext,
+  document: vscode.TextDocument,
+): Promise<ExpansionResult | undefined> {
+  // An unsaved buffer has no folder to resolve a relative target against, so
+  // there is nothing to expand rather than something to guess.
+  if (document.isUntitled) return undefined
+  const gate = await includeGateFor(context, document)
+  if (!gate) return undefined
+  try {
+    return expandForRender(await engineForExpansion(), {
+      source: document.getText(),
+      sourcePath: document.uri.fsPath,
+      resolve: gate.resolver,
+      cache: includeCache,
+    })
+  } catch (error) {
+    // A render that cannot expand still shows the document. The failure is
+    // surfaced rather than swallowed; falling back silently is the behavior
+    // this feature exists to end.
+    void vscode.window.showWarningMessage(
+      `Carve: includes could not be expanded, so the preview shows the directives as written. ${String(error)}`,
+    )
+    return undefined
+  }
+}
+
+/**
+ * Publish the include warnings against the document that raised them.
+ *
+ * §19 I7 keeps the failure CLASS out of the rendered message - a resolver's own
+ * error text routinely carries absolute host paths - so the class travels in
+ * the diagnostic's `code` instead, where tooling can read it and a screenshot
+ * does not leak a home directory.
+ */
+function publishIncludeDiagnostics(
+  document: vscode.TextDocument,
+  expansion: ExpansionResult | undefined,
+): void {
+  if (!includeDiagnostics) return
+  if (!expansion) {
+    includeDiagnostics.delete(document.uri)
+    return
+  }
+  const denialFor = new Map(expansion.refusals.map((refusal) => [refusal.path, refusal.denial]))
+  const diagnostics = expansion.warnings.map((warning) => {
+    const range = new vscode.Range(
+      document.positionAt(warning.start),
+      document.positionAt(warning.end),
+    )
+    const diagnostic = new vscode.Diagnostic(range, warning.message, vscode.DiagnosticSeverity.Warning)
+    diagnostic.source = 'carve'
+    const denial = [...denialFor].find(([path]) => warning.message.includes(path))?.[1]
+    diagnostic.code = denial ? `${warning.rule}/${denial}` : warning.rule
+    return diagnostic
+  })
+  if (expansion.suppressedWarnings > 0) {
+    diagnostics.push(
+      new vscode.Diagnostic(
+        new vscode.Range(0, 0, 0, 0),
+        `${expansion.suppressedWarnings} further include warnings were not reported.`,
+        vscode.DiagnosticSeverity.Information,
+      ),
+    )
+  }
+  includeDiagnostics.set(document.uri, diagnostics)
+}
+
+/**
+ * Re-render when an included file changes.
+ *
+ * The attempted targets are watched too, not only the resolved ones: a preview
+ * that followed successful reads alone would never notice a missing chapter
+ * being created, and would stay stale in exactly the case includes are for.
+ */
+function watchIncludeTargets(
+  context: vscode.ExtensionContext,
+  document: vscode.TextDocument,
+  expansion: ExpansionResult | undefined,
+): void {
+  for (const watcher of includeWatchers) watcher.dispose()
+  includeWatchers = []
+  if (!expansion) return
+  for (const target of watchTargets(expansion)) {
+    const watcher = vscode.workspace.createFileSystemWatcher(target)
+    const invalidate = (): void => {
+      includeCache.invalidate(target)
+      if (previewUri && document.uri.toString() === previewUri.toString()) {
+        scheduleRender(context, document)
+      }
+    }
+    watcher.onDidChange(invalidate, undefined, context.subscriptions)
+    watcher.onDidCreate(invalidate, undefined, context.subscriptions)
+    watcher.onDidDelete(invalidate, undefined, context.subscriptions)
+    includeWatchers.push(watcher)
+  }
+}
+
+/**
+ * Say out loud what a one-shot export refused to read.
+ *
+ * A preview reports refusals as diagnostics, which sit beside the text. An
+ * export writes a file and walks away, so a swallowed denial reaches whoever
+ * the file is sent to - a missing chapter and a chapter that was never included
+ * look identical on the page.
+ */
+function reportRefusals(expansion: ExpansionResult | undefined): void {
+  const summary = expansion ? refusalSummary(expansion) : null
+  if (summary) void vscode.window.showWarningMessage(summary)
 }
 
 function previewRenderOptions(): PreviewRenderOptions {
@@ -189,16 +387,27 @@ function previewRenderOptions(): PreviewRenderOptions {
   return options
 }
 
-async function exportHtml(): Promise<void> {
+/**
+ * Every target except Carve source expands, so HTML, Markdown and anything
+ * downstream of them carry the children in (#191, flavor 1). Writing the
+ * document back as Carve deliberately does NOT - spec I15 requires the writer
+ * to return the author's document - which is why flattening is a separate,
+ * named command rather than a mode of this one.
+ */
+async function exportHtml(context: vscode.ExtensionContext): Promise<void> {
   const editor = vscode.window.activeTextEditor
   if (!editor || editor.document.languageId !== 'carve') {
     void vscode.window.showWarningMessage('Open a Carve document to export it.')
     return
   }
   const name = editor.document.fileName.split(/[\\/]/).pop() ?? 'Carve document'
+  const expansion = await expandIncludesFor(context, editor.document)
+  reportRefusals(expansion)
+  const render = previewRenderOptions()
+  if (expansion) render.document = expansion.doc
   const html = exportHtmlDocument(editor.document.getText(), {
     title: name,
-    render: previewRenderOptions(),
+    render,
   })
   const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.html'
   const target = await vscode.window.showSaveDialog({
@@ -258,9 +467,9 @@ async function walkIncludes(
  * Write the document and every file it includes into a folder beside it.
  *
  * Flattening - one self-contained `.crv` - is the other half of this ticket and
- * is not reachable yet: it needs the engine's expansion pass, and the engine
- * this extension bundles has no include code at all. Issue 198 carries the
- * measurement and the unblocking condition.
+ * is a separate command by design: a Carve export must NOT expand, because spec
+ * I15 requires writing a document back as Carve to return the author's
+ * document. Issue 198 carries it.
  */
 async function exportBundle(context: vscode.ExtensionContext): Promise<void> {
   const editor = vscode.window.activeTextEditor
@@ -297,13 +506,15 @@ async function exportBundle(context: vscode.ExtensionContext): Promise<void> {
   if (pick === 'Reveal') await vscode.commands.executeCommand('revealFileInOS', root)
 }
 
-async function exportMarkdown(): Promise<void> {
+async function exportMarkdown(context: vscode.ExtensionContext): Promise<void> {
   const editor = vscode.window.activeTextEditor
   if (!editor || editor.document.languageId !== 'carve') {
     void vscode.window.showWarningMessage('Open a Carve document to export it.')
     return
   }
-  const markdown = renderMarkdown(editor.document.getText())
+  const expansion = await expandIncludesFor(context, editor.document)
+  reportRefusals(expansion)
+  const markdown = renderMarkdown(editor.document.getText(), expansion?.doc)
   const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.md'
   const target = await vscode.window.showSaveDialog({
     defaultUri: editor.document.uri.with({ path: defaultPath }),

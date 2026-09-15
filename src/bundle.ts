@@ -1,15 +1,11 @@
 /**
  * Export a document together with every file it includes.
  *
- * Deliberately NOT flattening. Flattening merges the children into the parent,
- * which needs the engine's expansion pass; the engine bundled here carries no
- * include code at all and its pin cannot move while issue 183 is open (see 198).
- * A bundle
- * needs none of that: the include WALK the language server already performs
+ * Deliberately NOT flattening, which is a separate command (issue 198).
+ * Flattening merges the children into one document; a bundle copies them,
+ * directives intact. The include WALK the language server already performs
  * reports every target it touched, resolved and attempted alike, so the file
- * list is a value handed over rather than something to compute, and the files
- * are COPIED rather than merged. No spec section 19 merge semantics are
- * reimplemented here, which is the whole reason this half is reachable.
+ * list is a value handed over rather than something to compute.
  *
  * It is also the right shape for "send it to a colleague who will keep editing
  * it": the directives survive, so the recipient gets a document that is still a

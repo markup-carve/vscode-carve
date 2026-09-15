@@ -101,7 +101,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"\ud83d\ude04\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
+          "markdownDescription": "Map of emoji shortcodes to glyphs for the preview, e.g. `{ \"smile\": \"😄\" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally."
         },
         "carve.includes.enabled": {
           "type": "string",
@@ -117,7 +117,7 @@
           ],
           "default": "auto",
           "restricted": true,
-          "markdownDescription": "Resolve `{{ path }}` include directives (PART 9 §19). Targets are contained to the workspace root, falling back to the document's own folder - never the process working directory, so a document here and the same document rendered by the `carve` CLI agree."
+          "markdownDescription": "Resolve `{{ path }}` include directives (PART 9 §19) in the language server AND in the preview and the HTML and Markdown exports. Targets are contained to the workspace root, falling back to the document's own folder - never the process working directory, so a document here and the same document rendered by the `carve` CLI agree."
         },
         "carve.includes.includeRoot": {
           "type": "string",
@@ -280,7 +280,7 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "0.1.6",
+    "@markup-carve/carve": "github:markup-carve/carve-js#5ad62d8b8af3b0771ded3f733322882328a3bef2",
     "@markup-carve/carve-lsp": "0.1.4",
     "vscode-languageclient": "^9.0.1"
   },
@@ -297,6 +297,6 @@
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "overrides": {
-    "@markup-carve/carve": "0.1.6"
+    "@markup-carve/carve": "github:markup-carve/carve-js#5ad62d8b8af3b0771ded3f733322882328a3bef2"
   }
 }
