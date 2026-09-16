@@ -1,8 +1,8 @@
 /**
  * A bare delimiter never pairs across a link destination or an autolink (PART 9
  * section 9 E2a), so `/see [x](http://a.b/c) now/` is one italic run. Expected
- * readings come from the spec's layout oracle. Parentheses nested three deep are
- * not recognized, by design.
+ * readings come from the spec's layout oracle. Parentheses nested three deep and
+ * labels nested five deep are not recognized, by design.
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -58,6 +58,34 @@ const destinations = (d) => [
   String.raw`[x](foo(bar(\x))${d}y)`,
   `<${'a'.repeat(40)}:x${d}y>`,
   `<${'a'.repeat(40)}:x${d}>`,
+  `[](a${d})`,
+  String.raw`[x\]](a${d})`,
+  '[x `]` y](a' + d + ')',
+  `[x {# ] #} y](a${d})`,
+  `[a [b [c]]](a${d})`,
+  `[x]( "t${d}")`,
+  String.raw`[x](a "t\\"${d}")`,
+  `[x](a${String.fromCharCode(0xa0)}b${d})`,
+  `<x:é${d}>`,
+  `<x:a${String.fromCodePoint(0x1f600)}${d}>`,
+]
+
+// Shapes the spec does not read as a destination or an autolink, so the run
+// closes at the delimiter inside them (markup-carve/carve-grammars#454).
+const closedDestinations = (d) => [
+  `](a${d})`,
+  String.raw`\[x](a${d})`,
+  `<a@b${d}>`,
+  `<a@b.c${d}>`,
+  `<x@a.b${d}>`,
+  `[x](a  "t${d}")`,
+  `[x](a  't${d}')`,
+  `[x](a\t"t${d}")`,
+  String.raw`[x](a\ b${d})`,
+  `<x:a"${d}>`,
+  `<x:a|${d}>`,
+  `<x:a${String.fromCharCode(0x200b)}${d}>`,
+  `<x:a${String.fromCodePoint(0x110bd)}${d}>`,
 ]
 
 for (const [d, scope] of runs) {
@@ -67,7 +95,23 @@ for (const [d, scope] of runs) {
       assert.equal(covered(source, scope), `see ${destination} now`)
     })
   }
+  for (const destination of closedDestinations(d)) {
+    const source = `${d}see ${destination} now${d}`
+    test(`${source} closes inside`, () => {
+      assert.equal(covered(source, scope), `see ${destination.slice(0, destination.lastIndexOf(d))}`)
+    })
+  }
 }
+
+for (const address of ['<ä_@b.cd>', '<a@b_c.de>']) {
+  test(`_see ${address} now_ is one run`, () => {
+    assert.equal(covered(`_see ${address} now_`, 'markup.underline.text.carve'), `see ${address} now`)
+  })
+}
+
+test('bold italic does not read an escaped bracket as a label', () => {
+  assert.equal(covered(String.raw`/*see \[x*/](a) now*/`, 'markup.bold.italic.carve'), String.raw`see \[x`)
+})
 
 test('an email autolink is opaque too', () => {
   assert.equal(covered('_see <me_@x.y> now_', 'markup.underline.text.carve'), 'see <me_@x.y> now')
