@@ -1,0 +1,24 @@
+>[a]: /u {.c}
+#^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ text.carve meta.link.reference.definition.carve
+#     ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#       ^ text.carve meta.link.reference.definition.carve
+#        ^ text.carve meta.link.reference.definition.carve meta.attributes.carve
+#         ^^ text.carve meta.link.reference.definition.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#           ^ text.carve meta.link.reference.definition.carve meta.attributes.carve
+>
+>[b]: /v	{.c}
+#^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ text.carve meta.link.reference.definition.carve
+#     ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#       ^^^^^^ text.carve
+>
+>[c]: /w 	{.c}
+#^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ text.carve meta.link.reference.definition.carve
+#     ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#       ^^ text.carve
+#         ^ text.carve meta.attributes.carve
+#          ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#            ^ text.carve meta.attributes.carve
+>

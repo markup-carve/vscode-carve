@@ -16,10 +16,7 @@
 >- {:fr} item
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.unnumbered.carve
-#  ^ text.carve meta.attributes.carve
-#   ^^^ text.carve meta.attributes.carve entity.other.attribute-name.language.carve
-#      ^ text.carve meta.attributes.carve
-#       ^^^^^^ text.carve
+#  ^^^^^^^^^^^ text.carve
 >
 >[y]{:zh-Hant .hl}
 #^ text.carve meta.span.inline.carve punctuation.definition.span.begin.carve
