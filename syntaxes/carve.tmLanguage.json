@@ -239,6 +239,16 @@
         }
       ]
     },
+    "braced-comment-in-bold": {
+      "comment": "Inside a `*` run an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (markup-carve/carve-grammars#461).",
+      "patterns": [
+        {
+          "name": "comment.block.inline.carve",
+          "begin": "\\{%(?:(?=.*?%\\})|(?!.*?(?<=\\S)\\*(?![\\w*])))",
+          "end": "%\\}|^(?=[ \\t]*$)"
+        }
+      ]
+    },
     "braced-comment": {
       "patterns": [
         {
@@ -1731,7 +1741,7 @@
               "include": "#opaque-destination"
             },
             {
-              "include": "#braced-comment"
+              "include": "#braced-comment-in-bold"
             }
           ]
         },
