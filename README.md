@@ -40,6 +40,7 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 
 - A bare bold run can cross a soft line break, so its opener cannot check for a closer first. When the only closer-shaped `*` sits inside a code span, or there is none, the run colors to the end of its paragraph: `` x *a `b* c` d `` renders as text but shows as bold. The same happens to the `*/}` left after `{/a *b {/c/}*/}`.
 - A braced span whose closer is on a later line, such as `x{*` followed by `*}` on the next line, is not scoped as a span.
+- A bare italic, underline, strikethrough or highlight run is scoped only when its closer is on the same line. `/a` followed by `b/` on the next line is one italic run, and shows as text.
 
 ## Settings
 
