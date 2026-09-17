@@ -48,3 +48,13 @@ test('a closed comment in a bold run keeps both scopes', () => {
   assert.equal(covered('*a {% b* c %} d*', 'markup.bold'), 'a {% b* c %} d')
   assert.equal(covered('*a {% b\nc %} d*', 'comment.block.inline'), '{% b\nc %}')
 })
+
+test('an unclosed critic comment opener in a bold run leaves the closer alone', () => {
+  assert.equal(covered('*a {# b* c', 'markup.bold'), 'a {# b')
+  assert.equal(covered('*a {# b* c', 'comment.block.critic'), '')
+})
+
+test('a closed critic comment in a bold run keeps both scopes', () => {
+  assert.equal(covered('*a {# b* c #} d*', 'comment.block.critic'), '{# b* c #}')
+  assert.equal(covered('*a {# b* c #} d*', 'markup.bold'), 'a {# b* c #} d')
+})
