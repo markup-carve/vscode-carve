@@ -244,12 +244,12 @@
       "patterns": [
         {
           "name": "comment.block.inline.carve",
-          "begin": "\\{%(?:(?=.*?%\\})|(?!.*?(?<=\\S)\\*(?![\\w*])))",
+          "begin": "\\{%(?:(?=.*?%\\})|(?!.*?(?<=\\S)\\*(?!\\w)))",
           "end": "%\\}|^(?=[ \\t]*$)"
         },
         {
           "name": "comment.block.critic.carve",
-          "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?![\\w*])))",
+          "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?!\\w)))",
           "end": "#\\}|^(?=[ \\t]*$)"
         }
       ]
@@ -2069,8 +2069,8 @@
         {
           "comment": "A bare bold run may cross soft line breaks, so this rule carries TextMate state with begin/end. A blank or whitespace-only line ends an unclosed run at its paragraph boundary instead of letting it colour the rest of the file (markup-carve/vscode-carve#178).",
           "contentName": "markup.bold.carve",
-          "begin": "(?<![\\w*])(\\*)(?=\\S)",
-          "end": "(?<=\\S)(\\*)(?![\\w*])|^[ \\t]*$",
+          "begin": "(?<![\\w*])(\\*)(?![\\s*])",
+          "end": "(?<=\\S)(\\*)(?!\\w)|^[ \\t]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.bold.carve"

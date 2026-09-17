@@ -127,10 +127,7 @@
 #    ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
 >
 >{**}
-#^ text.carve
-# ^ text.carve punctuation.definition.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^ text.carve
+#^^^^^ text.carve
 >
 >{= =h= =}
 #^^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
