@@ -981,7 +981,7 @@
       "patterns": [
         {
           "comment": "A FOOTNOTE definition, and until markup-carve/carve-grammars#307 every scope on it said LINK REFERENCE DEFINITION. The rule is right - it is anchored on `[^label]:` and it is the one definition shape that opens a container - but it was copied from the link definition below and kept that construct's names, so `[^a]: note text` scoped the whole line `meta.link.reference.definition.carve` and put `markup.underline.link.carve` on `note`, the first WORD of the prose, as though it were a URL. A footnote body is inline content and has no destination, so that capture carries no scope at all now. The construct ledger read this row as a GAP the whole time, because the only name the rule had was another construct's. A FOOTNOTE definition has a BODY, and that body's content column is a FIXED two whatever the label is wide, so it is the one definition shape that opens a container: `[^a]: note` over `  [r]: /u` collects the second definition (corpus a-definition-on-a-footnote-body-s-continuation-line-is-collected), one column in leaves it the document's own text, and three or more is the body's own text. Narrowing the definition rule below to flush-left without this would have dropped the scope from that shape entirely. A LINK reference definition gets no container, deliberately: it has no body at all, so an indented definition under one is a paragraph, not a second definition (measured against carve-php and carve-js - `[r]: /u` over `  [s]: /v` renders the second line as prose). `begin` consumes exactly what the definition rule below consumes and carries the same captures, so a footnote definition line tokenizes as it always did. Capture 0 carries the old rule-level `name`, which a begin/end rule cannot carry itself - a rule-level name spans the whole REGION, so the body lines would be scoped as definition too. A capture-0 name does NOT reach a sibling capture that re-tokenizes with its own patterns (vscode-textmate builds that sub-tokenization from the RULE stack, not from the capture's local stack), so the attribute capture names the scope itself or a trailing `{...}` block silently loses its definition layer. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
-          "begin": "^(\\[\\^[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "begin": "^(\\[\\^[^\\]]+\\]:)\\s+(\\S+)(?:( )(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "beginCaptures": {
             "0": {
               "name": "meta.footnote.definition.carve"
@@ -990,10 +990,10 @@
               "name": "constant.other.reference.footnote.carve"
             },
             "4": {
-              "name": "meta.footnote.definition.carve",
+              "name": "meta.footnote.definition.carve meta.attributes.carve",
               "patterns": [
                 {
-                  "include": "#attributes"
+                  "include": "#attribute-items"
                 }
               ]
             }
@@ -1008,7 +1008,7 @@
         {
           "comment": "FLUSH-LEFT: an indented definition at document level is prose, not a definition (corpus indented-reference-and-footnote-definitions-stay-literal). Indented spellings are reached through `#definitions-in-container`, which only a container's body can see, so the column question is answered by the container that opened rather than by this line on its own. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
           "name": "meta.link.reference.definition.carve",
-          "match": "^(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "match": "^(\\[[^\\]]+\\]:)\\s+(\\S+)(?:( )(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "captures": {
             "1": {
               "name": "constant.other.reference.link.carve"
@@ -1017,9 +1017,10 @@
               "name": "markup.underline.link.carve"
             },
             "4": {
+              "name": "meta.attributes.carve",
               "patterns": [
                 {
-                  "include": "#attributes"
+                  "include": "#attribute-items"
                 }
               ]
             }
@@ -1298,6 +1299,41 @@
         }
       ]
     },
+    "attribute-items": {
+      "comment": "The identifier, class, id and value scopes inside an attribute block. Shared so a reference definition's own attribute capture paints the same items the root rule does, without inheriting its attachment guard.",
+      "patterns": [
+        {
+          "match": "(?<=[{\\s]):(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?",
+          "name": "entity.other.attribute-name.language.carve"
+        },
+        {
+          "name": "entity.other.attribute-name.id.carve",
+          "match": "#[A-Za-z_][A-Za-z0-9_-]*"
+        },
+        {
+          "name": "entity.other.attribute-name.class.carve",
+          "match": "\\.[A-Za-z_][A-Za-z0-9_-]*"
+        },
+        {
+          "name": "entity.other.attribute-name.carve",
+          "match": "[A-Za-z_][A-Za-z0-9_-]*(?==)",
+          "comment": "No colon. The enclosing match already forbids one, so this could never paint a colon-bearing name and the two only disagreed on paper - but a reader checking the rule found the permissive spelling first (spec markup-carve/carve#870)."
+        },
+        {
+          "name": "string.quoted.double.attribute.carve",
+          "match": "\"(?:[^\"\\\\]|\\\\.)*\""
+        },
+        {
+          "name": "string.quoted.single.attribute.carve",
+          "match": "'(?:[^'\\\\]|\\\\.)*'"
+        },
+        {
+          "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class. The lookbehind carries the KEY as well as the `=`, because a sub-pattern's lookbehind reads the whole line and not just the captured attribute block: a bare `(?<==)` also fired on an `=` sitting immediately BEFORE the opening brace, so a table cell whose attributes follow the header-kind marker (`|={.total}`) matched `{.total` as one unquoted value and lost the class scope. `|{.total}`, `|>{.num}` and `|=<{.h}` all scoped correctly, which is why it read as a table defect rather than an attribute one. A key always ends in an identifier character, so requiring one cannot exclude a real `key=value`.",
+          "name": "string.unquoted.attribute.carve",
+          "match": "(?<=[A-Za-z0-9_-]=)[^\\s\"'}]+"
+        }
+      ]
+    },
     "attributes": {
       "patterns": [
         {
@@ -1308,39 +1344,12 @@
         {
           "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons (`{k=v.w}`); a quoted value may contain an escaped quote (`{title=\"a\\\"b\"}`); a bare `{}` stays literal.",
           "name": "meta.attributes.carve",
-          "match": "\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}",
+          "match": "(?<![\\w\"\\'])(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|\\'(?:\\\\.|[^\\'\\\\\\n])*\\'|[^{}\"\\'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|\\'(?:\\\\.|[^\\'\\\\\\n])*\\'|[^{}\"\\'\\n])*\\})*[ \\t]*$))\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}",
           "captures": {
             "0": {
               "patterns": [
                 {
-                  "match": "(?<=[{\\s]):(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?",
-                  "name": "entity.other.attribute-name.language.carve"
-                },
-                {
-                  "name": "entity.other.attribute-name.id.carve",
-                  "match": "#[A-Za-z_][A-Za-z0-9_-]*"
-                },
-                {
-                  "name": "entity.other.attribute-name.class.carve",
-                  "match": "\\.[A-Za-z_][A-Za-z0-9_-]*"
-                },
-                {
-                  "name": "entity.other.attribute-name.carve",
-                  "match": "[A-Za-z_][A-Za-z0-9_-]*(?==)",
-                  "comment": "No colon. The enclosing match already forbids one, so this could never paint a colon-bearing name and the two only disagreed on paper - but a reader checking the rule found the permissive spelling first (spec markup-carve/carve#870)."
-                },
-                {
-                  "name": "string.quoted.double.attribute.carve",
-                  "match": "\"(?:[^\"\\\\]|\\\\.)*\""
-                },
-                {
-                  "name": "string.quoted.single.attribute.carve",
-                  "match": "'(?:[^'\\\\]|\\\\.)*'"
-                },
-                {
-                  "comment": "An unquoted value may contain dots and colons (k=v.w); consume it whole so the dot is not mistaken for a class. The lookbehind carries the KEY as well as the `=`, because a sub-pattern's lookbehind reads the whole line and not just the captured attribute block: a bare `(?<==)` also fired on an `=` sitting immediately BEFORE the opening brace, so a table cell whose attributes follow the header-kind marker (`|={.total}`) matched `{.total` as one unquoted value and lost the class scope. `|{.total}`, `|>{.num}` and `|=<{.h}` all scoped correctly, which is why it read as a table defect rather than an attribute one. A key always ends in an identifier character, so requiring one cannot exclude a real `key=value`.",
-                  "name": "string.unquoted.attribute.carve",
-                  "match": "(?<=[A-Za-z0-9_-]=)[^\\s\"'}]+"
+                  "include": "#attribute-items"
                 }
               ]
             }
@@ -2125,7 +2134,7 @@
         },
         {
           "name": "meta.link.reference.definition.carve",
-          "match": "^[ \\t]*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "match": "^[ \\t]*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:( )(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "captures": {
             "1": {
               "name": "constant.other.reference.link.carve"
@@ -2134,9 +2143,10 @@
               "name": "markup.underline.link.carve"
             },
             "4": {
+              "name": "meta.attributes.carve",
               "patterns": [
                 {
-                  "include": "#attributes"
+                  "include": "#attribute-items"
                 }
               ]
             }
@@ -2177,7 +2187,7 @@
         {
           "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
           "name": "meta.link.reference.definition.carve",
-          "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:(\\s+)(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "match": "\\G\\s*(\\[[^\\]]+\\]:)\\s+(\\S+)(?:( )(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
           "captures": {
             "1": {
               "name": "constant.other.reference.link.carve"
@@ -2186,9 +2196,10 @@
               "name": "markup.underline.link.carve"
             },
             "4": {
+              "name": "meta.attributes.carve",
               "patterns": [
                 {
-                  "include": "#attributes"
+                  "include": "#attribute-items"
                 }
               ]
             }

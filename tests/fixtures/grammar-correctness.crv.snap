@@ -68,13 +68,13 @@
 #  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
 #      ^^^^^ text.carve
 >Attr {title="a\"b"} keeps the whole quoted value
-#^^^^^ text.carve
-#     ^ text.carve meta.attributes.carve
-#      ^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.carve
-#           ^ text.carve meta.attributes.carve
-#            ^^^^^^ text.carve meta.attributes.carve string.quoted.double.attribute.carve
-#                  ^ text.carve meta.attributes.carve
-#                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^ text.carve
+#            ^ text.carve punctuation.definition.smartquote.carve
+#             ^^ text.carve
+#               ^ text.carve punctuation.definition.smartquote.carve
+#                ^ text.carve
+#                 ^ text.carve punctuation.definition.smartquote.carve
+#                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >An escaped ^[a \] b] footnote keeps going
 #^^^^^^^^^^^ text.carve
 #           ^^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
