@@ -1601,25 +1601,203 @@
           }
         },
         {
+          "comment": "A substitution splits at its first top-level arrow, where code, math, a literal, a comment or an escape is opaque, and each half is inline content (markup-carve/carve#2092). With no top-level arrow the braces are a forced strikethrough. Declared limit: a link, image or autolink that spans the arrow is scoped whole in the deleted half, where the spec splits inside it.",
           "name": "markup.changed.critic.carve",
-          "match": "(\\{~)([^~]*)(~>)([^~]*)(~\\})",
-          "captures": {
+          "begin": "(\\{~)(?=(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|[^\\\\`~\\n]|~(?![>}]))*?~>(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|[^\\\\~\\n]|~(?!\\}))*?~\\})",
+          "beginCaptures": {
             "1": {
               "name": "punctuation.definition.critic.carve"
-            },
-            "2": {
-              "name": "markup.deleted.carve"
-            },
-            "3": {
-              "name": "punctuation.definition.critic.carve"
-            },
-            "4": {
-              "name": "markup.inserted.carve"
-            },
-            "5": {
+            }
+          },
+          "end": "(~\\})|(?=$)",
+          "endCaptures": {
+            "1": {
               "name": "punctuation.definition.critic.carve"
             }
-          }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?!~>)",
+              "end": "(?=~>|$)",
+              "contentName": "markup.deleted.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "include": "#raw-inline"
+                },
+                {
+                  "include": "#inline-literal"
+                },
+                {
+                  "include": "#math"
+                },
+                {
+                  "name": "markup.raw.inline.carve",
+                  "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.raw.carve"
+                    },
+                    "2": {
+                      "name": "markup.raw.inline.content.carve"
+                    },
+                    "3": {
+                      "name": "punctuation.definition.raw.carve"
+                    }
+                  }
+                },
+                {
+                  "name": "markup.raw.inline.carve",
+                  "match": "(`+)((?:(?!~>).)+?)(?=~>)",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.raw.carve"
+                    },
+                    "2": {
+                      "name": "markup.raw.inline.content.carve"
+                    }
+                  }
+                },
+                {
+                  "include": "#links"
+                },
+                {
+                  "include": "#images"
+                },
+                {
+                  "include": "#footnotes"
+                },
+                {
+                  "include": "#forced-emphasis"
+                },
+                {
+                  "include": "#sup-sub"
+                },
+                {
+                  "include": "#attributes"
+                },
+                {
+                  "include": "#autolink"
+                },
+                {
+                  "match": "([*/_=])(?!(?:(?!~>).)*?\\1)"
+                },
+                {
+                  "include": "#emphasis"
+                },
+                {
+                  "include": "#mentions-tags"
+                },
+                {
+                  "include": "#smart-typography"
+                }
+              ]
+            },
+            {
+              "begin": "(~>)",
+              "beginCaptures": {
+                "1": {
+                  "name": "punctuation.definition.critic.carve"
+                }
+              },
+              "end": "(?=~\\}|$)",
+              "contentName": "markup.inserted.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "include": "#raw-inline"
+                },
+                {
+                  "include": "#inline-literal"
+                },
+                {
+                  "include": "#math"
+                },
+                {
+                  "name": "markup.raw.inline.carve",
+                  "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.raw.carve"
+                    },
+                    "2": {
+                      "name": "markup.raw.inline.content.carve"
+                    },
+                    "3": {
+                      "name": "punctuation.definition.raw.carve"
+                    }
+                  }
+                },
+                {
+                  "name": "markup.raw.inline.carve",
+                  "match": "(`+)((?:(?!~\\}).)+?)(?=~\\})",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.raw.carve"
+                    },
+                    "2": {
+                      "name": "markup.raw.inline.content.carve"
+                    }
+                  }
+                },
+                {
+                  "include": "#links"
+                },
+                {
+                  "include": "#images"
+                },
+                {
+                  "include": "#footnotes"
+                },
+                {
+                  "include": "#forced-emphasis"
+                },
+                {
+                  "include": "#sup-sub"
+                },
+                {
+                  "include": "#attributes"
+                },
+                {
+                  "include": "#autolink"
+                },
+                {
+                  "match": "([*/_=])(?!(?:(?!~\\}).)*?\\1)"
+                },
+                {
+                  "include": "#emphasis"
+                },
+                {
+                  "include": "#mentions-tags"
+                },
+                {
+                  "include": "#smart-typography"
+                }
+              ]
+            }
+          ]
         },
         {
           "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment written across a break coloured the markup inside it - 87 of 286 generated documents (markup-carve/carve-grammars#320). AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\\\{#` alone claimed it and every line after it. The guard refuses the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}`, and leaves a multi-line comment - whose first line holds no `}` at all - opening as it should. A BLANK LINE ENDS IT, which is the bound Prism uses for this construct too. A TextMate begin sees one line and cannot look ahead for its own closer, so without a bound an unclosed opener would scope the rest of the document. One paragraph is where the engine stops reading this construct as well.",
