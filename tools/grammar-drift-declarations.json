@@ -7,6 +7,8 @@
     "citation": { "local": "citations", "fixture": "citations" }
   },
   "upstreamRulesGroupedLocally": {
+    "braced_comment_in_strong": { "local": "braced-comment-in-bold", "fixture": "comment-in-bold" },
+    "critic_comment_in_strong": { "local": "braced-comment-in-bold", "fixture": "comment-in-bold" },
     "admonition": { "local": "divs", "fixture": "composite-figures" },
     "block_comment": { "local": "comments", "fixture": "comment-fence-tail" },
     "line_comment": { "local": "comments", "fixture": "composite-figures" },
@@ -74,6 +76,7 @@
     "fenced_code_in_container": { "local": "code-block-behind-a-container-prefix", "fixture": "container-grammar-rules" }
   },
   "localRulesGroupedUpstream": {
+    "attribute-items": { "upstream": "attributes", "fixture": "attribute-attachment" },
     "caption-behind-a-container-prefix": { "upstream": "caption", "fixture": "container-grammar-rules" },
     "table-row-cells": { "upstream": "table_row", "fixture": "table-patterns" },
     "table-row-behind-a-container-prefix": { "upstream": "table_row", "fixture": "container-grammar-rules" },

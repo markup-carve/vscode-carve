@@ -1,0 +1,18 @@
+>*a {% b* c %} d*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve comment.block.inline.carve
+#     ^^^^^^ text.carve markup.bold.carve comment.block.inline.carve
+#           ^^ text.carve markup.bold.carve comment.block.inline.carve
+#             ^^ text.carve markup.bold.carve
+#               ^ text.carve punctuation.definition.bold.carve
+>
+>*a {# b* c #} d*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve comment.block.critic.carve
+#     ^^^^^^ text.carve markup.bold.carve comment.block.critic.carve
+#           ^^ text.carve markup.bold.carve comment.block.critic.carve
+#             ^^ text.carve markup.bold.carve
+#               ^ text.carve punctuation.definition.bold.carve
+>
