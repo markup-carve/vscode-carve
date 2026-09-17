@@ -34,6 +34,13 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Markd
 
 The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-carve`](https://github.com/markup-carve/tree-sitter-carve). VS Code extensions currently use TextMate grammars for built-in syntax colorization, so this extension ships a TextMate grammar aligned with the Tree-sitter grammar and uses the LSP for semantic behavior.
 
+### Highlighting limits
+
+A TextMate rule sees one line at a time, so a few shapes color differently from how Carve reads them.
+
+- A bare bold run can cross a soft line break, so its opener cannot check for a closer first. When the only closer-shaped `*` sits inside a code span, or there is none, the run colors to the end of its paragraph: `` x *a `b* c` d `` renders as text but shows as bold. The same happens to the `*/}` left after `{/a *b {/c/}*/}`.
+- A braced span whose closer is on a later line, such as `x{*` followed by `*}` on the next line, is not scoped as a span.
+
 ## Settings
 
 | Setting | Default | Description |

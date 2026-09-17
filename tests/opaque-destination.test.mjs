@@ -28,9 +28,12 @@ const registry = new vsctm.Registry({
 })
 const grammar = await registry.loadGrammar('text.carve')
 
+// Only the run's own delimiters drop out; a nested link or quote keeps its punctuation.
+const runDelimiter = /^punctuation\.definition\.(?:italic|underline|strike|highlight|bold|bold-italic)\.carve$/
+
 function covered(line, scope) {
   return grammar.tokenizeLine(line, vsctm.INITIAL).tokens
-    .filter((token) => token.scopes.includes(scope) && !token.scopes.some((name) => name.startsWith('punctuation.')))
+    .filter((token) => token.scopes.includes(scope) && !runDelimiter.test(token.scopes.at(-1)))
     .map((token) => line.slice(token.startIndex, token.endIndex))
     .join('')
 }

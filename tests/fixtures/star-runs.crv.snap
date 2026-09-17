@@ -43,7 +43,9 @@
 >
 >*a *b** c
 #^ text.carve punctuation.definition.bold.carve
-# ^^^^ text.carve markup.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^ text.carve markup.bold.carve
+#    ^ text.carve markup.bold.carve
 #     ^ text.carve punctuation.definition.bold.carve
 #      ^^^^ text.carve
 >
@@ -67,13 +69,17 @@
 >
 >*a {% b** c
 #^ text.carve punctuation.definition.bold.carve
-# ^^^^^^ text.carve markup.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve
+#     ^^ text.carve markup.bold.carve
 #       ^ text.carve punctuation.definition.bold.carve
 #        ^^^^ text.carve
 >
 >*a {# b** c
 #^ text.carve punctuation.definition.bold.carve
-# ^^^^^^ text.carve markup.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve
+#     ^^ text.carve markup.bold.carve
 #       ^ text.carve punctuation.definition.bold.carve
 #        ^^^^ text.carve
 >
@@ -88,13 +94,17 @@
 >
 >*a {% b**c
 #^ text.carve punctuation.definition.bold.carve
-# ^^^^^^ text.carve markup.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve
+#     ^^ text.carve markup.bold.carve
 #       ^ text.carve punctuation.definition.bold.carve
 #        ^^^ text.carve
 >
 >*a {# b**c
 #^ text.carve punctuation.definition.bold.carve
-# ^^^^^^ text.carve markup.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve
+#     ^^ text.carve markup.bold.carve
 #       ^ text.carve punctuation.definition.bold.carve
 #        ^^^ text.carve
 >

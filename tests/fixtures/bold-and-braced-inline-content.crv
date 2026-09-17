@@ -1,0 +1,75 @@
+x{*$`a*} here
+
+x{/!`c/} here
+
+x{_$$`a_} here
+
+{*$`a`*} and {/!`c`/}
+
+x $`a b
+
+x !`a b
+
+x $$`a b
+
+*a `b* c` d*
+
+a *}b
+
+a{*{*x*}*}b
+
+*a {/b *c* d/} e*
+
+*a {*b*} c*
+
+*a *b* c*
+
+*a {^b *c* d^} e*
+
+*a [b* c](u) d*
+
+*bold with /italic/ inside*
+
+*a /b* c/ d*
+
+*a {# b* c
+
+{/a *b/}
+
+{_a *b_} c*
+
+{^*b*^}
+
+{+*a*+}
+
+{,*a*,}
+
+{-/a/-}
+
+{+a}+}
+
+{-a- }
+
+{++}
+
+{,a,b,}
+
+{^a {^b^} c^}
+
+{+`a+}`+}
+
+{-a -b- c-}
+
+{^ a^}
+
+{+ a+}
+
+{^a *b ^}c*^}
+
+a <x:a|> b
+
+a <x:a"> b
+
+a <http://x.y/z> b
+
+a <me@x.y> b

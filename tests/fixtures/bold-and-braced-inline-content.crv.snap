@@ -1,0 +1,277 @@
+>x{*$`a*} here
+#^ text.carve
+# ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#   ^ text.carve markup.bold.carve markup.bold.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#    ^ text.carve markup.bold.carve markup.bold.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#     ^ text.carve markup.bold.carve markup.bold.carve markup.other.math.inline.carve markup.other.math.content.carve
+#      ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#        ^^^^^^ text.carve
+>
+>x{/!`c/} here
+#^ text.carve
+# ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#   ^ text.carve markup.italic.carve markup.italic.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#    ^ text.carve markup.italic.carve markup.italic.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#     ^ text.carve markup.italic.carve markup.italic.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#      ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#        ^^^^^^ text.carve
+>
+>x{_$$`a_} here
+#^ text.carve
+# ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#   ^^ text.carve markup.underline.text.carve markup.underline.text.carve markup.other.math.display.carve punctuation.definition.math.carve
+#     ^ text.carve markup.underline.text.carve markup.underline.text.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#      ^ text.carve markup.underline.text.carve markup.underline.text.carve markup.other.math.display.carve markup.other.math.content.carve
+#       ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#         ^^^^^^ text.carve
+>
+>{*$`a`*} and {/!`c`/}
+#^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#  ^ text.carve markup.bold.carve markup.bold.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#   ^ text.carve markup.bold.carve markup.bold.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#    ^ text.carve markup.bold.carve markup.bold.carve markup.other.math.inline.carve markup.other.math.content.carve
+#     ^ text.carve markup.bold.carve markup.bold.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#      ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#        ^^^^^ text.carve
+#             ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#               ^ text.carve markup.italic.carve markup.italic.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#                ^ text.carve markup.italic.carve markup.italic.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                 ^ text.carve markup.italic.carve markup.italic.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                  ^ text.carve markup.italic.carve markup.italic.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                   ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+>
+>x $`a b
+#^^ text.carve
+#  ^ text.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#   ^ text.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#    ^^^^ text.carve markup.other.math.inline.carve markup.other.math.content.carve
+>
+>x !`a b
+#^^ text.carve
+#  ^ text.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#   ^ text.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#    ^^^^ text.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+>
+>x $$`a b
+#^^ text.carve
+#  ^^ text.carve markup.other.math.display.carve punctuation.definition.math.carve
+#    ^ text.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#     ^^^^ text.carve markup.other.math.display.carve markup.other.math.content.carve
+>
+>*a `b* c` d*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^ text.carve markup.bold.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#    ^^^^ text.carve markup.bold.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#        ^ text.carve markup.bold.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#         ^^ text.carve markup.bold.carve
+#           ^ text.carve punctuation.definition.bold.carve
+>
+>a *}b
+#^^^^^^ text.carve
+>
+>a{*{*x*}*}b
+#^ text.carve
+# ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#   ^ text.carve markup.bold.carve markup.bold.carve
+#    ^ text.carve markup.bold.carve markup.bold.carve
+#     ^ text.carve markup.bold.carve markup.bold.carve
+#      ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#        ^^^^ text.carve
+>
+>*a {/b *c* d/} e*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve markup.italic.carve punctuation.definition.italic.carve
+#     ^^ text.carve markup.bold.carve markup.italic.carve markup.italic.carve
+#       ^ text.carve markup.bold.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
+#        ^ text.carve markup.bold.carve markup.italic.carve markup.italic.carve markup.bold.carve
+#         ^ text.carve markup.bold.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
+#          ^^ text.carve markup.bold.carve markup.italic.carve markup.italic.carve
+#            ^^ text.carve markup.bold.carve markup.italic.carve punctuation.definition.italic.carve
+#              ^^ text.carve markup.bold.carve
+#                ^ text.carve punctuation.definition.bold.carve
+>
+>*a {*b*} c*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve
+#     ^ text.carve markup.bold.carve
+#      ^ text.carve punctuation.definition.bold.carve
+#       ^^^^^ text.carve
+>
+>*a *b* c*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^ text.carve markup.bold.carve
+#    ^ text.carve markup.bold.carve
+#     ^ text.carve punctuation.definition.bold.carve
+#      ^^^^ text.carve
+>
+>*a {^b *c* d^} e*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve markup.superscript.carve punctuation.definition.superscript.carve
+#     ^^ text.carve markup.bold.carve markup.superscript.carve markup.superscript.carve
+#       ^ text.carve markup.bold.carve markup.superscript.carve markup.superscript.carve punctuation.definition.bold.carve
+#        ^ text.carve markup.bold.carve markup.superscript.carve markup.superscript.carve markup.bold.carve
+#         ^ text.carve markup.bold.carve markup.superscript.carve markup.superscript.carve punctuation.definition.bold.carve
+#          ^^ text.carve markup.bold.carve markup.superscript.carve markup.superscript.carve
+#            ^^ text.carve markup.bold.carve markup.superscript.carve punctuation.definition.superscript.carve
+#              ^^ text.carve markup.bold.carve
+#                ^ text.carve punctuation.definition.bold.carve
+>
+>*a [b* c](u) d*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^ text.carve markup.bold.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#    ^^^^ text.carve markup.bold.carve meta.link.inline.carve string.other.link.title.carve
+#        ^ text.carve markup.bold.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#         ^ text.carve markup.bold.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#          ^ text.carve markup.bold.carve meta.link.inline.carve markup.underline.link.carve
+#           ^ text.carve markup.bold.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#            ^^ text.carve markup.bold.carve
+#              ^ text.carve punctuation.definition.bold.carve
+>
+>*bold with /italic/ inside*
+#^ text.carve punctuation.definition.bold.carve
+# ^^^^^^^^^^ text.carve markup.bold.carve
+#           ^ text.carve markup.bold.carve markup.italic.carve punctuation.definition.italic.carve
+#            ^^^^^^ text.carve markup.bold.carve markup.italic.carve markup.italic.carve
+#                  ^ text.carve markup.bold.carve markup.italic.carve punctuation.definition.italic.carve
+#                   ^^^^^^^ text.carve markup.bold.carve
+#                          ^ text.carve punctuation.definition.bold.carve
+>
+>*a /b* c/ d*
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^ text.carve markup.bold.carve
+#    ^ text.carve markup.bold.carve
+#     ^ text.carve punctuation.definition.bold.carve
+#      ^^^^^^^ text.carve
+>
+>*a {# b* c
+#^ text.carve punctuation.definition.bold.carve
+# ^^ text.carve markup.bold.carve
+#   ^^ text.carve markup.bold.carve
+#     ^^ text.carve markup.bold.carve
+#       ^ text.carve punctuation.definition.bold.carve
+#        ^^^ text.carve
+>
+>{/a *b/}
+#^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#  ^^ text.carve markup.italic.carve markup.italic.carve
+#    ^ text.carve markup.italic.carve markup.italic.carve
+#     ^ text.carve markup.italic.carve markup.italic.carve
+#      ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+>
+>{_a *b_} c*
+#^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#  ^^ text.carve markup.underline.text.carve markup.underline.text.carve
+#    ^ text.carve markup.underline.text.carve markup.underline.text.carve
+#     ^ text.carve markup.underline.text.carve markup.underline.text.carve
+#      ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
+#        ^^^^ text.carve
+>
+>{^*b*^}
+#^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+#  ^ text.carve markup.superscript.carve markup.superscript.carve punctuation.definition.bold.carve
+#   ^ text.carve markup.superscript.carve markup.superscript.carve markup.bold.carve
+#    ^ text.carve markup.superscript.carve markup.superscript.carve punctuation.definition.bold.carve
+#     ^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+>
+>{+*a*+}
+#^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#  ^ text.carve markup.inserted.critic.carve markup.inserted.carve punctuation.definition.bold.carve
+#   ^ text.carve markup.inserted.critic.carve markup.inserted.carve markup.bold.carve
+#    ^ text.carve markup.inserted.critic.carve markup.inserted.carve punctuation.definition.bold.carve
+#     ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+>
+>{,*a*,}
+#^^ text.carve markup.subscript.carve punctuation.definition.subscript.carve
+#  ^ text.carve markup.subscript.carve markup.subscript.carve punctuation.definition.bold.carve
+#   ^ text.carve markup.subscript.carve markup.subscript.carve markup.bold.carve
+#    ^ text.carve markup.subscript.carve markup.subscript.carve punctuation.definition.bold.carve
+#     ^^ text.carve markup.subscript.carve punctuation.definition.subscript.carve
+>
+>{-/a/-}
+#^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#  ^ text.carve markup.deleted.critic.carve markup.deleted.carve markup.italic.carve punctuation.definition.italic.carve
+#   ^ text.carve markup.deleted.critic.carve markup.deleted.carve markup.italic.carve markup.italic.carve
+#    ^ text.carve markup.deleted.critic.carve markup.deleted.carve markup.italic.carve punctuation.definition.italic.carve
+#     ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+>
+>{+a}+}
+#^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#  ^^ text.carve markup.inserted.critic.carve markup.inserted.carve
+#    ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+>
+>{-a- }
+#^^^^^^^ text.carve
+>
+>{++}
+#^^^^^ text.carve
+>
+>{,a,b,}
+#^^ text.carve markup.subscript.carve punctuation.definition.subscript.carve
+#  ^^^ text.carve markup.subscript.carve markup.subscript.carve
+#     ^^ text.carve markup.subscript.carve punctuation.definition.subscript.carve
+>
+>{^a {^b^} c^}
+#^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+#  ^^^^^ text.carve markup.superscript.carve markup.superscript.carve
+#       ^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+#         ^^^^^ text.carve
+>
+>{+`a+}`+}
+#^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#  ^ text.carve markup.inserted.critic.carve markup.inserted.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#   ^^^ text.carve markup.inserted.critic.carve markup.inserted.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#      ^ text.carve markup.inserted.critic.carve markup.inserted.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#       ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+>
+>{-a -b- c-}
+#^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#  ^^^^^^^ text.carve markup.deleted.critic.carve markup.deleted.carve
+#         ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+>
+>{^ a^}
+#^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+#  ^^ text.carve markup.superscript.carve markup.superscript.carve
+#    ^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+>
+>{+ a+}
+#^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#  ^^ text.carve markup.inserted.critic.carve markup.inserted.carve
+#    ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+>
+>{^a *b ^}c*^}
+#^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+#  ^^ text.carve markup.superscript.carve markup.superscript.carve
+#    ^ text.carve markup.superscript.carve markup.superscript.carve
+#     ^^ text.carve markup.superscript.carve markup.superscript.carve
+#       ^^ text.carve markup.superscript.carve punctuation.definition.superscript.carve
+#         ^^^^^ text.carve
+>
+>a <x:a|> b
+#^^^^^^^^^^^ text.carve
+>
+>a <x:a"> b
+#^^^^^^ text.carve
+#      ^ text.carve punctuation.definition.smartquote.carve
+#       ^^^^ text.carve
+>
+>a <http://x.y/z> b
+#^^ text.carve
+#  ^ text.carve meta.link.autolink.carve punctuation.definition.link.carve
+#   ^^^^^^^^^^^^ text.carve meta.link.autolink.carve markup.underline.link.carve
+#               ^ text.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                ^^^ text.carve
+>
+>a <me@x.y> b
+#^^ text.carve
+#  ^ text.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+#   ^^^^^^ text.carve meta.link.autolink.email.carve markup.underline.link.carve
+#         ^ text.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+#          ^^^ text.carve
+>
