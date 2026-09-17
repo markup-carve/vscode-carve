@@ -41,7 +41,9 @@
 #                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >{=a=b=} the way the other four do.
 #^^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
-#  ^^^ text.carve markup.highlight.carve markup.highlight.carve
+#  ^ text.carve markup.highlight.carve markup.highlight.carve
+#   ^ text.carve markup.highlight.carve markup.highlight.carve
+#    ^ text.carve markup.highlight.carve markup.highlight.carve
 #     ^^ text.carve markup.highlight.carve punctuation.definition.highlight.carve
 #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >
