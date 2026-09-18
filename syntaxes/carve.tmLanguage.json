@@ -249,7 +249,7 @@
         },
         {
           "name": "comment.block.critic.carve",
-          "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
+          "begin": "\\{#(?!#\\})(?:(?=[^\\n]*?#\\})(?<![^\\s\\w\\\"']\\{#)|(?![^}\\n]*(?<!#)\\}))(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
           "end": "#\\}|^(?=[ \\t]*$)"
         }
       ]
@@ -1893,7 +1893,7 @@
         {
           "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment written across a break coloured the markup inside it - 87 of 286 generated documents (markup-carve/carve-grammars#320). AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\\\{#` alone claimed it and every line after it. The guard refuses the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}`, and leaves a multi-line comment - whose first line holds no `}` at all - opening as it should. A BLANK LINE ENDS IT, which is the bound Prism uses for this construct too. A TextMate begin sees one line and cannot look ahead for its own closer, so without a bound an unclosed opener would scope the rest of the document. One paragraph is where the engine stops reading this construct as well.",
           "name": "comment.block.critic.carve",
-          "begin": "(\\{#)(?![^}\\n]*(?<!#)\\})",
+          "begin": "(\\{#)(?!#\\})(?:(?=[^\\n]*?#\\})(?<![^\\s\\w\\\"']\\{#)|(?![^}\\n]*(?<!#)\\}))",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.critic.carve"
