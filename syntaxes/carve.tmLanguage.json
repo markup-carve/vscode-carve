@@ -2164,7 +2164,7 @@
         {
           "comment": "A bare bold run may cross soft line breaks, so this rule carries TextMate state with begin/end. A blank or whitespace-only line ends an unclosed run at its paragraph boundary instead of letting it colour the rest of the file (markup-carve/vscode-carve#178).",
           "contentName": "markup.bold.carve",
-          "begin": "(?<![\\w*])(\\*)(?![\\s*}])",
+          "begin": "(?<![\\w*])(\\*)(?![\\s*])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
           "end": "(?<=\\S)(\\*)(?![\\p{L}\\p{N}])|^[ \\t]*$",
           "beginCaptures": {
             "1": {
