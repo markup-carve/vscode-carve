@@ -513,16 +513,8 @@ const rows = []
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = 'github:markup-carve/carve-js#6ca06f8d7b4e0a987277e923cf3292d5860cf87a'
-// The engine splits a substitution at its top-level arrow (carve-js#1838) and
-// still renders each half as text, where carve#2092 reads both halves as inline
-// content.
-const ENGINE_LAG = {
-  '472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it.crv':
-    'the halves keep their delimiters as text: `/old/` instead of an emphasis run',
-  '472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it-2.crv':
-    'the halves keep their delimiters as text: math, literal and comment stay literal',
-}
+const ENGINE_PIN = '0.1.7'
+const ENGINE_LAG = {}
 const lagWaived = []
 const lagStale = []
 
