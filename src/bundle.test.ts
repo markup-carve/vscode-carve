@@ -122,7 +122,7 @@ test('the installed server walk has no expanded document to flatten', async () =
   // mean reimplementing section 19's merge - heading clamps, id renames, budgets.
   const includes = await importLsp('includes.js')
   const resolution = includes.resolveIncludes!('Hi\n') as Record<string, unknown>
-  assert.deepEqual(Object.keys(resolution).sort(), ['bytes', 'dependencies', 'documents', 'warnings'])
+  assert.deepEqual(Object.keys(resolution).sort(), ['bytes', 'dependencies', 'documents', 'suppressedWarnings', 'warnings'])
   for (const key of ['doc', 'ast', 'document']) {
     assert.equal(key in resolution, false, `resolveIncludes gained a "${key}" - flattening may now be reachable here`)
   }
