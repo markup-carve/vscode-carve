@@ -6,6 +6,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-09-21
+
+### Added
+
+- **The preview presents `{.diff}` on a language fence** (#216). Added and removed lines are marked per line, on top of the language highlighting.
+- **Include selections in the language server** (#268). carve-lsp 0.1.7 diagnoses, navigates and completes a `@lines` range or a named section on an include directive, and resolves a crossref whose target an included file supplies.
+
+### Changed
+
+- **Engine and language server are released versions** (#267, #268). The extension bundles carve-js 0.1.7 and carve-lsp 0.1.7, one engine copy between them, instead of an unreleased carve-js revision.
+
+### Fixed
+
+- **Include warnings land on the right characters after an emoji** (#213). The engine's codepoint offsets are converted to the editor's UTF-16 units.
+- **Highlighting of emphasis content matches the spec** (#247, #248, #257, #258, #262, #264). Bold, bare emphasis, forced and braced spans scope their inline content, and star runs open and close a bold run where the spec does.
+- **Highlighting of link destinations, attribute blocks, comments and substitutions matches the spec** (#227, #229, #233, #238, #239, #241, #244, #263). A bare delimiter inside a destination no longer closes a run, a detached attribute block is prose, a comment may hold a `}`, and a substitution splits only at a top-level arrow.
+
 ## [0.1.6] - 2026-09-15
 
 ### Added
