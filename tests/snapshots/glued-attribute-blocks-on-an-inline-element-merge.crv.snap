@@ -1,0 +1,11 @@
+>*x*{.k}{.j}
+#^ text.carve punctuation.definition.bold.carve
+# ^ text.carve markup.bold.carve
+#  ^ text.carve punctuation.definition.bold.carve
+#   ^ text.carve meta.attributes.carve
+#    ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#      ^ text.carve meta.attributes.carve
+#       ^ text.carve meta.attributes.carve
+#        ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#          ^ text.carve meta.attributes.carve
+>
