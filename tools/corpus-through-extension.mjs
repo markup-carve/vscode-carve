@@ -514,7 +514,10 @@ const rows = []
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
 const ENGINE_PIN = '0.1.7'
-const ENGINE_LAG = {}
+const ENGINE_LAG = {
+  '475-footnote-references-take-an-attribute-run-editorial-substitution-and-comment-take-none-3.crv':
+    'carve-js 4b6683f keeps an attribute block after a substitution or a comment as text; 0.1.7 drops it',
+}
 const lagWaived = []
 const lagStale = []
 

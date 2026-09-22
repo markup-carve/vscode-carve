@@ -1,0 +1,18 @@
+>a[^n]{.k}{.j} b
+#^ text.carve
+# ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#    ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ text.carve meta.attributes.carve
+#      ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#        ^ text.carve meta.attributes.carve
+#         ^ text.carve meta.attributes.carve
+#          ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#            ^ text.carve meta.attributes.carve
+#             ^^^ text.carve
+>
+>[^n]: x
+#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^^ text.carve meta.footnote.definition.carve
+>
