@@ -1,0 +1,37 @@
+>/***/
+#^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#  ^ text.carve markup.bold.italic.carve markup.bold.italic.carve
+#   ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+>
+>/****/
+#^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#  ^^ text.carve markup.bold.italic.carve markup.bold.italic.carve
+#    ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+>
+>/**/
+#^ text.carve markup.italic.carve punctuation.definition.italic.carve
+# ^^ text.carve markup.italic.carve markup.italic.carve
+#   ^ text.carve markup.italic.carve punctuation.definition.italic.carve
+>
+>/*x*/
+#^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#  ^ text.carve markup.bold.italic.carve markup.bold.italic.carve
+#   ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+>
+>*x*
+#^ text.carve punctuation.definition.bold.carve
+# ^ text.carve markup.bold.carve
+#  ^ text.carve punctuation.definition.bold.carve
+>
+>/x/
+#^ text.carve markup.italic.carve punctuation.definition.italic.carve
+# ^ text.carve markup.italic.carve markup.italic.carve
+#  ^ text.carve markup.italic.carve punctuation.definition.italic.carve
+>
+>a /*b*c*/ d
+#^^ text.carve
+#  ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#    ^^^ text.carve markup.bold.italic.carve markup.bold.italic.carve
+#       ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#         ^^^ text.carve
+>
