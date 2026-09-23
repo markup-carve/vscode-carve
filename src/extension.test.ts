@@ -173,6 +173,7 @@ const PREVIEW_ASSETS = {
   katexCss: 'katex.css',
   katexAutoRender: 'auto-render.js',
   hljsJs: 'highlight.js',
+  hljsCarveJs: 'hljs-carve.js',
   hljsLightCss: 'github.css',
   hljsDarkCss: 'github-dark.css',
   carveTokensCss: 'carve-css/tokens.css',
