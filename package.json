@@ -316,6 +316,7 @@
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "@markup-carve/carve-css": "^0.1.0",
+    "@markup-carve/carve-grammars": "^0.1.9",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.2.2",
