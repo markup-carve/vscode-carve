@@ -902,9 +902,9 @@ export function previewDocument(source: string, options: PreviewOptions): string
         const cls = [...code.classList].find((c) => c.indexOf('language-') === 0)
         const lang = cls ? cls.slice('language-'.length) : ''
         const canHl = lang && typeof hljs.getLanguage === 'function' && hljs.getLanguage(lang)
-        const text = code.textContent.replace(/\n$/, '')
-        code.innerHTML = text.split('\n').map((line) => {
-          const marker = /^[+\- ]/.test(line) ? line[0] : ''
+        const text = code.textContent.replace(/\\n$/, '')
+        code.innerHTML = text.split('\\n').map((line) => {
+          const marker = /^[-+ ]/.test(line) ? line[0] : ''
           const body = marker ? line.slice(1) : line
           let inner
           try { inner = canHl ? hljs.highlight(body, { language: lang }).value : escapeHtml(body) }
@@ -912,7 +912,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
           const lineCls = marker === '+' ? 'line diff add' : marker === '-' ? 'line diff remove' : 'line'
           const markerSpan = marker ? '<span class="diff-marker">' + escapeHtml(marker) + '</span>' : ''
           return '<span class="' + lineCls + '">' + markerSpan + inner + '</span>'
-        }).join('\n')
+        }).join('\\n')
         pre.classList.add('has-diff')
       }
       function highlightCode() {
