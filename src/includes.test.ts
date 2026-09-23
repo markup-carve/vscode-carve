@@ -36,6 +36,10 @@ test('the include settings ride under carve.includes, where the server reads the
   assert.deepEqual(options().carve.includes, { enabled: 'auto' })
 })
 
+test('the server export source actions are off, the extension has its own export commands', () => {
+  assert.equal(options().carve.exportActions, false)
+})
+
 test('the formatter option the server already relied on survives', () => {
   assert.equal(options().carve.formatter, 'conservative')
 })

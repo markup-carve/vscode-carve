@@ -20,6 +20,7 @@ import {
   type ServerResolver,
 } from './include-expansion.js'
 import { flattenDocument, flattenPath, flattenSummary, type Writer } from './flatten.js'
+import { convertToCarve, IMPORT_EXTENSIONS, importFormatFor, importTargetPath } from './import.js'
 import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
 import { serverInternalPath, serverModulePath } from './paths.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
@@ -54,6 +55,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.commands.registerCommand('carve.openPreview', () => openPreview(context)),
     vscode.commands.registerCommand('carve.exportHtml', () => exportHtml(context)),
     vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown(context)),
+    vscode.commands.registerCommand('carve.importFile', (uri?: vscode.Uri) => importFile(uri)),
     vscode.commands.registerCommand('carve.exportBundle', () => exportBundle(context)),
     vscode.commands.registerCommand('carve.exportFlattened', () => exportFlattened(context)),
     vscode.commands.registerCommand('carve.copyFlattened', () => copyFlattened(context)),
@@ -625,6 +627,65 @@ async function exportMarkdown(context: vscode.ExtensionContext): Promise<void> {
   )
   if (pick === 'Open File') {
     await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(target))
+  }
+}
+
+async function importSource(uri: unknown): Promise<vscode.Uri | undefined> {
+  if (uri instanceof vscode.Uri && importFormatFor(uri.path)) return uri
+  const active = vscode.window.activeTextEditor?.document.uri
+  if (active && importFormatFor(active.path)) return active
+  const picked = await vscode.window.showOpenDialog({
+    canSelectMany: false,
+    filters: { 'Markdown or HTML': IMPORT_EXTENSIONS.map((ext) => ext.slice(1)) },
+    openLabel: 'Import to Carve',
+  })
+  return picked?.[0]
+}
+
+async function importFile(uri: unknown): Promise<void> {
+  const source = await importSource(uri)
+  if (!source) return
+  const format = importFormatFor(source.path)
+  if (!format) {
+    void vscode.window.showWarningMessage('Pick a Markdown or HTML file to import.')
+    return
+  }
+  const open = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === source.toString())
+  const text = open
+    ? open.getText()
+    : new TextDecoder().decode(await vscode.workspace.fs.readFile(source))
+  let result
+  try {
+    result = convertToCarve(text, format)
+  } catch (error) {
+    void vscode.window.showErrorMessage(`Carve import failed: ${(error as Error).message}`)
+    return
+  }
+  const target = source.with({ path: importTargetPath(source.path) })
+  const name = target.path.split('/').pop()
+  if (await exists(target)) {
+    const overwrite = await vscode.window.showWarningMessage(
+      `${name} already exists. Overwrite it?`,
+      { modal: true },
+      'Overwrite',
+    )
+    if (overwrite !== 'Overwrite') return
+  }
+  await vscode.workspace.fs.writeFile(target, new TextEncoder().encode(result.carve))
+  await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(target))
+  if (result.diagnostics > 0) {
+    void vscode.window.showInformationMessage(
+      `Imported ${name}; ${result.diagnostics} HTML construct(s) were dropped or simplified.`,
+    )
+  }
+}
+
+async function exists(uri: vscode.Uri): Promise<boolean> {
+  try {
+    await vscode.workspace.fs.stat(uri)
+    return true
+  } catch {
+    return false
   }
 }
 
