@@ -83,7 +83,10 @@
     "trailing-comment-cell": { "upstream": "trailing_comment", "fixture": "container-grammar-rules" },
     "code-fence-on-quote-marker-line": { "upstream": "fenced_code_in_container", "fixture": "container-grammar-rules" },
     "thematic-break-behind-a-container-prefix": { "upstream": "hr", "fixture": "thematic-break" },
-    "block-quote-body": { "upstream": "blockquote_in_container", "fixture": "definition-at-a-content-column" }
+    "block-quote-body": { "upstream": "blockquote_in_container", "fixture": "definition-at-a-content-column" },
+    "fenced-code-languages": { "upstream": "fenced_code", "fixture": "fenced-code-embedded-languages" },
+    "fenced-code-languages-on-a-marker-line": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" },
+    "fenced-code-languages-at-a-body-column": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" }
   },
   "localOnlyRules": {
     "container-body": "grammar-correctness",

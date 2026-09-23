@@ -1,0 +1,146 @@
+>```js
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>const a = "s"
+#^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript storage.type.js
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
+#          ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript string.quoted.double.js
+#           ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript string.quoted.double.js
+#            ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript string.quoted.double.js
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>````carve
+#^^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#    ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>*bold* text
+#^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+# ^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.bold.carve
+#     ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+#      ^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve
+>```js
+#^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>const b = 1
+#^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript storage.type.js
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
+#          ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript constant.numeric.decimal.js
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>still carve _after_ the inner fence
+#^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve
+#            ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.underline.text.carve punctuation.definition.underline.carve
+#             ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.underline.text.carve markup.underline.text.carve
+#                  ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.underline.text.carve punctuation.definition.underline.carve
+#                   ^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve
+>````
+#^^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>```js
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>const t = `open template
+#^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript storage.type.js
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
+#          ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript string.template.js
+#           ^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript string.template.js
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>after the unterminated template
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
+>````js
+#^^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#    ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>const u = 2
+#^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript storage.type.js
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
+#          ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript constant.numeric.decimal.js
+>```
+#^^^^ text.carve markup.raw.block.fenced.code.carve
+>const v = 3
+#^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>````
+#^^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>```python
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>x = 1
+#^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>~~~js "Title" [label]
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+#     ^ text.carve markup.raw.block.fenced.code.carve
+#      ^^^^^^^ text.carve markup.raw.block.fenced.code.carve string.quoted.double.carve
+#             ^ text.carve markup.raw.block.fenced.code.carve
+#              ^^^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.label.carve
+>const e = 4
+#^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript storage.type.js
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
+#          ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript constant.numeric.decimal.js
+>~~~
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>```=html
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+><b>raw</b>
+#^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>- item
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^ text.carve
+>
+>  ```js
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#     ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>  const c = 5
+#^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
+#  ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript storage.type.js
+#       ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
+#            ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript constant.numeric.decimal.js
+>  ```
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>  ```carve
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>  *bold* at the body column
+#^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve
+#  ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+#   ^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.bold.carve
+#       ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+#        ^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve
+>  ```
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>- ```carve
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#     ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>  /italic/ in an item
+#^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve
+#  ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.italic.carve punctuation.definition.italic.carve
+#   ^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.italic.carve markup.italic.carve
+#         ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.italic.carve punctuation.definition.italic.carve
+#          ^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve
+>  ```
+#^^ text.carve markup.raw.block.fenced.code.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>column zero ends the list
+#^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+>
