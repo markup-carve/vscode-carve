@@ -43,6 +43,8 @@ export interface CarveInitializationOptions {
   carve: {
     formatter: string
     includes: IncludeSettingsPayload
+    /** Off: the extension's own export commands already cover the server's export source actions. */
+    exportActions: false
   }
   /**
    * TOP LEVEL, not under `carve`. `readWorkspaceTrusted` reads
@@ -78,6 +80,7 @@ export function carveInitializationOptions(
     carve: {
       formatter: input.formatter,
       includes: includeSettingsPayload(input.includes),
+      exportActions: false,
     },
     workspaceTrusted: input.workspaceTrusted,
   }

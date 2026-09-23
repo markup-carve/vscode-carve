@@ -171,6 +171,10 @@
         "title": "Carve: Export to Markdown"
       },
       {
+        "command": "carve.importFile",
+        "title": "Carve: Import from Markdown or HTML"
+      },
+      {
         "command": "carve.exportBundle",
         "title": "Carve: Export Bundle (document and its includes)"
       },
@@ -196,6 +200,13 @@
       }
     ],
     "menus": {
+      "explorer/context": [
+        {
+          "command": "carve.importFile",
+          "when": "resourceExtname =~ /^\\.(md|markdown|html?)$/i",
+          "group": "7_modification"
+        }
+      ],
       "editor/title": [
         {
           "command": "carve.openPreview",

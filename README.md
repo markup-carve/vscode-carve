@@ -29,6 +29,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Markd
   - **Carve: Export to HTML** writes a self-contained HTML file (Mermaid, KaTeX, and highlight.js load from a CDN; theming follows the reader's color scheme).
   - **Carve: Export Bundle (document and its includes)** writes the document and every file it pulls in into a folder beside it, keeping the directives and the file boundaries.
   - **Carve: Print Preview / Export PDF** opens the system print dialog on the preview, so you can save to PDF.
+- Import command: **Carve: Import from Markdown or HTML** converts a `.md` or `.html` file to a sibling `.crv` with the carve-js importer and opens it. It works on the active editor, a file from the explorer context menu, or a file picked from a dialog, and asks before overwriting an existing `.crv`.
 - Editor rules for comments, brackets, autoclosing pairs, folding markers, and word patterns.
 - An example document in the repository, `examples/demo.crv`, exercising every supported construct - open it and run **Carve: Open Preview** to see the rendering features in action.
 

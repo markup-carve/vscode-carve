@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Carve: Import from Markdown or HTML** converts a `.md` or `.html` file to a sibling `.crv`, from the command palette or the explorer context menu.
+
+### Changed
+
+- **The language server's export source actions are turned off** (markup-carve/carve-lsp#262). The extension already has its own export commands, so export is no longer listed twice once carve-lsp ships the actions.
+
 ## [0.1.7] - 2026-09-21
 
 ### Added
