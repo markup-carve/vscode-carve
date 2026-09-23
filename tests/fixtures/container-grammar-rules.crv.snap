@@ -12,7 +12,7 @@
 #     ^ text.carve markup.raw.block.fenced.code.carve
 #      ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
 >  code
-#^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+#^^^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.javascript
 >  ```
 #^^ text.carve markup.raw.block.fenced.code.carve
 #  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve

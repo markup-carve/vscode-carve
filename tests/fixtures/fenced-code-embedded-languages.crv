@@ -1,0 +1,51 @@
+```js
+const a = "s"
+```
+
+````carve
+*bold* text
+```js
+const b = 1
+```
+still carve _after_ the inner fence
+````
+
+```js
+const t = `open template
+```
+
+after the unterminated template
+
+````js
+const u = 2
+```
+const v = 3
+````
+
+```python
+x = 1
+```
+
+~~~js "Title" [label]
+const e = 4
+~~~
+
+```=html
+<b>raw</b>
+```
+
+- item
+
+  ```js
+  const c = 5
+  ```
+
+  ```carve
+  *bold* at the body column
+  ```
+
+- ```carve
+  /italic/ in an item
+  ```
+
+column zero ends the list

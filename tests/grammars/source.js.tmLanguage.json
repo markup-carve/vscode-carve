@@ -1,0 +1,10 @@
+{
+  "comment": "Minimal stand-in for VS Code's JavaScript grammar so fixture snapshots can show a fence body tokenized as source.js without depending on a VS Code install. The template string spans lines on purpose: it is what an unterminated construct inside a fence looks like.",
+  "scopeName": "source.js",
+  "patterns": [
+    { "match": "\\b(?:const|let)\\b", "name": "storage.type.js" },
+    { "match": "\\b[0-9]+\\b", "name": "constant.numeric.decimal.js" },
+    { "begin": "\"", "end": "\"", "name": "string.quoted.double.js" },
+    { "begin": "`", "end": "`", "name": "string.template.js" }
+  ]
+}

@@ -7,6 +7,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Markd
 - Language registration for `.crv` files, with a dedicated file icon in the Explorer.
 - Carve highlighting in the Markdown editor for fences labeled `carve` or `crv`.
 - Syntax highlighting for headings, emphasis, strong, links, images, lists, tables, code, raw blocks, comments, attributes, footnotes, mentions, tags, math, and frontmatter.
+- Fenced code bodies in the editor highlight in the fence's language (`js`, `ts`, `python`, `sh`, `yaml`, `html`, `rust`, `go` and about 30 more) when VS Code has a grammar for it; a `carve` or `crv` fence highlights as Carve. Other fences stay plain code.
 - Language server integration via [`markup-carve/carve-lsp`](https://github.com/markup-carve/carve-lsp):
   - diagnostics for parser errors and Djot/Markdown migration warnings,
   - quick fixes for migration warnings where the rewrite is mechanical,
@@ -42,6 +43,7 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 - A bare bold run can cross a soft line break, so its opener cannot check for a closer first. When the only closer-shaped `*` sits inside a code span, or there is none, the run colors to the end of its paragraph: `` x *a `b* c` d `` renders as text but shows as bold. The same happens to the `*/}` left after `{/a *b {/c/}*/}`.
 - A braced span whose closer is on a later line, such as `x{*` followed by `*}` on the next line, is not scoped as a span.
 - A bare italic, underline, strikethrough or highlight run is scoped only when its closer is on the same line. `/a` followed by `b/` on the next line is one italic run, and shows as text.
+- Inside a fenced code block that embeds a language, a bare fence line shorter than the opener (a ```` ``` ```` line inside a ```` ```` ```` block) ends the language highlighting for the rest of the block. The block itself stays open until its real closer. Carve fences are exempt. Fences inside a block quote are not embedded.
 
 ## Settings
 

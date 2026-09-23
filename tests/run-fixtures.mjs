@@ -39,7 +39,13 @@ const bin = join(
   process.platform === "win32" ? "vscode-tmgrammar-snap.cmd" : "vscode-tmgrammar-snap",
 );
 
-const args = ["-g", grammar, "-s", scope];
+// Stand-ins for grammars VS Code ships, so a fence body can embed them here.
+const grammarsDir = join(here, "grammars");
+const embedded = readdirSync(grammarsDir)
+  .filter((f) => f.endsWith(".tmLanguage.json"))
+  .flatMap((f) => ["-g", join(grammarsDir, f)]);
+
+const args = ["-g", grammar, ...embedded, "-s", scope];
 if (update) {
   args.push("-u");
 }
