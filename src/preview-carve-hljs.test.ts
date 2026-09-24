@@ -13,7 +13,6 @@ import { exportHtmlDocument, previewDocument, type PreviewAssets } from './previ
 
 const require = createRequire(import.meta.url)
 const grammarsDir = dirname(require.resolve('@markup-carve/carve-grammars/package.json'))
-const grammarsVersion = (JSON.parse(readFileSync(join(grammarsDir, 'package.json'), 'utf8')) as { version: string }).version
 const hljsFile = require.resolve('@highlightjs/cdn-assets/highlight.min.js')
 
 const assets = new Proxy({}, { get: (_, key) => `asset:${String(key)}` }) as PreviewAssets
@@ -35,8 +34,24 @@ test('the preview loads the carve grammar right after highlight.js', () => {
   assert.equal(srcs.indexOf('asset:hljsCarveJs'), srcs.indexOf('asset:hljsJs') + 1)
 })
 
-test('the export loads the bundled grammar version from the CDN', () => {
+test('the export loads the pinned grammar and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], `https://cdn.jsdelivr.net/npm/@markup-carve/carve-grammars@${grammarsVersion}/highlightjs/carve.js`)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e19b94c5/highlightjs/carve.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@e19b94c5\/shiki\/table-tokens\.css/)
+  assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-table-boundary/)
+})
+
+test('the preview loads the table palette beside its highlight.js theme', () => {
+  const html = previewDocument('x', { nonce: 'n', cspSource: 'csp', assets })
+  assert.match(html, /href="asset:hljsTableCss"/)
+})
+
+test('a Carve table fence separates borders from header and span operators', () => {
+  const context = createContext({})
+  runInContext(readFileSync(hljsFile, 'utf8'), context)
+  runInContext(readFileSync(join(grammarsDir, 'highlightjs', 'carve.js'), 'utf8'), context)
+  const html = runInContext("hljs.highlight('|= Stage |= Owner |\\n| Row | < |', { language: 'carve' }).value", context) as string
+  assert.match(html, /hljs-table-operator[^>]*>\|=/)
+  assert.match(html, /hljs-table-boundary[^>]*>\|</)
 })
