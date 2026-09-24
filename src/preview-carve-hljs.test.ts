@@ -37,8 +37,8 @@ test('the preview loads the carve grammar right after highlight.js', () => {
 test('the export loads the pinned grammar and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@70bd71fe/highlightjs/carve.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@70bd71fe\/shiki\/table-tokens\.css/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@49ab9a00/highlightjs/carve.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@49ab9a00\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-table-boundary/)
 })
 
@@ -47,11 +47,12 @@ test('the preview loads the table palette beside its highlight.js theme', () => 
   assert.match(html, /href="asset:hljsTableCss"/)
 })
 
-test('a Carve table fence separates borders from header and span operators', () => {
+test('a Carve table fence separates borders from header, span, and alignment operators', () => {
   const context = createContext({})
   runInContext(readFileSync(hljsFile, 'utf8'), context)
   runInContext(readFileSync(join(grammarsDir, 'highlightjs', 'carve.js'), 'utf8'), context)
-  const html = runInContext("hljs.highlight('|= Stage |= Owner |\\n| Row | < |', { language: 'carve' }).value", context) as string
+  const html = runInContext("hljs.highlight('|= Stage |= Owner |\\n| Row | < |\\n|?^ Top | Bottom |', { language: 'carve' }).value", context) as string
   assert.match(html, /hljs-table-operator[^>]*>\|=/)
   assert.match(html, /hljs-table-boundary[^>]*>\|</)
+  assert.match(html, /hljs-table-operator[^>]*>\?\^</)
 })

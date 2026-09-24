@@ -1090,10 +1090,10 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@70bd71fe/highlightjs/carve.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@49ab9a00/highlightjs/carve.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@70bd71fe/shiki/table-tokens.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@49ab9a00/shiki/table-tokens.css',
 } as const
 
 export interface ExportOptions {

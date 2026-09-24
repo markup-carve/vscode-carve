@@ -668,8 +668,30 @@
       "comment": "The cells of a table ROW, shared by `#tables` and `#table-row-behind-a-container-prefix` so the two cannot drift apart - the same reason `#container-body` and `#block-quote-body` exist. The two rules differ only in their anchor: one opens at the line start, the other at the scan position on a container's own marker line.",
       "patterns": [
         {
+          "match": "(\\|=)((?:[<~>][\\^~v]|\\?[\\^~v]|[<~>]))(?= |\\{[^}]*\\} )",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.table.header.carve"
+            },
+            "2": {
+              "name": "keyword.operator.table.alignment.carve"
+            }
+          }
+        },
+        {
           "match": "\\|=",
           "name": "keyword.operator.table.header.carve"
+        },
+        {
+          "match": "(\\|)((?:[<~>][\\^~v]|\\?[\\^~v]|[~>]|<(?! *\\|)))(?= |\\{[^}]*\\} )",
+          "captures": {
+            "1": {
+              "name": "punctuation.separator.table.carve"
+            },
+            "2": {
+              "name": "keyword.operator.table.alignment.carve"
+            }
+          }
         },
         {
           "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
