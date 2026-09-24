@@ -176,6 +176,7 @@ const PREVIEW_ASSETS = {
   hljsCarveJs: 'hljs-carve.js',
   hljsLightCss: 'github.css',
   hljsDarkCss: 'github-dark.css',
+  hljsTableCss: 'table-tokens.css',
   carveTokensCss: 'carve-css/tokens.css',
   carveCoreCss: 'carve-css/core.css',
   carveExtensionsCss: 'carve-css/extensions.css',

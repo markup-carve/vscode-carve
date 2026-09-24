@@ -24,6 +24,7 @@ import { convertToCarve, IMPORT_EXTENSIONS, importFormatFor, importTargetPath } 
 import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
 import { serverInternalPath, serverModulePath } from './paths.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
+import { createTableMarkerScanner } from './table-colors.js'
 import {
   exportHtmlDocument,
   renderMarkdown,
@@ -49,6 +50,58 @@ let includeWatchers: vscode.FileSystemWatcher[] = []
 const includeCache = new IncludeCache()
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  const boundaryDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#4f7f8d' },
+    dark: { color: '#79a8b5' },
+  })
+  const operatorDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#cf222e', fontWeight: 'bold' },
+    dark: { color: '#ff7b72', fontWeight: 'bold' },
+  })
+  context.subscriptions.push(boundaryDecoration, operatorDecoration)
+  void createTableMarkerScanner(context.extensionPath).then((scanTableMarkers) => {
+    const updateTableMarkers = (editor: vscode.TextEditor): void => {
+      if (editor.document.languageId !== 'carve') {
+        editor.setDecorations(boundaryDecoration, [])
+        editor.setDecorations(operatorDecoration, [])
+        return
+      }
+      const markers = scanTableMarkers(editor.document.getText(), editor.document.uri.toString())
+      const ranges = (kind: 'boundary' | 'operator') => markers
+        .filter((marker) => marker.kind === kind)
+        .map((marker) => new vscode.Range(marker.line, marker.start, marker.line, marker.end))
+      editor.setDecorations(boundaryDecoration, ranges('boundary'))
+      editor.setDecorations(operatorDecoration, ranges('operator'))
+    }
+    const tableTimers = new Map<vscode.TextEditor, ReturnType<typeof setTimeout>>()
+    const scheduleTableMarkers = (editor: vscode.TextEditor): void => {
+      const previous = tableTimers.get(editor)
+      if (previous) clearTimeout(previous)
+      tableTimers.set(editor, setTimeout(() => {
+        tableTimers.delete(editor)
+        updateTableMarkers(editor)
+      }, 120))
+    }
+    for (const editor of vscode.window.visibleTextEditors) updateTableMarkers(editor)
+    context.subscriptions.push(
+      vscode.window.onDidChangeVisibleTextEditors((editors) => {
+        for (const editor of editors) updateTableMarkers(editor)
+      }),
+      vscode.workspace.onDidOpenTextDocument((document) => {
+        for (const editor of vscode.window.visibleTextEditors) {
+          if (editor.document === document) updateTableMarkers(editor)
+        }
+      }),
+      vscode.workspace.onDidChangeTextDocument((event) => {
+        for (const editor of vscode.window.visibleTextEditors) {
+          if (editor.document === event.document) scheduleTableMarkers(editor)
+        }
+      }),
+      { dispose: () => { for (const timer of tableTimers.values()) clearTimeout(timer) } },
+    )
+  }).catch((error) => {
+    console.error('Carve table highlighting could not start', error)
+  })
   includeDiagnostics = vscode.languages.createDiagnosticCollection('carve-includes')
   context.subscriptions.push(
     includeDiagnostics,
@@ -744,6 +797,7 @@ function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview
     hljsCarveJs: asset('media', 'hljs', 'carve.js'),
     hljsLightCss: asset('media', 'hljs', 'github.min.css'),
     hljsDarkCss: asset('media', 'hljs', 'github-dark.min.css'),
+    hljsTableCss: asset('media', 'hljs', 'table-tokens.css'),
     carveTokensCss: asset('media', 'carve-css', 'tokens.css'),
     carveCoreCss: asset('media', 'carve-css', 'core.css'),
     carveExtensionsCss: asset('media', 'carve-css', 'extensions.css'),

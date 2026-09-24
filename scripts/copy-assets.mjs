@@ -22,6 +22,7 @@ const files = [
   [join(nm, '@highlightjs', 'cdn-assets', 'styles', 'github-dark.min.css'), join(media, 'hljs', 'github-dark.min.css')],
   // Self-registers against the global hljs, so it must load after highlight.min.js.
   [join(nm, '@markup-carve', 'carve-grammars', 'highlightjs', 'carve.js'), join(media, 'hljs', 'carve.js')],
+  [join(nm, '@markup-carve', 'carve-grammars', 'shiki', 'table-tokens.css'), join(media, 'hljs', 'table-tokens.css')],
   // @markup-carve/carve-css - the shared token layer and the rules built on it.
   // Linked as four separate files rather than through carve.css, because that
   // entry point pulls its layers in with relative `@import`s and the preview

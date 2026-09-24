@@ -237,6 +237,8 @@ export interface PreviewAssets {
   hljsLightCss: string
   /** Webview URI for the highlight.js dark theme stylesheet. */
   hljsDarkCss: string
+  /** Boundary and operator colors for Carve table code. */
+  hljsTableCss: string
   /** Webview URI for the carve-css token layer. */
   carveTokensCss: string
   /** Webview URI for the carve-css core stylesheet. */
@@ -281,6 +283,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
   <link rel="stylesheet" href="${assets.katexCss}">
   <link id="hljs-light" rel="stylesheet" href="${assets.hljsLightCss}" disabled>
   <link id="hljs-dark" rel="stylesheet" href="${assets.hljsDarkCss}" disabled>
+  <link rel="stylesheet" href="${assets.hljsTableCss}">
   <link rel="stylesheet" href="${assets.carveTokensCss}">
   <link rel="stylesheet" href="${assets.carveCoreCss}">
   <link rel="stylesheet" href="${assets.carveExtensionsCss}">
@@ -387,6 +390,8 @@ export function previewDocument(source: string, options: PreviewOptions): string
     body.vscode-high-contrast-light {
       --carve-border: var(--vscode-contrastBorder, var(--vscode-panel-border));
       --carve-rule: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --carve-table-boundary: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --carve-table-operator: var(--vscode-editorError-foreground);
       --carve-border-width: 1px;
       --carve-accent-width: 4px;
     }
@@ -1085,9 +1090,10 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/npm/@markup-carve/carve-grammars@0.1.9/highlightjs/carve.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@70bd71fe/highlightjs/carve.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@70bd71fe/shiki/table-tokens.css',
 } as const
 
 export interface ExportOptions {
@@ -1113,8 +1119,15 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
   <link rel="stylesheet" href="${CDN.katexCss}">
   <link rel="stylesheet" href="${CDN.hljsLightCss}" media="(prefers-color-scheme: light)">
   <link rel="stylesheet" href="${CDN.hljsDarkCss}" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="${CDN.hljsTableCss}">
   <style>
     :root { color-scheme: light dark; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --carve-table-boundary: #79a8b5;
+        --carve-table-operator: #ff7b72;
+      }
+    }
     html { font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
     body { margin: 0; padding: 24px; line-height: 1.55; }
     main { max-width: 760px; margin: 0 auto; }
