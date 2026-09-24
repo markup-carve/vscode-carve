@@ -37,8 +37,8 @@ test('the preview loads the carve grammar right after highlight.js', () => {
 test('the export loads the pinned grammar and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e19b94c5/highlightjs/carve.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@e19b94c5\/shiki\/table-tokens\.css/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@70bd71fe/highlightjs/carve.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@70bd71fe\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-table-boundary/)
 })
 
