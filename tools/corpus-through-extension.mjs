@@ -515,8 +515,92 @@ const rows = []
 // string that changes when the engine moves, which is all this key has to be.
 const ENGINE_PIN = '0.1.7'
 const ENGINE_LAG = {
+  '101-table-header-cell-rowspan.crv':
+    'the expected reading was written by markup-carve/carve#2224 (spec 4ddc1ae5, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '116-fence-opener-with-a-nested-list-body-inside-a-list-item-6.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '271-the-flush-left-line-after-a-container-a-quoted-line-opened-4.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-7.crv':
+    'the expected reading was written by markup-carve/carve#2141 (spec 56268f93, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
   '475-footnote-references-take-an-attribute-run-editorial-substitution-and-comment-take-none-3.crv':
     'carve-js 4b6683f keeps an attribute block after a substitution or a comment as text; 0.1.7 drops it',
+  '476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv':
+    'the expected reading was written by markup-carve/carve#2141 (spec 56268f93, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '476-an-item-s-fence-is-read-once-whatever-block-it-follows.crv':
+    'the expected reading was written by markup-carve/carve#2141 (spec 56268f93, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-3.crv':
+    'the expected reading was written by markup-carve/carve#2148 (spec 8c060ffc, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-5.crv':
+    'the expected reading was written by markup-carve/carve#2148 (spec 8c060ffc, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '479-a-closer-below-the-container-s-column-does-not-count-4.crv':
+    'the expected reading was written by markup-carve/carve#2149 (spec 89a0e03a, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '480-a-bare-colon-opener-in-a-description-body-is-an-opener-2.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '480-a-bare-colon-opener-in-a-description-body-is-an-opener-3.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '480-a-bare-colon-opener-in-a-description-body-is-an-opener-4.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '480-a-bare-colon-opener-in-a-description-body-is-an-opener-5.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '480-a-bare-colon-opener-in-a-description-body-is-an-opener-7.crv':
+    'the expected reading was written by markup-carve/carve#2152 (spec 33286aa8, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '480-a-bare-colon-opener-in-a-description-body-is-an-opener.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-2.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-3.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-4.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-5.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-6.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-10.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-5.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '483-an-empty-term-marker-in-a-description-body-is-text-2.crv':
+    'the expected reading was written by markup-carve/carve#2155 (spec ea262212, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '483-an-empty-term-marker-in-a-description-body-is-text-3.crv':
+    'the expected reading was written by markup-carve/carve#2155 (spec ea262212, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '483-an-empty-term-marker-in-a-description-body-is-text-4.crv':
+    'the expected reading was written by markup-carve/carve#2155 (spec ea262212, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '483-an-empty-term-marker-in-a-description-body-is-text-5.crv':
+    'the expected reading was written by markup-carve/carve#2155 (spec ea262212, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '483-an-empty-term-marker-in-a-description-body-is-text.crv':
+    'the expected reading was written by markup-carve/carve#2155 (spec ea262212, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '486-any-character-is-content-of-the-combined-bold-italic-token-6.crv':
+    'the expected reading was written by markup-carve/carve#2162 (spec f286a687, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-8.crv':
+    'the expected reading was written by markup-carve/carve#2169 (spec 229cafce, 2026-09-22); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '493-empty-containers-share-one-html-body-shape-2.crv':
+    'the expected reading was written by markup-carve/carve#2184 (spec f275a7c8, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '494-an-explicit-table-head-span-keeps-one-row-group.crv':
+    'the expected reading was written by markup-carve/carve#2224 (spec 4ddc1ae5, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '495-a-table-foot-span-keeps-one-row-group.crv':
+    'the expected reading was written by markup-carve/carve#2224 (spec 4ddc1ae5, 2026-09-24); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '496-a-title-or-label-fills-the-container-body-slot-2.crv':
+    'the expected reading was written by markup-carve/carve#2275 (spec 51a644d5, 2026-09-25); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '496-a-title-or-label-fills-the-container-body-slot-3.crv':
+    'the expected reading was written by markup-carve/carve#2275 (spec 51a644d5, 2026-09-25); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '496-a-title-or-label-fills-the-container-body-slot-4.crv':
+    'the expected reading was written by markup-carve/carve#2275 (spec 51a644d5, 2026-09-25); the bundled 0.1.7 was published 2026-09-19 and predates it',
+  '496-a-title-or-label-fills-the-container-body-slot.crv':
+    'the expected reading was written by markup-carve/carve#2275 (spec 51a644d5, 2026-09-25); the bundled 0.1.7 was published 2026-09-19 and predates it',
 }
 const lagWaived = []
 const lagStale = []
