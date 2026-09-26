@@ -9,10 +9,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - **Carve: Import from Markdown or HTML** converts a `.md` or `.html` file to a sibling `.crv`, from the command palette or the explorer context menu.
+- **Fenced code bodies highlight in the fence's language** (#277, #278). About 38 languages are covered in the editor, each mapped in `embeddedLanguages` so comment toggling and brackets follow the embedded language, and a `carve` or `crv` fence embeds the Carve grammar itself.
+- **Fences tagged `carve` highlight in the preview and the HTML export** (#276). carve-grammars publishes a highlight.js grammar for Carve; the preview bundles it and the export loads the same file from jsDelivr.
+- **Table markers are colored** in the editor, the preview and the HTML export, including inside Carve code fences (#279, #280). A pipe inside a code span or a non-Carve fence is left alone, and `|< |` stays a colspan while `|=>` is colored whole.
 
 ### Changed
 
 - **The language server's export source actions are turned off** (markup-carve/carve-lsp#262). The extension already has its own export commands, so export is no longer listed twice once carve-lsp ships the actions.
+
+### Fixed
+
+- **The preview renders again.** In 0.1.7 the preview's inline script did not parse, so no code highlighting, no `{.diff}` presentation, no math, no Mermaid and no charts reached the webview. The diff presentation put `/^[+\- ]/` and `\n` escapes inside the template literal that builds the webview HTML, which produced an out-of-order character class and three literals broken across lines - one SyntaxError stops the whole script. A test now parses every inline script in the preview and export HTML (#275).
 
 ## [0.1.7] - 2026-09-21
 
