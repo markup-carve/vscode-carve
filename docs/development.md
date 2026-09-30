@@ -141,3 +141,26 @@ code --install-extension "$(ls -t vscode-carve-*.vsix | head -1)"
 `npm run package` names the file after the version in `package.json`, so the
 command above installs whatever it just wrote rather than a version spelled out
 here, which goes stale at every release.
+
+## Release notes
+
+`scripts/release-notes.mjs <version>` prints the release body for a version,
+derived from that version's `CHANGELOG.md` section:
+
+```bash
+node scripts/release-notes.mjs 0.1.8
+```
+
+`Fixed` becomes Fixes, `Added` and `Changed` become Improvements, `Breaking` and
+`Removed` become Breaking, and Breaking is printed first. Bullets keep their
+wording, unwrapped to one line and with the bold lead-in flattened. The footer
+compares against whichever version's section follows in the file.
+
+Derive rather than write the two by hand. The release workflow refuses to
+publish without a draft, so the draft tends to get written first and the
+CHANGELOG reconciled afterwards, which is how the two drift. Re-running this
+reproduces the body byte for byte, so a diff against the published draft is
+evidence that one of them moved.
+
+It refuses to print an empty body, a version with no section, and a CHANGELOG
+section it has no heading for, rather than silently dropping entries.
