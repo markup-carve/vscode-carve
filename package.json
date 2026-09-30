@@ -344,8 +344,8 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "0.1.7",
-    "@markup-carve/carve-lsp": "0.1.7",
+    "@markup-carve/carve": "0.1.9",
+    "@markup-carve/carve-lsp": "0.1.9",
     "vscode-languageclient": "^9.0.1",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
@@ -364,6 +364,6 @@
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "overrides": {
-    "@markup-carve/carve": "0.1.7"
+    "@markup-carve/carve": "0.1.9"
   }
 }
