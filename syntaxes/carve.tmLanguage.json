@@ -853,6 +853,16 @@
               "name": "string.unquoted.caption.carve",
               "patterns": [
                 {
+                  "comment": "THE CODE AND LITERAL INLINE RULES RUN BEFORE #trailing-comment, because a `%%` between backticks is code content in a caption as it is anywhere else: carve-js at pin 9f81a0a7 and carve-php 685e94fa3 both render an image over `^ cap ` + a backticked `x %% b` + ` c` as `<figcaption>cap <code>x %% b</code> c</figcaption>` (markup-carve/carve#2682). With only #trailing-comment reachable here, no code-span rule ran inside a caption at all, so the run's `%%` opened a line comment and swallowed the closing backtick and the text after it. The trailing-comment rule stays last, so a real trailing comment after a code span is still a comment, which is what the engines do too.",
+                  "include": "#raw-inline"
+                },
+                {
+                  "include": "#inline-literal"
+                },
+                {
+                  "include": "#inline-code"
+                },
+                {
                   "include": "#trailing-comment"
                 }
               ]
@@ -874,6 +884,16 @@
             "3": {
               "name": "string.unquoted.caption.carve",
               "patterns": [
+                {
+                  "comment": "THE CODE AND LITERAL INLINE RULES RUN BEFORE #trailing-comment, because a `%%` between backticks is code content in a caption as it is anywhere else: carve-js at pin 9f81a0a7 and carve-php 685e94fa3 both render an image over `^ cap ` + a backticked `x %% b` + ` c` as `<figcaption>cap <code>x %% b</code> c</figcaption>` (markup-carve/carve#2682). With only #trailing-comment reachable here, no code-span rule ran inside a caption at all, so the run's `%%` opened a line comment and swallowed the closing backtick and the text after it. The trailing-comment rule stays last, so a real trailing comment after a code span is still a comment, which is what the engines do too.",
+                  "include": "#raw-inline"
+                },
+                {
+                  "include": "#inline-literal"
+                },
+                {
+                  "include": "#inline-code"
+                },
                 {
                   "include": "#trailing-comment"
                 }
