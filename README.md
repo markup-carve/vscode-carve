@@ -1,6 +1,6 @@
 # vscode-carve
 
-VS Code support for [Carve](https://github.com/markup-carve/carve), a post-Markdown lightweight markup language.
+VS Code support for [Carve](https://github.com/markup-carve/carve), a lightweight markup language for documents.
 
 ## Features
 
