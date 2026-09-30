@@ -23,6 +23,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **The preview renders again.** In 0.1.7 its inline script did not parse, so no code highlighting, no `{.diff}` presentation, no math, no Mermaid and no charts reached the webview. A test now parses every inline script in the preview and export HTML (#275).
 - **An empty code fence renders no characters** instead of a single newline, and a list marker retained below its content column stays text instead of opening a nested list. The bundled engine and language server are 0.1.9 (#293).
+- **A gallery collapses instead of overflowing a narrow preview.** Its tiles now take the smaller of the configured minimum and the full width, so a gallery whose minimum is wider than the pane no longer forces a horizontal scrollbar. A scroll-wrapped table takes a minimum width, and print footnote size, link destinations and index columns become adjustable. The bundled stylesheet is carve-css 0.1.1 (#295).
 
 ## [0.1.7] - 2026-09-21
 
