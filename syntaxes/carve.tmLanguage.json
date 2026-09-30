@@ -335,6 +335,16 @@
               "name": "entity.name.section.carve",
               "patterns": [
                 {
+                  "comment": "THE CODE AND LITERAL INLINE RULES RUN BEFORE #trailing-comment, because a `%%` between backticks is code content under a hash mark as it is anywhere else: carve-js 0.1.4 and carve-php 685e94fa3 both render a heading holding a backtick-delimited `x %% b` with that payload intact (markup-carve/carve#2682). With only #trailing-comment reachable here, no code-span rule ran inside a heading at all, so the run's `%%` opened a line comment and swallowed the closing backtick and the text after it. The trailing-comment rule stays last, so a real trailing comment after a code span is still a comment.",
+                  "include": "#raw-inline"
+                },
+                {
+                  "include": "#inline-literal"
+                },
+                {
+                  "include": "#inline-code"
+                },
+                {
                   "include": "#trailing-comment"
                 }
               ]
@@ -356,6 +366,16 @@
             "3": {
               "name": "entity.name.section.carve",
               "patterns": [
+                {
+                  "comment": "THE CODE AND LITERAL INLINE RULES RUN BEFORE #trailing-comment, because a `%%` between backticks is code content under a hash mark as it is anywhere else: carve-js 0.1.4 and carve-php 685e94fa3 both render a heading holding a backtick-delimited `x %% b` with that payload intact (markup-carve/carve#2682). With only #trailing-comment reachable here, no code-span rule ran inside a heading at all, so the run's `%%` opened a line comment and swallowed the closing backtick and the text after it. The trailing-comment rule stays last, so a real trailing comment after a code span is still a comment.",
+                  "include": "#raw-inline"
+                },
+                {
+                  "include": "#inline-literal"
+                },
+                {
+                  "include": "#inline-code"
+                },
                 {
                   "include": "#trailing-comment"
                 }
