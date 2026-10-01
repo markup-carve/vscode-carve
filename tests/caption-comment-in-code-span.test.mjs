@@ -323,3 +323,24 @@ for (const source of [
     assert.ok(covered(source, 'markup.table.caption').includes('^ cap'))
   })
 }
+
+for (const source of [
+  '- intro\n\n  ![a](i.png)\n\n^ cap',
+  '- ![a\n  %% c\n  b](/i)\n  ^ cap',
+  '- ![a\n  - x](/i)\n  ^ cap',
+]) {
+  test('an image slot respects its container after a gap or interruption: ' + JSON.stringify(source), () => {
+    assert.ok(!covered(source, 'markup.table.caption').includes('^ cap'))
+  })
+}
+test('an indented document line can continue an image paragraph', () => {
+  assert.ok(covered('![a\n  ---\nb](/i)\n^ cap', 'markup.table.caption').includes('^ cap'))
+})
+test('unfinished images preserve inline code and emphasis', () => {
+  const source = '![Figure shows *x*\nand `code` here\n\nnext'
+  assert.ok(covered(source, 'markup.bold').includes('x'))
+  assert.ok(covered(source, 'markup.raw.inline.content').includes('code'))
+})
+test('a quote immediately after an image gap keeps its marker scope', () => {
+  assert.equal(covered('![a](i.png)\n\n>\n> text', 'punctuation.definition.quote'), '\n\n>\n>')
+})

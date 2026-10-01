@@ -28,7 +28,7 @@ function frame(begin, children, prefix = '', quoted = false) {
   }
   const gap = {
     begin: quoted ? String.raw`^((?:> )*>)[ ]?[ \t]*\n` : String.raw`^[ \t]*\n`,
-    end: '^' + (quoted ? String.raw`\1 ` : prefix) + marker + '|' + blank + '|(?=^)',
+    end: (quoted ? '^' + String.raw`\1 ` + marker + '|' + blank : String.raw`^[ \t]*\n`) + '|(?=^)',
     endCaptures: captures,
   }
   if (quoted) gap.beginCaptures = { '1': { patterns: include('caption-quote-prefix') } }
@@ -62,8 +62,21 @@ const hosts = [
   ['math', math, include('caption-math-on-host-line', 'caption-prose-continuation')],
   ['colon', String.raw`:{3,} +(?:figure|>)[ \t]*$`, include('caption-colon-host')],
 ]
+const closingImage = '(?:' + repository.images.patterns.map(rule => {
+  const marker = rule.match.includes(String.raw`(\]\()`) ? String.raw`(\]\()` : String.raw`(\])`
+  const start = rule.match.indexOf(marker)
+  if (start < 0) throw new Error('Image closing syntax changed')
+  return rule.match.slice(start)
+}).join('|') + ')' + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
+const imageClose = String.raw`[^\]\n]*` + closingImage
 function containerChildren(children) {
-  return children.map(rule => rule.include === '#caption-prose-continuation' ? { include: '#caption-prose-continuation-in-container' } : rule.include === '#caption-colon-host' ? { include: '#caption-colon-host-in-container' } : rule)
+  return children.map(rule => rule.include === '#caption-multiline-image' ? {
+    begin: String.raw`\G` + partialImage,
+    end: String.raw`^(?=[ \t]+` + containerInterrupt + String.raw`)|^(?=\S)|^[ \t]*` + imageClose + '|' + blank,
+    beginCaptures: { '0': { patterns: include('caption-paragraph-inline') } },
+    endCaptures: { '0': { patterns: include('caption-paragraph-inline') } },
+    patterns: include('caption-paragraph-inline'),
+  } : rule.include === '#caption-prose-continuation' ? { include: '#caption-prose-continuation-in-container' } : rule.include === '#caption-colon-host' ? { include: '#caption-colon-host-in-container' } : rule)
 }
 const patterns = [
   {
@@ -149,23 +162,20 @@ updated = replaceEntry(updated, 'caption-prose-continuation-quoted', {
     ...include('caption-quote-paragraph-inline'),
   ],
 })
-const closingImage = '(?:' + repository.images.patterns.map(rule => {
-  const marker = rule.match.includes(String.raw`(\]\()`) ? String.raw`(\]\()` : String.raw`(\])`
-  const start = rule.match.indexOf(marker)
-  if (start < 0) throw new Error('Image closing syntax changed')
-  return rule.match.slice(start)
-}).join('|') + ')' + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
-const imageClose = String.raw`[^\]\n]*` + closingImage
-const otherBlock = '(?=' + interrupt + ')'
+const otherBlock = '(?=' + interrupt + ')|' + String.raw`[ \t]*(?=%%)`
 updated = replaceEntry(updated, 'caption-multiline-image', {
   begin: String.raw`\G` + partialImage,
-  end: '^' + imageClose + '|' + blank + '|^' + otherBlock,
+  end: '^' + imageClose + '|' + blank + '|^(?:' + otherBlock + ')',
+  beginCaptures: { '0': { patterns: include('caption-paragraph-inline') } },
+  endCaptures: { '0': { patterns: include('caption-paragraph-inline') } },
+  patterns: include('caption-paragraph-inline'),
 })
 updated = replaceEntry(updated, 'caption-multiline-image-quoted', {
   begin: String.raw`(?<=^((?:> )+))\G` + partialImage,
-  end: String.raw`^\1` + imageClose + '|' + blank + String.raw`|^(?!\1)|^\1` + otherBlock,
-  endCaptures: { '0': { patterns: include('caption-quote-prefix') } },
-  patterns: [{ match: '^(?:> )+', captures: { '0': { patterns: include('caption-quote-prefix') } } }],
+  end: String.raw`^\1` + imageClose + '|' + blank + String.raw`|^(?!\1)|^\1(?:` + otherBlock + ')',
+  beginCaptures: { '0': { patterns: include('caption-paragraph-inline') } },
+  endCaptures: { '0': { patterns: include('caption-quote-prefix', 'caption-quote-paragraph-inline') } },
+  patterns: [{ match: '^(?:> )+', captures: { '0': { patterns: include('caption-quote-prefix') } } }, ...include('caption-quote-paragraph-inline')],
 })
 const containerHosts = [
   frame(String.raw`\G(?<=[ \t])(?=> |>$)`, include('block-quote-on-marker-line', 'block-quotes'), String.raw`[ \t]+`),
