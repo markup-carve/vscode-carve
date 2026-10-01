@@ -38,16 +38,19 @@ const attributeMatch = repository.attributes.patterns[1]?.match
 const payloadStart = attributeMatch?.indexOf(String.raw`\{\s*(?:`) ?? -1
 if (payloadStart < 0) throw new Error('Strict attribute payload changed')
 const attribute = attributeMatch.slice(payloadStart)
+const interrupt = String.raw`(?:(?:-{3,}|\*{3,}|_{3,})[ \t]*$|#{1,6} +(?![ \t]*$)|%{3,}(?: |$)|` + '`{3,}' + String.raw`|~{3,}|:{3,}(?: |$)|>(?: |$)|\|[^\n]*\|[ \t]*$|\+[ \t]*$|\*\[[^\]\n]+\]: |\[[^\]\n]+\]: )`
+const containerInterrupt = '(?:' + interrupt + String.raw`|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.) +|:: +|: +)`
 const image = '(?:' + repository.images.patterns.map(rule => rule.match).join('|') + ')' + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
 const fence = repository['code-blocks'].patterns.find(rule => rule.begin)?.begin.slice(1)
 if (!fence || !fence.includes(String.raw`\2`)) throw new Error('Generic fence capture layout changed')
 const partialImage = String.raw`!\[[^\]\n]*$`
+const math = repository.math.patterns[0].match + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
 const hosts = [
-  ['multiline-image', partialImage, include('caption-multiline-image')],
-  ['image', image, include('images', 'attributes', 'trailing-comment')],
+  ['multiline-image', partialImage, include('caption-multiline-image', 'caption-prose-continuation')],
+  ['image', image, include('caption-image-on-host-line', 'caption-prose-continuation')],
   ['table', String.raw`\|[^\n]*\|[ \t]*$`, include('table-row-behind-a-container-prefix', 'tables')],
   ['fence', fence, include('code-blocks', 'code-block-behind-a-container-prefix', 'code-fence-on-quote-marker-line')],
-  ['math', String.raw`\$\$` + '`+' + String.raw`[^\n]*$`, include('math')],
+  ['math', math, include('caption-math-on-host-line', 'caption-prose-continuation')],
   ['colon', String.raw`:{3,} +(?:figure|>)[ \t]*$`, include('caption-colon-host')],
 ]
 const patterns = [
@@ -60,16 +63,17 @@ const patterns = [
   frame('^(?=> |>$)', include('block-quotes'), String.raw`[ \t]*`),
 ]
 for (const [kind, host, children] of hosts) {
-  const quotedHost = kind === 'fence' ? host.replaceAll(String.raw`\2`, String.raw`\3`) : host
+  const quotedHost = (kind === 'fence' || kind === 'math') ? host.replaceAll(String.raw`\2`, String.raw`\3`) : host
   const quotedChildren = kind === 'fence'
     ? include('code-fence-on-quote-marker-line', 'code-blocks', 'code-block-behind-a-container-prefix')
     : kind === 'colon' ? include('caption-colon-host-quoted')
-      : kind === 'multiline-image' ? include('caption-multiline-image-quoted') : children
+      : kind === 'multiline-image' ? include('caption-multiline-image-quoted', 'caption-prose-continuation-quoted')
+        : ['image', 'math'].includes(kind) ? children.map(rule => rule.include === '#caption-prose-continuation' ? { include: '#caption-prose-continuation-quoted' } : rule) : children
   patterns.push(frame(String.raw`(?<=^((?:> )+))\G(?=` + quotedHost + ')', quotedChildren, String.raw`\1`, true))
 }
 for (const [, host, children] of hosts) {
   patterns.push(frame('^(?=' + host + ')', children, String.raw`[ \t]*`))
-  patterns.push(frame(String.raw`\G(?<=[ \t])(?=` + host + ')', children, String.raw`[ \t]+`))
+  patterns.push(frame(String.raw`\G(?<=[ \t])(?=` + host + ')', children.map(rule => rule.include === '#caption-prose-continuation' ? { include: '#caption-prose-continuation-in-container' } : rule), String.raw`[ \t]+`))
 }
 const generated = {
   patterns,
@@ -101,6 +105,38 @@ function replaceEntry(text, key, value) {
   }
   return text.slice(0, start) + JSON.stringify(value, null, 2).replaceAll('\n', '\n    ') + text.slice(end)
 }
+for (const [key, host, rules] of [
+  ['caption-image-on-host-line', image, ['images', 'attributes']],
+  ['caption-math-on-host-line', math, ['math', 'attributes']],
+]) {
+  updated = replaceEntry(updated, key, {
+    match: String.raw`\G` + host,
+    captures: { '0': { patterns: include(...rules) } },
+  })
+}
+// A prose host remains eligible only if its next non-blank line is a caption.
+// Continuation text invalidates it, and consumes its final blank before the
+// pending host can reuse that blank as a caption gap.
+const captionStart = String.raw`\^ +(?![ \t]*$)[^ ].*$`
+updated = replaceEntry(updated, 'caption-prose-continuation', {
+  begin: String.raw`^(?![ \t]*(?:` + captionStart + String.raw`|$)|[ \t]*` + interrupt + String.raw`)(?=[ \t]*\S)[ \t]*`,
+  end: String.raw`^[ \t]*\n|^(?=[ \t]*` + interrupt + ')',
+  patterns: include('caption-paragraph-inline'),
+})
+updated = replaceEntry(updated, 'caption-prose-continuation-in-container', {
+  begin: String.raw`^([ \t]+)(?!` + captionStart + '|$|' + containerInterrupt + String.raw`)(?=\S)`,
+  end: String.raw`^[ \t]*\n|^(?=\S)|^(?=[ \t]+` + containerInterrupt + ')',
+  patterns: include('caption-paragraph-inline'),
+})
+updated = replaceEntry(updated, 'caption-prose-continuation-quoted', {
+  begin: String.raw`^((?:> )+)(?!` + captionStart + String.raw`|[ \t]*$|` + interrupt + String.raw`)(?=[ \t]*\S)`,
+  end: blank + String.raw`|^(?!\1)|^\1(?=` + interrupt + ')',
+  beginCaptures: { '1': { patterns: include('caption-quote-prefix') } },
+  patterns: [
+    { match: '^(?:> )+', captures: { '0': { patterns: include('caption-quote-prefix') } } },
+    ...include('caption-quote-paragraph-inline'),
+  ],
+})
 const closingImage = '(?:' + repository.images.patterns.map(rule => {
   const marker = rule.match.includes(String.raw`(\]\()`) ? String.raw`(\]\()` : String.raw`(\])`
   const start = rule.match.indexOf(marker)
@@ -110,7 +146,7 @@ const closingImage = '(?:' + repository.images.patterns.map(rule => {
 const imageClose = String.raw`[^\]\n]*` + closingImage
 const otherBlock = String.raw`(?=#{1,6} |` + '`{3,}' + String.raw`|~{3,}|:{3,}(?: |$)|>(?: |$)|(?:[-*]|[0-9]+[.)]) +|\|)`
 updated = replaceEntry(updated, 'caption-multiline-image', {
-  begin: String.raw`(?:^|\G(?<=[ \t]))` + partialImage,
+  begin: String.raw`\G` + partialImage,
   end: '^' + imageClose + '|' + blank + '|^' + otherBlock,
 })
 updated = replaceEntry(updated, 'caption-multiline-image-quoted', {
@@ -123,15 +159,15 @@ updated = replaceEntry(updated, 'captionable-blocks-in-container', {
   patterns: [
     ...include('captionable-blocks'),
     ...hosts.map(([kind, host, children]) => frame(
-      String.raw`^([ \t]+)(?=` + (kind === 'fence' ? host.replaceAll(String.raw`\2`, String.raw`\3`) : host) + ')',
-      children,
+      String.raw`^([ \t]+)(?=` + ((kind === 'fence' || kind === 'math') ? host.replaceAll(String.raw`\2`, String.raw`\3`) : host) + ')',
+      children.map(rule => rule.include === '#caption-prose-continuation' ? { include: '#caption-prose-continuation-in-container' } : rule),
       String.raw`\1`,
     )),
   ],
 })
 const attributeGuard = String.raw`(?![ \t]*` + attribute + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$)`
 const content = attributeGuard + String.raw`(?=[ \t]*\S)`
-const interrupt = String.raw`(?:(?:-{3,}|\*{3,}|_{3,})[ \t]*$|#{1,6} +(?![ \t]*$)|%{3,}(?: |$)|` + '`{3,}' + String.raw`|~{3,}|:{3,}(?: |$)|>(?: |$)|\||(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.) +|:: +|\+[ \t]*$|: +|\*\[[^\]\n]+\]: |\[[^\]\n]+\]: )`
+
 updated = replaceEntry(updated, 'caption-paragraph', {
   patterns: [
     {
@@ -150,6 +186,21 @@ updated = replaceEntry(updated, 'caption-paragraph', {
     {
       begin: String.raw`\G(?<=[ \t])` + content,
       end: String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+(?:[ \t]*$|` + interrupt + '))',
+      patterns: include('caption-paragraph-inline'),
+    },
+  ],
+})
+updated = replaceEntry(updated, 'caption-paragraph-in-container', {
+  comment: 'Nested item markers start a new block inside an item; document-level list markers fold into an open paragraph.',
+  patterns: [
+    {
+      begin: String.raw`^([ \t]+)` + content,
+      end: String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+` + containerInterrupt + ')',
+      patterns: include('caption-paragraph-inline'),
+    },
+    {
+      begin: String.raw`\G(?<=[ \t])` + content,
+      end: String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+` + containerInterrupt + ')',
       patterns: include('caption-paragraph-inline'),
     },
   ],

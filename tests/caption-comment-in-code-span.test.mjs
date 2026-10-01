@@ -184,12 +184,11 @@ test('invalid attributes stay inside prose before an image', () => {
   assert.ok(!covered('{2=v}\n![a](i.png)\n^ cap', 'markup.table.caption').includes('^ cap'))
 })
 
-for (const marker of ['a.', 'iv.', '.']) {
-  test(`an ordered list interrupts tracked prose: ${marker}`, () => {
-    assert.ok(covered('prose\n' + marker + ' item', 'markup.list.numbered').includes(marker))
+for (const marker of ['-', 'a.', 'iv.', '.']) {
+  test(`a list marker folded into prose cannot introduce a caption host: ${marker}`, () => {
+    assert.ok(!covered('prose\n' + marker + ' ![a](i.png)\n  ^ cap', 'markup.table.caption').includes('^ cap'))
   })
 }
-
 test('indented prose keeps its inline footnote scope', () => {
   assert.ok(covered('- - a\n [^f]: x', 'constant.other.reference.footnote').includes('[^f]'))
 })
@@ -236,3 +235,18 @@ test('invalid trailing image attributes keep the caret in prose', () => {
 test('multiple valid image attributes preserve caption pairing', () => {
   assert.ok(covered('![a](i.png){.one}{#fig}\n^ cap', 'markup.table.caption').includes('^ cap'))
 })
+
+for (const source of [
+  '![a](i.png)\n![b](j.png)\n^ cap',
+  '![a](i.png)\n![b](j.png) more\n^ cap',
+  '![a](i.png)\n![b](j.png)\n\n^ cap',
+  '$$`x` and more\n^ cap',
+  '$$`x`\n$$`y`\n^ cap',
+]) {
+  for (const prefix of ['', '> ']) {
+    test(`a prose host continuation does not take a caption: ${JSON.stringify(prefix + source)}`, () => {
+      const quoted = source.split('\n').map(line => prefix + line).join('\n')
+      assert.ok(!covered(quoted, 'markup.table.caption').includes('^ cap'))
+    })
+  }
+}
