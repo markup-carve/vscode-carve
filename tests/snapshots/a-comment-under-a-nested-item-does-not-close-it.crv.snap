@@ -6,5 +6,6 @@
 > %% c
 #^^^^^ text.carve comment.line.percent.carve
 > b
-#^^^ text.carve
+#^ text.carve
+# ^^ text.carve
 >

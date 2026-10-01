@@ -1,6 +1,7 @@
 >[^a]: intro
 #^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#     ^^^^^^ text.carve meta.footnote.definition.carve
+#     ^ text.carve meta.footnote.definition.carve
+#      ^^^^^^ text.carve
 >+
 #^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
 > more

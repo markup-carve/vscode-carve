@@ -49,8 +49,8 @@
 >
 >[^n]: a footnote definition whose first word is prose, not a destination
 #^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#     ^^ text.carve meta.footnote.definition.carve
-#       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#     ^ text.carve meta.footnote.definition.carve
+#      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >
 >[r]: /i.png
 #^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve

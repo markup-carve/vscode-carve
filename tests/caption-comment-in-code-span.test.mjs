@@ -250,3 +250,76 @@ for (const source of [
     })
   }
 }
+
+for (const separator of ['{#fig}', '%% c', '%%c']) {
+  test(`a paragraph interrupter leaves a fresh image caption slot: ${separator}`, () => {
+    assert.ok(covered('prose\n' + separator + '\n![a](i.png)\n^ cap', 'markup.table.caption').includes('^ cap'))
+  })
+}
+for (const opening of ['Intro text', '[x](u) intro']) {
+  test(`a figure body tracks paragraph continuation: ${opening}`, () => {
+    const source = '::: figure\n' + opening + '\n![a](i.png)\n^ Panel\n:::'
+    assert.ok(!covered(source, 'markup.table.caption').includes('^ Panel'))
+  })
+}
+for (const body of [' :::', '> :::', '::: note\t"T"\ntext']) {
+  test(`body text cannot consume a figure closer: ${JSON.stringify(body)}`, () => {
+    assert.ok(covered('::: figure\n' + body + '\n:::\n^ group', 'markup.table.caption').includes('^ group'))
+  })
+}
+test('a glued label opens a nested div with its own closer', () => {
+  assert.ok(covered('::: figure\n:::[l]\nx\n:::\n:::\n^ group', 'markup.table.caption').includes('^ group'))
+})
+for (const lazy of ['continued', '- item']) {
+  test(`a lazy quote line preserves its caption slot: ${lazy}`, () => {
+    assert.ok(covered('> quoted\n' + lazy + '\n^ cap', 'markup.table.caption').includes('^ cap'))
+  })
+}
+for (const first of ['item', '![a](i.png)']) {
+  test(`a lazy image in a list stays paragraph content: ${first}`, () => {
+    assert.ok(!covered('- ' + first + '\n![b](j.png)\n^ cap', 'markup.table.caption').includes('^ cap'))
+  })
+}
+test('a document image after a footnote starts its own caption slot', () => {
+  assert.ok(covered('[^n]: intro\n![a](i.png)\n^ cap', 'markup.table.caption').includes('^ cap'))
+})
+test('the first image in a footnote body can take a caption', () => {
+  assert.ok(covered('[^n]: ![a](i.png)\n  ^ cap', 'markup.table.caption').includes('^ cap'))
+})
+test('an indented image in a root figure body stays paragraph content', () => {
+  const source = '::: figure\n  ![a](i.png)\n  ^ inner\n:::\n^ group'
+  assert.ok(!covered(source, 'markup.table.caption').includes('^ inner'))
+  assert.ok(covered(source, 'markup.table.caption').includes('^ group'))
+})
+test('a bare quote marker inside a quoted figure is an empty body line', () => {
+  assert.ok(covered('> ::: figure\n>\n> body\n> :::\n> ^ cap', 'markup.table.caption').includes('^ cap'))
+})
+test('a quote on a list marker line can take a caption', () => {
+  assert.ok(covered('- > quoted\n  ^ cap', 'markup.table.caption').includes('^ cap'))
+})
+
+for (const source of [
+  '> quoted\n>\ntext\n^ cap',
+  '> ```\n> x\n> ```\ntext\n^ cap',
+  '> > ![a](i.png)\n>\n> > ^ cap',
+  '![a\n%% c\nb](/i)\n^ cap',
+  '![a\n{#id}\nb](/i)\n^ cap',
+  '![a\n---\nb](/i)\n^ cap',
+  '- ![a](i.png)\n ^ cap',
+  '[^n]: ![a](i.png)\n ^ cap',
+  '- intro\n\n  ![a](i.png)\n   ^ cap',
+]) {
+  test('a closed or invalidated host cannot take a caption: ' + JSON.stringify(source), () => {
+    assert.ok(!covered(source, 'markup.table.caption').includes('^ cap'))
+  })
+}
+for (const source of [
+  '![a](i.png)\n\n![b](j.png)\n^ cap',
+  '> ![a](i.png)\n>\n> ![b](j.png)\n> ^ cap',
+  '- ![a](i.png)\n\n  ![b](j.png)\n  ^ cap',
+  '![a\n- x](/i)\n^ cap',
+]) {
+  test('a fresh eligible host can take a caption: ' + JSON.stringify(source), () => {
+    assert.ok(covered(source, 'markup.table.caption').includes('^ cap'))
+  })
+}

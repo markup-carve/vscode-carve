@@ -949,7 +949,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2})",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -973,7 +973,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -991,7 +991,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -1009,7 +1009,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -1027,7 +1027,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t]\\3)",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -1045,7 +1045,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -1063,7 +1063,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -1081,7 +1081,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -1099,7 +1099,7 @@
           "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
           "patterns": [
             {
-              "include": "#container-body"
+              "include": "#caption-list-body"
             }
           ]
         },
@@ -1129,21 +1129,13 @@
       "patterns": [
         {
           "comment": "A FOOTNOTE definition, and until markup-carve/carve-grammars#307 every scope on it said LINK REFERENCE DEFINITION. The rule is right - it is anchored on `[^label]:` and it is the one definition shape that opens a container - but it was copied from the link definition below and kept that construct's names, so `[^a]: note text` scoped the whole line `meta.link.reference.definition.carve` and put `markup.underline.link.carve` on `note`, the first WORD of the prose, as though it were a URL. A footnote body is inline content and has no destination, so that capture carries no scope at all now. The construct ledger read this row as a GAP the whole time, because the only name the rule had was another construct's. A FOOTNOTE definition has a BODY, and that body's content column is a FIXED two whatever the label is wide, so it is the one definition shape that opens a container: `[^a]: note` over `  [r]: /u` collects the second definition (corpus a-definition-on-a-footnote-body-s-continuation-line-is-collected), one column in leaves it the document's own text, and three or more is the body's own text. Narrowing the definition rule below to flush-left without this would have dropped the scope from that shape entirely. A LINK reference definition gets no container, deliberately: it has no body at all, so an indented definition under one is a paragraph, not a second definition (measured against carve-php and carve-js - `[r]: /u` over `  [s]: /v` renders the second line as prose). `begin` consumes exactly what the definition rule below consumes and carries the same captures, so a footnote definition line tokenizes as it always did. Capture 0 carries the old rule-level `name`, which a begin/end rule cannot carry itself - a rule-level name spans the whole REGION, so the body lines would be scoped as definition too. A capture-0 name does NOT reach a sibling capture that re-tokenizes with its own patterns (vscode-textmate builds that sub-tokenization from the RULE stack, not from the capture's local stack), so the attribute capture names the scope itself or a trailing `{...}` block silently loses its definition layer. The trailing group captures an optional `{...}` attribute block using the same strict-identifier body #attributes validates, and recurses into #attributes so the block gets meta.link.reference.definition.carve (this rule's own name) layered with meta.attributes.carve and the entity captures - not only the sibling meta.attributes.carve it already got from the independent root #attributes pattern. Those attributes reach every link resolving the label (markup-carve/carve#612), so they are meaningful content, not decoration (markup-carve/vscode-carve#67).",
-          "begin": "^(\\[\\^[^\\]]+\\]:)\\s+(\\S+)(?:( )(\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}))?",
+          "begin": "^(\\[\\^[^\\]]+\\]:)[ \\t]+(?=\\S)",
           "beginCaptures": {
             "0": {
               "name": "meta.footnote.definition.carve"
             },
             "1": {
               "name": "constant.other.reference.footnote.carve"
-            },
-            "4": {
-              "name": "meta.footnote.definition.carve meta.attributes.carve",
-              "patterns": [
-                {
-                  "include": "#attribute-items"
-                }
-              ]
             }
           },
           "end": "^(?![ \\t]*$)(?![ \\t]{2})",
@@ -2945,7 +2937,7 @@
           "include": "#trailing-comment"
         },
         {
-          "include": "#caption-paragraph"
+          "include": "#caption-paragraph-in-quote"
         }
       ]
     },
@@ -2983,7 +2975,7 @@
         },
         {
           "begin": "^(?=> |>$)",
-          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -2996,10 +2988,16 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#block-quotes"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#block-quotes"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -3020,8 +3018,8 @@
           ]
         },
         {
-          "begin": "(?<=^((?:> )+))\\G(?=!\\[[^\\]\\n]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "(?<=^((?:> )*>) )\\G(?=!\\[[^\\]\\n]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3034,17 +3032,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-multiline-image-quoted"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image-quoted"
+                },
+                {
+                  "include": "#caption-prose-continuation-quoted"
+                }
+              ]
             },
             {
-              "include": "#caption-prose-continuation-quoted"
-            },
-            {
-              "begin": "^((?:> ?)+)[ \\t]*\\n",
-              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3070,8 +3074,8 @@
           ]
         },
         {
-          "begin": "(?<=^((?:> )+))\\G(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "(?<=^((?:> )*>) )\\G(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3084,17 +3088,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-image-on-host-line"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-quoted"
+                }
+              ]
             },
             {
-              "include": "#caption-prose-continuation-quoted"
-            },
-            {
-              "begin": "^((?:> ?)+)[ \\t]*\\n",
-              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3120,8 +3130,8 @@
           ]
         },
         {
-          "begin": "(?<=^((?:> )+))\\G(?=\\|[^\\n]*\\|[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "(?<=^((?:> )*>) )\\G(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3134,17 +3144,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#table-row-behind-a-container-prefix"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
             },
             {
-              "include": "#tables"
-            },
-            {
-              "begin": "^((?:> ?)+)[ \\t]*\\n",
-              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3170,8 +3186,8 @@
           ]
         },
         {
-          "begin": "(?<=^((?:> )+))\\G(?=((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "(?<=^((?:> )*>) )\\G(?=((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3184,20 +3200,26 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#code-fence-on-quote-marker-line"
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                }
+              ]
             },
             {
-              "include": "#code-blocks"
-            },
-            {
-              "include": "#code-block-behind-a-container-prefix"
-            },
-            {
-              "begin": "^((?:> ?)+)[ \\t]*\\n",
-              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3223,8 +3245,8 @@
           ]
         },
         {
-          "begin": "(?<=^((?:> )+))\\G(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\3)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "(?<=^((?:> )*>) )\\G(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\3)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3237,17 +3259,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-math-on-host-line"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-quoted"
+                }
+              ]
             },
             {
-              "include": "#caption-prose-continuation-quoted"
-            },
-            {
-              "begin": "^((?:> ?)+)[ \\t]*\\n",
-              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3273,8 +3301,8 @@
           ]
         },
         {
-          "begin": "(?<=^((?:> )+))\\G(?=:{3,} +(?:figure|>)[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "(?<=^((?:> )*>) )\\G(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3287,14 +3315,20 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-colon-host-quoted"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host-quoted"
+                }
+              ]
             },
             {
-              "begin": "^((?:> ?)+)[ \\t]*\\n",
-              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3321,7 +3355,7 @@
         },
         {
           "begin": "^(?=!\\[[^\\]\\n]*$)",
-          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3334,13 +3368,19 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-multiline-image"
-            },
-            {
-              "include": "#caption-prose-continuation"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image"
+                },
+                {
+                  "include": "#caption-prose-continuation"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -3362,7 +3402,7 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?=!\\[[^\\]\\n]*$)",
-          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3375,17 +3415,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-multiline-image"
-            },
-            {
-              "include": "#caption-prose-continuation-in-container"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-container"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
-              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3403,7 +3449,7 @@
         },
         {
           "begin": "^(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3416,13 +3462,19 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-image-on-host-line"
-            },
-            {
-              "include": "#caption-prose-continuation"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -3444,7 +3496,7 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3457,17 +3509,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-image-on-host-line"
-            },
-            {
-              "include": "#caption-prose-continuation-in-container"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-container"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
-              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3485,7 +3543,7 @@
         },
         {
           "begin": "^(?=\\|[^\\n]*\\|[ \\t]*$)",
-          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3498,13 +3556,19 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#table-row-behind-a-container-prefix"
-            },
-            {
-              "include": "#tables"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -3526,7 +3590,7 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?=\\|[^\\n]*\\|[ \\t]*$)",
-          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3539,17 +3603,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#table-row-behind-a-container-prefix"
-            },
-            {
-              "include": "#tables"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
-              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3567,7 +3637,7 @@
         },
         {
           "begin": "^(?=((`|~)\\2{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
-          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3580,16 +3650,22 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#code-blocks"
-            },
-            {
-              "include": "#code-block-behind-a-container-prefix"
-            },
-            {
-              "include": "#code-fence-on-quote-marker-line"
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                },
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -3611,7 +3687,7 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?=((`|~)\\2{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
-          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3624,20 +3700,26 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#code-blocks"
-            },
-            {
-              "include": "#code-block-behind-a-container-prefix"
-            },
-            {
-              "include": "#code-fence-on-quote-marker-line"
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                },
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
-              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3655,7 +3737,7 @@
         },
         {
           "begin": "^(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\2)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3668,13 +3750,19 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-math-on-host-line"
-            },
-            {
-              "include": "#caption-prose-continuation"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -3696,7 +3784,7 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\2)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3709,17 +3797,23 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-math-on-host-line"
-            },
-            {
-              "include": "#caption-prose-continuation-in-container"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-container"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
-              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3737,7 +3831,7 @@
         },
         {
           "begin": "^(?=:{3,} +(?:figure|>)[ \\t]*$)",
-          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3750,10 +3844,16 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-colon-host"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -3775,7 +3875,7 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?=:{3,} +(?:figure|>)[ \\t]*$)",
-          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -3788,14 +3888,20 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-colon-host"
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host-in-container"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
-              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
               "endCaptures": {
                 "0": {
                   "patterns": [
@@ -3815,8 +3921,8 @@
       "comment": "Generated by tools/generate-caption-contexts.mjs. Caption slots permit at most one blank line (PART 9 §4; caption_slot)."
     },
     "caption-colon-host": {
-      "begin": "(?:^|\\G(?<=[ \\t]))(:{3,}) +(?:figure|>)[ \\t]*$",
-      "end": "^[ \\t]*(?:> )*(\\1)[ \\t]*$",
+      "begin": "^(?=:{3,} +(?:figure|>)[ \\t]*$)(:{3,})[^\\n]*$",
+      "end": "^(\\1)[ \\t]*$",
       "beginCaptures": {
         "0": {
           "patterns": [
@@ -3840,13 +3946,13 @@
           "include": "#caption-nested-div"
         },
         {
-          "include": "#container-body"
+          "include": "#caption-colon-body"
         }
       ]
     },
     "caption-nested-div": {
-      "begin": "(?:^|\\G(?<=[ \\t]))(:{3,})(?: +[^\\n]+)?[ \\t]*$",
-      "end": "^[ \\t]*(?:> )*(\\1)[ \\t]*$",
+      "begin": "^(?=(?:[ \\t]*(?:(?:[-*])[ \\t]+)?(?::::+) +(?:figure)[ \\t]*$|[ \\t]*(?:(?:[-*])[ \\t]+)?(?::::+)(?: +(?:[^\\s{\\[\"]+))?(?: +(?:\"[^\"]*\")(?: +(?:\\[[^\\]]*\\]))?| *(?:\\[[^\\]]*\\])(?: +(?:\"[^\"]*\"))?)?[ \\t]*$))(:{3,})[^\\n]*$",
+      "end": "^(\\1)[ \\t]*$",
       "beginCaptures": {
         "0": {
           "patterns": [
@@ -3870,7 +3976,7 @@
           "include": "#caption-nested-div"
         },
         {
-          "include": "#container-body"
+          "include": "#caption-colon-body"
         }
       ]
     },
@@ -3929,7 +4035,7 @@
       "patterns": [
         {
           "begin": "(?<=^((?:> )+))\\G(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
-          "end": "^(?!\\1)|^(?=\\1[ \\t]*(?:[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
+          "end": "^(?!\\1)|^(?=\\1[ \\t]*(?:[ \\t]*$|(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))))",
           "patterns": [
             {
               "match": "^(?:> )+",
@@ -3950,7 +4056,7 @@
         },
         {
           "begin": "^(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)[ \\t]*",
-          "end": "^(?=[ \\t]*(?:[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
+          "end": "^(?=[ \\t]*(?:[ \\t]*$|(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))))",
           "patterns": [
             {
               "include": "#caption-paragraph-inline"
@@ -3959,7 +4065,7 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
-          "end": "^(?=[ \\t]*$|\\S)|^(?=[ \\t]+(?:[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
+          "end": "^(?=[ \\t]*$|\\S)|^(?=[ \\t]+(?:[ \\t]*$|(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))))",
           "patterns": [
             {
               "include": "#caption-paragraph-inline"
@@ -4045,8 +4151,8 @@
       ]
     },
     "caption-colon-host-quoted": {
-      "begin": "(?<=^((?:> )+))\\G(:{3,}) +(?:figure|>)[ \\t]*$",
-      "end": "^\\1(\\2)[ \\t]*$|^(?!\\1)",
+      "begin": "(?<=^((?:> )*>) )\\G(?=:{3,} +(?:figure|>)[ \\t]*$)(:{3,})[^\\n]*$",
+      "end": "^\\1 (\\2)[ \\t]*$|^(?!\\1(?: |$))",
       "beginCaptures": {
         "0": {
           "patterns": [
@@ -4060,6 +4166,9 @@
         "0": {
           "patterns": [
             {
+              "include": "#caption-quote-prefix"
+            },
+            {
               "include": "#caption-colon-tokenizer"
             }
           ]
@@ -4067,7 +4176,7 @@
       },
       "patterns": [
         {
-          "match": "^(?:> )",
+          "match": "^(?:> ?)+",
           "captures": {
             "0": {
               "patterns": [
@@ -4082,13 +4191,13 @@
           "include": "#caption-nested-div-quoted"
         },
         {
-          "include": "#container-body"
+          "include": "#caption-colon-body"
         }
       ]
     },
     "caption-nested-div-quoted": {
-      "begin": "(?<=^((?:> )+))\\G(:{3,})(?: +[^\\n]+)?[ \\t]*$",
-      "end": "^\\1(\\2)[ \\t]*$|^(?!\\1)",
+      "begin": "(?<=^((?:> )*>) )\\G(?=(?:[ \\t]*(?:(?:[-*])[ \\t]+)?(?::::+) +(?:figure)[ \\t]*$|[ \\t]*(?:(?:[-*])[ \\t]+)?(?::::+)(?: +(?:[^\\s{\\[\"]+))?(?: +(?:\"[^\"]*\")(?: +(?:\\[[^\\]]*\\]))?| *(?:\\[[^\\]]*\\])(?: +(?:\"[^\"]*\"))?)?[ \\t]*$))(:{3,})[^\\n]*$",
+      "end": "^\\1 (\\2)[ \\t]*$|^(?!\\1(?: |$))",
       "beginCaptures": {
         "0": {
           "patterns": [
@@ -4102,6 +4211,9 @@
         "0": {
           "patterns": [
             {
+              "include": "#caption-quote-prefix"
+            },
+            {
               "include": "#caption-colon-tokenizer"
             }
           ]
@@ -4109,7 +4221,7 @@
       },
       "patterns": [
         {
-          "match": "^(?:> )",
+          "match": "^(?:> ?)+",
           "captures": {
             "0": {
               "patterns": [
@@ -4124,7 +4236,7 @@
           "include": "#caption-nested-div-quoted"
         },
         {
-          "include": "#container-body"
+          "include": "#caption-colon-body"
         }
       ]
     },
@@ -4199,8 +4311,8 @@
           "include": "#captionable-blocks"
         },
         {
-          "begin": "^([ \\t]+)(?=!\\[[^\\]\\n]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "\\G(?<=[ \\t])(?=> |>$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -4213,13 +4325,66 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-multiline-image"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#block-quote-on-marker-line"
+                },
+                {
+                  "include": "#block-quotes"
+                }
+              ]
             },
             {
-              "include": "#caption-prose-continuation-in-container"
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?:> |>$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#block-quote-on-marker-line"
+                },
+                {
+                  "include": "#block-quotes"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -4240,8 +4405,8 @@
           ]
         },
         {
-          "begin": "^([ \\t]+)(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "^(?=([ \\t]+)(?:!\\[[^\\]\\n]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -4254,13 +4419,19 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-image-on-host-line"
-            },
-            {
-              "include": "#caption-prose-continuation-in-container"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-container"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -4281,8 +4452,8 @@
           ]
         },
         {
-          "begin": "^([ \\t]+)(?=\\|[^\\n]*\\|[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "^(?=([ \\t]+)(?:(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -4295,13 +4466,19 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#table-row-behind-a-container-prefix"
-            },
-            {
-              "include": "#tables"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-container"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -4322,8 +4499,8 @@
           ]
         },
         {
-          "begin": "^([ \\t]+)(?=((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "^(?=([ \\t]+)(?:\\|[^\\n]*\\|[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -4336,16 +4513,19 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#code-blocks"
-            },
-            {
-              "include": "#code-block-behind-a-container-prefix"
-            },
-            {
-              "include": "#code-fence-on-quote-marker-line"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -4366,8 +4546,8 @@
           ]
         },
         {
-          "begin": "^([ \\t]+)(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\3)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "^(?=([ \\t]+)(?:((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -4380,13 +4560,22 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-math-on-host-line"
-            },
-            {
-              "include": "#caption-prose-continuation-in-container"
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                },
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -4407,8 +4596,8 @@
           ]
         },
         {
-          "begin": "^([ \\t]+)(?=:{3,} +(?:figure|>)[ \\t]*$)",
-          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "begin": "^(?=([ \\t]+)(?:(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\3)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
           "endCaptures": {
             "0": {
               "patterns": [
@@ -4421,10 +4610,63 @@
               ]
             }
           },
-          "applyEndPatternLast": true,
           "patterns": [
             {
-              "include": "#caption-colon-host"
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-container"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?::{3,} +(?:figure|>)[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host-in-container"
+                }
+              ]
             },
             {
               "begin": "^[ \\t]*\\n",
@@ -4448,11 +4690,11 @@
     },
     "caption-multiline-image": {
       "begin": "\\G!\\[[^\\]\\n]*$",
-      "end": "^[^\\]\\n]*(?:(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|^(?:> ?)*[ \\t]*\\n|^(?=#{1,6} |`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|(?:[-*]|[0-9]+[.)]) +|\\|)"
+      "end": "^[^\\]\\n]*(?:(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|^(?:> ?)*[ \\t]*\\n|^(?=(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))"
     },
     "caption-multiline-image-quoted": {
       "begin": "(?<=^((?:> )+))\\G!\\[[^\\]\\n]*$",
-      "end": "^\\1[^\\]\\n]*(?:(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|^(?:> ?)*[ \\t]*\\n|^(?!\\1)|^\\1(?=#{1,6} |`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|(?:[-*]|[0-9]+[.)]) +|\\|)",
+      "end": "^\\1[^\\]\\n]*(?:(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|^(?:> ?)*[ \\t]*\\n|^(?!\\1)|^\\1(?=(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
       "endCaptures": {
         "0": {
           "patterns": [
@@ -4508,8 +4750,8 @@
       }
     },
     "caption-prose-continuation": {
-      "begin": "^(?![ \\t]*(?:\\^ +(?![ \\t]*$)[^ ].*$|$)|[ \\t]*(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))(?=[ \\t]*\\S)[ \\t]*",
-      "end": "^[ \\t]*\\n|^(?=[ \\t]*(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))",
+      "begin": "^(?![ \\t]*(?:\\^ +(?![ \\t]*$)[^ ].*$|$)|[ \\t]*(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))(?=[ \\t]*\\S)[ \\t]*",
+      "end": "^[ \\t]*\\n|^(?=[ \\t]*(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
       "patterns": [
         {
           "include": "#caption-paragraph-inline"
@@ -4517,8 +4759,8 @@
       ]
     },
     "caption-prose-continuation-quoted": {
-      "begin": "^((?:> )+)(?!\\^ +(?![ \\t]*$)[^ ].*$|[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))(?=[ \\t]*\\S)",
-      "end": "^(?:> ?)*[ \\t]*\\n|^(?!\\1)|^\\1(?=(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))",
+      "begin": "^((?:> )+)(?!\\^ +(?![ \\t]*$)[^ ].*$|[ \\t]*$|(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))(?=[ \\t]*\\S)",
+      "end": "^(?:> ?)*[ \\t]*\\n|^(?!\\1)|^\\1(?=(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
       "beginCaptures": {
         "1": {
           "patterns": [
@@ -4547,8 +4789,8 @@
       ]
     },
     "caption-prose-continuation-in-container": {
-      "begin": "^([ \\t]+)(?!\\^ +(?![ \\t]*$)[^ ].*$|$|(?:(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))(?=\\S)",
-      "end": "^[ \\t]*\\n|^(?=\\S)|^(?=[ \\t]+(?:(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
+      "begin": "^([ \\t]+)(?!\\^ +(?![ \\t]*$)[^ ].*$|$|(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))(?=\\S)",
+      "end": "^[ \\t]*\\n|^(?=\\S)|^(?=[ \\t]+(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
       "patterns": [
         {
           "include": "#caption-paragraph-inline"
@@ -4560,7 +4802,7 @@
       "patterns": [
         {
           "begin": "^([ \\t]+)(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
-          "end": "^(?=[ \\t]*$|\\S)|^(?=[ \\t]+(?:(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
+          "end": "^(?=[ \\t]*$|\\S)|^(?=[ \\t]+(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
           "patterns": [
             {
               "include": "#caption-paragraph-inline"
@@ -4569,10 +4811,1705 @@
         },
         {
           "begin": "\\G(?<=[ \\t])(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
-          "end": "^(?=[ \\t]*$|\\S)|^(?=[ \\t]+(?:(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
+          "end": "^(?=[ \\t]*$|\\S)|^(?=[ \\t]+(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
           "patterns": [
             {
               "include": "#caption-paragraph-inline"
+            }
+          ]
+        }
+      ]
+    },
+    "caption-colon-body": {
+      "patterns": [
+        {
+          "include": "#captionable-blocks"
+        },
+        {
+          "include": "#comment-fence-on-marker-line"
+        },
+        {
+          "include": "#block-quote-on-marker-line"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#thematic-break-behind-a-container-prefix"
+        },
+        {
+          "include": "#thematic-break"
+        },
+        {
+          "include": "#headings-behind-a-container-prefix"
+        },
+        {
+          "include": "#headings"
+        },
+        {
+          "include": "#code-block-behind-a-container-prefix"
+        },
+        {
+          "include": "#code-blocks"
+        },
+        {
+          "include": "#divs"
+        },
+        {
+          "include": "#table-row-behind-a-container-prefix"
+        },
+        {
+          "include": "#tables"
+        },
+        {
+          "include": "#block-quotes"
+        },
+        {
+          "include": "#lists"
+        },
+        {
+          "include": "#definitions-in-container"
+        },
+        {
+          "include": "#caption-paragraph"
+        },
+        {
+          "include": "#links"
+        },
+        {
+          "include": "#images"
+        },
+        {
+          "include": "#footnotes"
+        },
+        {
+          "include": "#citations"
+        },
+        {
+          "include": "#code-callouts"
+        },
+        {
+          "include": "#critic-markup"
+        },
+        {
+          "include": "#forced-emphasis"
+        },
+        {
+          "include": "#sup-sub"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#trailing-comment"
+        },
+        {
+          "include": "#include-directive"
+        },
+        {
+          "include": "#math"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#extension-inline"
+        },
+        {
+          "include": "#emphasis"
+        },
+        {
+          "include": "#mentions-tags"
+        },
+        {
+          "include": "#smart-typography"
+        },
+        {
+          "include": "#hard-break"
+        }
+      ]
+    },
+    "caption-colon-host-in-container": {
+      "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(?=:{3,} +(?:figure|>)[ \\t]*$)(:{3,})[^\\n]*$",
+      "end": "^[ \\t]+(\\1)[ \\t]*$",
+      "beginCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "include": "#caption-nested-div-in-container"
+        },
+        {
+          "include": "#container-body"
+        }
+      ]
+    },
+    "caption-nested-div-in-container": {
+      "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(?=(?:[ \\t]*(?:(?:[-*])[ \\t]+)?(?::::+) +(?:figure)[ \\t]*$|[ \\t]*(?:(?:[-*])[ \\t]+)?(?::::+)(?: +(?:[^\\s{\\[\"]+))?(?: +(?:\"[^\"]*\")(?: +(?:\\[[^\\]]*\\]))?| *(?:\\[[^\\]]*\\])(?: +(?:\"[^\"]*\"))?)?[ \\t]*$))(:{3,})[^\\n]*$",
+      "end": "^[ \\t]+(\\1)[ \\t]*$",
+      "beginCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "include": "#caption-nested-div-in-container"
+        },
+        {
+          "include": "#container-body"
+        }
+      ]
+    },
+    "caption-quote-lazy-line": {
+      "begin": "^(?![ \\t]*(?:\\^ +(?![ \\t]*$)[^ ].*$|$)|[ \\t]*(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))(?=[ \\t]*\\S)[ \\t]*",
+      "end": "^(?=[ \\t]*(?:\\^ +(?![ \\t]*$)[^ ].*$|$|(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))))",
+      "patterns": [
+        {
+          "include": "#caption-paragraph-inline"
+        }
+      ]
+    },
+    "caption-list-body": {
+      "patterns": [
+        {
+          "include": "#captionable-blocks-in-list"
+        },
+        {
+          "include": "#comment-fence-on-marker-line"
+        },
+        {
+          "include": "#block-quote-on-marker-line"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#thematic-break-behind-a-container-prefix"
+        },
+        {
+          "include": "#thematic-break"
+        },
+        {
+          "include": "#headings-behind-a-container-prefix"
+        },
+        {
+          "include": "#headings"
+        },
+        {
+          "include": "#code-block-behind-a-container-prefix"
+        },
+        {
+          "include": "#code-blocks"
+        },
+        {
+          "include": "#divs"
+        },
+        {
+          "include": "#table-row-behind-a-container-prefix"
+        },
+        {
+          "include": "#tables"
+        },
+        {
+          "include": "#block-quotes"
+        },
+        {
+          "include": "#lists"
+        },
+        {
+          "include": "#definitions-in-container"
+        },
+        {
+          "include": "#caption-paragraph-in-list"
+        },
+        {
+          "include": "#links"
+        },
+        {
+          "include": "#images"
+        },
+        {
+          "include": "#footnotes"
+        },
+        {
+          "include": "#citations"
+        },
+        {
+          "include": "#code-callouts"
+        },
+        {
+          "include": "#critic-markup"
+        },
+        {
+          "include": "#forced-emphasis"
+        },
+        {
+          "include": "#sup-sub"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#trailing-comment"
+        },
+        {
+          "include": "#include-directive"
+        },
+        {
+          "include": "#math"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#extension-inline"
+        },
+        {
+          "include": "#emphasis"
+        },
+        {
+          "include": "#mentions-tags"
+        },
+        {
+          "include": "#smart-typography"
+        },
+        {
+          "include": "#hard-break"
+        }
+      ]
+    },
+    "caption-paragraph-in-list": {
+      "patterns": [
+        {
+          "begin": "^([ \\t]+)(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
+          "end": "^(?=[ \\t]*$)|^(?=[ \\t]*(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
+          "patterns": [
+            {
+              "include": "#caption-paragraph-inline"
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
+          "end": "^(?=[ \\t]*$)|^(?=[ \\t]*(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
+          "patterns": [
+            {
+              "include": "#caption-paragraph-inline"
+            }
+          ]
+        }
+      ]
+    },
+    "caption-prose-continuation-in-list": {
+      "begin": "^(?![ \\t]*(?:\\^ +(?![ \\t]*$)[^ ].*$|$)|[ \\t]*(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))(?=[ \\t]*\\S)[ \\t]*",
+      "end": "^[ \\t]*\\n|^(?=[ \\t]*(?:(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|: +))",
+      "patterns": [
+        {
+          "include": "#caption-paragraph-inline"
+        }
+      ]
+    },
+    "captionable-blocks-in-list": {
+      "patterns": [
+        {
+          "begin": "^(?=(?:[-*]|[0-9]+[.)]) +(?:(?:\\[[ xX]\\]) +)?(:{3,}) +(?:figure|>)[ \\t]*$)",
+          "end": "(?=^)",
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#lists"
+            }
+          ]
+        },
+        {
+          "begin": "^(?=> |>$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#block-quotes"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )*>) )\\G(?=!\\[[^\\]\\n]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image-quoted"
+                },
+                {
+                  "include": "#caption-prose-continuation-quoted"
+                }
+              ]
+            },
+            {
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )*>) )\\G(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-quoted"
+                }
+              ]
+            },
+            {
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )*>) )\\G(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
+            },
+            {
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )*>) )\\G(?=((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                }
+              ]
+            },
+            {
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )*>) )\\G(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\3)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-quoted"
+                }
+              ]
+            },
+            {
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )*>) )\\G(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?!\\1 ?[ \\t]*\\n))|(?<=^\\1 \\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host-quoted"
+                }
+              ]
+            },
+            {
+              "begin": "^((?:> )*>)[ ]?[ \\t]*\\n",
+              "end": "^\\1 (\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=!\\[[^\\]\\n]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=!\\[[^\\]\\n]*$)",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=((`|~)\\2{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                },
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=((`|~)\\2{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                },
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\2)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\2)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]{2,}\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host-in-container"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]{2,}(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=> |>$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#block-quote-on-marker-line"
+                },
+                {
+                  "include": "#block-quotes"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?:> |>$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#block-quote-on-marker-line"
+                },
+                {
+                  "include": "#block-quotes"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?:!\\[[^\\]\\n]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-multiline-image"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?:(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-image-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?:\\|[^\\n]*\\|[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#table-row-behind-a-container-prefix"
+                },
+                {
+                  "include": "#tables"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?:((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#code-blocks"
+                },
+                {
+                  "include": "#code-block-behind-a-container-prefix"
+                },
+                {
+                  "include": "#code-fence-on-quote-marker-line"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?:(\\$\\$)(`+)([^`]|[^`][\\s\\S]*?[^`])(\\3)(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G[ \\t]*(?=\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-math-on-host-line"
+                },
+                {
+                  "include": "#caption-prose-continuation-in-list"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=([ \\t]+)(?::{3,} +(?:figure|>)[ \\t]*$))",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^(?!\\G)(?![ \\t]*\\n))|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)",
+              "end": "(?=^(?:> ?)*[ \\t]*(?:\\^ +|$))|(?=^(?!\\G))|(?<=^(?:> ?)*[ \\t]*\\n)$",
+              "applyEndPatternLast": true,
+              "patterns": [
+                {
+                  "include": "#caption-colon-host-in-container"
+                }
+              ]
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "caption-paragraph-in-quote": {
+      "patterns": [
+        {
+          "begin": "(?<=((?:> )+))\\G(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
+          "end": "^(?=[ \\t]*\\1[ \\t]*(?:[ \\t]*$|(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))))|^(?![ \\t]*\\1)(?=[ \\t]*(?:[ \\t]*$|(?:%%|(?:\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\|[^\\n]*\\|[ \\t]*$|\\+[ \\t]*$|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: ))|\\^ +(?![ \\t]*$)[^ ].*$))",
+          "patterns": [
+            {
+              "match": "^[ \\t]*(?:> )+",
+              "captures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "include": "#caption-quote-paragraph-inline"
             }
           ]
         }
