@@ -3,7 +3,8 @@
 #     ^^^^^ text.carve meta.footnote.definition.carve
 >
 >	more
-#^^^^^^ text.carve
+#^ text.carve
+# ^^^^^ text.carve
 >
 >see[^a]
 #^^^ text.carve

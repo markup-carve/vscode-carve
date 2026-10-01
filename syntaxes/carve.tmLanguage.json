@@ -4,6 +4,9 @@
   "scopeName": "text.carve",
   "patterns": [
     {
+      "include": "#captionable-blocks"
+    },
+    {
       "include": "#frontmatter"
     },
     {
@@ -32,6 +35,9 @@
     },
     {
       "include": "#definitions"
+    },
+    {
+      "include": "#caption-paragraph"
     },
     {
       "include": "#links"
@@ -640,7 +646,7 @@
       "patterns": [
         {
           "name": "markup.other.figure-group.carve",
-          "comment": "COMPOSITE FIGURE (PART 9 S4c, markup-carve/carve#1215; ported from markup-carve/carve-grammars#223, tracked by markup-carve/carve-grammars#222). The kind word `figure` is reserved among the `:::` types: a BARE opener - the fence, its separator, the word `figure`, and NOTHING else - is ONE figure of ordered panels, not an admonition, so it carries its own scope and this pattern sits BEFORE the generic div pattern below. THE WHOLE DISTINCTION IS THE TAIL of one line: an opener carrying a quoted title or a `[label]` (`::: figure \"T\"`, `::: figure [g]`) is not that production at all, does not match here, and falls through to the div pattern - which is the generic Tier-2 container the clause says it stays, with title and label preserved. THE SEPARATOR IS A SPACE RUN, NEVER A TAB (grammar.ebnf PART 7, MARKER SEPARATORS; corpus 254): `:::<TAB>figure` renders as a paragraph, so it is spelled ` +` rather than the `\\s*` the div pattern beside it uses - a tab-separated opener falls to that pattern and reads exactly as it does today, an over-colouring this rule neither widens nor fixes. Trailing whitespace after the kind word is insignificant and may be a tab. THE GROUP CAPTION NEEDS NO RULE: it is an ordinary `^ ` line one line below the closing fence, which the caption pattern under `#tables` already claims at document level and inside every container body. The optional bullet prefix is carried over from the div pattern, because a group may open directly after a list marker (`- ::: figure`) just as an admonition may. RESIDUAL, written down rather than left to be rediscovered: GROUPS DO NOT NEST - a bare `::: figure` at any depth inside an open group is a generic container - but a `:::` opener here is a per-line `match` with no region, so this grammar has no notion of being inside one and over-colours the inner opener as a group too. carve-grammars carries that rule through a begin/end pair; restructuring the div pattern into begin/end is what it would take here as well, and is deliberately not part of this change.",
+          "comment": "A bare ::: figure opens a composite figure (PART 9 §4c). Titles and labels fall through to the generic container rule. The separator is spaces. Captionable-block regions track the closing fence and caption slot; these match rules provide the fence scopes. Nested figure openers retain the figure-group scope; container nesting is not fully modeled.",
           "match": "^[ \\t]*(?:([-*])[ \\t]+)?(:::+) +(figure)[ \\t]*$",
           "captures": {
             "1": {
@@ -840,66 +846,6 @@
               "name": "keyword.operator.table.continuation.carve"
             }
           }
-        },
-        {
-          "comment": "CAPTION. THE MARKER SEPARATOR IS A RUN, AND NONE OF IT IS CONTENT (PART 7 MARKER SEPARATOR, markup-carve/carve#1583). The separator gets its own capture and the content capture may not start with a space, so `^   cap` captions `cap` rather than ` cap`. The `(?![ \\t]*$)` guard is what makes a marker with NOTHING after its run a paragraph instead of a caption: on `^   ` the old ` +(.+)$` let ` +` give one space back so `(.+)` could match it, scoping a caption whose content was a single space, while carve-js renders `<p>^</p>`. The guard is the same one `#headings` carries for the same reason - the two constructs share the rule and had drifted apart on it. A TAB IS NOT PART OF THE SEPARATOR, so `^ \\tsecond` captions `\\tsecond` with the tab kept, which is why the content capture excludes a space rather than all whitespace.",
-          "name": "markup.table.caption.carve",
-          "match": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.caption.carve"
-            },
-            "3": {
-              "name": "string.unquoted.caption.carve",
-              "patterns": [
-                {
-                  "comment": "THE CODE AND LITERAL INLINE RULES RUN BEFORE #trailing-comment, because a `%%` between backticks is code content in a caption as it is anywhere else: carve-js at pin 9f81a0a7 and carve-php 685e94fa3 both render an image over `^ cap ` + a backticked `x %% b` + ` c` as `<figcaption>cap <code>x %% b</code> c</figcaption>` (markup-carve/carve#2682). With only #trailing-comment reachable here, no code-span rule ran inside a caption at all, so the run's `%%` opened a line comment and swallowed the closing backtick and the text after it. The trailing-comment rule stays last, so a real trailing comment after a code span is still a comment, which is what the engines do too.",
-                  "include": "#raw-inline"
-                },
-                {
-                  "include": "#inline-literal"
-                },
-                {
-                  "include": "#inline-code"
-                },
-                {
-                  "include": "#trailing-comment"
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    "caption-behind-a-container-prefix": {
-      "patterns": [
-        {
-          "comment": "A CAPTION IS STILL A CAPTION BEHIND A CONTAINER PREFIX (`> ^ cap`), and the caption rule in `#tables` cannot reach it: that rule is anchored on `^[ \\t]*`, which tolerates indentation but not a marker, and the quote's own begin match has already consumed `> ` by the time the line is scanned - so the caption carried NO caption scope at all. Corpus 405-a-quote-holding-a-captioned-block-indents-it-like-any-other-nested-block renders `> ![a](i.png)` over `> ^ cap` as a figure inside the quote. `#block-quote-body` already reaches headings, thematic breaks, table rows, fences and reference definitions this way; the caption was the construct left out, and an ABSENT rule is exactly what the coverage gate cannot report, because a rule that emits no scope can never be an orphan (the blindness `#headings-behind-a-container-prefix` was filed for). Anchored on \\G with the `(?<=[ \\t])` guard for the reasons `#table-row-behind-a-container-prefix` gives. Reachable ONLY from `#block-quote-body`: containers reach the caption through `#tables`, whose `^[ \\t]*` anchor already matches at a container's own body column.",
-          "name": "markup.table.caption.carve",
-          "match": "\\G(?<=[ \\t])(\\^)( +)(?![ \\t]*$)([^ ].*)$",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.caption.carve"
-            },
-            "3": {
-              "name": "string.unquoted.caption.carve",
-              "patterns": [
-                {
-                  "comment": "THE CODE AND LITERAL INLINE RULES RUN BEFORE #trailing-comment, because a `%%` between backticks is code content in a caption as it is anywhere else: carve-js at pin 9f81a0a7 and carve-php 685e94fa3 both render an image over `^ cap ` + a backticked `x %% b` + ` c` as `<figcaption>cap <code>x %% b</code> c</figcaption>` (markup-carve/carve#2682). With only #trailing-comment reachable here, no code-span rule ran inside a caption at all, so the run's `%%` opened a line comment and swallowed the closing backtick and the text after it. The trailing-comment rule stays last, so a real trailing comment after a code span is still a comment, which is what the engines do too.",
-                  "include": "#raw-inline"
-                },
-                {
-                  "include": "#inline-literal"
-                },
-                {
-                  "include": "#inline-code"
-                },
-                {
-                  "include": "#trailing-comment"
-                }
-              ]
-            }
-          }
         }
       ]
     },
@@ -962,7 +908,7 @@
               "name": "punctuation.definition.quote.carve"
             }
           },
-          "end": "$",
+          "end": "$|(?=^)",
           "patterns": [
             {
               "include": "#block-quote-body"
@@ -2772,8 +2718,11 @@
       ]
     },
     "container-body": {
-      "comment": "The pattern set a container's body reaches, shared by every rule that opens one so they cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only, with `#definitions-in-container` standing in for `#definitions`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the container's content column. `#comment-fence-on-marker-line` leads, and is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
+      "comment": "The pattern set a container's body reaches, shared by every rule that opens one so they cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only, with `#definitions-in-container` standing in for `#definitions`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the container's content column. `#comment-fence-on-marker-line` is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
       "patterns": [
+        {
+          "include": "#captionable-blocks-in-container"
+        },
         {
           "include": "#comment-fence-on-marker-line"
         },
@@ -2818,6 +2767,9 @@
         },
         {
           "include": "#definitions-in-container"
+        },
+        {
+          "include": "#caption-paragraph"
         },
         {
           "include": "#links"
@@ -2947,6 +2899,13 @@
       "comment": "The pattern set a block quote's own line reaches, shared by `#block-quotes` and `#block-quote-on-marker-line` so the two cannot drift apart - the same reason `#container-body` exists for containers. Both rules differ only in their anchor: one opens at the line start, the other at the scan position on a list item's marker line.",
       "patterns": [
         {
+          "include": "#captionable-blocks"
+        },
+        {
+          "include": "#block-quote-on-marker-line",
+          "comment": "Nested quote bodies must reach their own captionable blocks."
+        },
+        {
           "include": "#code-fence-on-quote-marker-line"
         },
         {
@@ -2960,9 +2919,6 @@
         },
         {
           "include": "#table-row-behind-a-container-prefix"
-        },
-        {
-          "include": "#caption-behind-a-container-prefix"
         },
         {
           "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
@@ -2987,6 +2943,9 @@
         },
         {
           "include": "#trailing-comment"
+        },
+        {
+          "include": "#caption-paragraph"
         }
       ]
     },
@@ -3001,12 +2960,1508 @@
               "name": "punctuation.definition.quote.carve"
             }
           },
-          "end": "$",
+          "end": "$|(?=^)",
           "patterns": [
             {
               "include": "#block-quote-body"
             }
           ]
+        }
+      ]
+    },
+    "captionable-blocks": {
+      "patterns": [
+        {
+          "begin": "^(?=(?:[-*]|[0-9]+[.)]) +(?:(?:\\[[ xX]\\]) +)?(:{3,}) +(?:figure|>)[ \\t]*$)",
+          "end": "(?=^)",
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#lists"
+            }
+          ]
+        },
+        {
+          "begin": "^(?=> |>$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#block-quotes"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )+))\\G(?=!\\[[^\\]\\n]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-multiline-image-quoted"
+            },
+            {
+              "begin": "^((?:> ?)+)[ \\t]*\\n",
+              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )+))\\G(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#images"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#trailing-comment"
+            },
+            {
+              "begin": "^((?:> ?)+)[ \\t]*\\n",
+              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )+))\\G(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#table-row-behind-a-container-prefix"
+            },
+            {
+              "include": "#tables"
+            },
+            {
+              "begin": "^((?:> ?)+)[ \\t]*\\n",
+              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )+))\\G(?=((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#code-fence-on-quote-marker-line"
+            },
+            {
+              "include": "#code-blocks"
+            },
+            {
+              "include": "#code-block-behind-a-container-prefix"
+            },
+            {
+              "begin": "^((?:> ?)+)[ \\t]*\\n",
+              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )+))\\G(?=\\$\\$`+[^\\n]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#math"
+            },
+            {
+              "begin": "^((?:> ?)+)[ \\t]*\\n",
+              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "(?<=^((?:> )+))\\G(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-colon-host-quoted"
+            },
+            {
+              "begin": "^((?:> ?)+)[ \\t]*\\n",
+              "end": "^\\1 ?(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              },
+              "beginCaptures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=!\\[[^\\]\\n]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-multiline-image"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=!\\[[^\\]\\n]*$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-multiline-image"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#images"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#trailing-comment"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#images"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#trailing-comment"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#table-row-behind-a-container-prefix"
+            },
+            {
+              "include": "#tables"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#table-row-behind-a-container-prefix"
+            },
+            {
+              "include": "#tables"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=((`|~)\\2{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#code-blocks"
+            },
+            {
+              "include": "#code-block-behind-a-container-prefix"
+            },
+            {
+              "include": "#code-fence-on-quote-marker-line"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=((`|~)\\2{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#code-blocks"
+            },
+            {
+              "include": "#code-block-behind-a-container-prefix"
+            },
+            {
+              "include": "#code-fence-on-quote-marker-line"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=\\$\\$`+[^\\n]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#math"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=\\$\\$`+[^\\n]*$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#math"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]*\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-colon-host"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]*(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^[ \\t]+\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-colon-host"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^[ \\t]+(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "comment": "Generated by tools/generate-caption-contexts.mjs. Caption slots permit at most one blank line (PART 9 §4; caption_slot)."
+    },
+    "caption-colon-host": {
+      "begin": "(?:^|\\G(?<=[ \\t]))(:{3,}) +(?:figure|>)[ \\t]*$",
+      "end": "^[ \\t]*(?:> )*(\\1)[ \\t]*$",
+      "beginCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "include": "#caption-nested-div"
+        },
+        {
+          "include": "#container-body"
+        }
+      ]
+    },
+    "caption-nested-div": {
+      "begin": "(?:^|\\G(?<=[ \\t]))(:{3,})(?: +[^\\n]+)?[ \\t]*$",
+      "end": "^[ \\t]*(?:> )*(\\1)[ \\t]*$",
+      "beginCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "include": "#caption-nested-div"
+        },
+        {
+          "include": "#container-body"
+        }
+      ]
+    },
+    "caption-inline": {
+      "patterns": [
+        {
+          "include": "#smart-typography",
+          "comment": "Consume backslash escapes before testing backtick openers."
+        },
+        {
+          "comment": "Verbatim spans protect their percent runs; a trailing comment after a span remains a comment (#299).",
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#trailing-comment"
+        }
+      ]
+    },
+    "caption": {
+      "patterns": [
+        {
+          "name": "markup.table.caption.carve",
+          "match": "(\\^)( +)(?![ \\t]*$)([^ ].*)$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.caption.carve"
+            },
+            "3": {
+              "name": "string.unquoted.caption.carve",
+              "patterns": [
+                {
+                  "include": "#caption-inline"
+                }
+              ]
+            }
+          },
+          "comment": "Only host end captures include this tokenizer. The separator is spaces; empty content stays prose (PART 7 marker separator)."
+        }
+      ]
+    },
+    "caption-quote-prefix": {
+      "patterns": [
+        {
+          "match": ">",
+          "name": "punctuation.definition.quote.carve"
+        }
+      ]
+    },
+    "caption-paragraph": {
+      "patterns": [
+        {
+          "begin": "(?<=^((?:> )+))\\G(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
+          "end": "^(?!\\1)|^(?=\\1[ \\t]*(?:[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\||(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|\\+[ \\t]*$|: +|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
+          "patterns": [
+            {
+              "match": "^(?:> )+",
+              "captures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "include": "#caption-quote-paragraph-inline"
+            }
+          ]
+        },
+        {
+          "begin": "^(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)[ \\t]*",
+          "end": "^(?=[ \\t]*(?:[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\||(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|\\+[ \\t]*$|: +|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
+          "patterns": [
+            {
+              "include": "#caption-paragraph-inline"
+            }
+          ]
+        },
+        {
+          "begin": "\\G(?<=[ \\t])(?![ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)(?=[ \\t]*\\S)",
+          "end": "^(?=[ \\t]*$|\\S)|^(?=[ \\t]+(?:[ \\t]*$|(?:(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|#{1,6} +(?![ \\t]*$)|%{3,}(?: |$)|`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|\\||(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\\.) +|:: +|\\+[ \\t]*$|: +|\\*\\[[^\\]\\n]+\\]: |\\[[^\\]\\n]+\\]: )))",
+          "patterns": [
+            {
+              "include": "#caption-paragraph-inline"
+            }
+          ]
+        }
+      ]
+    },
+    "caption-paragraph-inline": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#thematic-break"
+        },
+        {
+          "include": "#links"
+        },
+        {
+          "include": "#images"
+        },
+        {
+          "include": "#footnotes"
+        },
+        {
+          "include": "#citations"
+        },
+        {
+          "include": "#code-callouts"
+        },
+        {
+          "include": "#critic-markup"
+        },
+        {
+          "include": "#forced-emphasis"
+        },
+        {
+          "include": "#sup-sub"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#braced-comment"
+        },
+        {
+          "include": "#trailing-comment"
+        },
+        {
+          "include": "#include-directive"
+        },
+        {
+          "include": "#math"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#extension-inline"
+        },
+        {
+          "include": "#emphasis"
+        },
+        {
+          "include": "#mentions-tags"
+        },
+        {
+          "include": "#smart-typography"
+        },
+        {
+          "include": "#hard-break"
+        }
+      ]
+    },
+    "caption-colon-host-quoted": {
+      "begin": "(?<=^((?:> )+))\\G(:{3,}) +(?:figure|>)[ \\t]*$",
+      "end": "^\\1(\\2)[ \\t]*$|^(?!\\1)",
+      "beginCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "match": "^(?:> )",
+          "captures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "include": "#caption-nested-div-quoted"
+        },
+        {
+          "include": "#container-body"
+        }
+      ]
+    },
+    "caption-nested-div-quoted": {
+      "begin": "(?<=^((?:> )+))\\G(:{3,})(?: +[^\\n]+)?[ \\t]*$",
+      "end": "^\\1(\\2)[ \\t]*$|^(?!\\1)",
+      "beginCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-colon-tokenizer"
+            }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "match": "^(?:> )",
+          "captures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "include": "#caption-nested-div-quoted"
+        },
+        {
+          "include": "#container-body"
+        }
+      ]
+    },
+    "caption-colon-tokenizer": {
+      "patterns": [
+        {
+          "name": "markup.other.figure-group.carve",
+          "match": "[ \\t]*(?:([-*])[ \\t]+)?(:::+) +(figure)[ \\t]*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.list.begin.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.figure-group.carve"
+            },
+            "3": {
+              "name": "entity.name.type.figure-group.carve"
+            }
+          }
+        },
+        {
+          "name": "markup.other.div.carve",
+          "match": "[ \\t]*(?:([-*])[ \\t]+)?(:::+)(?: +([^\\s{\\[\"]+))?(?: +(\"[^\"]*\")(?: +(\\[[^\\]]*\\]))?| *(\\[[^\\]]*\\])(?: +(\"[^\"]*\"))?)?[ \\t]*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.list.begin.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.div.carve"
+            },
+            "3": {
+              "name": "entity.name.type.div.carve"
+            },
+            "4": {
+              "name": "string.quoted.double.carve"
+            },
+            "5": {
+              "name": "entity.name.label.carve"
+            },
+            "6": {
+              "name": "entity.name.label.carve"
+            },
+            "7": {
+              "name": "string.quoted.double.carve"
+            }
+          }
+        }
+      ]
+    },
+    "caption-quote-paragraph-inline": {
+      "patterns": [
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#trailing-comment"
+        },
+        {
+          "include": "#smart-typography"
+        }
+      ]
+    },
+    "captionable-blocks-in-container": {
+      "patterns": [
+        {
+          "include": "#captionable-blocks"
+        },
+        {
+          "begin": "^([ \\t]+)(?=!\\[[^\\]\\n]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-multiline-image"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^([ \\t]+)(?=(?:(!\\[)([^\\]]*)(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(!\\[)([^\\]]*)(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#images"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#trailing-comment"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^([ \\t]+)(?=\\|[^\\n]*\\|[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#table-row-behind-a-container-prefix"
+            },
+            {
+              "include": "#tables"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^([ \\t]+)(?=((`|~)\\3{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#code-blocks"
+            },
+            {
+              "include": "#code-block-behind-a-container-prefix"
+            },
+            {
+              "include": "#code-fence-on-quote-marker-line"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^([ \\t]+)(?=\\$\\$`+[^\\n]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#math"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "begin": "^([ \\t]+)(?=:{3,} +(?:figure|>)[ \\t]*$)",
+          "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|(?=^)|(?<=^\\1\\^ +[^\\n]*)$|(?<=^(?:> ?)*[ \\t]*\\n)$",
+          "endCaptures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                },
+                {
+                  "include": "#caption"
+                }
+              ]
+            }
+          },
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#caption-colon-host"
+            },
+            {
+              "begin": "^[ \\t]*\\n",
+              "end": "^\\1(\\^)( +)(?![ \\t]*$)([^ ].*)$|^(?:> ?)*[ \\t]*\\n|(?=^)",
+              "endCaptures": {
+                "0": {
+                  "patterns": [
+                    {
+                      "include": "#caption-quote-prefix"
+                    },
+                    {
+                      "include": "#caption"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "caption-multiline-image": {
+      "begin": "(?:^|\\G(?<=[ \\t]))!\\[[^\\]\\n]*$",
+      "end": "^[^\\]\\n]*(?:(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|^(?:> ?)*[ \\t]*\\n|^(?=#{1,6} |`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|(?:[-*]|[0-9]+[.)]) +|\\|)"
+    },
+    "caption-multiline-image-quoted": {
+      "begin": "(?<=^((?:> )+))\\G!\\[[^\\]\\n]*$",
+      "end": "^\\1[^\\]\\n]*(?:(\\]\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))|(\\])(\\[)([^\\]\\n]*)(\\]))(?:[ \\t]*\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})*[ \\t]*$|^(?:> ?)*[ \\t]*\\n|^(?!\\1)|^\\1(?=#{1,6} |`{3,}|~{3,}|:{3,}(?: |$)|>(?: |$)|(?:[-*]|[0-9]+[.)]) +|\\|)",
+      "endCaptures": {
+        "0": {
+          "patterns": [
+            {
+              "include": "#caption-quote-prefix"
+            }
+          ]
+        }
+      },
+      "patterns": [
+        {
+          "match": "^(?:> )+",
+          "captures": {
+            "0": {
+              "patterns": [
+                {
+                  "include": "#caption-quote-prefix"
+                }
+              ]
+            }
+          }
         }
       ]
     }

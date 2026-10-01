@@ -105,8 +105,8 @@
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
 >
 >- ::: figure
-#^ text.carve markup.other.figure-group.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.other.figure-group.carve
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
 #  ^^^ text.carve markup.other.figure-group.carve punctuation.definition.figure-group.carve
 #     ^ text.carve markup.other.figure-group.carve
 #      ^^^^^^ text.carve markup.other.figure-group.carve entity.name.type.figure-group.carve

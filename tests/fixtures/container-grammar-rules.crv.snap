@@ -29,12 +29,16 @@
 #^^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve
 #  ^^^ text.carve markup.quote.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
 >
->- item
+>- ![a](i.png)
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.unnumbered.carve
-#  ^^^^^ text.carve
+#  ^^ text.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#    ^ text.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve meta.image.inline.carve
+#       ^^^^^ text.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ text.carve meta.image.inline.carve
 >  ^ Caption at its content column
-#^^ text.carve markup.table.caption.carve
+#^^ text.carve
 #  ^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
 #   ^ text.carve markup.table.caption.carve
 #    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
@@ -72,6 +76,16 @@
 >> %%%
 #^^^^^ text.carve markup.quote.carve comment.block.carve
 >
+>> ![a](i.png)
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^ text.carve markup.quote.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#    ^ text.carve markup.quote.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve markup.quote.carve meta.image.inline.carve
+#       ^^^^^ text.carve markup.quote.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ text.carve markup.quote.carve meta.image.inline.carve
+>>
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
 >> ^ Caption behind a quote marker
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve
