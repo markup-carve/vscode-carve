@@ -38,35 +38,17 @@
 #                                           ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
 #                                            ^^^^^^^^^^^ text.carve
 >- [-] dropped
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
-#      ^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^ text.carve
 >- [>] forward
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
-#      ^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^ text.carve
 >- [_] paused
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
-#      ^^^^^^^ text.carve
+#^^^^^^^^^^^^^ text.carve
 >- [?] question
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
-#      ^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^ text.carve
 >- [x] done
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
-#      ^^^^^ text.carve
+#^^^^^^^^^^^ text.carve
 >- [ ] todo
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
-#      ^^^^^ text.carve
+#^^^^^^^^^^^ text.carve
 >Attr {title="a\"b"} keeps the whole quoted value
 #^^^^^^^^^^^^ text.carve
 #            ^ text.carve punctuation.definition.smartquote.carve

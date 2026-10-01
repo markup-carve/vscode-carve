@@ -1,7 +1,11 @@
 >> ![a](i.png)
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve
-#  ^^^^^^^^^^^ text.carve markup.quote.carve
+#  ^^ text.carve markup.quote.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#    ^ text.carve markup.quote.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ text.carve markup.quote.carve meta.image.inline.carve
+#       ^^^^^ text.carve markup.quote.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ text.carve markup.quote.carve meta.image.inline.carve
 >> ^ cap
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve
@@ -12,5 +16,5 @@
 >> plain
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve
-#  ^^^^^ text.carve markup.quote.carve
+#  ^^^^^^ text.carve markup.quote.carve
 >

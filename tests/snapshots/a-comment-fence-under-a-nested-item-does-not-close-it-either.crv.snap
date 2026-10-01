@@ -10,5 +10,6 @@
 > %%%
 #^^^^ text.carve comment.block.carve
 > b
-#^^^ text.carve
+#^ text.carve
+# ^^ text.carve
 >

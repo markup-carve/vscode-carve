@@ -3,8 +3,8 @@
 #  ^ text.carve markup.list.numbered.carve
 #   ^^ text.carve
 >    > quote
-#^^^^ text.carve markup.quote.carve
+#^^^^ text.carve
 #    ^ text.carve markup.quote.carve punctuation.definition.quote.carve
 #     ^ text.carve markup.quote.carve
-#      ^^^^^ text.carve markup.quote.carve
+#      ^^^^^^ text.carve markup.quote.carve
 >

@@ -70,9 +70,7 @@
 #   ^^^^^ text.carve
 >
 >^ cap
-#^ text.carve markup.table.caption.carve punctuation.definition.caption.carve
-# ^ text.carve markup.table.caption.carve
-#  ^^^ text.carve markup.table.caption.carve string.unquoted.caption.carve
+#^^^^^^ text.carve
 >
 >- [x] done
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve

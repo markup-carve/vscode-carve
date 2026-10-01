@@ -15,6 +15,6 @@
 >
 >[^a]: reference body.
 #^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#     ^^^^^^^^^^ text.carve meta.footnote.definition.carve
-#               ^^^^^^^ text.carve
+#     ^ text.carve meta.footnote.definition.carve
+#      ^^^^^^^^^^^^^^^^ text.carve
 >

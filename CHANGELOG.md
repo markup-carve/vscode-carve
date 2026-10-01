@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Caption highlighting follows a preceding captionable block. Bare caret lines stay prose (#300).
+
 ## [0.1.8] - 2026-09-30
 
 ### Added

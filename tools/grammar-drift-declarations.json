@@ -15,7 +15,6 @@
     "admonition_in_group": { "local": "divs", "fixture": "composite-figures" },
     "figure_group": { "local": "divs", "fixture": "composite-figures" },
     "blockquote_in_container": { "local": "block-quotes", "fixture": "blockquote-marker-spacing" },
-    "caption": { "local": "tables", "fixture": "composite-figures" },
     "abbreviation": { "local": "definitions", "fixture": "definition-at-a-content-column" },
     "abbreviation_in_container": { "local": "definitions-in-container", "fixture": "definition-at-a-content-column" },
     "link_ref_def": { "local": "definitions", "fixture": "reference-images-and-crossrefs" },
@@ -77,7 +76,6 @@
   },
   "localRulesGroupedUpstream": {
     "attribute-items": { "upstream": "attributes", "fixture": "attribute-attachment" },
-    "caption-behind-a-container-prefix": { "upstream": "caption", "fixture": "container-grammar-rules" },
     "table-row-cells": { "upstream": "table_row", "fixture": "table-patterns" },
     "table-row-behind-a-container-prefix": { "upstream": "table_row", "fixture": "container-grammar-rules" },
     "trailing-comment-cell": { "upstream": "trailing_comment", "fixture": "container-grammar-rules" },
@@ -86,7 +84,9 @@
     "block-quote-body": { "upstream": "blockquote_in_container", "fixture": "definition-at-a-content-column" },
     "fenced-code-languages": { "upstream": "fenced_code", "fixture": "fenced-code-embedded-languages" },
     "fenced-code-languages-on-a-marker-line": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" },
-    "fenced-code-languages-at-a-body-column": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" }
+    "fenced-code-languages-at-a-body-column": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" },
+    "caption-quote-prefix": { "upstream": "blockquote", "fixture": "container-grammar-rules" },
+    "caption-colon-tokenizer": { "upstream": "admonition", "fixture": "composite-figures" }
   },
   "localOnlyRules": {
     "container-body": "grammar-correctness",

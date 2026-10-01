@@ -24,14 +24,16 @@
 # ^^^ text.carve markup.list.unnumbered.carve
 #    ^^ text.carve
 >  [r]: /u
-#^^^^^^^^^^ text.carve
+#^^ text.carve
+#  ^^^^^^^^ text.carve
 >
 >10. a
 #^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
 #   ^ text.carve markup.list.numbered.carve
 #    ^^ text.carve
 >  [r]: /u
-#^^^^^^^^^^ text.carve
+#^^ text.carve
+#  ^^^^^^^^ text.carve
 >
 >- - a
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
@@ -39,11 +41,13 @@
 #  ^^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 #    ^^ text.carve
 > [r]: /u
-#^^^^^^^^^ text.carve
+#^ text.carve
+# ^^^^^^^^ text.carve
 >
 >[^a]: note
 #^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#     ^^^^^ text.carve meta.footnote.definition.carve
+#     ^ text.carve meta.footnote.definition.carve
+#      ^^^^^ text.carve
 >  [r]: /u
 #^^ text.carve meta.link.reference.definition.carve
 #  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
