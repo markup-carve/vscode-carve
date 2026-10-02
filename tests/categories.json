@@ -19,6 +19,7 @@
     "a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace": "a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace.crv",
     "a-definition-below-every-content-column-folds-as-text": "a-definition-below-every-content-column-folds-as-text.crv",
     "a-definition-inside-a-comment-registers-nothing": "a-definition-inside-a-comment-registers-nothing.crv",
+    "invalid-named-container-metadata-keeps-the-subtree": "invalid-named-container-metadata-keeps-the-subtree-2.crv",
     "a-definition-inside-a-container-is-collected-at-that-container-s-content-column": "a-definition-inside-a-container-is-collected-at-that-container-s-content-column.crv",
     "a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace": "a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace.crv",
     "a-fence-keeps-the-blank-line-at-the-end-of-its-content": "a-fence-keeps-the-blank-line-at-the-end-of-its-content.crv",
@@ -152,6 +153,7 @@
     "unquoted-attribute-values-may-contain-dots-and-colons": "unquoted-attribute-values-may-contain-dots-and-colons.crv"
   },
   "skip": {
+    "a-denied-destination-takes-one-render-loss-row-per-sink": "Measured against the bundled TextMate grammar: every scope the one file in this category produces is already pinned by a covered corpus snapshot, and the `no scope lives only in a skipped category` test re-checks that on every run. Whether a destination is DENIED is a render-time safety decision over an already-parsed link, and it has no token of its own: the file is an ordinary inline link beside an ordinary inline image, both pinned by the covered link and image categories. The scheme name sits inside the destination, which the grammar scopes as one destination either way, so no highlighting could distinguish a denied sink from an allowed one without duplicating the renderer's policy list in a regex.",
     "a-backslash-in-a-link-destination-is-a-literal-character": "How a backslash inside a destination is interpreted is link parsing; the link tokens are covered by 03 and the escape token by 60.",
     "a-band-paragraph-after-an-invisible-line-leaves-the-item-loose": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. Looseness is a render-time list property - it decides whether the item gets a `<p>`, not how any token is scoped.",
     "a-bare-attribute-block-on-its-own-line-is-literal": "Negative case: '{}' stays literal. The attribute-block pattern requires at least one character, so there is no token to assert; block attribute lines are covered by 84.",
