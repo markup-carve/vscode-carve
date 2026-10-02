@@ -10,10 +10,14 @@ on:
       # character, so this admits exactly vMAJOR.MINOR.PATCH and nothing else.
       - "v[0-9]+.[0-9]+.[0-9]+"
 
+# Every job declares timeout-minutes. Without one GitHub applies a 360-minute
+# default, roughly 900x the median job in this org, so a hung step burns hours
+# of runner time before anything stops it.
 jobs:
   publish:
     name: Build and publish extension
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment: release
     # The publish tokens are mapped to job env so the guard below can read them.
     # They used to gate the publish steps with `if: env.X != ''`, so a missing
