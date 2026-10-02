@@ -514,7 +514,20 @@ const rows = []
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
 const ENGINE_PIN = '0.1.9'
-const ENGINE_LAG = {}
+const ENGINE_LAG = {
+  '255-colon-fence-metadata-slots-must-be-a-space-too.crv':
+    'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
+  '255-colon-fence-metadata-slots-must-be-a-space-too-2.crv':
+    'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
+  '255-colon-fence-metadata-slots-must-be-a-space-too-3.crv':
+    'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
+  '255-colon-fence-metadata-slots-must-be-a-space-too-4.crv':
+    'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
+  '537-invalid-named-container-metadata-keeps-the-subtree.crv':
+    'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
+  '537-invalid-named-container-metadata-keeps-the-subtree-2.crv':
+    'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
+}
 const lagWaived = []
 const lagStale = []
 

@@ -262,7 +262,12 @@ for (const opening of ['Intro text', '[x](u) intro']) {
     assert.ok(!covered(source, 'markup.table.caption').includes('^ Panel'))
   })
 }
-for (const body of [' :::', '> :::', '::: note\t"T"\ntext']) {
+// `:::\tnote` replaced `::: note\t"T"` here when carve 1acc54c moved the corpus 255
+// goldens: a readable name followed by unreadable metadata now OPENS a container, so that
+// line is no longer body text and its closer belongs to the container it opened. The
+// separator before the NAME is still a space run (corpus 254 is unchanged), which is what
+// keeps the tab-glued form text and the invariant testable.
+for (const body of [' :::', '> :::', ':::\tnote\ntext']) {
   test(`body text cannot consume a figure closer: ${JSON.stringify(body)}`, () => {
     assert.ok(covered('::: figure\n' + body + '\n:::\n^ group', 'markup.table.caption').includes('^ group'))
   })

@@ -10,9 +10,19 @@
  *     x
  *     :::
  *
- * renders `<p>:::note\nx\n:::</p>`, and so do the tab-separated and glued forms
- * of every other token. Corpus 254 and 255 exist to pin exactly this rule. A
- * tab belongs at the START of a line and nowhere else on one.
+ * renders `<p>:::note\nx\n:::</p>`, and so does every tab-separated or glued
+ * form of the separator before the NAME. Corpus 254 pins that, and it is the
+ * whole of the rule: a tab belongs at the START of a line and nowhere else on
+ * one.
+ *
+ * WHAT A NAME BUYS. Once the name is read with a space separator, the metadata
+ * behind it no longer decides whether a container opens. Corpus 255 moved with
+ * carve 1acc54c: `::: note<TAB>"Title"` and `::: note "Title"<TAB>[First]`
+ * used to render as one paragraph and now render as an admonition aside, the
+ * unreadable metadata simply dropped (corpus 537 states the rule). Both are
+ * openers in the table below for that reason, and the grammar reaches them
+ * through a second branch in `#divs` that scopes the fence and the name and
+ * leaves the discarded tail alone.
  *
  * The one slot that takes NO separator is the bare `[label]`: `:::[l]` does
  * open a div, so that branch alone is zero-or-more.
@@ -109,9 +119,9 @@ const OPENERS = [
   [':::[l]', true],
   [':::\t[l]', false],
   ['::: note "T"', true],
-  ['::: note\t"T"', false],
+  ['::: note\t"T"', true],
   ['::: note "T" [l]', true],
-  ['::: note "T"\t[l]', false],
+  ['::: note "T"\t[l]', true],
 ]
 
 for (const [opener, opens] of OPENERS) {
