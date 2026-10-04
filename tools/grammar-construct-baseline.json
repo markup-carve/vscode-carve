@@ -18,6 +18,5 @@
   "upstream:fenced_code_in_container": "no fixture holds a code fence behind a container prefix that upstream's rule reaches",
   "local:table-row-cells": "upstream leaves the row's leading pipe unscoped - either a grouping delta or a real upstream gap",
   "local:table-row-behind-a-container-prefix": "upstream leaves the prefixed row's pipe unscoped",
-  "local:caption-colon-tokenizer": "upstream leaves a container opened after a list marker unscoped, carve-grammars#609",
   "localOnly:raw-inline": "upstream scopes the same backtick, so this is a grouping delta, not a local-only construct"
 }
