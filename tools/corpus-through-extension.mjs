@@ -551,6 +551,10 @@ const ENGINE_LAG = {
     'no name lookup folds case (CARVE-P9R-010, spec 546); engine 0.1.9 still folds case in `</#id>`, so `</#plan>` resolves to `#Plan`',
   '546-every-name-lookup-compares-case-exactly-3.crv':
     'no name lookup folds case (CARVE-P9R-010, spec 546); engine 0.1.9 still folds case in the heading index, so `[plan][]` resolves to `#Plan`',
+  '547-an-info-string-does-not-change-how-a-flush-left-fence-folds-into-a-description-body.crv':
+    'an info string decides nothing below a closed nested fence (spec 547); the flush-left fence has no closer ahead, so it is content of the description body and renders as a paragraph holding an inline code run, but engine 0.1.9 still lets it OPEN a code block inside the body and emits `<pre><code class="language-rust"></code></pre>` there',
+  '547-an-info-string-does-not-change-how-a-flush-left-fence-folds-into-a-description-body-2.crv':
+    'an info string decides nothing below a closed nested fence (spec 547); the flush-left fence has no closer ahead, so it is content of the description body and renders as a paragraph holding an inline code run, but engine 0.1.9 still lets it OPEN a code block inside the body and emits `<pre><code></code></pre>` there',
 }
 const lagWaived = []
 const lagStale = []
