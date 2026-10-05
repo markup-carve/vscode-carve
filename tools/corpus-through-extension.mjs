@@ -527,6 +527,22 @@ const ENGINE_LAG = {
     'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
   '537-invalid-named-container-metadata-keeps-the-subtree-2.crv':
     'invalid metadata behind a readable container name is dropped and the container still opens (spec 537); engine 0.1.9 reads the whole opener line as paragraph text',
+  '538-multiple-table-bodies-have-positional-source-metadata.crv':
+    'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
+  '539-empty-table-bodies-keep-their-source-boundaries.crv':
+    'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
+  '540-a-table-with-no-bodies-keeps-its-head-and-foot.crv':
+    'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
+  '541-invalid-table-body-metadata-stays-ordinary.crv':
+    'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
+  '541-invalid-table-body-metadata-stays-ordinary-4.crv':
+    'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
+  '542-a-span-across-bodies-keeps-their-header-semantics.crv':
+    'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
+  '543-a-head-and-foot-consuming-all-rows-leave-no-implicit-body.crv':
+    'a head and foot consuming every row leave no implicit body (spec 543); engine 0.1.9 still emits an empty tbody',
+  '544-explicit-body-counts-include-native-header-cells.crv':
+    'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
 }
 const lagWaived = []
 const lagStale = []
