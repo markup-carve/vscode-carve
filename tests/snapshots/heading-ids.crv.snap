@@ -32,7 +32,7 @@
 # ^ text.carve markup.heading.carve
 #  ^^^ text.carve markup.heading.carve entity.name.section.carve
 >
->See </#cafe-notes>, </#section-2024-recap>, </#setup-2>, and </#api-v2>.
+>See </#cafe-notes>, </#section-2024-recap>, </#Setup-2>, and </#api-v2>.
 #^^^^ text.carve
 #    ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
 #       ^^^^^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
