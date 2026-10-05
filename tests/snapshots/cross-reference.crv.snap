@@ -3,7 +3,7 @@
 # ^ text.carve markup.heading.carve
 #  ^^^^^^^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
 >
->See </#getting-started>.
+>See </#Getting-Started>.
 #^^^^ text.carve
 #    ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
 #       ^^^^^^^^^^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve

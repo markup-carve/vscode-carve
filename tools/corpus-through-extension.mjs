@@ -543,6 +543,14 @@ const ENGINE_LAG = {
     'a head and foot consuming every row leave no implicit body (spec 543); engine 0.1.9 still emits an empty tbody',
   '544-explicit-body-counts-include-native-header-cells.crv':
     'positional table body metadata (spec 538-544); engine 0.1.9 does not read body-rows, body-header-rows or body-header-cols and emits them as raw table attributes instead',
+  '15-heading-ids-2.crv':
+    'no name lookup folds case (CARVE-P9R-010, spec 546); engine 0.1.9 still folds case in `</#id>`, so `</#getting-started>` resolves instead of staying literal',
+  '173-implicit-heading-references-with-no-definition.crv':
+    'no name lookup folds case (CARVE-P9R-010, spec 546); engine 0.1.9 still folds case in the heading index, so `[getting started][]` resolves instead of staying literal',
+  '546-every-name-lookup-compares-case-exactly.crv':
+    'no name lookup folds case (CARVE-P9R-010, spec 546); engine 0.1.9 still folds case in `</#id>`, so `</#plan>` resolves to `#Plan`',
+  '546-every-name-lookup-compares-case-exactly-3.crv':
+    'no name lookup folds case (CARVE-P9R-010, spec 546); engine 0.1.9 still folds case in the heading index, so `[plan][]` resolves to `#Plan`',
 }
 const lagWaived = []
 const lagStale = []
