@@ -29,6 +29,31 @@ test('Markdown converts through the engine migration', () => {
   assert.equal(diagnostics, 0)
 })
 
+// Three Markdown shapes the engine imported wrongly until 0.1.10. The command
+// writes whatever the engine returns straight to a .crv file, so a fidelity
+// regression here reaches the user's document rather than a diagnostic. Each
+// case fails against 0.1.9.
+test('Markdown import escapes a bracket an emphasis span crosses', () => {
+  // 0.1.9 returned "/a [b/ c]", whose bracket re-reads as Carve markup and
+  // loses the emphasis outright.
+  assert.equal(convertToCarve('*a [b* c]\n', 'markdown').carve, '/a \\[b/ c]\n')
+})
+
+test('Markdown import keeps a lazy continuation inside its quote', () => {
+  // 0.1.9 read the line below as a setext underline and hoisted a heading out
+  // of the quote.
+  assert.equal(convertToCarve('> text\nlazy\n===\n', 'markdown').carve, '> text\n> lazy\n> ===\n')
+})
+
+test('Markdown import keeps the deactivated outer link as text', () => {
+  // Carve links never nest, so 0.1.9's "[a [b](/in) c](/out)" collapsed to one
+  // outer link and dropped the inner one.
+  assert.equal(
+    convertToCarve('[a [b](/in) c](/out)\n', 'markdown').carve,
+    '\\[a [b](/in) c\\](\\/out)\n',
+  )
+})
+
 test('HTML converts through the engine importer and counts its diagnostics', () => {
   assert.deepEqual(convertToCarve('<h1>Title</h1><p><b>bold</b></p>', 'html'), {
     carve: '# Title\n\n*bold*\n',
