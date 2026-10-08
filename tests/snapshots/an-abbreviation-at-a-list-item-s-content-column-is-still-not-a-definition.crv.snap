@@ -3,14 +3,7 @@
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^ text.carve
 >  *[HTML]: Hyper Text
-#^^ text.carve meta.abbreviation.definition.carve
-#  ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
-#   ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
-#    ^^^^ text.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
-#        ^ text.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
-#         ^ text.carve meta.abbreviation.definition.carve punctuation.separator.carve
-#          ^ text.carve meta.abbreviation.definition.carve
-#           ^^^^^^^^^^ text.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve
+#^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >
 >The HTML spec.
 #^^^^^^^^^^^^^^^ text.carve

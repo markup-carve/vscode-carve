@@ -39,13 +39,22 @@ function covered(source, scope) {
     .join('')).join('\n')
 }
 
-test('an abbreviation definition in a container owns its complete line', () => {
+// An abbreviation definition at a container's content column used to carry the
+// definition scopes here, so this test asked for them. The engine collects no
+// abbreviation outside document level (markup-carve/carve#611): both sources
+// below render the line as literal text, with no `<abbr>` anywhere. What the
+// line still must NOT do is open an unclosed bold run that crosses the block
+// under it, which is why it is consumed rather than left to the inline layer -
+// see tests/container-paragraph-continuation.test.mjs
+// (markup-carve/vscode-carve#329).
+test('an abbreviation definition in a container is neither a definition nor bold', () => {
   for (const source of [
+    // `<li><p>a</p><p>*[A]: a</p><ul><li>b</li></ul></li>`
     '- a\n\n  *[A]: a\n  - b',
+    // `<li>a\n*[HTML]: Hyper Text</li>` then `<p>The HTML spec.</p>`
     '- a\n  *[HTML]: Hyper Text\n\nThe HTML spec.',
   ]) {
-    const line = source.split('\n').find((candidate) => candidate.includes('*['))
-    assert.equal(covered(source, 'meta.abbreviation.definition.carve').split('\n').find((part) => part), line)
+    assert.equal(covered(source, 'meta.abbreviation.definition.carve').replace(/\n/g, ''), '')
     assert.ok(!covered(source, 'markup.bold.carve').includes('[A]'))
     assert.ok(!covered(source, 'markup.bold.carve').includes('[HTML]'))
   }

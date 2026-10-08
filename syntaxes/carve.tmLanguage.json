@@ -815,6 +815,22 @@
       ]
     },
     "tables": {
+      "comment": "A CONTINUATION ROW NEEDS A ROW ABOVE IT (markup-carve/vscode-carve#329). `+ b |` used to be a bare `match` beside the row rules, so it was scoped wherever it stood. The engine folds it into the row above it and renders it as ordinary text when no table is open, at the document level as much as at a container's content column: `+ cont |` under a GFM delimiter row is `<p>+ cont |</p>` (corpus 115-a-continuation-row-needs-a-body-row), and `:: t` over `:  a` over `   + b |` keeps the row in the description's paragraph. A `match` rule cannot ask what stood above it, so the row rules move inside a region that only a pipe row opens and that lets go on the first line which is not another continuation row. THE REGION CARRIES NO NAME, so no row gains a scope layer from it, and its `end` matches every line except a continuation row, so it cannot reach the end of the document. `applyEndPatternLast` is what makes the opening line reachable: the `end` is anchored on `^`, which still matches at the zero-width `begin`, so tested first it would close the region before a row was scoped.",
+      "patterns": [
+        {
+          "begin": "^(?=\\|)",
+          "end": "^(?![ \\t]*\\+.*\\|[ \\t]*$)",
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#table-rows"
+            }
+          ]
+        }
+      ]
+    },
+    "table-rows": {
+      "comment": "The rows of a table, reachable only from the region `#tables` opens.",
       "patterns": [
         {
           "comment": "GFM delimiter/alignment row: a whole line of only pipes, dashes, optional alignment colons, and whitespace (e.g. `|---|---|`, `|:---:|`). Gated by a full-row lookahead so an ordinary data cell that merely contains dashes is NOT mis-scoped. Each dash/colon cell is the separator; the pipes keep their separator scope. Note: TextMate rules are line-local and do not track table position, so a dash/colon-only row that is NOT the parser's second-row delimiter (e.g. a body row that happens to be all dashes) is also highlighted here. That edge case is rare and cosmetic; modeling exact delimiter-row position would require a full multi-line table state machine.",
@@ -854,9 +870,9 @@
           ]
         },
         {
-          "comment": "The continuation row (`+ b |`), which folds into the row above it. INDENT-TOLERANT for the same reason the row rule beside it is: a table inside a list item sits at the item's content column, and a column-0 anchor here left `  + b |` unscoped under a `  | a |` that did scope (markup-carve/vscode-carve#129). It inherits that rule's known over-match at the document level, where carve-js renders an indented pipe row as a paragraph.",
+          "comment": "The continuation row (`+ b |`), which folds into the row above it. Reachable ONLY from the region in `#tables`, so it needs a pipe row above it (markup-carve/vscode-carve#329).",
           "name": "markup.table.continuation.carve",
-          "match": "^(\\+)(.*\\|\\s*)$",
+          "match": "^[ \\t]*(\\+)(.*\\|\\s*)$",
           "captures": {
             "1": {
               "name": "keyword.operator.table.continuation.carve"
@@ -866,6 +882,22 @@
       ]
     },
     "table-row-behind-a-container-prefix": {
+      "comment": "THE CONTAINER SPELLING NEEDS A ROW ABOVE ITS CONTINUATION ROW TOO (markup-carve/vscode-carve#329), and for the same reason `#tables` does: the engine folds `+ b |` into the row above it and renders it as text when no table is open. `- + a |` over `tail` is one list item holding `+ a |`, and `:: t` over `:  a` over `   + b |` keeps the row in the description's paragraph. The rows move inside a region that only a pipe row opens - on the container's own marker line through `\\G`, or at its content column - and that lets go on the first line which is not another continuation row. THE REGION IS UNNAMED and its `end` matches every line except a continuation row, so it adds no scope and cannot reach the end of the document.",
+      "patterns": [
+        {
+          "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(?=\\|)",
+          "end": "^(?![ \\t]*\\+.*\\|[ \\t]*$)",
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#table-rows-behind-a-container-prefix"
+            }
+          ]
+        }
+      ]
+    },
+    "table-rows-behind-a-container-prefix": {
+      "comment": "The rows of a table at a container's content column. Reached through the region `#table-row-behind-a-container-prefix` opens, which is what gives the continuation row a row above it, and directly from `#block-quote-body`, where that region cannot be used - see the comment on that include.",
       "patterns": [
         {
           "name": "markup.table.row.separator.carve",
@@ -904,6 +936,7 @@
           ]
         },
         {
+          "comment": "The continuation row, which folds into the row above it. Through `#table-row-behind-a-container-prefix` it needs that row to exist (markup-carve/vscode-carve#329); reached directly from a quote body it does not, which is the limitation recorded on that include.",
           "name": "markup.table.continuation.carve",
           "match": "(?:\\G(?<=[ \\t])|^[ \\t]+)(\\+)(.*\\|\\s*)$",
           "captures": {
@@ -1237,6 +1270,10 @@
           },
           "end": "^(?![ \\t]*$)(?!\\1[ \\t])",
           "patterns": [
+            {
+              "comment": "A TABLE OPENED ON THE BODY'S OWN MARKER LINE, reached from the body region rather than from the inline child below, because a region opened inside that child would die with the line it opened on and could not hold the continuation rows that follow (markup-carve/vscode-carve#329). `:: t` over `:  | a |` over `   + b |` is a table inside the `<dd>`; while the marker line read inline only, the row carried no scope and the continuation row below it carried one with no row above it. The `\\G` alternative in that rule is what reaches the marker line, and it applies only there - on every later line the scan position is the line start, where its lookbehind fails, so the indented alternative takes over exactly as `#container-body` would. A `+` on the marker line still opens nothing, because the region needs a pipe row.",
+              "include": "#table-row-behind-a-container-prefix"
+            },
             {
               "begin": "\\G(?<=[ \\t])(?=.)",
               "end": "$",
@@ -2998,32 +3035,11 @@
       ]
     },
     "definitions-in-container": {
-      "comment": "Definitions reachable only from a container's body. The container's `end` has already established that the line sits at or beyond its content column, which a line-anchored whitespace run cannot know on its own.",
+      "comment": "Definitions reachable only from a container's body. The container's `end` has already established that the line sits at or beyond its content column, which a line-anchored whitespace run cannot know on its own. NO ABBREVIATION DEFINITION LIVES HERE (markup-carve/vscode-carve#329). An abbreviation definition is a document-level construct (markup-carve/carve#611), which is why the rule in `#definitions` is anchored at literal column 0 and why `#block-quote-body` says in so many words that it does not duplicate it. A copy of it reached a container's content column anyway, on the argument that the line had to be consumed before the inline layer could mistake its leading star for bold (markup-carve/vscode-carve#179). The engine says the star IS bold: `- a` over `  *[A]: x and *b*` renders `<strong>[A]: x and *b</strong>` inside the item, and `*[A]: a` under a description body, a list item, a footnote body, a quote or a div is plain text in every one of them. So the consume was not protecting a reading, it was inventing one - nine corpus documents, among them 194-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition and 432-an-abbreviation-definition-outside-document-level-is-not-an-invisible-line, carried a definition scope the engine does not collect. Leaving the line to the inline layer is what agrees with it.",
       "patterns": [
         {
-          "comment": "An abbreviation definition at a container's content column must be consumed before the inline layer can mistake its leading star for bold (markup-carve/vscode-carve#179).",
-          "name": "meta.abbreviation.definition.carve",
-          "match": "^[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
-          "captures": {
-            "1": {
-              "name": "punctuation.definition.abbreviation.carve"
-            },
-            "2": {
-              "name": "punctuation.definition.abbreviation.carve"
-            },
-            "3": {
-              "name": "entity.name.abbreviation.carve"
-            },
-            "4": {
-              "name": "punctuation.definition.abbreviation.carve"
-            },
-            "5": {
-              "name": "punctuation.separator.carve"
-            },
-            "6": {
-              "name": "string.unquoted.abbreviation.carve"
-            }
-          }
+          "comment": "AN ABBREVIATION DEFINITION AT A CONTENT COLUMN IS CONSUMED AND SCOPED AS NOTHING (markup-carve/vscode-carve#329). It used to carry the definition scopes, which the engine does not: `*[A]: a` under a description body, a list item, a footnote body, a quote or a div is plain text in every one of them. Dropping the pattern outright was measured and rejected - the inline layer then opens an UNCLOSED bold run on the leading star, and that run crosses the block boundary below it, so `- a` over blank over `  *[A]: a` over `  - b` lost the nested bullet's own scope (corpus 324-an-abbreviation-definition-in-an-item-body-is-paragraph-text-2). A line with a CLOSING star on it is left out, because there the engine does bold: `- a` over `  *[A]: x and *b*` renders `<strong>[A]: x and *b</strong>` inside the item. So the consume covers exactly the lines where emphasis would be unclosed, and it carries no name, because naming it would be inventing the construct again. AN ESCAPED STAR IS NOT A CLOSER, which is why the tail is written as a run of non-star characters and escape pairs rather than as `[^*]*`: the engine renders `  *[A]: escaped \\*` over `  - b` as plain text and a nested list, so a literal `\\*` must not read as a closing delimiter and let an unclosed run take the bullet below.",
+          "match": "^[ \\t]*\\*\\[[A-Za-z0-9]+\\]: +(?:[^*\\\\]|\\\\.)*$"
         },
         {
           "name": "meta.link.reference.definition.carve",
@@ -3079,7 +3095,8 @@
           "include": "#headings-behind-a-container-prefix"
         },
         {
-          "include": "#table-row-behind-a-container-prefix"
+          "comment": "A QUOTE BODY KEEPS THE BARE ROW RULES (markup-carve/vscode-carve#329). The region that gates a continuation row behind a container prefix cannot live here: a quote body is per-line, its own region ends at `$`, and a region opened inside it dies with the line it opened on. Measured - pointing this include at the region dropped the continuation scope from `> | a |` over `> + b |`, where the engine does render a table, and held the quote open for one line past its end, because vscode-textmate does not test an enclosing region's `end` while a child is open. So a continuation row behind a quote marker is still scoped with no row above it, which is the open-paragraph class #329 records rather than closes.",
+          "include": "#table-rows-behind-a-container-prefix"
         },
         {
           "comment": "A link/footnote reference definition is collected wherever its container puts it (markup-carve/carve#660), so it is recognized inside a quote too - unlike an abbreviation definition, which stays document-level-only (markup-carve/carve#611) and is deliberately NOT duplicated here. Anchored on \\G rather than ^: the quote's own begin match has already consumed the `> ` prefix, so ^ (true column 0 of the line) can never match again on the same line - \\G matches at the current scan position instead (markup-carve/vscode-carve#67).",
