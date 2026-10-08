@@ -1,43 +1,36 @@
-name: Release packages and assets
+name: Release
 
 on:
-  workflow_call:
+  push:
+    tags:
+      # NOT `v*`. That matched `vtest`, `v0.1.2-rc1`, `v-wip` and a typo like
+      # `v0.12` - every one of which would have published to two marketplaces,
+      # where a version number can never be reused. GitHub filter patterns
+      # match the WHOLE ref, and `+` means one-or-more of the preceding
+      # character, so this admits exactly vMAJOR.MINOR.PATCH and nothing else.
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  # A release is STARTED here. The `tag` job below creates the tag after the
+  # gates and after the approval, so starting a release no longer means pushing
+  # a tag by hand. Dispatched at an existing tag with no version it re-runs that
+  # one instead, which a tag push cannot do: recreating a tag under the same
+  # name fires no push event.
+  workflow_dispatch:
     inputs:
-      publish:
-        required: true
-        type: boolean
-      tag:
-        required: true
-        type: string
       version:
-        required: true
+        description: 'Version to release, without a leading v (e.g. 0.1.9). Leave empty when dispatching at an existing tag.'
+        required: false
         type: string
-      release_tag:
-        required: true
-        type: string
-      source_sha:
-        required: true
-        type: string
-      release_id:
-        required: true
-        type: string
-      release_body:
-        required: true
-        type: string
-      notes_digest:
-        required: true
-        type: string
+
+# The tag this run releases: the one that was pushed, or the one a dispatch will
+# create. Every gate below reads this, so a dispatch and a tag push measure the
+# same version.
 env:
-  RELEASE_TAG: ${{ inputs.version != '' && format('v{0}', inputs.version) || inputs.tag }}
+  RELEASE_TAG: ${{ inputs.version != '' && format('v{0}', inputs.version) || github.ref_name }}
 
 
 # Every job declares timeout-minutes. Without one GitHub applies a 360-minute
 # default, roughly 900x the median job in this org, so a hung step burns hours
 # of runner time before anything stops it.
-  LANE_TAG: ${{ inputs.tag }}
-  LANE_REF: ${{ format('refs/tags/{0}', inputs.tag) }}
-  LANE_REF_TYPE: tag
-  LANE_PUBLISH: ${{ inputs.publish }}
 jobs:
   publish:
     name: Build and publish extension
@@ -60,7 +53,6 @@ jobs:
       # "no release" for a draft that is sitting right there with notes in
       # it. See markup-carve/carve-wasm#80.
       contents: write
-      actions: read
     steps:
       # GATE: the notes are not the workflow's to write. A CHANGELOG entry is
       # deliberately one or two lines for a contributor, which makes poor
@@ -88,33 +80,10 @@ jobs:
             || { echo "::error::the release for $RELEASE_TAG has no notes"; exit 1; }
           printf '%s' "$release" | jq -r '"draft=\(.draft) tag=\(.tag_name)"'
 
-        if: ${{ inputs.publish }}
       - uses: actions/checkout@v6
         with:
           submodules: recursive
 
-          ref: ${{ inputs.source_sha }}
-          fetch-depth: 0
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-      - name: Verify approval and checked tag before publishing
-        working-directory: ${{ github.workspace }}
-        if: ${{ inputs.publish }}
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.tag }}
-          RELEASE_SHA: ${{ inputs.source_sha }}
-          RELEASE_NOTES_DIGEST: ${{ inputs.notes_digest }}
-        run: python .github/scripts/release-lane.py permit
-      - name: Expose the candidate tag locally
-        if: ${{ !inputs.publish }}
-        shell: bash
-        env:
-          CANDIDATE_TAG: ${{ inputs.tag }}
-        run: |
-          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -145,7 +114,7 @@ jobs:
       - name: Upload the packaged vsix as a build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vscode-carve-vsix-${{ inputs.publish && 'publish' || 'check' }}
+          name: vscode-carve-vsix
           path: vscode-carve.vsix
 
       # A missing credential FAILS. Skipping it leaves a green job describing a
@@ -176,7 +145,6 @@ jobs:
       - name: Publish to VS Code Marketplace
         run: npx vsce publish --packagePath vscode-carve.vsix
 
-        if: ${{ inputs.publish }}
       - name: Publish to Open VSX
         run: npx ovsx publish vscode-carve.vsix
 
@@ -196,7 +164,6 @@ jobs:
       # anything - and then it FAILS, because by that point the publish has
       # already happened and a red job is the only remaining way to say that
       # what a user can install is not what was tagged.
-        if: ${{ inputs.publish }}
       - name: Both marketplaces actually serve this version
         run: |
           want="${RELEASE_TAG#v}"
@@ -252,7 +219,37 @@ jobs:
       #
       # Last, deliberately: a draft that stays a draft is recoverable, and one
       # published beside a failed publish is not.
-        if: ${{ inputs.publish }}
+      - name: Publish the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          id="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$RELEASE_TAG\" and .draft)] | first | .id // empty")"
+          if [ -z "$id" ]; then
+            echo "No draft release for $RELEASE_TAG; nothing to publish."
+            exit 0
+          fi
+          # `tag_name` goes with every PATCH of a release. Omit it on a DRAFT
+          # and GitHub replaces the tag with a generated `untagged-*`
+          # placeholder, because a draft's tag is a string on the object rather
+          # than a git ref - so the field has nothing to fall back to.
+          # `-F` (not `-f`) for draft, so it is sent as a boolean.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" -X PATCH \
+            -f tag_name="$RELEASE_TAG" -F draft=false --jq '"published \(.tag_name)"'
+          # Read it back: exit status does not tell you whether the tag survived.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" \
+            --jq '"draft=\(.draft) tag=\(.tag_name)"'
+
+  # THE TAG IS CREATED HERE, after a human approves, so a release can be started
+  # without a tag existing - which is the whole point: creating the tag by hand
+  # was the maintainer's step.
+  # Nothing in this workflow gates it, because the checks live in the
+  # publishing job as steps - so the approval sits exactly where it sat
+  # before, ahead of them.
+  #
+  # A tag push still works unchanged: the step finds the tag already on the
+  # remote and creates nothing. The publish runs in THIS run rather than on the
+  # new tag, because a ref created with github.token triggers no workflow.
   tag:
     name: Create the tag
     runs-on: ubuntu-latest
@@ -260,21 +257,20 @@ jobs:
     environment: release
     permissions:
       contents: write
-      actions: read
     steps:
       - uses: actions/checkout@v4
 
-        with:
-          ref: ${{ inputs.source_sha }}
-          fetch-depth: 0
-      - name: Expose the candidate tag locally
-        if: ${{ !inputs.publish }}
-        shell: bash
-        env:
-          CANDIDATE_TAG: ${{ inputs.tag }}
+      - name: Create the tag unless it already exists
         run: |
-          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
-permissions:
-  contents: write
-  actions: read
-  id-token: write
+          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "$RELEASE_TAG is already on the remote; creating nothing."
+            exit 0
+          fi
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            echo "::error::this run is on tag $RELEASE_TAG, which is not on the remote."
+            exit 1
+          fi
+          # Re-checked under the approval: a tag can appear while a run waits.
+          git tag "$RELEASE_TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$RELEASE_TAG"
+          echo "tagged $RELEASE_TAG at $GITHUB_SHA"
