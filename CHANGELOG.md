@@ -18,6 +18,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Quote previews and HTML exports use readable text, a visible border and attribution aligned with the quote body (markup-carve/carve-css#32).
 - A fence that is a description body is highlighted as a fenced code block, with its language, instead of as an inline code span that swallowed the lines under it (#320).
 - A description body needs a `::` term above it. A lone `: ` line stays prose, and the fence rule from #320 no longer opens a code block on one (#326).
+- An abbreviation definition at a container's content column, and a table continuation row with no table row above it, are no longer highlighted as those constructs. Neither is one to the engine, at a container's content column or at the document level (#329).
 - A `%%` run inside a code span stays code in a heading and in a caption, instead of being highlighted as a comment (#297, #299).
 - Caption highlighting needs a captionable block before it. A bare `^` line stays prose (#300).
 - A container opener whose name is readable but whose metadata is not keeps its fence and its name highlighted (#298).
