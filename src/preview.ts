@@ -336,6 +336,8 @@ export function previewDocument(source: string, options: PreviewOptions): string
 
       --carve-rule: var(--vscode-panel-border);
       --carve-border: var(--vscode-panel-border);
+      --carve-quote-border: var(--vscode-contrastBorder,
+        color-mix(in srgb, var(--vscode-editor-foreground) 50%, var(--vscode-editor-background)));
 
       --carve-accent: var(--vscode-textLink-foreground);
       --carve-accent-ink: var(--vscode-textLink-activeForeground);
@@ -390,10 +392,12 @@ export function previewDocument(source: string, options: PreviewOptions): string
     body.vscode-high-contrast-light {
       --carve-border: var(--vscode-contrastBorder, var(--vscode-panel-border));
       --carve-rule: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --carve-quote-border: var(--vscode-contrastBorder, var(--vscode-editor-foreground));
       --carve-table-boundary: var(--vscode-contrastBorder, var(--vscode-panel-border));
       --carve-table-operator: var(--vscode-editorError-foreground);
       --carve-border-width: 1px;
       --carve-accent-width: 4px;
+      --carve-quote-border-width: var(--carve-accent-width);
     }
 
     /* --- Layout ------------------------------------------------------ */
@@ -1121,7 +1125,7 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
   <link rel="stylesheet" href="${CDN.hljsDarkCss}" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="${CDN.hljsTableCss}">
   <style>
-    :root { color-scheme: light dark; }
+    :root { color-scheme: light dark; --quote-padding: 1rem; --quote-border-width: 3px; }
     @media (prefers-color-scheme: dark) {
       :root {
         --carve-table-boundary: #79a8b5;
@@ -1138,7 +1142,25 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
     th, td { border: 1px solid rgba(127,127,127,0.4); padding: 5px 10px; }
     thead th { background: rgba(127,127,127,0.12); }
     tbody tr:nth-child(even) { background: rgba(127,127,127,0.06); }
-    blockquote { margin-left: 0; padding-left: 16px; border-left: 3px solid rgba(127,127,127,0.5); }
+    blockquote {
+      margin: 1rem 0;
+      padding-block: .25rem;
+      padding-inline-start: var(--quote-padding);
+      border-inline-start: var(--quote-border-width) solid color-mix(in srgb, currentColor 50%, transparent);
+      color: inherit;
+    }
+    blockquote > p { margin-block: 0 .75rem; }
+    blockquote > :first-child { margin-block-start: 0; }
+    blockquote > :last-child { margin-block-end: 0; }
+    figure:has(> blockquote) { margin-inline: 0; text-align: start; }
+    figure > blockquote { margin-block-end: 0; }
+    figure:has(> blockquote) > figcaption {
+      margin-block-start: .5rem;
+      padding-inline-start: calc(var(--quote-padding) + var(--quote-border-width));
+      font-size: .875em;
+      color: color-mix(in srgb, currentColor 75%, transparent);
+    }
+    @media (forced-colors: active) { blockquote { border-color: CanvasText; } }
     h1, h2 { border-bottom: 1px solid rgba(127,127,127,0.3); padding-bottom: 0.2em; }
     img { max-width: 100%; height: auto; }
     :not(pre) > code { padding: 0.1em 0.35em; border-radius: 4px; background: rgba(127,127,127,0.12); }
