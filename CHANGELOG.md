@@ -6,9 +6,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- The bundled stylesheet is carve-css 0.1.2 (#318).
+
 ### Fixed
 
 - Caption highlighting follows a preceding captionable block. Bare caret lines stay prose (#300).
+- A tab set and a code group show a panel in the preview and the HTML export again, past twelve tabs as well (#318).
+- A block image is separated from the block that follows it, so a blank line between two images reaches the preview (#318).
+- Nested emphasis, links, insertions, deletions and code spans inside a highlight take the highlight's colors, and forced-colors contrast is fixed for code-callout badges, color swatches and revealed spoilers (#318).
 
 ## [0.1.8] - 2026-09-30
 
