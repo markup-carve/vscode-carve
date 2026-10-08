@@ -9,9 +9,9 @@
 >: The visual property of objects.
 #^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.definition.carve
-#  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >: A pigment or paint.
 #^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.definition.carve
-#  ^^^^^^^^^^^^^^^^^^^^ text.carve
+#  ^^^^^^^^^^^^^^^^^^^ text.carve
 >
