@@ -62,7 +62,7 @@
     "literal_inline": { "local": "inline-literal", "fixture": "inline-literal" },
     "footnote_inline": { "local": "footnotes", "fixture": "grammar-correctness" },
     "cross_ref": { "local": "autolink", "fixture": "reference-images-and-crossrefs" },
-    "definition_list": { "local": "lists", "fixture": "tables-deflists" },
+    "definition_list": { "local": "description-lists", "fixture": "tables-deflists" },
     "callout_annotation": { "local": "code-callouts", "fixture": "code-callouts" },
     "callout_marker": { "local": "code-callouts", "fixture": "code-callouts" },
     "block_comment_on_quote_marker_line": { "local": "comment-fence-on-quote-marker-line", "fixture": "container-grammar-rules" },

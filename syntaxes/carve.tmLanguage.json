@@ -1120,17 +1120,71 @@
           ]
         },
         {
-          "comment": "Definition-list TERM line: a leading `::` marker. Only the marker is scoped (mirroring the single-colon definition rule below), so a trailing `%% comment` and any inline markup in the term still tokenize normally. Matched before the single-colon rule; `::` never collides with a `:::+` fenced div, which needs three colons.",
-          "name": "markup.list.definition.term.carve",
-          "match": "^([ \\t]*)(::)( +)(?![ \\t]*$)",
-          "captures": {
+          "include": "#description-lists"
+        }
+      ]
+    },
+    "description-lists": {
+      "comment": "A DESCRIPTION BODY NEEDS A `::` TERM ABOVE IT (markup-carve/vscode-carve#326). The term was a `match` rule, so the grammar held no description-list state and a `:` line was scoped as a body wherever it stood: the engine renders an orphan `: text` as `<p>: text</p>` and an orphan `: ``` ` as a paragraph holding an inline code span, while the grammar called the first a definition and, since #320, opened a fenced block on the second. The term is a begin/end container now and the body rules live inside it, so none of them can fire without a term above it. THE TERM'S SCOPE IS A CAPTURE, not a rule-level `name`, which would span the whole region instead of the marker line - the same reason `#definitions` names capture 0 of a footnote definition's begin rather than the rule. Only the marker is scoped, so a trailing `%% comment` and any inline markup in the term still tokenize normally, and `::` never collides with a `:::+` fenced div, which needs three colons. THE REGION IS BOUNDED: it ends on the first non-blank line that carries neither a `:` nor a `::` marker and is not indented PAST the term, so it cannot run to the end of the document. Past, not at: a line at the term's own column is a sibling block rather than a wrapped term - corpus 503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-8 renders `  # H` under `  :: c` as an `<h1>` beside the list, and 504-...-19 collects `  [r]: /u` there as a real reference definition. A lazy text line at that column does fold into the term, which a line-oriented grammar cannot tell from a block opener; the corpus exercises the opener, so that is the side this takes. Blank lines are held, because a loose description spans them as a list item does. The marker alternative takes ANY indent rather than a back-reference to the term's, because a tab and the spaces that reach the same column are one column to the engine and TextMate cannot do tab-stop arithmetic: `- outer` over `\\t:: t` over `    : d` is a `<dl>`, and a literal back-reference dropped the body. THE TERM ITSELF READS INLINE ONLY. A `<dt>` holds inline content, and a block opener indented under a term is term text at every depth (corpus 503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth), so the region reaches `#caption-paragraph-inline` and NOT `#container-body`. Block rules arrive with the body, inside `#description-body`. Writing the term's inline phase as a child region instead was measured and rejected: vscode-textmate does not test an enclosing region's `end` while a child is open, so a child that cannot see the term's column held `- outer` over `    :: t` over `  # H` past the point where the engine ends the list. A SECOND `::` TERM INSIDE THE REGION recurses into this same rule, because the region holds the whole list and not one entry: a term after a body no longer reaches `#lists` through `#container-body`, which the inline term phase removed. TWO BRANCHES, SPLIT ON THE TERM'S OWN COLUMN, because only the matching fence rule may be reachable. A body marker stands at the term's column, so under a column-0 term an INDENTED `: ``` ` is term text holding an inline code span - the engine renders `:: t` over `  : ``` ` that way - and the body-column fence rule must not see it.",
+      "patterns": [
+        {
+          "begin": "^(::)( +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.definition.term.carve"
+            },
+            "1": {
+              "name": "punctuation.definition.list.begin.carve"
+            }
+          },
+          "end": "^(?![ \\t]*$)(?![ \\t]*::?[ \\t])(?![ \\t])",
+          "patterns": [
+            {
+              "include": "#description-lists"
+            },
+            {
+              "include": "#description-body-fence-at-column-zero"
+            },
+            {
+              "include": "#description-body"
+            },
+            {
+              "include": "#caption-paragraph-inline"
+            }
+          ]
+        },
+        {
+          "begin": "^([ \\t]+)(::)( +)(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.definition.term.carve"
+            },
             "2": {
               "name": "punctuation.definition.list.begin.carve"
             }
-          }
-        },
+          },
+          "end": "^(?![ \\t]*$)(?![ \\t]*::?[ \\t])(?!\\1[ \\t])",
+          "patterns": [
+            {
+              "include": "#description-lists"
+            },
+            {
+              "include": "#description-body-fence-at-a-body-column"
+            },
+            {
+              "include": "#description-body"
+            },
+            {
+              "include": "#caption-paragraph-inline"
+            }
+          ]
+        }
+      ]
+    },
+    "description-body-fence-at-column-zero": {
+      "patterns": [
         {
-          "comment": "A CODE FENCE ON A DESCRIPTION MARKER LINE (`: ```` `) is a fenced block, and no rule could reach it (markup-carve/vscode-carve#320). The definition rule is a `match` rule that consumes only `indent + : + separator`, so the fence opener sits MID-LINE, where every block fence rule in `#code-blocks` and `#code-block-behind-a-container-prefix` is unreachable: each is anchored on `^` or on a `\\G` the description rule never establishes. The inline raw-span rule took the run instead, so the opener, the lines under it and the trailing run were all painted `markup.raw.inline.carve` and the fence lost its language scope. THE REGION ENDS AT THE DEFINITION'S CONTENT COLUMN, not at the next backtick run: corpus 548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column renders `:: t` over `: ```` ` over `code` over ```` ``` ```` as an EMPTY `<pre><code></code></pre>` inside the `<dd>` plus a document-level `<p>code <code></code></p>` - the body lines sit below the content column, so the fence holds none of them and the trailing run is an inline span in a new paragraph. THE CLOSER MUST SIT EXACTLY AT THE CONTENT COLUMN, which is why no padding is allowed before it: measured against the engine, `: ```` ` over `  first` over `    ```` ` over `  *after*` keeps BOTH the over-indented run and `*after*` inside the code block, so treating any indented run as a closer would end the block early and light up emphasis inside a code block. THE BOUNDARY IS ONE COLUMN PAST THE INDENT, not the reconstructed content column, which is the bound `#code-block-behind-a-container-prefix` already uses for a fence on a bullet's marker line. A TAB is one whitespace CHARACTER but advances to a tab stop, so a content column rebuilt from literal characters released a tab-indented body line: the engine keeps `\t*code*` inside the fence under `: ```` ` exactly as it does under `- ```` `, and the exact test lit up bold inside a code block. TextMate cannot do tab-stop arithmetic, so the rule takes the over-coloring side every block rule in this grammar takes and holds a line that reaches any indent. The CLOSER stays exact, because there the engine is strict in the other direction. KNOWN LIMITATION, INHERITED NOT ADDED: neither branch checks that a `::` term stands above the marker, because the definition rule it sits beside does not either - on an unpatched grammar `: text` with no term already scopes `markup.list.definition.carve`, where the engine renders `<p>: text</p>`. So an orphan `: ```` ` opens a block here although the engine makes it a paragraph with an inline span. Closing that gap means making the `::` term a stateful container the `:` body rules live inside, which would move every description scope in the grammar and is tracked separately (markup-carve/vscode-carve#326). BOUNDED: both end alternatives are line-anchored and the closer's width comes from a BACK-REFERENCE to the opener's own run, so the region can only ever end on a line boundary and never rescans. The `::` term rule is unaffected - this begin needs whitespace after a single colon, which `::` has not. THIS BRANCH IS COLUMN-0 STRICT, because at the document level an INDENTED `:` is not a description at all: the engine renders `  : ```` ` over `    foo` over `    ```` ` as a paragraph holding an inline code span. The indented shape is a description only inside a container, so it lives in `#description-body-fence-at-a-body-column`, which only the container bodies include - the same split `#code-blocks` and `#fenced-code-languages-at-a-body-column` already use.",
+          "comment": "A CODE FENCE ON A DESCRIPTION MARKER LINE (`: ```` `) is a fenced block, and no rule could reach it (markup-carve/vscode-carve#320). The definition rule is a `match` rule that consumes only `indent + : + separator`, so the fence opener sits MID-LINE, where every block fence rule in `#code-blocks` and `#code-block-behind-a-container-prefix` is unreachable: each is anchored on `^` or on a `\\G` the description rule never establishes. The inline raw-span rule took the run instead, so the opener, the lines under it and the trailing run were all painted `markup.raw.inline.carve` and the fence lost its language scope. THE REGION ENDS AT THE DEFINITION'S CONTENT COLUMN, not at the next backtick run: corpus 548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column renders `:: t` over `: ```` ` over `code` over ```` ``` ```` as an EMPTY `<pre><code></code></pre>` inside the `<dd>` plus a document-level `<p>code <code></code></p>` - the body lines sit below the content column, so the fence holds none of them and the trailing run is an inline span in a new paragraph. THE CLOSER MUST SIT EXACTLY AT THE CONTENT COLUMN, which is why no padding is allowed before it: measured against the engine, `: ```` ` over `  first` over `    ```` ` over `  *after*` keeps BOTH the over-indented run and `*after*` inside the code block, so treating any indented run as a closer would end the block early and light up emphasis inside a code block. THE BOUNDARY IS ONE COLUMN PAST THE INDENT, not the reconstructed content column, which is the bound `#code-block-behind-a-container-prefix` already uses for a fence on a bullet's marker line. A TAB is one whitespace CHARACTER but advances to a tab stop, so a content column rebuilt from literal characters released a tab-indented body line: the engine keeps `\t*code*` inside the fence under `: ```` ` exactly as it does under `- ```` `, and the exact test lit up bold inside a code block. TextMate cannot do tab-stop arithmetic, so the rule takes the over-coloring side every block rule in this grammar takes and holds a line that reaches any indent. The CLOSER stays exact, because there the engine is strict in the other direction. A `::` TERM MUST STAND ABOVE THE MARKER, and neither branch tests for one itself: both are reachable only from `#description-lists`, the term's own begin/end region (markup-carve/vscode-carve#326). Before that region existed an orphan `: ```` ` opened a block here, where the engine makes it a paragraph with an inline span. BOUNDED: both end alternatives are line-anchored and the closer's width comes from a BACK-REFERENCE to the opener's own run, so the region can only ever end on a line boundary and never rescans. The `::` term rule is unaffected - this begin needs whitespace after a single colon, which `::` has not. THIS BRANCH IS COLUMN-0 STRICT, because at the document level an INDENTED `:` is not a description at all: the engine renders `  : ```` ` over `    foo` over `    ```` ` as a paragraph holding an inline code span. The indented shape is a description only inside a container, so it lives in `#description-body-fence-at-a-body-column`, which only the indented branch of `#description-lists` includes - the same split `#code-blocks` and `#fenced-code-languages-at-a-body-column` already use.",
           "begin": "^((:)([ \\t]+))((`|~)\\5{2,})[ \\t]*([^`~\\s\\[\\\"]+)?[ \\t]*(?:(\\\"[^\\\"]*\\\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\\\"[^\\\"]*\\\")?)?[ \\t]*$",
           "beginCaptures": {
             "1": {
@@ -1165,23 +1219,44 @@
               "name": "markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve"
             }
           }
-        },
+        }
+      ]
+    },
+    "description-body": {
+      "patterns": [
         {
-          "comment": "Definition-list DEFINITION line: a single `:` marker followed by the definition body.",
-          "name": "markup.list.definition.carve",
-          "match": "^([ \\t]*)(:)[ \\t]+(?![ \\t]*$)",
-          "captures": {
+          "comment": "Definition-list DEFINITION line: a single `:` marker opening the body. A BEGIN/END CONTAINER, because a `<dd>` carries a content column the way a list item does, and because block rules belong to the body rather than to the term above it. The marker keeps its scope through capture 0 rather than a rule-level `name`, which would paint the whole region. Reachable ONLY from `#description-lists`, so a `:` line with no `::` term above it stays prose (markup-carve/vscode-carve#326). THE REGION ENDS on the first non-blank line not indented past the marker, which is what hands a sibling `:` body, a following `::` term and the line that ends the whole list back to the enclosing term region - it has to, because vscode-textmate does not test an enclosing region's `end` while this one is open. ITS OWN MARKER LINE READS INLINE ONLY: the `\\G` rules in `#container-body` otherwise fire behind the marker and paint a block there, and the engine renders `:  + a |` as body text, not as a table continuation. That child ends at `$`, so it never holds this region open past one line.",
+          "begin": "^([ \\t]*)(:)[ \\t]+(?![ \\t]*$)",
+          "beginCaptures": {
+            "0": {
+              "name": "markup.list.definition.carve"
+            },
             "2": {
               "name": "punctuation.definition.list.begin.carve"
             }
-          }
+          },
+          "end": "^(?![ \\t]*$)(?!\\1[ \\t])",
+          "patterns": [
+            {
+              "begin": "\\G(?<=[ \\t])(?=.)",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#caption-paragraph-inline"
+                }
+              ]
+            },
+            {
+              "include": "#container-body"
+            }
+          ]
         }
       ]
     },
     "description-body-fence-at-a-body-column": {
       "patterns": [
         {
-          "comment": "A CODE FENCE ON A DESCRIPTION MARKER LINE (`: ```` `) is a fenced block, and no rule could reach it (markup-carve/vscode-carve#320). The definition rule is a `match` rule that consumes only `indent + : + separator`, so the fence opener sits MID-LINE, where every block fence rule in `#code-blocks` and `#code-block-behind-a-container-prefix` is unreachable: each is anchored on `^` or on a `\\G` the description rule never establishes. The inline raw-span rule took the run instead, so the opener, the lines under it and the trailing run were all painted `markup.raw.inline.carve` and the fence lost its language scope. THE REGION ENDS AT THE DEFINITION'S CONTENT COLUMN, not at the next backtick run: corpus 548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column renders `:: t` over `: ```` ` over `code` over ```` ``` ```` as an EMPTY `<pre><code></code></pre>` inside the `<dd>` plus a document-level `<p>code <code></code></p>` - the body lines sit below the content column, so the fence holds none of them and the trailing run is an inline span in a new paragraph. THE CLOSER MUST SIT EXACTLY AT THE CONTENT COLUMN, which is why no padding is allowed before it: measured against the engine, `: ```` ` over `  first` over `    ```` ` over `  *after*` keeps BOTH the over-indented run and `*after*` inside the code block, so treating any indented run as a closer would end the block early and light up emphasis inside a code block. THE BOUNDARY IS ONE COLUMN PAST THE INDENT, not the reconstructed content column, which is the bound `#code-block-behind-a-container-prefix` already uses for a fence on a bullet's marker line. A TAB is one whitespace CHARACTER but advances to a tab stop, so a content column rebuilt from literal characters released a tab-indented body line: the engine keeps `\t*code*` inside the fence under `: ```` ` exactly as it does under `- ```` `, and the exact test lit up bold inside a code block. TextMate cannot do tab-stop arithmetic, so the rule takes the over-coloring side every block rule in this grammar takes and holds a line that reaches any indent. The CLOSER stays exact, because there the engine is strict in the other direction. KNOWN LIMITATION, INHERITED NOT ADDED: neither branch checks that a `::` term stands above the marker, because the definition rule it sits beside does not either - on an unpatched grammar `: text` with no term already scopes `markup.list.definition.carve`, where the engine renders `<p>: text</p>`. So an orphan `: ```` ` opens a block here although the engine makes it a paragraph with an inline span. Closing that gap means making the `::` term a stateful container the `:` body rules live inside, which would move every description scope in the grammar and is tracked separately (markup-carve/vscode-carve#326). BOUNDED: both end alternatives are line-anchored and the closer's width comes from a BACK-REFERENCE to the opener's own run, so the region can only ever end on a line boundary and never rescans. The `::` term rule is unaffected - this begin needs whitespace after a single colon, which `::` has not. THIS IS THE BODY-COLUMN BRANCH, reachable only from a container body and never from the document level, where an indented `:` is a paragraph rather than a description. Inside a container the shape is real: the engine renders `- outer` over `  :: t` over `  : ```` ` over `    code` over `    ```` ` as a `<dl>` inside the `<li>` whose `<dd>` holds a `<pre><code>`.",
+          "comment": "A CODE FENCE ON A DESCRIPTION MARKER LINE (`: ```` `) is a fenced block, and no rule could reach it (markup-carve/vscode-carve#320). The definition rule is a `match` rule that consumes only `indent + : + separator`, so the fence opener sits MID-LINE, where every block fence rule in `#code-blocks` and `#code-block-behind-a-container-prefix` is unreachable: each is anchored on `^` or on a `\\G` the description rule never establishes. The inline raw-span rule took the run instead, so the opener, the lines under it and the trailing run were all painted `markup.raw.inline.carve` and the fence lost its language scope. THE REGION ENDS AT THE DEFINITION'S CONTENT COLUMN, not at the next backtick run: corpus 548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column renders `:: t` over `: ```` ` over `code` over ```` ``` ```` as an EMPTY `<pre><code></code></pre>` inside the `<dd>` plus a document-level `<p>code <code></code></p>` - the body lines sit below the content column, so the fence holds none of them and the trailing run is an inline span in a new paragraph. THE CLOSER MUST SIT EXACTLY AT THE CONTENT COLUMN, which is why no padding is allowed before it: measured against the engine, `: ```` ` over `  first` over `    ```` ` over `  *after*` keeps BOTH the over-indented run and `*after*` inside the code block, so treating any indented run as a closer would end the block early and light up emphasis inside a code block. THE BOUNDARY IS ONE COLUMN PAST THE INDENT, not the reconstructed content column, which is the bound `#code-block-behind-a-container-prefix` already uses for a fence on a bullet's marker line. A TAB is one whitespace CHARACTER but advances to a tab stop, so a content column rebuilt from literal characters released a tab-indented body line: the engine keeps `\t*code*` inside the fence under `: ```` ` exactly as it does under `- ```` `, and the exact test lit up bold inside a code block. TextMate cannot do tab-stop arithmetic, so the rule takes the over-coloring side every block rule in this grammar takes and holds a line that reaches any indent. The CLOSER stays exact, because there the engine is strict in the other direction. A `::` TERM MUST STAND ABOVE THE MARKER, and neither branch tests for one itself: both are reachable only from `#description-lists`, the term's own begin/end region (markup-carve/vscode-carve#326). Before that region existed an orphan `: ```` ` opened a block here, where the engine makes it a paragraph with an inline span. BOUNDED: both end alternatives are line-anchored and the closer's width comes from a BACK-REFERENCE to the opener's own run, so the region can only ever end on a line boundary and never rescans. The `::` term rule is unaffected - this begin needs whitespace after a single colon, which `::` has not. THIS IS THE BODY-COLUMN BRANCH, reachable only from a term region inside a container body and never from the document level, where an indented `:` is a paragraph rather than a description. Inside a container the shape is real: the engine renders `- outer` over `  :: t` over `  : ```` ` over `    code` over `    ```` ` as a `<dl>` inside the `<li>` whose `<dd>` holds a `<pre><code>`.",
           "begin": "^([ \\t]+)((:)([ \\t]+))((`|~)\\6{2,})[ \\t]*([^`~\\s\\[\\\"]+)?[ \\t]*(?:(\\\"[^\\\"]*\\\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\\\"[^\\\"]*\\\")?)?[ \\t]*$",
           "beginCaptures": {
             "2": {
@@ -2847,9 +2922,6 @@
         },
         {
           "include": "#block-quotes"
-        },
-        {
-          "include": "#description-body-fence-at-a-body-column"
         },
         {
           "include": "#lists"
@@ -5063,9 +5135,6 @@
           "include": "#block-quotes"
         },
         {
-          "include": "#description-body-fence-at-a-body-column"
-        },
-        {
           "include": "#lists"
         },
         {
@@ -5251,9 +5320,6 @@
         },
         {
           "include": "#block-quotes"
-        },
-        {
-          "include": "#description-body-fence-at-a-body-column"
         },
         {
           "include": "#lists"

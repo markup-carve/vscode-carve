@@ -265,18 +265,20 @@ test('a tab-indented body line stays inside a description body fence', () => {
   }
 })
 
-test('an orphan description marker opens a fence, which is a known limitation', () => {
-  // PINS A WRONG READING ON PURPOSE, labeled so a later fix shows up as a diff
-  // here rather than silently. The engine renders `: ```` ` with no `::` term
-  // above it as `<p>: <code>...</code></p>`, a paragraph with an inline span.
-  // This grammar has no description-list state - on an unpatched grammar
-  // `: text` already scopes as a definition - so the marker is taken at face
-  // value and the fence opens. markup-carve/vscode-carve#326 tracks giving the
-  // `::` term a container so both rules can require one.
+test('an orphan description marker opens no fence', () => {
+  // WAS A PINNED WRONG READING until markup-carve/vscode-carve#326 gave the
+  // `::` term a begin/end container and moved both body rules inside it, so
+  // neither can fire without a term above it. The engine renders a lone
+  // description marker in front of a backtick run as a paragraph holding an
+  // inline code span, and the grammar now agrees.
+  //
+  // ONE LIMITATION REMAINS in this file's subject: an UNTERMINATED fence at a
+  // description body's content column is still painted as a block, where the
+  // engine keeps the paragraph open and renders an inline span. That is
+  // `#code-block-behind-a-container-prefix` reading, and it is identical for
+  // the same shape under a list item, so it is tracked separately.
   const opener = run(tokenize(': ```\ncode\n```\n'), '```').at(0)
   assert.ok(opener, 'the run was not tokenized at all')
-  assert.ok(
-    has(opener, BLOCK),
-    `pinning today's reading; update this test when #326 lands: ${opener.scopes.join(' ')}`,
-  )
+  assert.ok(!has(opener, BLOCK), `an orphan marker opens no block: ${opener.scopes.join(' ')}`)
+  assert.ok(has(opener, INLINE), `the run stays a code span: ${opener.scopes.join(' ')}`)
 })
