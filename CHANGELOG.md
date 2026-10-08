@@ -6,16 +6,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-10-08
+
 ### Changed
 
+- The bundled engine is carve 0.1.10 (#313). Colon-fence metadata slots, positional table-body metadata, case-exact name lookups and the Markdown-import fidelity fixes reach the preview, the export and the import command.
 - The bundled stylesheet is carve-css 0.1.2 (#318).
 
 ### Fixed
 
-- Caption highlighting follows a preceding captionable block. Bare caret lines stay prose (#300).
+- A `%%` run inside a code span stays code in a heading and in a caption, instead of being highlighted as a comment (#297, #299).
+- Caption highlighting needs a captionable block before it. A bare `^` line stays prose (#300).
+- A container opener whose name is readable but whose metadata is not keeps its fence and its name highlighted (#298).
 - A tab set and a code group show a panel in the preview and the HTML export again, past twelve tabs as well (#318).
 - A block image is separated from the block that follows it, so a blank line between two images reaches the preview (#318).
-- Nested emphasis, links, insertions, deletions and code spans inside a highlight take the highlight's colors, and forced-colors contrast is fixed for code-callout badges, color swatches and revealed spoilers (#318).
+- Nested links, insertions, deletions and code spans inside a highlight take the highlight's colors, and forced-colors contrast is fixed for code-callout badges, color swatches and revealed spoilers (#318).
 
 ## [0.1.8] - 2026-09-30
 
