@@ -2056,10 +2056,12 @@
 546-every-name-lookup-compares-case-exactly-2.crv	2b64514140d694ec	a45321315c9a4a17	0	2	2
 546-every-name-lookup-compares-case-exactly-3.crv	b1b9ce46a4f5b930	249720f7491da157	1	1	1
 546-every-name-lookup-compares-case-exactly-4.crv	f8411ec0611c4b4d	c926b7bb0cabda58	1	0	0
+546-every-name-lookup-compares-case-exactly-5.crv	8ec0712aeb048513	b58dba1b6ab28b90	2	0	4
 546-every-name-lookup-compares-case-exactly.crv	11eebaa1965145c0	ace728bd90da2cd7	1	1	1
 547-an-info-string-does-not-change-how-a-flush-left-fence-folds-into-a-description-body-2.crv	585a8a19a1d38e58	8c34ef305c82ce33	0	0	1
 547-an-info-string-does-not-change-how-a-flush-left-fence-folds-into-a-description-body-3.crv	83b3b8d307c7077c	5ce2bbad3bce74c4	0	0	2
 547-an-info-string-does-not-change-how-a-flush-left-fence-folds-into-a-description-body.crv	e5f0d1836207ee7e	6eaea732779fffa4	0	0	1
+548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column.crv	0f2428772858d4df	cbfddc73768a0e50	0	0	1
 55-blockquote-caption-after-a-blank-line.crv	5c6f906ee4bc629f	86c065f490dd443a	0	0	1
 56-table-cell-escaped-pipe.crv	4a744c07c43447b8	96cefa084ce25ee2	0	0	1
 57-table-cell-pipe-inside-code-span.crv	1a48409aa4f1839e	ebe9750733ad1378	0	0	1
