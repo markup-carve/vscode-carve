@@ -37,9 +37,8 @@
 //      So this runner resolves the engine from BOTH graphs, and if the two land
 //      on different files it parses every corpus document with each and names
 //      the documents the two parsers read differently. When they land on the
-//      same file the AST comparison is an identity - it is the resolution above
-//      that discriminates, and the run says which case it is rather than
-//      implying a comparison it did not make.
+//      same file that comparison would be an identity, so it is skipped and the
+//      run says so (#315).
 //
 //      Since #183 one copy is forced by an `overrides` entry in this package
 //      instead of being demanded of carve-lsp's declaration, and the run scans
@@ -52,7 +51,13 @@
 //      server bug or the two surfaces disagreeing about the language - which is
 //      the two-parsers symptom a user would actually see.
 //
-// Usage: node tools/corpus-through-extension.mjs [--corpus <dir>] [--manifest <file>]
+//   5. THE RECORDED BASELINE. tools/corpus-baseline.tsv holds, per document, a
+//      hash of its source and of the engine's AST, and its diagnostic, outline
+//      and fold counts. Every one is compared by document, so an engine or
+//      language-server change that moves any of them fails with names (#315,
+//      #316). `--record` rewrites the file after a deliberate change.
+//
+// Usage: node tools/corpus-through-extension.mjs [--corpus <dir>] [--manifest <file>] [--record]
 //
 // `--manifest` writes one TAB-separated row per document, so two runs (say
 // either side of an engine bump) compare as SETS of rows rather than as sums.
@@ -62,6 +67,7 @@
 
 import { readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { dirname, join, resolve } from 'node:path'
 import { argv, execPath, exit, stderr, stdout } from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -81,6 +87,10 @@ const flag = (name) => {
 
 const corpusDir = resolve(flag('--corpus') ?? join(repoRoot, 'spec', 'tests', 'corpus'))
 const manifestPath = flag('--manifest')
+const record = argv.includes('--record')
+const baselinePath = join(repoRoot, 'tools', 'corpus-baseline.tsv')
+const BASELINE_FIELDS = ['source', 'ast', 'diagnostics', 'symbols', 'folds']
+const digest = (text) => createHash('sha256').update(text).digest('hex').slice(0, 16)
 
 const fail = (message) => {
   stdout.write(`corpus-through-extension: ${message}\n`)
@@ -485,7 +495,6 @@ const ERROR_SEVERITY = 1
 
 let renderMismatches = 0
 let renderThrew = 0
-let astMismatches = 0
 let serverErrors = 0
 let totalDiagnostics = 0
 let totalSymbols = 0
@@ -495,6 +504,8 @@ const renderFailures = []
 const astFailures = []
 const diagnosticFailures = []
 const rows = []
+const measured = new Map()
+let twoParserMismatches = 0
 
 // DOCUMENTS THE BUNDLED ENGINE CANNOT YET RENDER, and the pin that fixes them.
 //
@@ -589,12 +600,21 @@ for (const name of documents) {
   server.notify('textDocument/didClose', { textDocument: { uri } })
 
   const previewAst = parseWith(previewEngine, source)
-  const serverAst = sharedEngine ? previewAst : parseWith(serverEngine, source)
-  const astState = previewAst === serverAst ? 'ast-agree' : 'ast-differ'
-  if (astState === 'ast-differ') {
-    astMismatches++
-    astFailures.push(name)
+  let astState = 'ast-one-copy'
+  if (!sharedEngine) {
+    astState = previewAst === parseWith(serverEngine, source) ? 'ast-agree' : 'ast-differ'
+    if (astState === 'ast-differ') {
+      twoParserMismatches++
+      astFailures.push(name)
+    }
   }
+  measured.set(name, {
+    source: digest(source),
+    ast: digest(previewAst),
+    diagnostics: String(diagnostics.length),
+    symbols: String(symbols.length),
+    folds: String(folds.length),
+  })
 
   rows.push(
     [name, renderState, astState, diagnostics.length, errors.length, symbols.length, folds.length].join('\t'),
@@ -605,6 +625,45 @@ server.stop()
 
 if (manifestPath) writeFileSync(manifestPath, rows.map((row) => `${row}\n`).join(''))
 
+const baselineMismatches = { ast: [], diagnostics: [], symbols: [], folds: [] }
+const unrecorded = []
+const staleRows = []
+if (record) {
+  writeFileSync(
+    baselinePath,
+    `# document\t${BASELINE_FIELDS.join('\t')}\n` +
+      [...measured].map(([name, row]) => [name, ...BASELINE_FIELDS.map((f) => row[f])].join('\t') + '\n').join(''),
+  )
+} else {
+  let baselineText
+  try {
+    baselineText = readFileSync(baselinePath, 'utf8')
+  } catch {
+    fail(`no ${baselinePath}. Record one with npm run test:corpus -- --record and review it.`)
+  }
+  const baseline = new Map()
+  for (const line of baselineText.split('\n')) {
+    if (line === '' || line.startsWith('#')) continue
+    const [name, ...values] = line.split('\t')
+    baseline.set(name, Object.fromEntries(BASELINE_FIELDS.map((field, index) => [field, values[index]])))
+  }
+  for (const [name, row] of measured) {
+    const recorded = baseline.get(name)
+    // A changed source makes every other recorded figure about a different document.
+    if (!recorded || recorded.source !== row.source) {
+      unrecorded.push(name)
+      continue
+    }
+    for (const field of Object.keys(baselineMismatches)) {
+      if (recorded[field] !== row[field]) {
+        baselineMismatches[field].push(`${name}: ${field} ${recorded[field]} recorded, ${row[field]} now`)
+      }
+    }
+  }
+  for (const name of baseline.keys()) if (!measured.has(name)) staleRows.push(name)
+}
+const astMismatches = baselineMismatches.ast.length
+
 const report = (label, entries, cap = 25) => {
   for (const entry of entries.slice(0, cap)) stdout.write(`${label}: ${entry}\n`)
   if (entries.length > cap) stdout.write(`${label}: ... and ${entries.length - cap} more\n`)
@@ -613,6 +672,9 @@ const report = (label, entries, cap = 25) => {
 report('renders differently', renderFailures)
 report('read by two different parsers', astFailures)
 report('error diagnostic', diagnosticFailures)
+for (const [field, entries] of Object.entries(baselineMismatches)) report(`${field} moved`, entries)
+report('not in the baseline', unrecorded)
+report('baseline row for no document', staleRows)
 
 stdout.write(`corpus=${corpusDir}\n`)
 stdout.write(`documents=${documents.length}\n`)
@@ -627,11 +689,21 @@ for (const copy of engineCopies) stdout.write(`  installed copy: ${describeCopy(
 stdout.write(`enginePinPreview=${previewPin}\n`)
 stdout.write(`enginePinServer=${serverPin}\n`)
 stdout.write(`enginePinOverride=${engineOverride ?? '(none)'}\n`)
-stdout.write(`astMismatches=${astMismatches}\n`)
+stdout.write(
+  `twoParserMismatches=${sharedEngine ? 'not measured: both surfaces resolve one engine copy' : twoParserMismatches}\n`,
+)
+const againstBaseline = (count) => (record ? 'not compared: --record' : count)
+stdout.write(`astMismatches=${againstBaseline(astMismatches)}\n`)
 stdout.write(`diagnostics=${totalDiagnostics}\n`)
+stdout.write(`diagnosticMismatches=${againstBaseline(baselineMismatches.diagnostics.length)}\n`)
 stdout.write(`errorDiagnostics=${serverErrors}\n`)
 stdout.write(`symbols=${totalSymbols}\n`)
+stdout.write(`symbolMismatches=${againstBaseline(baselineMismatches.symbols.length)}\n`)
 stdout.write(`folds=${totalFolds}\n`)
+stdout.write(`foldMismatches=${againstBaseline(baselineMismatches.folds.length)}\n`)
+stdout.write(`unrecorded=${againstBaseline(unrecorded.length)}\n`)
+stdout.write(`staleBaselineRows=${againstBaseline(staleRows.length)}\n`)
+if (record) stdout.write(`recorded ${measured.size} documents to ${baselinePath}\n`)
 
 if (!overrideForcesOneCopy) {
   stdout.write(
@@ -695,8 +767,20 @@ if (renderMismatches > 0 || renderThrew > 0) {
       '  submodule, or a renderer extension the preview enables changes Tier-1 output.\n',
   )
 }
-if (astMismatches > 0) {
+if (twoParserMismatches > 0) {
   stdout.write('FAIL: the two engine copies parse the documents above differently.\n')
+}
+const baselineFailures =
+  Object.values(baselineMismatches).reduce((sum, entries) => sum + entries.length, 0) +
+  unrecorded.length +
+  staleRows.length
+if (baselineFailures > 0) {
+  stdout.write(
+    `FAIL: ${baselineFailures} document figure(s) differ from tools/corpus-baseline.tsv.\n` +
+      '  The AST, diagnostic, outline or fold output moved on the documents named above, or the\n' +
+      '  corpus changed under the baseline. If the change is intended, re-record with\n' +
+      '  npm run test:corpus -- --record and review the diff by document.\n',
+  )
 }
 if (lagStale.length > 0) {
   stdout.write(
@@ -723,7 +807,8 @@ if (serverErrors > 0) {
 const failures =
   renderMismatches +
   renderThrew +
-  astMismatches +
+  twoParserMismatches +
+  baselineFailures +
   serverErrors +
   deadProviders.length +
   (sharedEngine ? 0 : 1) +

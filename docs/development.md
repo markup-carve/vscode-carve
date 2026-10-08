@@ -48,6 +48,7 @@ surfaces the extension actually ships and is part of `npm test`:
 npm run build                 # it measures dist/, not the sources
 npm run test:corpus
 npm run test:corpus -- --manifest /tmp/before.tsv   # one row per document
+npm run test:corpus -- --record   # rewrite tools/corpus-baseline.tsv
 ```
 
 - The preview and export path (`renderPreviewBody`) is compared byte-for-byte
@@ -83,6 +84,24 @@ Pass `--manifest` on both sides of an engine bump and diff the two files: totals
 alone cannot tell a document that lost a diagnostic from another that gained
 one.
 
+### The recorded baseline
+
+`tools/corpus-baseline.tsv` holds one row per corpus document: a hash of its
+source, a hash of the engine's AST, and its diagnostic, outline and fold counts.
+The run compares each figure by document and fails with the document names when
+any of them moved, when a document has no row, or when a row names a document
+the corpus no longer has. A total cannot do this job, because one document
+gaining a fold while another loses one leaves it unchanged.
+
+The AST hash is what gives the AST arm something to disagree with. With one
+engine copy installed, comparing the preview's parse against the language
+server's is a value compared with itself, so the run reports
+`twoParserMismatches` as not measured instead of as zero.
+
+An engine bump, a carve-lsp bump or a spec bump will usually move some rows.
+When the change is intended, re-record with `npm run test:corpus -- --record`
+and review the baseline diff by document before committing it.
+
 ## Updating the corpus
 
 Update the submodule and regenerate the snapshots:
@@ -95,6 +114,8 @@ npm run test:grammar:update
 
 Review both the submodule change and generated snapshot diff. New categories
 must be deliberately added to `covered` or `skip` in `tests/categories.json`.
+New and changed corpus documents also need a row in the corpus baseline: run
+`npm run test:corpus -- --record` and review its diff.
 
 ### When the engine is behind the spec
 
