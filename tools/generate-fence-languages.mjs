@@ -19,47 +19,21 @@ const root = dirname(dirname(fileURLToPath(import.meta.url)))
 const grammarPath = resolve(root, 'syntaxes/carve.tmLanguage.json')
 const manifestPath = resolve(root, 'package.json')
 
-// [VS Code language id, info-string words, grammar scopes to include]
-export const LANGUAGES = [
-  ['carve', ['carve', 'crv'], ['text.carve']],
-  ['javascript', ['js', 'javascript', 'mjs', 'cjs'], ['source.js']],
-  ['javascriptreact', ['jsx'], ['source.js.jsx']],
-  ['typescript', ['ts', 'typescript', 'mts', 'cts'], ['source.ts']],
-  ['typescriptreact', ['tsx'], ['source.tsx']],
-  ['json', ['json', 'json5'], ['source.json']],
-  ['jsonc', ['jsonc'], ['source.json.comments']],
-  ['yaml', ['yaml', 'yml'], ['source.yaml']],
-  ['toml', ['toml'], ['source.toml']],
-  ['html', ['html', 'htm', 'xhtml'], ['text.html.basic']],
-  ['xml', ['xml', 'svg', 'xsd'], ['text.xml']],
-  ['css', ['css'], ['source.css']],
-  ['scss', ['scss'], ['source.css.scss']],
-  ['less', ['less'], ['source.css.less']],
-  ['php', ['php'], ['text.html.basic', 'source.php']],
-  ['python', ['python', 'py', 'py3'], ['source.python']],
-  ['ruby', ['ruby', 'rb'], ['source.ruby']],
-  ['rust', ['rust', 'rs'], ['source.rust']],
-  ['go', ['go', 'golang'], ['source.go']],
-  ['java', ['java'], ['source.java']],
-  ['kotlin', ['kotlin', 'kt', 'kts'], ['source.kotlin']],
-  ['swift', ['swift'], ['source.swift']],
-  ['dart', ['dart'], ['source.dart']],
-  ['c', ['c', 'h'], ['source.c']],
-  ['cpp', ['cpp', 'c\\+\\+', 'cxx', 'cc', 'hpp'], ['source.cpp']],
-  ['csharp', ['cs', 'csharp', 'c#'], ['source.cs']],
-  ['shellscript', ['sh', 'bash', 'shell', 'zsh'], ['source.shell']],
-  ['powershell', ['powershell', 'ps1', 'pwsh'], ['source.powershell']],
-  ['bat', ['bat', 'batch', 'cmd'], ['source.batchfile']],
-  ['sql', ['sql'], ['source.sql']],
-  ['lua', ['lua'], ['source.lua']],
-  ['perl', ['perl', 'pl'], ['source.perl']],
-  ['r', ['r'], ['source.r']],
-  ['markdown', ['markdown', 'md'], ['text.html.markdown']],
-  ['diff', ['diff', 'patch'], ['source.diff']],
-  ['dockerfile', ['dockerfile', 'docker'], ['source.dockerfile']],
-  ['makefile', ['makefile', 'make'], ['source.makefile']],
-  ['ini', ['ini', 'cfg'], ['source.ini']],
-]
+// tools/fence-languages.json is vendored from carve-grammars (see
+// tools/check-fence-languages-drift.sh). Its `language` column is the VS Code
+// language id. Rows sharing a language and scopes (sh and zsh) become one rule.
+const table = JSON.parse(readFileSync(resolve(root, 'tools/fence-languages.json'), 'utf8'))
+
+const escapeWord = (word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+// [VS Code language id, info-string patterns, grammar scopes to include]
+export const LANGUAGES = []
+for (const { words, language, textmate } of table.languages) {
+  if (!textmate) continue
+  const same = LANGUAGES.find(([id, , scopes]) => id === language && scopes.join() === textmate.join())
+  if (same) same[1].push(...words.map(escapeWord))
+  else LANGUAGES.push([language, words.map(escapeWord), textmate])
+}
 
 const LANGUAGE_CAPTURE = '([^`~\\s\\["]+)?'
 const BARE_FENCE = '[ \\t]*[`~]{3,}[ \\t]*$'
