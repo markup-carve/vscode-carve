@@ -7,7 +7,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a lightweigh
 - Language registration for `.crv` files, with a dedicated file icon in the Explorer.
 - Carve highlighting in the Markdown editor for fences labeled `carve` or `crv`.
 - Syntax highlighting for headings, emphasis, strong, links, images, lists, tables, code, raw blocks, comments, attributes, footnotes, mentions, tags, math, and frontmatter.
-- Fenced code bodies in the editor highlight in the fence's language (`js`, `ts`, `python`, `sh`, `yaml`, `html`, `rust`, `go` and about 30 more) when VS Code has a grammar for it; a `carve` or `crv` fence highlights as Carve. Other fences stay plain code.
+- Fenced code bodies in the editor highlight in the fence's language (`js`, `ts`, `python`, `sh`, `yaml`, `html`, `rust`, `go`, `c++`, `latex` and about 60 more) when VS Code has a grammar for it; a `carve` or `crv` fence highlights as Carve. Some languages, such as Blade, Twig, Vue, Svelte, GraphQL, TOML and Kotlin, need their VS Code extension installed. Other fences stay plain code. The list is the shared [fence-language table](https://github.com/markup-carve/carve-grammars/tree/main/fence-languages) every Carve editor grammar uses.
 - Language server integration via [`markup-carve/carve-lsp`](https://github.com/markup-carve/carve-lsp):
   - diagnostics for parser errors and Djot/Markdown migration warnings,
   - quick fixes for migration warnings where the rewrite is mechanical,

@@ -44,4 +44,6 @@ jobs:
       # means a local run never needs a clone.
       - name: The vendored block battery still matches carve-grammars
         run: ./tools/check-battery-drift.sh
+      - name: The vendored fence-language table still matches carve-grammars
+        run: ./tools/check-fence-languages-drift.sh
       - run: npm run package
