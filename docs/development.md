@@ -76,9 +76,9 @@ npm run test:corpus -- --record   # rewrite tools/corpus-baseline.tsv
   becomes one, this needs revisiting.
 
 The run refuses to report anything over a population it did not check the size
-of. The number of documents must equal the number of `::: compare` blocks the
-spec's `resources/examples/` pages declare, so an empty or truncated corpus is a
-failure rather than a fast green run.
+of. The number of documents must equal the number of `carve` fences inside the
+`::: compare` blocks of the spec's `resources/examples/` pages, so an empty or
+truncated corpus is a failure rather than a fast green run.
 
 Pass `--manifest` on both sides of an engine bump and diff the two files: totals
 alone cannot tell a document that lost a diagnostic from another that gained

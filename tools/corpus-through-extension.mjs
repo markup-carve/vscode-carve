@@ -71,6 +71,7 @@ import { createHash } from 'node:crypto'
 import { dirname, join, resolve } from 'node:path'
 import { argv, execPath, exit, stderr, stdout } from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { countDeclaredPairs } from './declared-pairs.mjs'
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -109,7 +110,7 @@ const fail = (message) => {
  * both sides together when the corpus is emptied, and that exact mistake was
  * made and caught in markup-carve/pandoc-carve. tests/corpus is GENERATED from
  * the `::: compare` blocks in spec/resources/examples/{core,extensions,edge-cases}.md,
- * so counting those blocks is an independent statement of how many documents
+ * one pair per `carve` fence in a block, so counting those is an independent statement of how many documents
  * there should be - and it leaves no literal here to go stale, because adding an
  * example moves the expectation on the next corpus rebuild.
  *
@@ -117,11 +118,6 @@ const fail = (message) => {
  * from a truncated checkout, and truncation is the failure being guarded against.
  */
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
-const COMPARE_OPEN = /^:{3,}\s+compare(\s+\S.*)?$/
-
-// Mirrors the generator's state machine rather than grepping: a `::: compare`
-// line inside an already-open block is content, not a second pair, and a block
-// closes on a bare marker line of its own length.
 const declaredCorpusSize = () => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
   let declared = 0
@@ -140,18 +136,7 @@ const declaredCorpusSize = () => {
           '  tests/corpus inside a markup-carve/carve checkout.',
       )
     }
-    let marker = null
-    for (const rawLine of source.split('\n')) {
-      const line = rawLine.trim()
-      if (marker !== null) {
-        if (line === marker) marker = null
-        continue
-      }
-      if (COMPARE_OPEN.test(line)) {
-        declared++
-        marker = line.match(/^:{3,}/)[0]
-      }
-    }
+    declared += countDeclaredPairs(source.split('\n'))
   }
   return declared
 }
@@ -178,7 +163,7 @@ if (declared === 0) {
 if (documents.length !== declared) {
   fail(
     `${corpusDir} holds ${documents.length} documents, but the spec's example pages declare ${declared}.\n` +
-      '  Every ::: compare block in resources/examples/{core,extensions,edge-cases}.md becomes one\n' +
+      '  Every carve fence in a ::: compare block in resources/examples/{core,extensions,edge-cases}.md becomes one\n' +
       '  corpus pair, so a difference means this is not the corpus those pages describe: a\n' +
       '  truncated or stale checkout, a wrong --corpus, or a corpus that needs regenerating\n' +
       '  (npm run corpus:build in the spec repository). Every number below would describe a\n' +
