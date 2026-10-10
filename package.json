@@ -315,6 +315,11 @@
         }
       ]
     },
+    "configurationDefaults": {
+      "[carve]": {
+        "editor.formatOnType": true
+      }
+    },
     "keybindings": [
       {
         "command": "carve.openPreview",
