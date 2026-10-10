@@ -22,6 +22,16 @@ import {
 import { flattenDocument, flattenPath, flattenSummary, type Writer } from './flatten.js'
 import { convertToCarve, IMPORT_EXTENSIONS, importFormatFor, importTargetPath } from './import.js'
 import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
+import {
+  LIST_INDENT_COMMAND,
+  listIndentEdits,
+  mergeListIndentEdits,
+  selectedListLines,
+  serverHasListIndent,
+  useDefaultKey,
+  type ListIndentDirection,
+  type LspRange,
+} from './list-indent.js'
 import { serverInternalPath, serverModulePath } from './paths.js'
 import { shouldHoldRender } from './preview-hold.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
@@ -132,6 +142,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       )
       await editor.edit((builder) => builder.replace(whole, formatted))
     }),
+    vscode.commands.registerCommand('carve.indentListItem', () => queueListShift('indent')),
+    vscode.commands.registerCommand('carve.outdentListItem', () => queueListShift('outdent')),
     vscode.commands.registerCommand('carve.restartLanguageServer', async () => {
       await stopLanguageServer()
       await startLanguageServer(context)
@@ -182,8 +194,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.window.onDidChangeTextEditorSelection((event) => {
       highlightPreviewLine(event.textEditor, event.selections)
       releaseHeldRender(context, event.textEditor)
+      if (event.textEditor === vscode.window.activeTextEditor) updateListItemContext(event.textEditor)
+    }),
+    vscode.window.onDidChangeActiveTextEditor((editor) => updateListItemContext(editor)),
+    vscode.workspace.onDidChangeTextDocument((event) => {
+      const editor = vscode.window.activeTextEditor
+      if (editor?.document === event.document) updateListItemContext(editor)
     }),
   )
+  updateListItemContext(vscode.window.activeTextEditor)
 
   await startLanguageServer(context)
 }
@@ -910,6 +929,95 @@ function includePayload(): CarveInitializationOptions {
       allowAbsolute: vscode.workspace.getConfiguration('carve.includes').get('allowAbsolute'),
     },
     workspaceTrusted: vscode.workspace.isTrusted,
+  })
+}
+
+let onListItem = false
+
+/** Sets `carve.onListItem`, which routes Tab / Shift+Tab to the list commands. */
+function updateListItemContext(editor: vscode.TextEditor | undefined): void {
+  const next = !!editor && editor.document.languageId === 'carve'
+    && selectedListLines(editor.document.getText(), editor.selections).length > 0
+  if (next === onListItem) return
+  onListItem = next
+  void vscode.commands.executeCommand('setContext', 'carve.onListItem', next)
+}
+
+/**
+ * The one place that talks to `carve.listIndent`; its answer is read by
+ * `listIndentEdits`. Adjust these two when carve-lsp#464 settles the contract.
+ */
+async function requestListIndent(
+  running: LanguageClient,
+  uri: string,
+  line: number,
+  direction: ListIndentDirection,
+): Promise<unknown> {
+  return running.sendRequest('workspace/executeCommand', {
+    command: LIST_INDENT_COMMAND,
+    arguments: [{ uri, line, direction }],
+  })
+}
+
+let listShiftQueue: Promise<void> = Promise.resolve()
+
+/**
+ * Runs key presses one at a time, so a second Tab typed before the server
+ * answers the first reads the document after the first edit, not before it.
+ */
+function queueListShift(direction: ListIndentDirection): Promise<void> {
+  const editor = vscode.window.activeTextEditor
+  listShiftQueue = listShiftQueue.then(() => shiftListItems(direction, editor)).catch((error) => {
+    console.error('Carve list indent failed', error)
+  })
+  return listShiftQueue
+}
+
+/** Tab / Shift+Tab on list items, falling back to VS Code's own key. */
+async function shiftListItems(
+  direction: ListIndentDirection,
+  editor: vscode.TextEditor | undefined,
+): Promise<void> {
+  // A press queued behind a slow answer is dropped once its editor lost focus.
+  if (editor !== vscode.window.activeTextEditor) return
+  const fallback = direction === 'indent' ? 'tab' : 'outdent'
+  const running = client
+  const serverReady = !!editor && !!running?.isRunning()
+    && serverHasListIndent(running.initializeResult?.capabilities.executeCommandProvider?.commands)
+  if (!editor || !running || !serverReady) {
+    await vscode.commands.executeCommand(fallback)
+    return
+  }
+  const { document } = editor
+  const version = document.version
+  const selections = editor.selections
+  const uri = document.uri.toString()
+  const lines = selectedListLines(document.getText(), editor.selections as readonly LspRange[])
+  let answers: Awaited<ReturnType<typeof listIndentEdits>>[]
+  try {
+    answers = await Promise.all(lines.map(async (line) =>
+      listIndentEdits(await requestListIndent(running, uri, line, direction), uri)))
+  } catch (error) {
+    console.error('carve.listIndent failed', error)
+    answers = []
+  }
+  // The key belongs to the editor and cursors it was pressed in; if they moved
+  // while the server answered, neither its edit nor the default key applies.
+  const moved = vscode.window.activeTextEditor !== editor
+    || editor.selections.length !== selections.length
+    || editor.selections.some((selection, index) => !selection.isEqual(selections[index]))
+  if (moved && document.version === version) return
+  const edits = document.version === version ? mergeListIndentEdits(answers) : []
+  if (useDefaultKey({ serverReady, edits: edits.length, documentChanged: document.version !== version })) {
+    await vscode.commands.executeCommand(fallback)
+    return
+  }
+  if (edits.length === 0) return
+  await editor.edit((builder) => {
+    for (const edit of edits) {
+      const { start, end } = edit.range
+      builder.replace(new vscode.Range(start.line, start.character, end.line, end.character), edit.newText)
+    }
   })
 }
 

@@ -17,6 +17,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a lightweigh
   - context-aware completion: admonition kinds after `:::`, heading ids after `</#`, footnote labels after `[^`, and link reference labels after `][`,
   - document formatting (and format-on-save) that trims trailing whitespace, collapses blank-line runs, and normalizes the final newline without touching code, raw, or comment blocks,
   - continuation on Enter: a new line inside a block quote, a table or a description list starts with the right prefix, and Enter on a `:::` opener writes the closer. This runs through format-on-type, which the extension turns on for Carve files (see settings below),
+  - Tab and Shift+Tab on a list item line nest the item under the one above it and move it back out, placing the marker at the column Carve needs for the sublist to parse. Elsewhere, and on a first item or a top-level item where there is nothing to nest under or out of, the keys keep their usual behavior. This needs a carve-lsp release with the `carve.listIndent` command ([carve-lsp#464](https://github.com/markup-carve/carve-lsp/issues/464)); with an older server, or with `carve.lsp.enabled` off, Tab and Shift+Tab indent as usual,
   - folding for headings/sections and multi-line blocks,
   - rename for footnote and link reference labels (definition and all references),
   - code lens showing the reference count above each footnote definition.

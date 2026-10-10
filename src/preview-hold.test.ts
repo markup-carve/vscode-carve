@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { isBareListMarker, isInsideCodeFence, shouldHoldRender } from './preview-hold.js'
+import { codeFenceMask, isBareListMarker, isInsideCodeFence, shouldHoldRender } from './preview-hold.js'
 
 const bare = [
   '-', '- ', '*', '* ', '-\t',
@@ -81,4 +81,10 @@ test('the render does not hold for an out-of-range line', () => {
 
 test('CRLF line endings split like LF', () => {
   assert.equal(shouldHoldRender('- a\r\n- \r\n', 1), true)
+})
+
+test('the fence mask agrees with the per-line check', () => {
+  const lines = ['- a', '```', '- b', '```', '~~~', 'x', '~~~~', '- c', '````', '`````', '- d']
+  const mask = codeFenceMask(lines)
+  lines.forEach((_, line) => assert.equal(mask[line], isInsideCodeFence(lines, line), `line ${line}`))
 })
