@@ -38,6 +38,16 @@ test('a fence closes only on the same character, at least as long, with nothing 
   assert.equal(isInsideCodeFence(['````', '`````', '-'], 2), false)
 })
 
+test('a fence opened on a list-item line still counts', () => {
+  assert.equal(shouldHoldRender('- ```\n  - \n  ```\n', 1), false)
+  assert.equal(shouldHoldRender('1. [ ] ~~~\n  1.\n', 1), false)
+  assert.equal(isInsideCodeFence(['- ```', '  x', '  ```', '- '], 3), false)
+})
+
+test('a marker line is not a fence closer', () => {
+  assert.equal(isInsideCodeFence(['```', '- ```', '-'], 2), true)
+})
+
 test('an unclosed fence runs to the end', () => {
   assert.equal(isInsideCodeFence(['~~~', 'x', 'y', '-'], 3), true)
 })

@@ -15,7 +15,10 @@ const TASK = String.raw`\[[ xX_>?-]\]`
 const BARE_MARKER = new RegExp(
   String.raw`^[ \t]*(?:>[ \t]*)*${MARKER}(?:[ \t]+${TASK})?[ \t]*$`,
 )
-const FENCE = /^[ \t]*(?:>[ \t]*)*(`{3,}|~{3,})(.*)$/
+// An opener may sit on a marker line (`- ```), a closer may not.
+const FENCE = new RegExp(
+  String.raw`^[ \t]*(?:>[ \t]*)*(${MARKER}[ \t]+(?:${TASK}[ \t]+)?)?(\x60{3,}|~{3,})(.*)$`,
+)
 
 /** Whether a line holds only a list marker (and optionally a task box). */
 export function isBareListMarker(line: string): boolean {
@@ -33,10 +36,10 @@ export function isInsideCodeFence(lines: readonly string[], line: number): boole
   for (let i = 0; i < line && i < lines.length; i++) {
     const match = FENCE.exec(lines[i])
     if (!match) continue
-    const run = match[1]
+    const [, marker, run, rest] = match
     if (open === undefined) {
       open = run
-    } else if (run[0] === open[0] && run.length >= open.length && match[2].trim() === '') {
+    } else if (!marker && run[0] === open[0] && run.length >= open.length && rest.trim() === '') {
       open = undefined
     }
   }
