@@ -26,6 +26,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a lightweigh
   - typesets inline and display math with [KaTeX](https://katex.org/),
   - syntax-highlights fenced code blocks with highlight.js (light/dark aware),
   - follows the active Carve editor, syncs scrolling line-by-line in both directions, and highlights the block under the cursor,
+  - keeps its last render while the cursor line holds only a list marker (`- `, `1. `, `- [ ] `), so starting a new item does not flash the marker as text folded into the item above; it renders once the line gets content or the cursor leaves it,
   - links `@mentions` and `#tags` and renders `:emoji:` shortcodes when configured (see settings below).
 - Export commands:
   - **Carve: Export to HTML** writes a self-contained HTML file (Mermaid, KaTeX, and highlight.js load from a CDN; theming follows the reader's color scheme).

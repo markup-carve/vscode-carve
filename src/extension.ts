@@ -23,6 +23,7 @@ import { flattenDocument, flattenPath, flattenSummary, type Writer } from './fla
 import { convertToCarve, IMPORT_EXTENSIONS, importFormatFor, importTargetPath } from './import.js'
 import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
 import { serverInternalPath, serverModulePath } from './paths.js'
+import { shouldHoldRender } from './preview-hold.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import { createTableMarkerScanner } from './table-colors.js'
 import {
@@ -43,6 +44,8 @@ let suppressEditorScroll = false
 /** When the previewed document last changed, to tell typing from scrolling. */
 let lastEditAt = 0
 let renderTimer: ReturnType<typeof setTimeout> | undefined
+/** Line (0-based) whose bare list marker is holding back a render. */
+let heldRenderLine: number | undefined
 /** Include warnings for the previewed document, cleared when it stops failing. */
 let includeDiagnostics: vscode.DiagnosticCollection | undefined
 /** Watchers over the targets the last render touched, resolved or attempted. */
@@ -165,6 +168,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         }
         previewUri = editor.document.uri
         renderPreview(context, editor.document)
+      } else if (previewPanel && heldRenderLine !== undefined && !renderTimer) {
+        // Focus left the Carve editor (another file, or the preview itself).
+        const held = vscode.workspace.textDocuments.find(
+          (doc) => doc.uri.toString() === previewUri?.toString(),
+        )
+        if (held) renderPreview(context, held)
       }
     }),
     vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
@@ -172,6 +181,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }),
     vscode.window.onDidChangeTextEditorSelection((event) => {
       highlightPreviewLine(event.textEditor, event.selections)
+      releaseHeldRender(context, event.textEditor)
     }),
   )
 
@@ -238,12 +248,36 @@ function scheduleRender(context: vscode.ExtensionContext, document: vscode.TextD
     // The preview may have switched to another document during the debounce
     // window; only render if this document is still the one being previewed.
     if (previewUri && document.uri.toString() === previewUri.toString()) {
+      const line = cursorLineIn(document)
+      if (line !== undefined && shouldHoldRender(document.getText(), line)) {
+        heldRenderLine = line
+        return
+      }
       renderPreview(context, document)
     }
   }, RENDER_DEBOUNCE_MS)
 }
 
+/** The primary cursor line when `document` is in the active editor. */
+function cursorLineIn(document: vscode.TextDocument): number | undefined {
+  const editor = vscode.window.activeTextEditor
+  if (!editor || editor.document.uri.toString() !== document.uri.toString()) return undefined
+  return editor.selection.active.line
+}
+
+/** Render a held preview once the cursor has left the bare-marker line. */
+function releaseHeldRender(context: vscode.ExtensionContext, editor: vscode.TextEditor): void {
+  if (heldRenderLine === undefined || !previewUri) return
+  if (editor.document.uri.toString() !== previewUri.toString()) return
+  const line = editor.selection.active.line
+  if (line === heldRenderLine && shouldHoldRender(editor.document.getText(), line)) return
+  // A pending debounce renders with the same rules; let it.
+  if (renderTimer) return
+  renderPreview(context, editor.document)
+}
+
 function renderPreview(context: vscode.ExtensionContext, document: vscode.TextDocument): void {
+  heldRenderLine = undefined
   void renderPreviewNow(context, document)
 }
 
