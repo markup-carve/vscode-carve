@@ -17,9 +17,10 @@ const TASK = String.raw`\[[ xX_>?-]\]`
 const BARE_MARKER = new RegExp(
   String.raw`^[ \t]*(?:>[ \t]*)*${MARKER}(?:[ \t]+${TASK})?[ \t]*$`,
 )
-// An opener may sit on a marker line (`- - ```), a closer may not.
+// An opener may sit on a list or description marker line (`- - ```, `: ```),
+// a closer may not.
 const FENCE = new RegExp(
-  String.raw`^[ \t]*((?:>[ \t]*|${MARKER}[ \t]+(?:${TASK}[ \t]+)?)*)(\x60{3,}|~{3,})(.*)$`,
+  String.raw`^[ \t]*((?:>[ \t]*|:[ \t]+|${MARKER}[ \t]+(?:${TASK}[ \t]+)?)*)(\x60{3,}|~{3,})(.*)$`,
 )
 
 /** Whether a line holds only a list marker (and optionally a task box). */
@@ -30,8 +31,9 @@ export function isBareListMarker(line: string): boolean {
 /**
  * Whether `line` (0-based) sits inside a backtick or tilde code fence.
  *
- * A line scan, not a parse: it ignores container rules, so an indented fence
- * at the document level counts as a fence. Erring that way only skips a hold.
+ * A line scan, not a parse: it ignores container rules (an indented fence at
+ * the document level counts as a fence), so an unusual shape can be misread.
+ * A misread costs one flicker or one deferred render, never the output.
  */
 export function isInsideCodeFence(lines: readonly string[], line: number): boolean {
   let open: string | undefined
@@ -40,7 +42,8 @@ export function isInsideCodeFence(lines: readonly string[], line: number): boole
     if (!match) continue
     const [, prefix, run, rest] = match
     if (open === undefined) {
-      open = run
+      // A fence character after the run makes it inline code: ```code```.
+      if (!rest.includes(run[0])) open = run
     } else if (/^[ \t>]*$/.test(prefix) && run[0] === open[0] && run.length >= open.length && rest.trim() === '') {
       open = undefined
     }

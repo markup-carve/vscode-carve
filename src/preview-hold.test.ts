@@ -46,6 +46,15 @@ test('a fence opened on a list-item line still counts', () => {
   assert.equal(shouldHoldRender('> - ```\n> - \n', 1), false)
 })
 
+test('a fence opened on a description body line still counts', () => {
+  assert.equal(shouldHoldRender(':: term\n: ```\n  - \n  ```\n', 2), false)
+})
+
+test('an inline code span is not a fence opener', () => {
+  assert.equal(shouldHoldRender('```code```\n\n- a\n- ', 3), true)
+  assert.equal(isInsideCodeFence(['~~~ a~b', '-'], 1), false)
+})
+
 test('a marker line is not a fence closer', () => {
   assert.equal(isInsideCodeFence(['```', '- ```', '-'], 2), true)
 })
