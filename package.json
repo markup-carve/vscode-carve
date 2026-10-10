@@ -258,11 +258,29 @@
         "title": "Carve: Restart Language Server"
       },
       {
+        "command": "carve.indentListItem",
+        "title": "Carve: Nest List Item"
+      },
+      {
+        "command": "carve.outdentListItem",
+        "title": "Carve: Un-nest List Item"
+      },
+      {
         "command": "carve.formatCanonical",
         "title": "Carve: Format Document (canonical)"
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "carve.indentListItem",
+          "when": "editorLangId == carve"
+        },
+        {
+          "command": "carve.outdentListItem",
+          "when": "editorLangId == carve"
+        }
+      ],
       "explorer/context": [
         {
           "command": "carve.importFile",
@@ -326,6 +344,16 @@
         "key": "ctrl+shift+v",
         "mac": "cmd+shift+v",
         "when": "editorLangId == carve"
+      },
+      {
+        "command": "carve.indentListItem",
+        "key": "tab",
+        "when": "editorLangId == carve && editorTextFocus && !editorReadonly && !suggestWidgetVisible && !inlineSuggestionVisible && !inSnippetMode && !editorTabMovesFocus && carve.onListItem"
+      },
+      {
+        "command": "carve.outdentListItem",
+        "key": "shift+tab",
+        "when": "editorLangId == carve && editorTextFocus && !editorReadonly && !suggestWidgetVisible && !inlineSuggestionVisible && !inSnippetMode && !editorTabMovesFocus && carve.onListItem"
       }
     ],
     "walkthroughs": [

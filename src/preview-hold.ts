@@ -12,7 +12,7 @@
 // marker, not a bullet. One marker only: `* * *` is a thematic break. The
 // alpha and roman branches stay disjoint so the fence prefix cannot backtrack
 // exponentially.
-const MARKER = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]{2,}[.)]|[IVXLCDM]{2,}[.)]|\.)`
+export const MARKER = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]{2,}[.)]|[IVXLCDM]{2,}[.)]|\.)`
 const TASK = String.raw`\[[ xX_>?-]\]`
 const BARE_MARKER = new RegExp(
   String.raw`^[ \t]*(?:>[ \t]*)*${MARKER}(?:[ \t]+${TASK})?[ \t]*$`,
@@ -37,18 +37,34 @@ export function isBareListMarker(line: string): boolean {
  */
 export function isInsideCodeFence(lines: readonly string[], line: number): boolean {
   let open: string | undefined
-  for (let i = 0; i < line && i < lines.length; i++) {
-    const match = FENCE.exec(lines[i])
-    if (!match) continue
-    const [, prefix, run, rest] = match
-    if (open === undefined) {
-      // A fence character after the run makes it inline code: ```code```.
-      if (!rest.includes(run[0])) open = run
-    } else if (/^[ \t>]*$/.test(prefix) && run[0] === open[0] && run.length >= open.length && rest.trim() === '') {
-      open = undefined
-    }
-  }
+  for (let i = 0; i < line && i < lines.length; i++) open = stepCodeFence(open, lines[i])
   return open !== undefined
+}
+
+/** For each line, whether it sits inside a code fence; one pass over the document. */
+export function codeFenceMask(lines: readonly string[]): boolean[] {
+  const mask: boolean[] = []
+  let open: string | undefined
+  for (const line of lines) {
+    mask.push(open !== undefined)
+    open = stepCodeFence(open, line)
+  }
+  return mask
+}
+
+/** The open fence run after `line`, given the one open before it. */
+function stepCodeFence(open: string | undefined, line: string): string | undefined {
+  const match = FENCE.exec(line)
+  if (!match) return open
+  const [, prefix, run, rest] = match
+  if (open === undefined) {
+    // A fence character after the run makes it inline code: ```code```.
+    return rest.includes(run[0]) ? undefined : run
+  }
+  if (/^[ \t>]*$/.test(prefix) && run[0] === open[0] && run.length >= open.length && rest.trim() === '') {
+    return undefined
+  }
+  return open
 }
 
 /** Whether a render should wait while the cursor is on `line` of `text`. */
