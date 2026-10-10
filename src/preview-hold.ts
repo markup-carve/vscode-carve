@@ -9,15 +9,17 @@
  */
 
 // Same marker set as the grammar's container rules; `+` is the continuation
-// marker, not a bullet. One marker only: `* * *` is a thematic break.
-const MARKER = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)`
+// marker, not a bullet. One marker only: `* * *` is a thematic break. The
+// alpha and roman branches stay disjoint so the fence prefix cannot backtrack
+// exponentially.
+const MARKER = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]{2,}[.)]|[IVXLCDM]{2,}[.)]|\.)`
 const TASK = String.raw`\[[ xX_>?-]\]`
 const BARE_MARKER = new RegExp(
   String.raw`^[ \t]*(?:>[ \t]*)*${MARKER}(?:[ \t]+${TASK})?[ \t]*$`,
 )
-// An opener may sit on a marker line (`- ```), a closer may not.
+// An opener may sit on a marker line (`- - ```), a closer may not.
 const FENCE = new RegExp(
-  String.raw`^[ \t]*(?:>[ \t]*)*(${MARKER}[ \t]+(?:${TASK}[ \t]+)?)?(\x60{3,}|~{3,})(.*)$`,
+  String.raw`^[ \t]*((?:>[ \t]*|${MARKER}[ \t]+(?:${TASK}[ \t]+)?)*)(\x60{3,}|~{3,})(.*)$`,
 )
 
 /** Whether a line holds only a list marker (and optionally a task box). */
@@ -36,10 +38,10 @@ export function isInsideCodeFence(lines: readonly string[], line: number): boole
   for (let i = 0; i < line && i < lines.length; i++) {
     const match = FENCE.exec(lines[i])
     if (!match) continue
-    const [, marker, run, rest] = match
+    const [, prefix, run, rest] = match
     if (open === undefined) {
       open = run
-    } else if (!marker && run[0] === open[0] && run.length >= open.length && rest.trim() === '') {
+    } else if (/^[ \t>]*$/.test(prefix) && run[0] === open[0] && run.length >= open.length && rest.trim() === '') {
       open = undefined
     }
   }

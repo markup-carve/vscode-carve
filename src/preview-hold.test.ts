@@ -42,6 +42,8 @@ test('a fence opened on a list-item line still counts', () => {
   assert.equal(shouldHoldRender('- ```\n  - \n  ```\n', 1), false)
   assert.equal(shouldHoldRender('1. [ ] ~~~\n  1.\n', 1), false)
   assert.equal(isInsideCodeFence(['- ```', '  x', '  ```', '- '], 3), false)
+  assert.equal(shouldHoldRender('- - ```\n    - \n    ```\n', 1), false)
+  assert.equal(shouldHoldRender('> - ```\n> - \n', 1), false)
 })
 
 test('a marker line is not a fence closer', () => {
