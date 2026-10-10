@@ -16,6 +16,7 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a lightweigh
   - semantic tokens for parser-aware highlighting in themes that support LSP semantic colorization,
   - context-aware completion: admonition kinds after `:::`, heading ids after `</#`, footnote labels after `[^`, and link reference labels after `][`,
   - document formatting (and format-on-save) that trims trailing whitespace, collapses blank-line runs, and normalizes the final newline without touching code, raw, or comment blocks,
+  - continuation on Enter: a new line inside a block quote, a table or a description list starts with the right prefix, and Enter on a `:::` opener writes the closer. This runs through format-on-type, which the extension turns on for Carve files (see settings below),
   - folding for headings/sections and multi-line blocks,
   - rename for footnote and link reference labels (definition and all references),
   - code lens showing the reference count above each footnote definition.
@@ -58,6 +59,12 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 | `carve.includes.enabled` | `"auto"` | Resolve `{{ path }}` include directives (`auto`/`on`/`off`). `auto` resolves them in a trusted workspace and leaves them literal in an untrusted one. |
 | `carve.includes.includeRoot` | `""` | Containment root for include targets, the equivalent of `carve --include-root`. Empty uses the workspace folder the document belongs to, then the document's own folder. |
 | `carve.includes.allowAbsolute` | `false` | Allow an absolute include path. Still subject to root containment. |
+
+The extension also sets one editor default for Carve files only:
+
+| Setting | Default for `[carve]` | Description |
+|---------|-----------------------|-------------|
+| `editor.formatOnType` | `true` | Lets the language server continue a block on Enter. VS Code only asks the server when this is on, and its own default is off. To turn it off, set `"[carve]": { "editor.formatOnType": false }` in your settings. |
 
 ### Includes
 
