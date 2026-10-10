@@ -168,6 +168,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         }
         previewUri = editor.document.uri
         renderPreview(context, editor.document)
+      } else if (previewPanel && heldRenderLine !== undefined && !renderTimer) {
+        // Focus left the Carve editor (another file, or the preview itself).
+        const held = vscode.workspace.textDocuments.find(
+          (doc) => doc.uri.toString() === previewUri?.toString(),
+        )
+        if (held) renderPreview(context, held)
       }
     }),
     vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
