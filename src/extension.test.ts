@@ -871,6 +871,24 @@ test('both exports are reachable from the editor, not only the palette', () => {
   }
 })
 
+test('format-on-type is on by default for Carve files only', () => {
+  const manifest = JSON.parse(
+    readFileSync(join(here, '..', 'package.json'), 'utf8'),
+  ) as {
+    contributes: {
+      languages: { id: string }[]
+      configurationDefaults?: Record<string, Record<string, unknown>>
+    }
+  }
+
+  // VS Code sends onTypeFormatting only with editor.formatOnType on, so the
+  // carve-lsp Enter continuations never fire without this default.
+  assert.ok(manifest.contributes.languages.some((l) => l.id === 'carve'))
+  const defaults = manifest.contributes.configurationDefaults ?? {}
+  assert.equal(defaults['[carve]']?.['editor.formatOnType'], true)
+  assert.equal(defaults['editor.formatOnType'], undefined, 'must stay language-scoped')
+})
+
 test('the Markdown export writes the engine Markdown, with no HTML wrapper', () => {
   // The bundle exports ten converters and the extension reached one of them.
   // What lands on disk has to be what carveToMarkdown writes: the HTML export
