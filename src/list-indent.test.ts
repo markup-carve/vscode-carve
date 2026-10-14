@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import {
+  LIST_INDENT_COMMAND,
   isListItemLine,
   listIndentEdits,
   mergeListIndentEdits,
@@ -151,4 +156,21 @@ test('the key falls back when the server cannot or did not edit', () => {
   assert.equal(useDefaultKey({ serverReady: true, edits: 0, documentChanged: false }), true)
   assert.equal(useDefaultKey({ serverReady: true, edits: 2, documentChanged: false }), false)
   assert.equal(useDefaultKey({ serverReady: true, edits: 0, documentChanged: true }), false)
+})
+
+// The contract half: the installed server's own walk, not a hand-written answer.
+const lspDist = join(dirname(createRequire(import.meta.url).resolve('@markup-carve/carve-lsp/package.json')), 'dist')
+
+test('the installed server advertises carve.listIndent and its edits pass through', async () => {
+  const server = readFileSync(join(lspDist, 'server.js'), 'utf8')
+  assert.ok(server.includes(`'${LIST_INDENT_COMMAND}'`), 'carve-lsp no longer registers carve.listIndent')
+  const format = (await import(pathToFileURL(join(lspDist, 'format.js')).href)) as {
+    listIndentEdits: (source: string, line: number, direction: 'indent' | 'outdent') => unknown
+  }
+  const uri = 'file:///doc.crv'
+  const answer = format.listIndentEdits('- a\n- b\n', 1, 'indent')
+  const edits = listIndentEdits(answer, uri)
+  assert.ok(edits.length > 0, JSON.stringify(answer))
+  assert.deepEqual(edits, answer)
+  assert.deepEqual(listIndentEdits(format.listIndentEdits('- a\n', 0, 'indent'), uri), [])
 })
