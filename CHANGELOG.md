@@ -14,6 +14,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Fenced code blocks highlight in 28 more languages, among them F# (`f#`), Objective-C, CUDA, LaTeX, reStructuredText, Clojure, Julia, Razor and JSON Lines, and `node` opens a JavaScript fence. Blade, Twig, Vue, Svelte and GraphQL fences highlight once their VS Code extension is installed. The list now comes from the fence-language table in carve-grammars (markup-carve/carve-grammars#646).
 
+### Fixed
+
+- Link text highlighting starts at the bracket that opens the link. In `a [b [x](u) c]` only `[x](u)` is highlighted as a link, as the engine renders it; before, the highlight began at the outer `[`. Link text holding a bracket pair, such as `[a [b] c](u)`, is highlighted now too. Reference links follow the same rule.
+- A pipe line is a table row only when it ends in a closing pipe, optionally followed by an attribute block. A lone `|`, `| a | b` and `- | a | b` are highlighted as the paragraph text the engine renders, and a `+ c |` line below such a line is no continuation row.
+
 ## [0.1.9] - 2026-10-08
 
 ### Changed

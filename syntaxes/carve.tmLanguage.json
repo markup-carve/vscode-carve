@@ -902,7 +902,7 @@
       "comment": "A CONTINUATION ROW NEEDS A ROW ABOVE IT (markup-carve/vscode-carve#329). `+ b |` used to be a bare `match` beside the row rules, so it was scoped wherever it stood. The engine folds it into the row above it and renders it as ordinary text when no table is open, at the document level as much as at a container's content column: `+ cont |` under a GFM delimiter row is `<p>+ cont |</p>` (corpus 115-a-continuation-row-needs-a-body-row), and `:: t` over `:  a` over `   + b |` keeps the row in the description's paragraph. A `match` rule cannot ask what stood above it, so the row rules move inside a region that only a pipe row opens and that lets go on the first line which is not another continuation row. THE REGION CARRIES NO NAME, so no row gains a scope layer from it, and its `end` matches every line except a continuation row, so it cannot reach the end of the document. `applyEndPatternLast` is what makes the opening line reachable: the `end` is anchored on `^`, which still matches at the zero-width `begin`, so tested first it would close the region before a row was scoped.",
       "patterns": [
         {
-          "begin": "^(?=\\|)",
+          "begin": "^(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
           "end": "^(?![ \\t]*\\+.*\\|[ \\t]*$)",
           "applyEndPatternLast": true,
           "patterns": [
@@ -945,7 +945,7 @@
         },
         {
           "name": "markup.table.row.carve",
-          "begin": "^(?=\\|)",
+          "begin": "^(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
           "end": "$",
           "patterns": [
             {
@@ -969,7 +969,7 @@
       "comment": "THE CONTAINER SPELLING NEEDS A ROW ABOVE ITS CONTINUATION ROW TOO (markup-carve/vscode-carve#329), and for the same reason `#tables` does: the engine folds `+ b |` into the row above it and renders it as text when no table is open. `- + a |` over `tail` is one list item holding `+ a |`, and `:: t` over `:  a` over `   + b |` keeps the row in the description's paragraph. The rows move inside a region that only a pipe row opens - on the container's own marker line through `\\G`, or at its content column - and that lets go on the first line which is not another continuation row. THE REGION IS UNNAMED and its `end` matches every line except a continuation row, so it adds no scope and cannot reach the end of the document.",
       "patterns": [
         {
-          "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(?=\\|)",
+          "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
           "end": "^(?![ \\t]*\\+.*\\|[ \\t]*$)",
           "applyEndPatternLast": true,
           "patterns": [
@@ -1011,7 +1011,7 @@
         {
           "comment": "A TABLE ROW MAY OPEN ON A CONTAINER'S OWN MARKER LINE (`- | a |`, `- [ ] | a |`, `1. | a |`), and `#tables` cannot reach it: its begin is `^(?=\\\\s*\\\\|)`, which tolerates indentation but not a marker, and the container's own begin match has already consumed `- ` by the time the line is scanned, so the row carried no table scope at all while carve-js renders a table inside the item (markup-carve/vscode-carve#129, corpus 361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-2). Quotes (`#block-quote-on-marker-line`) and divs (the optional marker alternative in `#divs`) both already had a marker-line path; tables did not. Anchored on \\\\G with the `(?<=[ \\\\t])` guard for the reasons `#comment-fence-on-marker-line` gives: \\\\G matches at the current scan position, which on a marker line is where the marker ended, vscode-textmate resets it on every following line so this can never open one there, and the guard keeps it to a marker rather than to a pipe glued after some earlier match. The begin is ZERO-WIDTH so the cells rule owns every character of the row, exactly as it does at the line start. Reachable ONLY from `#container-body`. The DELIMITER-row spelling on a marker line is deliberately not duplicated: it cannot arise, because a GFM delimiter row is the second line of its table and a marker line is the first.",
           "name": "markup.table.row.carve",
-          "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(?=\\|)",
+          "begin": "(?:\\G(?<=[ \\t])|^[ \\t]+)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
           "end": "$",
           "patterns": [
             {
@@ -1488,7 +1488,7 @@
         {
           "comment": "A quoted title may contain escaped characters (`\"ti\\\"tle\"`), so the title run must consume `\\\\.` pairs instead of stopping at the first backslash - otherwise the whole link loses its scoping.",
           "name": "meta.link.inline.carve",
-          "match": "(\\[)([^\\]]+)(\\])(\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))",
+          "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))",
           "captures": {
             "1": {
               "name": "punctuation.definition.link.begin.carve"
@@ -1518,7 +1518,7 @@
         },
         {
           "name": "meta.link.reference.carve",
-          "match": "(\\[)([^\\]]+)(\\])(\\[)([^\\]]*)(\\])",
+          "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)([^\\]]*)(\\])",
           "captures": {
             "2": {
               "name": "string.other.link.title.carve"
