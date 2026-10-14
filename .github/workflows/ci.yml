@@ -7,6 +7,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Pull requests share one group per PR so a new push cancels the stale run;
+# every other event gets its own group, since GitHub keeps one pending run per group.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 # Every job declares timeout-minutes. Without one GitHub applies a 360-minute
 # default, roughly 900x the median job in this org, so a hung step burns hours
 # of runner time before anything stops it.
@@ -38,12 +44,6 @@ jobs:
       - run: npm run build
       - run: npm test
 
-      # Separate from `npm test` on purpose: this one reaches the network, so a
-      # failure here means the vendored battery is stale (or GitHub is down),
-      # not that the grammar is wrong. Keeping it out of the test script also
-      # means a local run never needs a clone.
-      - name: The vendored block battery still matches carve-grammars
-        run: ./tools/check-battery-drift.sh
-      - name: The vendored fence-language table still matches carve-grammars
-        run: ./tools/check-fence-languages-drift.sh
+      # The network drift checks (battery, fence languages) run daily in
+      # grammar-drift.yml: upstream moving is not a reason for a PR to fail.
       - run: npm run package
