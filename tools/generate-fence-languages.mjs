@@ -37,22 +37,34 @@ for (const { words, language, textmate } of table.languages) {
 
 const LANGUAGE_CAPTURE = '([^`~\\s\\["]+)?'
 const BARE_FENCE = '[ \\t]*[`~]{3,}[ \\t]*$'
-
+// [generated entry, hand-written entry, index among its begin rules, while guard, end suffix]
 // [generated entry, hand-written entry, index among its begin rules, while guard]
 // Inside a container the embedded body must also stop at a column-0 line so the
 // generic rule's zero-width container boundary gets to close an unclosed fence.
+//
+// Inside a colon container of N colons the engine closes an unclosed fence at
+// the container's closer, so those variants also stop before a bare run of
+// exactly N colons. N is fixed per rule because an end pattern cannot see the
+// container's own begin captures; #colon-containers picks the variant.
+export const COLON_CONTAINER_LENGTHS = [3, 4, 5]
+const colonCloser = (n) => `[ \\t]*:{${n}}[ \\t]*$`
 const VARIANTS = [
   ['fenced-code-languages', 'code-blocks', 0, `(^|\\G)(?!${BARE_FENCE})`],
   ['fenced-code-languages-on-a-marker-line', 'code-block-behind-a-container-prefix', 0, `(^|\\G)(?!${BARE_FENCE})(?=[ \\t]|$)`],
   ['fenced-code-languages-at-a-body-column', 'code-block-behind-a-container-prefix', 1, `(^|\\G)(?!${BARE_FENCE})(?=[ \\t]|$)`],
+  ...COLON_CONTAINER_LENGTHS.map((n) => [
+    `fenced-code-languages-in-colon-container-${n}`, 'code-blocks', 0,
+    `(^|\\G)(?!${BARE_FENCE})(?!${colonCloser(n)})`, `|(?=^${colonCloser(n)})`,
+  ]),
 ]
 
-function languageRule(generic, [id, words, scopes], whileGuard) {
+function languageRule(generic, [id, words, scopes], whileGuard, endSuffix = '') {
   if (generic.begin.split(LANGUAGE_CAPTURE).length !== 2) {
     throw new Error(`generic fence rule no longer has exactly one language capture: ${generic.begin}`)
   }
   const { comment, ...rule } = generic
   rule.begin = generic.begin.replace(LANGUAGE_CAPTURE, `((?i:${words.join('|')}))`)
+  rule.end = generic.end + endSuffix
   const include = scopes.map((scope) => ({ include: scope }))
   // Carve holds fences of its own, so it gets the exact closer from the outer
   // `end`. Other languages sit under a `while` that stops at any bare fence
@@ -69,9 +81,19 @@ function languageRule(generic, [id, words, scopes], whileGuard) {
 
 export function generate(grammar) {
   const entries = {}
-  for (const [key, source, index, whileGuard] of VARIANTS) {
+  for (const [key, source, index, whileGuard, endSuffix] of VARIANTS) {
     const generic = grammar.repository[source].patterns.filter((rule) => rule.begin)[index]
-    entries[key] = { patterns: LANGUAGES.map((language) => languageRule(generic, language, whileGuard)) }
+    entries[key] = { patterns: LANGUAGES.map((language) => languageRule(generic, language, whileGuard, endSuffix)) }
+  }
+  const generic = grammar.repository['code-blocks'].patterns.filter((rule) => rule.begin)[0]
+  const { comment, ...bare } = generic
+  for (const n of COLON_CONTAINER_LENGTHS) {
+    entries[`code-blocks-in-colon-container-${n}`] = {
+      patterns: [
+        { include: `#fenced-code-languages-in-colon-container-${n}` },
+        { ...bare, end: generic.end + `|(?=^${colonCloser(n)})` },
+      ],
+    }
   }
   return entries
 }

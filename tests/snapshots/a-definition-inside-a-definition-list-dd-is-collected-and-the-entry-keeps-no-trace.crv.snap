@@ -5,7 +5,7 @@
 >:  [r]: /u
 #^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
 # ^^ text.carve markup.list.definition.carve
-#   ^^^^^^^ text.carve
+#   ^^^^^^^^ text.carve
 >
 >see [t][r]
 #^^^^ text.carve
