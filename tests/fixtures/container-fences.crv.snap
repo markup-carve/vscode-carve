@@ -1,0 +1,83 @@
+>::: tip
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>```carve
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>*three*
+#^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+# ^^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.bold.carve
+#      ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>plain three
+#^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>:::: outer
+#^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#    ^ text.carve markup.other.div.carve
+#     ^^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>```carve
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>*four*
+#^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+# ^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.bold.carve
+#     ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>plain four
+#^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>::::
+#^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::::: wide
+#^^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#     ^ text.carve markup.other.div.carve
+#      ^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>```carve
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>*five*
+#^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+# ^^^^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve markup.bold.carve
+#     ^ text.carve markup.raw.block.fenced.code.carve meta.embedded.block.carve punctuation.definition.bold.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>plain five
+#^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>:::::
+#^^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: note
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>unclosed, and no closer follows
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>after the containers *b*
+#^^^^^^^^^^^^^^^^^^^^^ text.carve
+#                     ^ text.carve punctuation.definition.bold.carve
+#                      ^ text.carve markup.bold.carve
+#                       ^ text.carve punctuation.definition.bold.carve
+>

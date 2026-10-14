@@ -3,6 +3,7 @@
 // Run with --check to verify the committed grammar without rewriting it.
 import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { COLON_CONTAINER_LENGTHS } from './generate-fence-languages.mjs'
 
 const path = fileURLToPath(new URL('../syntaxes/carve.tmLanguage.json', import.meta.url))
 const source = readFileSync(path, 'utf8')
@@ -208,6 +209,22 @@ function withoutCaptures(regex) {
 }
 const div = '(?:' + repository.divs.patterns.map(rule => withoutCaptures(rule.match.slice(1))).join('|') + ')'
 const colonCaptures = { '0': { patterns: include('caption-colon-tokenizer') } }
+// A colon container is a region per fence length, so a fence inside it can
+// stop at the container's own closer: the engine closes an unclosed fence
+// there. The lengths match generate-fence-languages.mjs.
+updated = replaceEntry(updated, 'colon-containers', {
+  patterns: COLON_CONTAINER_LENGTHS.map(n => ({
+    begin: String.raw`^(?=[ \t]*:{` + n + String.raw`}[ \t]+\S)(?=` + div + String.raw`)[ \t]*(:{` + n + String.raw`})[^\n]*$`,
+    end: String.raw`^[ \t]*(:{` + n + String.raw`})[ \t]*$`,
+    beginCaptures: colonCaptures,
+    endCaptures: colonCaptures,
+    patterns: [
+      frame('^(?=' + fence + ')', include('code-blocks-in-colon-container-' + n, 'code-block-behind-a-container-prefix', 'code-fence-on-quote-marker-line'), String.raw`[ \t]*`),
+      ...include('code-blocks-in-colon-container-' + n),
+      { include: '$self' },
+    ],
+  })),
+})
 const quotePrefix = { match: '^(?:> )+', captures: { '0': { patterns: include('caption-quote-prefix') } } }
 const colonBody = repository['container-body'].patterns.map(rule =>
   rule.include === '#captionable-blocks-in-container' ? { include: '#captionable-blocks' }
@@ -318,6 +335,21 @@ updated = replaceEntry(updated, 'caption-paragraph-in-list', {
       patterns: include('caption-paragraph-inline'),
     },
   ],
+})
+// A footnote or description body: a list marker interrupts a paragraph only
+// inside a list item, so here it folds into the open paragraph as text.
+const noteParagraphEnd = String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+(?:[ \t]*$|` + interrupt + '))'
+const noteMarkerLineParagraph = { begin: String.raw`\G(?<=[ \t])` + content, end: noteParagraphEnd, patterns: include('caption-paragraph-inline') }
+updated = replaceEntry(updated, 'caption-paragraph-in-note', {
+  patterns: [
+    { begin: String.raw`^([ \t]+)` + content, end: noteParagraphEnd, patterns: include('caption-paragraph-inline') },
+    noteMarkerLineParagraph,
+  ],
+})
+updated = replaceEntry(updated, 'caption-paragraph-on-note-marker-line', { patterns: [noteMarkerLineParagraph] })
+updated = replaceEntry(updated, 'note-body', {
+  patterns: repository['container-body'].patterns.map(rule =>
+    rule.include === '#caption-paragraph-in-container' ? { include: '#caption-paragraph-in-note' } : rule),
 })
 const paragraphIndex = grammar.patterns.findIndex(rule => rule.include === '#caption-paragraph')
 if (paragraphIndex < 0) throw new Error('Missing paragraph entry')

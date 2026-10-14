@@ -223,19 +223,16 @@ test('an indented description term is let go at a column below its own', () => {
 })
 
 /*
- * A REMAINING LIMITATION, unchanged by this fix and recorded so it is not
- * mistaken for a regression. The engine renders `> :: t` over `> : d` as a
- * `<dl>` inside the blockquote, but both description rules are anchored on `^`
- * and `#block-quotes` ends at `$`, so neither can fire behind a `>` prefix.
- * Nothing on those lines carries a description scope, before or after #326.
+ * The engine renders `> :: t` over `> : d` as a `<dl>` inside the blockquote,
+ * and a quoted `: d` with no term above it as a paragraph, as at the document
+ * level.
  */
-test('a description behind a block-quote marker is still unscoped', () => {
+test('a description behind a block-quote marker is scoped, and needs its term', () => {
   const tokens = tokenize('> :: t\n> : d\n')
-  for (const t of tokens) {
-    assert.ok(
-      !has(t, TERM) && !has(t, DEF),
-      `this shape is expected to stay unscoped; it now has ${t.scopes.join(' ')}`,
-    )
+  assert.ok(tokens.some((t) => t.line === '> :: t' && t.text === '::' && has(t, TERM)), report(tokens))
+  assert.ok(tokens.some((t) => t.line === '> : d' && t.text === ':' && has(t, DEF)), report(tokens))
+  for (const t of tokenize('> : d\n')) {
+    assert.ok(!has(t, TERM) && !has(t, DEF), `a quoted body with no term is prose: ${t.scopes.join(' ')}`)
   }
 })
 

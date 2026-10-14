@@ -90,7 +90,16 @@
     "fenced-code-languages-on-a-marker-line": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" },
     "fenced-code-languages-at-a-body-column": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" },
     "caption-quote-prefix": { "upstream": "blockquote", "fixture": "container-grammar-rules" },
-    "caption-colon-tokenizer": { "upstream": "admonition", "fixture": "composite-figures" }
+    "caption-colon-tokenizer": { "upstream": "admonition", "fixture": "composite-figures" },
+    "emphasis-in-quote": { "upstream": "blockquote", "fixture": "quote-content" },
+    "list-item-in-quote": { "upstream": "blockquote", "fixture": "quote-content" },
+    "description-list-in-quote": { "upstream": "quoted_blocks", "fixture": "quote-content" },
+    "code-blocks-in-colon-container-3": { "upstream": "fenced_code", "fixture": "container-fences" },
+    "code-blocks-in-colon-container-4": { "upstream": "fenced_code", "fixture": "container-fences" },
+    "code-blocks-in-colon-container-5": { "upstream": "fenced_code", "fixture": "container-fences" },
+    "fenced-code-languages-in-colon-container-3": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
+    "fenced-code-languages-in-colon-container-4": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
+    "fenced-code-languages-in-colon-container-5": { "upstream": "fenced_code_languages", "fixture": "container-fences" }
   },
   "localOnlyRules": {
     "container-body": "grammar-correctness"

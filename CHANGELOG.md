@@ -13,6 +13,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - A relative image path shows in the preview. The preview may load files from the document's folder and its workspace folder.
 - A bare `:::` closer no longer starts a fold of its own.
 - Toggle Line Comment writes `%%`, and typing `$` no longer inserts a second one (inline math is spelled `` $`x` ``).
+- A long line of unclosed inline openers no longer freezes the editor. `{*a {/b ` repeated 250 times took 38 seconds to highlight; braced and bare openers now check for a closer before scanning their body.
+- Block quotes highlight their inline markup, list items, description lists, lazy lines and nested quotes. A star with no closer on its quote line stays text.
+- An unclosed code fence inside a `:::` container stops at the container's closer instead of running to the end of the file, for containers of three to five colons.
+- An unclosed `---` front matter block ends at the first column-0 line that cannot start a YAML mapping, so the rest of the document is no longer highlighted as YAML. Mapping-shaped lines and `#` lines right after the opener still read as front matter.
+- `\|` in a table row is an escaped pipe, not a cell separator, and every ASCII punctuation character can be escaped, so `\$`, `\:smile:` and `\{{ x }}` stay text.
+- A list marker under a footnote or description paragraph is paragraph text, as the engine reads it. A list item's own sublist is unchanged.
+- Headings, captions, link text and span text highlight the inline markup inside them.
 
 ## [0.1.10] - 2026-10-14
 

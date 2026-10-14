@@ -6,6 +6,8 @@
 >see [*bold*][]
 #^^^^ text.carve
 #    ^ text.carve meta.link.reference.carve
-#     ^^^^^^ text.carve meta.link.reference.carve string.other.link.title.carve
+#     ^ text.carve meta.link.reference.carve string.other.link.title.carve punctuation.definition.bold.carve
+#      ^^^^ text.carve meta.link.reference.carve string.other.link.title.carve markup.bold.carve
+#          ^ text.carve meta.link.reference.carve string.other.link.title.carve punctuation.definition.bold.carve
 #           ^^^ text.carve meta.link.reference.carve
 >

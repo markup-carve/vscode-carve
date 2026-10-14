@@ -1,0 +1,33 @@
+::: tip
+```carve
+*three*
+```
+```
+plain three
+```
+:::
+
+:::: outer
+```carve
+*four*
+```
+```
+plain four
+```
+::::
+
+::::: wide
+```carve
+*five*
+```
+```
+plain five
+```
+:::::
+
+::: note
+```
+unclosed, and no closer follows
+:::
+
+after the containers *b*
