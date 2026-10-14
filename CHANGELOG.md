@@ -8,24 +8,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [0.1.10] - 2026-10-14
 
-### Fixes
-
-- Flatten counts renamed include ids using the engine's `include-id-rename` warning.
-- Link and table highlighting follows the source forms accepted by the parser.
-
-### Improvements
-
-- List Tab and Shift+Tab use the language server command when available, with the editor key as fallback.
-- A bare list marker holds the previous preview until the item has content or the cursor leaves it.
-- Fenced code highlighting covers the shared grammar language table. The preview uses carve 0.1.11.
-
-
 ### Changed
 
+- The bundled stylesheet is carve-css 0.1.5 (#335).
+- Format on type is enabled by default for Carve documents (#342).
 - The bundled engine is carve 0.1.11 (#349). The preview and the HTML export render the spec corpus at carve 21879d7, including nested braced emphasis, escapes in image alt text and the fence-closer measurement rulings. The flatten command keeps counting renamed ids under the engine's new `include-id-rename` warning.
 
 ### Added
 
+- Tab and Shift+Tab route list items through the language server when it supports the command; otherwise the editor key applies (#345).
+- A bare list marker holds the previous preview until the item gains content or the cursor leaves it (#343).
 - Fenced code blocks highlight in 28 more languages, among them F# (`f#`), Objective-C, CUDA, LaTeX, reStructuredText, Clojure, Julia, Razor and JSON Lines, and `node` opens a JavaScript fence. Blade, Twig, Vue, Svelte and GraphQL fences highlight once their VS Code extension is installed. The list now comes from the fence-language table in carve-grammars (markup-carve/carve-grammars#646).
 
 ### Fixed
