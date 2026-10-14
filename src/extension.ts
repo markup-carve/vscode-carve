@@ -945,7 +945,7 @@ function updateListItemContext(editor: vscode.TextEditor | undefined): void {
 
 /**
  * The one place that talks to `carve.listIndent`; its answer is read by
- * `listIndentEdits`. Adjust these two when carve-lsp#464 settles the contract.
+ * `listIndentEdits`.
  */
 async function requestListIndent(
   running: LanguageClient,
