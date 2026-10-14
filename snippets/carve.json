@@ -31,7 +31,7 @@
   },
   "Bold italic": {
     "prefix": "bolditalic",
-    "body": ["***${1:text}***$0"],
+    "body": ["/*${1:text}*/$0"],
     "description": "Bold italic"
   },
   "Underline": {
@@ -46,17 +46,17 @@
   },
   "Highlight": {
     "prefix": "highlight",
-    "body": ["==${1:text}==$0"],
+    "body": ["=${1:text}=$0"],
     "description": "Highlight / mark"
   },
   "Insert": {
     "prefix": "insert",
-    "body": ["++${1:text}++$0"],
+    "body": ["{+${1:text}+}$0"],
     "description": "Inserted text"
   },
   "Delete": {
     "prefix": "delete",
-    "body": ["--${1:text}--$0"],
+    "body": ["{-${1:text}-}$0"],
     "description": "Deleted text"
   },
   "Superscript": {

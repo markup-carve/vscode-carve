@@ -41,6 +41,7 @@ import {
   renderMarkdown,
   previewDocument,
   previewExtensions,
+  symbolsFromEmojiSetting,
   type PreviewAssets,
   type PreviewRenderOptions,
 } from './preview.js'
@@ -234,12 +235,14 @@ function openPreview(context: vscode.ExtensionContext): void {
       {
         enableScripts: true,
         retainContextWhenHidden: true,
-        localResourceRoots: [context.extensionUri],
+        localResourceRoots: previewResourceRoots(context, editor.document),
       },
     )
+    previewRootsKey = previewResourceRoots(context, editor.document).map(String).join('\n')
     previewPanel.onDidDispose(() => {
       previewPanel = undefined
       previewUri = undefined
+      previewRootsKey = undefined
       if (renderTimer) {
         clearTimeout(renderTimer)
         renderTimer = undefined
@@ -256,6 +259,39 @@ function openPreview(context: vscode.ExtensionContext): void {
 
   previewUri = editor.document.uri
   renderPreview(context, editor.document)
+}
+
+let previewRootsKey: string | undefined
+
+/**
+ * What the preview may load: the extension's own assets, plus the document's
+ * folder and its workspace folder, so a relative image can be shown.
+ */
+function previewResourceRoots(context: vscode.ExtensionContext, document: vscode.TextDocument): vscode.Uri[] {
+  const roots = [context.extensionUri]
+  if (document.isUntitled) return roots
+  const folder = vscode.workspace.getWorkspaceFolder(document.uri)
+  if (folder) roots.push(folder.uri)
+  roots.push(vscode.Uri.joinPath(document.uri, '..'))
+  return roots
+}
+
+/** A relative image source as a webview URI, resolved against the document's folder. */
+function imageSourceResolver(
+  webview: vscode.Webview,
+  document: vscode.TextDocument,
+): ((relative: string) => string | undefined) | undefined {
+  if (document.isUntitled) return undefined
+  return (relative) => {
+    const [, path = '', suffix = ''] = /^([^?#]*)(.*)$/s.exec(relative) ?? []
+    let decoded: string
+    try {
+      decoded = decodeURIComponent(path)
+    } catch {
+      return undefined
+    }
+    return webview.asWebviewUri(vscode.Uri.joinPath(document.uri, '..', decoded)).toString() + suffix
+  }
 }
 
 function scheduleRender(context: vscode.ExtensionContext, document: vscode.TextDocument): void {
@@ -335,11 +371,18 @@ async function renderPreviewNow(
   const render = previewRenderOptions()
   render.extensions = extensions
   if (expansion) render.document = expansion.doc
+  const roots = previewResourceRoots(context, document)
+  const rootsKey = roots.map(String).join('\n')
+  if (rootsKey !== previewRootsKey) {
+    previewRootsKey = rootsKey
+    previewPanel.webview.options = { ...previewPanel.webview.options, localResourceRoots: roots }
+  }
   previewPanel.webview.html = previewDocument(document.getText(), {
     nonce: nonce(),
     cspSource: previewPanel.webview.cspSource,
     assets: previewAssets(context, previewPanel.webview),
     render,
+    resolveImageSource: imageSourceResolver(previewPanel.webview, document),
   })
   publishIncludeDiagnostics(document, expansion)
   watchIncludeTargets(context, document, expansion)
@@ -502,11 +545,11 @@ function previewRenderOptions(): PreviewRenderOptions {
   const config = vscode.workspace.getConfiguration('carve.preview')
   const mentionUrl = config.get<string>('mentionUrl')?.trim()
   const tagUrl = config.get<string>('tagUrl')?.trim()
-  const emoji = config.get<Record<string, string>>('emoji')
+  const symbols = symbolsFromEmojiSetting(config.get<Record<string, string>>('emoji'))
   const options: PreviewRenderOptions = {}
   if (mentionUrl) options.mentionUrl = mentionUrl
   if (tagUrl) options.tagUrl = tagUrl
-  if (emoji && Object.keys(emoji).length) options.emoji = emoji
+  if (symbols) options.symbols = symbols
   return options
 }
 

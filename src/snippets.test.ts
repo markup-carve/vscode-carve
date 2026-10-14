@@ -28,6 +28,9 @@ const expand = (body: string | string[]): string =>
     .replace(/\$\{\d+\|([^|]*)\|[^}]*\}/g, (_, choices: string) => choices.split(',')[0]!)
     .replace(/\$\{\d+:([^}]*)\}/g, '$1')
     .replace(/\$\{\d+\}/g, 'x')
+    // `$0` is where the cursor lands, usually glued to a closer: text there
+    // would turn `*text*` into the unclosed `*text*x`.
+    .replace(/\$0(?!\d)/g, '')
     .replace(/\$\d+/g, 'x')
 
 /**
@@ -60,6 +63,45 @@ for (const [name, expected] of Object.entries(MUST_BUILD)) {
     assert.match(html, expected, `${name} rendered as:\n${html}`)
   })
 }
+
+/**
+ * What each inline snippet must produce, rendered inside a paragraph. Every
+ * pattern names the element AND its default text, so a spelling the engine
+ * reads as literal characters (`==x==`, `++x++`) cannot pass on the paragraph.
+ */
+const MUST_BUILD_INLINE: Record<string, RegExp> = {
+  Bold: /<strong>text<\/strong>/,
+  Italic: /<em>text<\/em>/,
+  'Bold italic': /<strong><em>text<\/em><\/strong>/,
+  Underline: /<u>text<\/u>/,
+  Strikethrough: /<s>text<\/s>/,
+  Highlight: /<mark>text<\/mark>/,
+  Insert: /<ins>text<\/ins>/,
+  Delete: /<del>text<\/del>/,
+  Superscript: /<sup>text<\/sup>/,
+  Subscript: /<sub>text<\/sub>/,
+  'Inline code': /<code>code<\/code>/,
+  'Math inline': /class="math inline"/,
+  'Math block': /class="math display"/,
+  'Inline literal': /<p>text<\/p>/,
+  Link: /<a href="https:\/\/example.com"[^>]*>text<\/a>/,
+  Image: /<img src="path\/to\/image.png" alt="alt"/,
+  Footnote: /role="doc-noteref"/,
+}
+
+for (const [name, expected] of Object.entries(MUST_BUILD_INLINE)) {
+  test(`the ${name} snippet builds its inline element`, () => {
+    const snippet = snippets[name]
+    assert.ok(snippet, `no snippet named ${name}`)
+    const html = renderPreviewBody(expand(snippet.body) + '\n')
+    assert.match(html, expected, `${name} rendered as:\n${html}`)
+  })
+}
+
+test('the reference link snippet resolves against a definition', () => {
+  const html = renderPreviewBody(expand(snippets['Reference link']!.body) + '\n\n[ref]: https://example.com\n')
+  assert.match(html, /<a href="https:\/\/example.com"[^>]*>text<\/a>/)
+})
 
 test('the div snippet keeps the separator its opener requires', () => {
   // `:::name` is a paragraph: the colon fence takes a separator before its

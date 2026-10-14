@@ -153,13 +153,29 @@ export function previewExtensions(): CarveExtension[] {
   return PREVIEW_EXTENSIONS.map((name) => EXTENSION_FACTORIES[name]())
 }
 
+const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }
+
+/**
+ * The `carve.preview.emoji` setting as the engine's `symbols` option. The
+ * engine writes a symbol's value raw, so each glyph is escaped: the setting
+ * can come from a workspace's own settings file.
+ */
+export function symbolsFromEmojiSetting(
+  emoji: Record<string, string> | undefined,
+): Record<string, string> | undefined {
+  const entries = Object.entries(emoji ?? {}).filter(([, glyph]) => typeof glyph === 'string')
+  if (!entries.length) return undefined
+  return Object.fromEntries(entries.map(([name, glyph]) =>
+    [name, glyph.replace(/[&<>"]/g, (c) => HTML_ESCAPES[c]!)]))
+}
+
 export interface PreviewRenderOptions {
   /** URL template for `@mention` links; `{name}` is replaced. */
   mentionUrl?: string
   /** URL template for `#tag` links; `{name}` is replaced. */
   tagUrl?: string
-  /** Emoji shortcode -> glyph map for `:name:`. */
-  emoji?: Record<string, string>
+  /** The engine's symbol map for `:name:`; see `symbolsFromEmojiSetting`. */
+  symbols?: Record<string, string>
   /** Stamp blocks with `data-source-line` for scroll sync. */
   sourceLine?: boolean
   /**
@@ -254,12 +270,41 @@ export interface PreviewOptions {
   /** The webview's CSP source, used to allow locally bundled assets. */
   cspSource: string
   assets: PreviewAssets
-  /** Carve render options (mention/tag URLs, emoji map). */
+  /** Carve render options (mention/tag URLs, symbol map). */
   render?: PreviewRenderOptions
+  /** Maps a relative image source to a webview URI, or undefined to keep it. */
+  resolveImageSource?: (relative: string) => string | undefined
+}
+
+const IMG_SRC = /(<img\b[^>]*?\ssrc=")([^"]*)(")/g
+// A scheme (`https:`, `data:`), a protocol-relative or root path, or a fragment.
+const NOT_RELATIVE = /^(?:[A-Za-z][A-Za-z0-9+.-]*:|\/|#)/
+
+const decodeAttribute = (value: string): string => value
+  .replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+const encodeAttribute = (value: string): string => value.replace(/[&<>"]/g, (c) => HTML_ESCAPES[c]!)
+
+/**
+ * Point every relative `<img src>` at what `resolve` returns. A webview has no
+ * document base URL, so a relative source would load from nowhere.
+ */
+export function rewriteRelativeImageSources(
+  html: string,
+  resolve: (relative: string) => string | undefined,
+): string {
+  return html.replace(IMG_SRC, (whole, open: string, value: string, close: string) => {
+    const relative = decodeAttribute(value)
+    if (!relative || NOT_RELATIVE.test(relative)) return whole
+    const resolved = resolve(relative)
+    return resolved === undefined ? whole : open + encodeAttribute(resolved) + close
+  })
 }
 
 export function previewDocument(source: string, options: PreviewOptions): string {
-  const body = renderPreviewBody(source, { ...options.render, sourceLine: true })
+  const rendered = renderPreviewBody(source, { ...options.render, sourceLine: true })
+  const body = options.resolveImageSource
+    ? rewriteRelativeImageSources(rendered, options.resolveImageSource)
+    : rendered
   const { nonce, cspSource, assets } = options
   const csp = [
     `default-src 'none'`,
