@@ -90,7 +90,7 @@ test('a colliding explicit heading id is renamed and counted', async () => {
   })
   try {
     const result = await flatten(scene)
-    assert.deepEqual(result.expansion.warnings.map((w) => w.rule), ['include-heading-id-rename'])
+    assert.deepEqual(result.expansion.warnings.map((w) => w.rule), ['include-id-rename'])
     assert.equal(result.renames, 1)
     assert.match(result.text, /\{#intro-2\}/)
     assert.match(flattenSummary(result, 'book.flat.crv'), /1 colliding id or footnote label was renamed \(spec I5\)/)

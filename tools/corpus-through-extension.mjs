@@ -509,14 +509,13 @@ let twoParserMismatches = 0
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = '0.1.10'
+const ENGINE_PIN = '0.1.11'
 const ENGINE_LAG = {
-  // carve spec fdefc540 (#2782) resolves punctuation escapes in native image
-  // alt text; engine 0.1.10 still retains the backslash. Retires when the
-  // engine releases that ruling. The spec's own resources/engine-pin-drift.txt
-  // declares the same lag for the same document.
-  '316-an-image-s-alt-text-closes-where-a-link-s-text-closes-4.crv':
-    'image alt punctuation escapes resolve under spec #2782; engine 0.1.10 retains them',
+  // Not the core engine: the bundled wikilinks() extension closes `[[` at the
+  // first `]]` even when its first bracket is escaped, so this document becomes a
+  // wikilink in the preview. Retires when a carve-js release fixes the extension.
+  '551-a-link-destination-is-opaque-to-the-bracket-scan-10.crv':
+    'wikilinks() in engine 0.1.11 closes on an escaped `\\]`; core renders the corpus output',
 }
 const lagWaived = []
 const lagStale = []

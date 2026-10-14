@@ -40,7 +40,7 @@ export interface FlattenResult {
   renames: number
 }
 
-const RENAME_RULES = new Set(['include-heading-id-rename', 'include-footnote-rename'])
+const RENAME_RULES = new Set(['include-id-rename', 'include-footnote-rename'])
 
 export function flattenDocument(
   engine: Engine & Writer,
