@@ -6,30 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Fixed
-
-- The `bolditalic`, `highlight`, `insert` and `delete` snippets write `/*x*/`, `=x=`, `{+x+}` and `{-x-}`. The old bodies (`***x***`, `==x==`, `++x++`, `--x--`) render as literal text.
-- The `carve.preview.emoji` setting reaches the preview. The engine reads the map as its `symbols` option, and each glyph is written as text.
-- A relative image path shows in the preview. The preview may load files from the document's folder and its workspace folder.
-- A bare `:::` closer no longer starts a fold of its own.
-- Toggle Line Comment writes `%%`, and typing `$` no longer inserts a second one (inline math is spelled `` $`x` ``).
-- A long line of unclosed inline openers no longer freezes the editor. `{*a {/b ` repeated 250 times took 38 seconds to highlight; braced and bare openers now check for a closer before scanning their body.
-- Block quotes highlight their inline markup, list items, description lists, lazy lines and nested quotes. A star with no closer on its quote line stays text.
-- An unclosed code fence inside a `:::` container stops at the container's closer instead of running to the end of the file, for containers of three to five colons.
-- Containers of six or more colons also stop an unclosed fence at their closer; a fence inside one is highlighted without its embedded language.
-- A line whose span closers all sit behind escapes or inside code spans no longer takes seconds to highlight.
-- An unclosed `---` front matter block ends at the first column-0 line that cannot start a YAML mapping, so the rest of the document is no longer highlighted as YAML. Mapping-shaped lines and `#` lines right after the opener still read as front matter.
-- `\|` in a table row is an escaped pipe, not a cell separator, and every ASCII punctuation character can be escaped, so `\$`, `\:smile:` and `\{{ x }}` stay text.
-- A list marker under a footnote or description paragraph is paragraph text, as the engine reads it. A list item's own sublist is unchanged.
-- Headings, captions, link text and span text highlight the inline markup inside them.
-- Enter on a `:::` or code fence opener on the last line of a document keeps the cursor on the new body line. The language server's closer arrived as one insert at the cursor there, and VS Code moved the cursor past the closer.
-
 ## [0.1.10] - 2026-10-14
 
 ### Changed
 
-- The bundled language server is carve-lsp 0.1.11, which provides list indentation. The bundled syntax grammar is carve-grammars 0.1.14.
-- The bundled stylesheet is carve-css 0.1.5 (#335).
+- The bundled language server is carve-lsp 0.1.11, which provides list indentation (#355). The bundled syntax grammar is carve-grammars 0.1.15, which keeps a table continuation join as one space (#359).
+- The bundled stylesheet is carve-css 0.1.5 (#335, #351).
 - Format on type is enabled by default for Carve documents (#342).
 - The bundled engine is carve 0.1.11 (#349). The preview and the HTML export render the spec 0.1.9 corpus, including nested braced emphasis, escapes in image alt text and the fence-closer measurement rulings. The flatten command keeps counting renamed ids under the engine's new `include-id-rename` warning.
 
@@ -37,12 +19,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Tab and Shift+Tab route list items through the bundled language server; with the server disabled, the editor key applies (#345).
 - A bare list marker holds the previous preview until the item gains content or the cursor leaves it (#343).
-- Fenced code blocks highlight in 28 more languages, among them F# (`f#`), Objective-C, CUDA, LaTeX, reStructuredText, Clojure, Julia, Razor and JSON Lines, and `node` opens a JavaScript fence. Blade, Twig, Vue, Svelte and GraphQL fences highlight once their VS Code extension is installed. The list now comes from the fence-language table in carve-grammars (markup-carve/carve-grammars#646).
+- Fenced code blocks highlight in 28 more languages, among them F# (`f#`), Objective-C, CUDA, LaTeX, reStructuredText, Clojure, Julia, Razor and JSON Lines, and `node` opens a JavaScript fence. Blade, Twig, Vue, Svelte and GraphQL fences highlight once their VS Code extension is installed. The list now comes from the fence-language table in carve-grammars (#332, markup-carve/carve-grammars#646).
 
 ### Fixed
 
-- Link text highlighting starts at the bracket that opens the link. In `a [b [x](u) c]` only `[x](u)` is highlighted as a link, as the engine renders it; before, the highlight began at the outer `[`. Link text holding a bracket pair, such as `[a [b] c](u)`, is highlighted now too. Reference links follow the same rule.
-- A pipe line is a table row only when it ends in a closing pipe, optionally followed by an attribute block. A lone `|`, `| a | b` and `- | a | b` are highlighted as the paragraph text the engine renders, and a `+ c |` line below such a line is no continuation row.
+- The `bolditalic`, `highlight`, `insert` and `delete` snippets write `/*x*/`, `=x=`, `{+x+}` and `{-x-}`. The old bodies (`***x***`, `==x==`, `++x++`, `--x--`) render as literal text (#354).
+- The `carve.preview.emoji` setting reaches the preview. The engine reads the map as its `symbols` option, and each glyph is written as text (#354).
+- A relative image path shows in the preview. The preview may load files from the document's folder and its workspace folder (#354).
+- A bare `:::` closer no longer starts a fold of its own (#354).
+- Toggle Line Comment writes `%%`, and typing `$` no longer inserts a second one (inline math is spelled `` $`x` ``) (#354).
+- A long line of unclosed inline openers no longer freezes the editor. `{*a {/b ` repeated 250 times took 38 seconds to highlight; braced and bare openers now check for a closer before scanning their body (#356).
+- Block quotes highlight their inline markup, list items, description lists, lazy lines and nested quotes. A star with no closer on its quote line stays text (#356).
+- An unclosed code fence inside a `:::` container stops at the container's closer instead of running to the end of the file, for containers of three to five colons (#356).
+- Containers of six or more colons also stop an unclosed fence at their closer; a fence inside one is highlighted without its embedded language (#357).
+- A line whose span closers all sit behind escapes or inside code spans no longer takes seconds to highlight (#357).
+- An unclosed `---` front matter block ends at the first column-0 line that cannot start a YAML mapping, so the rest of the document is no longer highlighted as YAML. Mapping-shaped lines and `#` lines right after the opener still read as front matter (#356).
+- `\|` in a table row is an escaped pipe, not a cell separator, and every ASCII punctuation character can be escaped, so `\$`, `\:smile:` and `\{{ x }}` stay text (#356).
+- A list marker under a footnote or description paragraph is paragraph text, as the engine reads it. A list item's own sublist is unchanged (#356).
+- Headings, captions, link text and span text highlight the inline markup inside them (#356).
+- Enter on a `:::` or code fence opener on the last line of a document keeps the cursor on the new body line. The language server's closer arrived as one insert at the cursor there, and VS Code moved the cursor past the closer (#358).
+- Link text highlighting starts at the bracket that opens the link (#350). In `a [b [x](u) c]` only `[x](u)` is highlighted as a link, as the engine renders it; before, the highlight began at the outer `[`. Link text holding a bracket pair, such as `[a [b] c](u)`, is highlighted now too. Reference links follow the same rule.
+- A pipe line is a table row only when it ends in a closing pipe, optionally followed by an attribute block (#350). A lone `|`, `| a | b` and `- | a | b` are highlighted as the paragraph text the engine renders, and a `+ c |` line below such a line is no continuation row.
 
 ## [0.1.9] - 2026-10-08
 
