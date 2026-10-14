@@ -64,6 +64,20 @@
 >:::::
 #^^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
 >
+>:::::: six
+#^^^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#      ^ text.carve markup.other.div.carve
+#       ^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>```js
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>six or more
+#^^^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>::::::
+#^^^^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>
 >::: note
 #^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
 #   ^ text.carve markup.other.div.carve

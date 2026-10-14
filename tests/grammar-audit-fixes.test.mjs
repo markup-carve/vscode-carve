@@ -177,6 +177,31 @@ test('an unclosed fence inside a colon container closes at the container closer'
   assert.ok(scoped(tokens, 5, 'b', 'markup.bold'), report(tokens))
 })
 
+test('an unclosed fence inside a container of six or more colons closes at its closer', () => {
+  const source = ':::::: note\n```js\nlet x\n::::::\n\nafter *b*\n'
+  assert.match(carveToHtml(source), /<\/aside>\s*<p>after <strong>b<\/strong><\/p>/)
+  const tokens = tokenize(source)
+  assert.ok(scoped(tokens, 3, '::::::', 'punctuation.definition.div'), report(tokens))
+  assert.ok(!tokens.some((t) => t.row >= 3 && has(t, 'markup.raw.block')), report(tokens))
+  assert.ok(scoped(tokens, 5, 'b', 'markup.bold'), report(tokens))
+})
+
+test('a long container ends only at a closer of its own length', () => {
+  const source = '::::::: outer\n:::::: inner\ntext\n::::::\n*still inside*\n:::::::\n'
+  assert.match(carveToHtml(source), /<div class="inner">\s*<p>text<\/p>\s*<\/div>\s*<p><strong>still inside<\/strong><\/p>\s*<\/div>/)
+  const tokens = tokenize(source)
+  assert.ok(scoped(tokens, 3, '::::::', 'punctuation.definition.div'), report(tokens))
+  assert.ok(scoped(tokens, 5, ':::::::', 'punctuation.definition.div'), report(tokens))
+})
+
+test('a closer hidden behind an escape or in code opens no span', () => {
+  const source = '{*a `x*}` and {/b \\/} c\n'
+  assert.match(carveToHtml(source), /<p>\{\*a <code>x\*\}<\/code> and \{\/b \/\} c<\/p>/)
+  const tokens = tokenize(source)
+  assert.ok(!tokens.some((t) => has(t, 'markup.italic')), report(tokens))
+  assert.ok(!tokens.some((t) => t.text === '{*' && has(t, 'punctuation.definition.bold')), report(tokens))
+})
+
 test('a fence inside a longer container keeps a shorter colon line as code', () => {
   const source = '::::: compare\n```carve\n::: tip\nx\n:::\n```\n:::::\n'
   assert.match(carveToHtml(source), /<code class="language-carve">::: tip\nx\n:::\n<\/code>/)

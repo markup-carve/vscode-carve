@@ -45,6 +45,10 @@ const nested = ['{*a {/b ', '{/a {*b ', '{_a {*b ', '{=a {*b ', '{*a {~b ', '{+a
   .map((unit) => [`nested ${unit.trim()}`, unit.repeat(250)])
 const long = ['=a ', '/a ', '~a ', '_a ', '{^a ', '{,a ', '/*a ']
   .map((unit) => [`long ${unit.trim()}`, unit.repeat(Math.ceil(9000 / unit.length))])
+// The only closers on the line sit behind an escape or inside a code span, so
+// the pre-check has to step over both or every opener rescans the line.
+const hidden = [' `x/}`', ' x\\/}', ' x\\*}', ' x\\*} x\\/}', ' `x*}` `y/}`']
+  .map((tail) => [`hidden closer${tail}`, '{*a {/b '.repeat(250).trim() + tail])
 
 function run(cases, budgetMs) {
   const result = spawnSync(process.execPath, ['--input-type=module', '-e', script, JSON.stringify(cases)], {
@@ -67,6 +71,10 @@ test('alternating unclosed braced openers tokenize in linear-ish time', () => {
 
 test('long lines of unclosed bare and braced openers tokenize quickly', () => {
   run(long, 3000)
+})
+
+test('a closer behind an escape or inside code does not make the run slow', () => {
+  run(hidden, 3000)
 })
 
 test('a closed span after the unclosed run is still styled', () => {
