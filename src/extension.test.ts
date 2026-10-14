@@ -20,6 +20,8 @@ import {
   renderConformanceBody,
   renderPreviewBody,
   renderMarkdown,
+  rewriteRelativeImageSources,
+  symbolsFromEmojiSetting,
 } from './preview.js'
 
 const require = createRequire(import.meta.url)
@@ -928,4 +930,55 @@ test('a viewport change right after an edit is typing, not scrolling', () => {
 test('a viewport change well after the last edit is a real scroll', () => {
   assert.equal(isScrollNotTyping(1_400, 1_000), true)
   assert.equal(isScrollNotTyping(99_999, 0), true)
+})
+
+test('the carve.preview.emoji setting reaches the engine as its symbols map', () => {
+  // The engine reads `symbols`; an `emoji` key is ignored and `:smile:` stays text.
+  const symbols = symbolsFromEmojiSetting({ smile: '\u{1F604}' })
+  assert.deepEqual(symbols, { smile: '\u{1F604}' })
+  assert.match(renderPreviewBody(':smile: and :frown:\n', { symbols }), /<p>\u{1F604} and :frown:<\/p>/u)
+  assert.equal(symbolsFromEmojiSetting({}), undefined)
+  assert.equal(symbolsFromEmojiSetting(undefined), undefined)
+})
+
+test('an emoji glyph from settings is text, not markup', () => {
+  // The engine writes symbol values raw; the setting promises glyphs, and a
+  // workspace settings file should not be able to put elements in the preview.
+  const symbols = symbolsFromEmojiSetting({ x: '<img src=a onerror=b>&' })
+  assert.match(renderPreviewBody(':x:\n', { symbols }), /<p>&lt;img src=a onerror=b&gt;&amp;<\/p>/)
+})
+
+test('relative image sources are handed to the resolver, everything else is left alone', () => {
+  const seen: string[] = []
+  const html = renderPreviewBody([
+    '![a](img/a.png)', '', '![b](https://e.org/b.png)', '', '![c](mailto:x)', '',
+    '![d](/abs.png)', '', '![e](//cdn.org/e.png)', '', '![f](../up/f%20g.png?x=1&y=2#frag)', '',
+  ].join('\n'))
+  const out = rewriteRelativeImageSources(html, (relative) => {
+    seen.push(relative)
+    return 'vscode-resource:/doc/' + relative
+  })
+  assert.deepEqual(seen, ['img/a.png', '../up/f%20g.png?x=1&y=2#frag'])
+  assert.match(out, /src="vscode-resource:\/doc\/img\/a.png"/)
+  assert.match(out, /src="vscode-resource:\/doc\/..\/up\/f%20g.png\?x=1&amp;y=2#frag"/)
+  for (const kept of ['https://e.org/b.png', 'mailto:x', '/abs.png', '//cdn.org/e.png']) {
+    assert.ok(out.includes(`src="${kept}"`), kept)
+  }
+})
+
+test('a relative image the resolver cannot place keeps its source', () => {
+  const html = renderPreviewBody('![a](a.png)\n')
+  assert.equal(rewriteRelativeImageSources(html, () => undefined), html)
+})
+
+test('the preview document rewrites relative images through its resolver', () => {
+  const html = previewDocument('![a](a.png)\n', {
+    nonce: 'n',
+    cspSource: 'vscode-webview://x',
+    assets: Object.fromEntries(['mermaid', 'chartJs', 'katexJs', 'katexCss', 'katexAutoRender', 'hljsJs',
+      'hljsCarveJs', 'hljsLightCss', 'hljsDarkCss', 'hljsTableCss', 'carveTokensCss', 'carveCoreCss',
+      'carveExtensionsCss', 'carveRecipesCss'].map((key) => [key, key])) as never,
+    resolveImageSource: (relative) => 'https://file+.vscode-resource.vscode-cdn.net/doc/' + relative,
+  })
+  assert.match(html, /<img src="https:\/\/file\+\.vscode-resource\.vscode-cdn\.net\/doc\/a\.png"/)
 })

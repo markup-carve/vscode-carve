@@ -28,13 +28,14 @@ VS Code support for [Carve](https://github.com/markup-carve/carve), a lightweigh
   - syntax-highlights fenced code blocks with highlight.js (light/dark aware),
   - follows the active Carve editor, syncs scrolling line-by-line in both directions, and highlights the block under the cursor,
   - keeps its last render while the cursor line holds only a list marker (`- `, `1. `, `- [ ] `), so starting a new item does not flash the marker as text folded into the item above; it renders once the line gets content or the cursor leaves it,
+  - shows images given by a path relative to the document, from the document's folder or its workspace folder,
   - links `@mentions` and `#tags` and renders `:emoji:` shortcodes when configured (see settings below).
 - Export commands:
   - **Carve: Export to HTML** writes a self-contained HTML file (Mermaid, KaTeX, and highlight.js load from a CDN; theming follows the reader's color scheme).
   - **Carve: Export Bundle (document and its includes)** writes the document and every file it pulls in into a folder beside it, keeping the directives and the file boundaries.
   - **Carve: Print Preview / Export PDF** opens the system print dialog on the preview, so you can save to PDF.
 - Import command: **Carve: Import from Markdown or HTML** converts a `.md` or `.html` file to a sibling `.crv` with the carve-js importer and opens it. It works on the active editor, a file from the explorer context menu, or a file picked from a dialog, and asks before overwriting an existing `.crv`.
-- Editor rules for comments, brackets, autoclosing pairs, folding markers, and word patterns.
+- Editor rules for comments (Toggle Line Comment writes `%%`), brackets, autoclosing pairs, folding markers, and word patterns.
 - An example document in the repository, `examples/demo.crv`, exercising every supported construct - open it and run **Carve: Open Preview** to see the rendering features in action.
 
 The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-carve`](https://github.com/markup-carve/tree-sitter-carve). VS Code extensions currently use TextMate grammars for built-in syntax colorization, so this extension ships a TextMate grammar aligned with the Tree-sitter grammar and uses the LSP for semantic behavior.

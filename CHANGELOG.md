@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- The `bolditalic`, `highlight`, `insert` and `delete` snippets write `/*x*/`, `=x=`, `{+x+}` and `{-x-}`. The old bodies (`***x***`, `==x==`, `++x++`, `--x--`) render as literal text.
+- The `carve.preview.emoji` setting reaches the preview. The engine reads the map as its `symbols` option, and each glyph is written as text.
+- A relative image path shows in the preview. The preview may load files from the document's folder and its workspace folder.
+- A bare `:::` closer no longer starts a fold of its own.
+- Toggle Line Comment writes `%%`, and typing `$` no longer inserts a second one (inline math is spelled `` $`x` ``).
+
 ## [0.1.10] - 2026-10-14
 
 ### Changed
