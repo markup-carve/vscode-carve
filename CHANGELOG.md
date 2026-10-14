@@ -6,6 +6,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-10-14
+
+### Fixes
+
+- Flatten counts renamed include ids using the engine's `include-id-rename` warning.
+- Link and table highlighting follows the source forms accepted by the parser.
+
+### Improvements
+
+- List Tab and Shift+Tab use the language server command when available, with the editor key as fallback.
+- A bare list marker holds the previous preview until the item has content or the cursor leaves it.
+- Fenced code highlighting covers the shared grammar language table. The preview uses carve 0.1.11.
+
+
 ### Changed
 
 - The bundled engine is carve 0.1.11 (#349). The preview and the HTML export render the spec corpus at carve 21879d7, including nested braced emphasis, escapes in image alt text and the fence-closer measurement rulings. The flatten command keeps counting renamed ids under the engine's new `include-id-rename` warning.
