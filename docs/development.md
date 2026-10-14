@@ -169,7 +169,7 @@ here, which goes stale at every release.
 derived from that version's `CHANGELOG.md` section:
 
 ```bash
-node scripts/release-notes.mjs 0.1.8
+node scripts/release-notes.mjs 0.1.10
 ```
 
 `Fixed` becomes Fixes, `Added` and `Changed` become Improvements, `Breaking` and
