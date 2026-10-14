@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- The bundled engine is carve 0.1.11 (#349). The preview and the HTML export render the spec corpus at carve 21879d7, including nested braced emphasis, escapes in image alt text and the fence-closer measurement rulings. The flatten command keeps counting renamed ids under the engine's new `include-id-rename` warning.
+
 ### Added
 
 - Fenced code blocks highlight in 28 more languages, among them F# (`f#`), Objective-C, CUDA, LaTeX, reStructuredText, Clojure, Julia, Razor and JSON Lines, and `node` opens a JavaScript fence. Blade, Twig, Vue, Svelte and GraphQL fences highlight once their VS Code extension is installed. The list now comes from the fence-language table in carve-grammars (markup-carve/carve-grammars#646).
