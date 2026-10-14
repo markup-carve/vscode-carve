@@ -12,7 +12,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - The bundled stylesheet is carve-css 0.1.5 (#335).
 - Format on type is enabled by default for Carve documents (#342).
-- The bundled engine is carve 0.1.11 (#349). The preview and the HTML export render the spec corpus at carve 21879d7, including nested braced emphasis, escapes in image alt text and the fence-closer measurement rulings. The flatten command keeps counting renamed ids under the engine's new `include-id-rename` warning.
+- The bundled engine is carve 0.1.11 (#349). The preview and the HTML export render the spec 0.1.9 corpus, including nested braced emphasis, escapes in image alt text and the fence-closer measurement rulings. The flatten command keeps counting renamed ids under the engine's new `include-id-rename` warning.
 
 ### Added
 
