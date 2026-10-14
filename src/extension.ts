@@ -20,6 +20,7 @@ import {
   type ServerResolver,
 } from './include-expansion.js'
 import { flattenDocument, flattenPath, flattenSummary, type Writer } from './flatten.js'
+import { enterCaretTarget, parkedCaret } from './enter-caret.js'
 import { convertToCarve, IMPORT_EXTENSIONS, importFormatFor, importTargetPath } from './import.js'
 import { carveInitializationOptions, type CarveInitializationOptions } from './includes.js'
 import {
@@ -1093,11 +1094,63 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
       fileEvents: vscode.workspace.createFileSystemWatcher('**/*.crv'),
     },
     initializationOptions: includePayload(),
+    middleware: {
+      provideOnTypeFormattingEdits: async (document, position, ch, options, token, next) => {
+        const edits = await next(document, position, ch, options, token)
+        if (ch === '\n' && edits) {
+          const target = enterCaretTarget(position, edits)
+          if (target) {
+            const insert = edits.find((edit) => edit.range.isEmpty && edit.range.start.isEqual(position))
+            if (insert) keepCaretAfterEnter(document, insert, new vscode.Position(target.line, target.character))
+          }
+        }
+        return edits
+      },
+    },
   }
 
   client = new LanguageClient('carve', 'Carve Language Server', serverOptions, clientOptions)
   context.subscriptions.push(client)
   await client.start()
+}
+
+/**
+ * Moves the caret back to the body line once VS Code has applied an on-type
+ * insert that carries a closer, since VS Code parks the caret after the whole
+ * insert. Acts only on that exact change and only while the caret sits where
+ * VS Code parked it, so typing in between is left alone.
+ */
+function keepCaretAfterEnter(document: vscode.TextDocument, insert: vscode.TextEdit, target: vscode.Position): void {
+  const normalize = (text: string): string => text.replace(/\r\n?/g, '\n')
+  const expected = normalize(insert.newText)
+  const start = insert.range.start
+  const end = parkedCaret(start, insert.newText)
+  const parked = new vscode.Position(end.line, end.character)
+  let applied = false
+  const moveIfParked = (editor: vscode.TextEditor | undefined): void => {
+    if (editor?.document !== document || editor.selections.length !== 1) return
+    if (!editor.selection.isEmpty || !editor.selection.active.isEqual(parked)) return
+    dispose()
+    editor.selection = new vscode.Selection(target, target)
+  }
+  const onChange = vscode.workspace.onDidChangeTextDocument((event) => {
+    if (event.document !== document || applied) return
+    applied = event.contentChanges.some(
+      (change) => change.range.isEmpty && change.range.start.isEqual(start) && normalize(change.text) === expected,
+    )
+    if (!applied) return dispose()
+    moveIfParked(vscode.window.activeTextEditor)
+  })
+  // VS Code may report the edit before its own caret placement; catch that placement too.
+  const onSelection = vscode.window.onDidChangeTextEditorSelection((event) => {
+    if (applied) moveIfParked(event.textEditor)
+  })
+  const timer = setTimeout(dispose, 2000)
+  function dispose(): void {
+    clearTimeout(timer)
+    onChange.dispose()
+    onSelection.dispose()
+  }
 }
 
 async function stopLanguageServer(): Promise<void> {

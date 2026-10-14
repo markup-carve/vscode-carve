@@ -22,6 +22,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `\|` in a table row is an escaped pipe, not a cell separator, and every ASCII punctuation character can be escaped, so `\$`, `\:smile:` and `\{{ x }}` stay text.
 - A list marker under a footnote or description paragraph is paragraph text, as the engine reads it. A list item's own sublist is unchanged.
 - Headings, captions, link text and span text highlight the inline markup inside them.
+- Enter on a `:::` or code fence opener on the last line of a document keeps the cursor on the new body line. The language server's closer arrived as one insert at the cursor there, and VS Code moved the cursor past the closer.
 
 ## [0.1.10] - 2026-10-14
 
