@@ -25,6 +25,12 @@ plain five
 ```
 :::::
 
+:::::: six
+```js
+six or more
+```
+::::::
+
 ::: note
 ```
 unclosed, and no closer follows

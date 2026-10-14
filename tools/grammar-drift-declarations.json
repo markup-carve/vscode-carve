@@ -99,7 +99,8 @@
     "code-blocks-in-colon-container-5": { "upstream": "fenced_code", "fixture": "container-fences" },
     "fenced-code-languages-in-colon-container-3": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
     "fenced-code-languages-in-colon-container-4": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
-    "fenced-code-languages-in-colon-container-5": { "upstream": "fenced_code_languages", "fixture": "container-fences" }
+    "fenced-code-languages-in-colon-container-5": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
+    "code-blocks-in-long-colon-container": { "upstream": "fenced_code", "fixture": "container-fences" }
   },
   "localOnlyRules": {
     "container-body": "grammar-correctness"

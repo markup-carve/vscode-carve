@@ -47,6 +47,7 @@ const BARE_FENCE = '[ \\t]*[`~]{3,}[ \\t]*$'
 // exactly N colons. N is fixed per rule because an end pattern cannot see the
 // container's own begin captures; #colon-containers picks the variant.
 export const COLON_CONTAINER_LENGTHS = [3, 4, 5]
+export const LONG_COLON_CLOSER = `[ \\t]*:{${COLON_CONTAINER_LENGTHS.at(-1) + 1},}[ \\t]*$`
 const colonCloser = (n) => `[ \\t]*:{${n}}[ \\t]*$`
 const VARIANTS = [
   ['fenced-code-languages', 'code-blocks', 0, `(^|\\G)(?!${BARE_FENCE})`],
@@ -94,6 +95,12 @@ export function generate(grammar) {
         { ...bare, end: generic.end + `|(?=^${colonCloser(n)})` },
       ],
     }
+  }
+  // Six or more colons share one rule: the fence stops before any bare run of
+  // six or more, and no per-language copies are made, so a fence there is
+  // highlighted without its embedded language.
+  entries['code-blocks-in-long-colon-container'] = {
+    patterns: [{ ...bare, end: generic.end + `|(?=^${LONG_COLON_CLOSER})` }],
   }
   return entries
 }

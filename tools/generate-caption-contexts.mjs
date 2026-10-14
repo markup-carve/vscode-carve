@@ -223,7 +223,18 @@ updated = replaceEntry(updated, 'colon-containers', {
       ...include('code-blocks-in-colon-container-' + n),
       { include: '$self' },
     ],
-  })),
+  })).concat({
+    // Longer containers: one rule, the closer matched by backreference.
+    begin: String.raw`^(?=[ \t]*:{` + (COLON_CONTAINER_LENGTHS.at(-1) + 1) + String.raw`,}[ \t]+\S)(?=` + div + String.raw`)[ \t]*(:{` + (COLON_CONTAINER_LENGTHS.at(-1) + 1) + String.raw`,})[^\n]*$`,
+    end: String.raw`^[ \t]*(\1)[ \t]*$`,
+    beginCaptures: colonCaptures,
+    endCaptures: colonCaptures,
+    patterns: [
+      frame('^(?=' + fence + ')', include('code-blocks-in-long-colon-container', 'code-block-behind-a-container-prefix', 'code-fence-on-quote-marker-line'), String.raw`[ \t]*`),
+      ...include('code-blocks-in-long-colon-container'),
+      { include: '$self' },
+    ],
+  }),
 })
 const quotePrefix = { match: '^(?:> )+', captures: { '0': { patterns: include('caption-quote-prefix') } } }
 const colonBody = repository['container-body'].patterns.map(rule =>
