@@ -1,0 +1,10 @@
+:: t
+: ```js
+  code
+  ```
+
+- outer
+  :: t
+  : ```js
+    code
+    ```
