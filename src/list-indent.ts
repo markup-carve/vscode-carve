@@ -142,7 +142,7 @@ function overlaps(a: LspRange, b: LspRange): boolean {
   return compare(a.start, b.end) < 0 && compare(b.start, a.end) < 0
 }
 
-/** Whether the server advertises `carve.listIndent` (carve-lsp 0.1.9 does not). */
+/** Whether the server advertises `carve.listIndent`. */
 export function serverHasListIndent(commands: readonly string[] | undefined): boolean {
   return commands?.includes(LIST_INDENT_COMMAND) ?? false
 }

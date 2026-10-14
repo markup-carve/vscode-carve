@@ -406,7 +406,7 @@
   },
   "dependencies": {
     "@markup-carve/carve": "0.1.11",
-    "@markup-carve/carve-lsp": "0.1.9",
+    "@markup-carve/carve-lsp": "0.1.11",
     "vscode-languageclient": "^9.0.1",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
@@ -414,7 +414,7 @@
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "@markup-carve/carve-css": "^0.1.5",
-    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#49ab9a000d288cec90943b6e0b02b2693b262abb",
+    "@markup-carve/carve-grammars": "0.1.14",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.2.2",
