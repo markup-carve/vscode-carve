@@ -63,10 +63,7 @@ const grammar = await registry.loadGrammar('text.carve')
 // `$`-anchored rule behaves differently.
 function classifyLine(src) {
   const lines = `${src}\nafter\n`.split('\n')
-  let state = vsctm.INITIAL
-  // Caption marker probes need a preceding captionable block.
-  if (src.startsWith('^')) state = grammar.tokenizeLine('![a](i.png)', state).ruleStack
-  const result = grammar.tokenizeLine(lines[0], state)
+  const result = grammar.tokenizeLine(lines[0], vsctm.INITIAL)
   return classify(result.tokens.flatMap((t) => t.scopes))
 }
 

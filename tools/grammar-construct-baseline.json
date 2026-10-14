@@ -16,7 +16,5 @@
   "upstream:block_comment_on_quote_on_marker_line": "no fixture holds a comment fence on a quote on a list marker line",
   "upstream:heading_in_container": "no fixture holds a heading behind a container prefix that upstream's rule reaches",
   "upstream:fenced_code_in_container": "no fixture holds a code fence behind a container prefix that upstream's rule reaches",
-  "local:table-row-cells": "upstream leaves the row's leading pipe unscoped - either a grouping delta or a real upstream gap",
-  "local:table-row-behind-a-container-prefix": "upstream leaves the prefixed row's pipe unscoped",
-  "localOnly:raw-inline": "upstream scopes the same backtick, so this is a grouping delta, not a local-only construct"
+  "upstream:list_item": "a task checkbox glued to an attribute block (-{.c} [x]) is left unscoped locally - the known limitation the task branch of lists documents"
 }

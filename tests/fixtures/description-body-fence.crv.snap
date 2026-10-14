@@ -1,0 +1,36 @@
+>:: t
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^ text.carve
+>: ```js
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.definition.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#     ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>  code
+#^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>  ```
+#^^ text.carve
+#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>- outer
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^^ text.carve
+>  :: t
+#^^ text.carve markup.list.definition.term.carve
+#  ^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#    ^ text.carve markup.list.definition.term.carve
+#     ^^ text.carve
+>  : ```js
+#^^ text.carve
+#  ^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.definition.carve
+#    ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#       ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>    code
+#^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>    ```
+#^^^^ text.carve
+#    ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
