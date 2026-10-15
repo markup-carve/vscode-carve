@@ -147,6 +147,29 @@ test('every target the render touched is watchable, refused ones included', asyn
   }
 })
 
+test('an open child bypasses a cached disk version', async () => {
+  const scene = book('{{ chapters/one.crv }}\n', { 'chapters/one.crv': 'Disk body.\n' })
+  try {
+    const make = await serverResolverFactory()
+    const disk = make(scene.root)
+    const cache = new IncludeCache()
+    const input = { source: readFileSync(scene.path, 'utf8'), sourcePath: scene.path, cache }
+    const first = expandForRender(await engine(), { ...input, resolve: disk })
+    assert.match(await html(first.doc), /Disk body/)
+    const open: ServerResolver = (includePath, context) => {
+      const result = disk(includePath, context)
+      return result.ok
+        ? { ...result, source: 'Unsaved body.\n', bytes: 14, version: 'open:2' }
+        : result
+    }
+    const second = expandForRender(await engine(), { ...input, resolve: open })
+    assert.match(await html(second.doc), /Unsaved body/)
+    assert.doesNotMatch(await html(second.doc), /Disk body/)
+  } finally {
+    scene.cleanup()
+  }
+})
+
 test('the bytes READ are charged, and a target is never refused before reading', async () => {
   // PART 9 section 19 bounds the expanded OUTPUT and explicitly not the work: a
   // target is resolved before its size is known, so refusing before reading
