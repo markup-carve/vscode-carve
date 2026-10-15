@@ -11,6 +11,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - The bundled language server is carve-lsp 0.1.12 (#361).
+- The preview and the HTML export highlight `carve` fences with carve-grammars
+  0.1.16 (#362).
+
+### Fixed
+
+- In the preview and the HTML export, a `carve` fence holding a closed code
+  fence longer than 32 KB is highlighted up to that fence's closer instead of
+  as code to the end (#362, markup-carve/carve-grammars#713).
 
 ## [0.1.10] - 2026-10-14
 
