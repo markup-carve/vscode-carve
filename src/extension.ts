@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync, realpathSync } from 'node:fs'
 import { basename } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import * as vscode from 'vscode'
@@ -62,6 +62,7 @@ let heldRenderLine: number | undefined
 let includeDiagnostics: vscode.DiagnosticCollection | undefined
 /** Watchers over the targets the last render touched, resolved or attempted. */
 let includeWatchers: vscode.FileSystemWatcher[] = []
+let includeWatchedPaths = new Set<string>()
 const includeCache = new IncludeCache()
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -172,10 +173,30 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (previewPanel && previewUri && event.document.uri.toString() === previewUri.toString()) {
         lastEditAt = Date.now()
         scheduleRender(context, event.document)
+      } else if (previewPanel && previewUri && watchedOpenPath(event.document)) {
+        const parent = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === previewUri?.toString())
+        if (parent) {
+          includeCache.invalidate(canonicalPath(event.document.uri.fsPath))
+          scheduleRender(context, parent)
+        }
       }
+    }),
+    vscode.workspace.onDidCloseTextDocument((document) => {
+      if (!previewPanel || !previewUri || !watchedOpenPath(document)) return
+      includeCache.invalidate(canonicalPath(document.uri.fsPath))
+      const parent = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === previewUri?.toString())
+      if (parent) scheduleRender(context, parent)
     }),
     vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (previewPanel && editor && editor.document.languageId === 'carve') {
+        // Keep the parent preview visible while editing one of its children.
+        if (watchedOpenPath(editor.document)) {
+          if (heldRenderLine !== undefined && !renderTimer && previewUri) {
+            const held = vscode.workspace.textDocuments.find((doc) => doc.uri.toString() === previewUri?.toString())
+            if (held) renderPreview(context, held)
+          }
+          return
+        }
         if (renderTimer) {
           clearTimeout(renderTimer)
           renderTimer = undefined
@@ -412,6 +433,7 @@ async function engineForExpansion(): Promise<Engine> {
 async function includeGateFor(
   context: vscode.ExtensionContext,
   document: vscode.TextDocument,
+  openBuffers = false,
 ): Promise<{ resolver: ServerResolver; includeRoot: string } | undefined> {
   const settings = (await import(
     pathToFileURL(serverInternalPath(context, 'include-settings.js')).href
@@ -424,7 +446,33 @@ async function includeGateFor(
     workspaceRoots: (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath),
   }) as { includeRoot?: string; resolver?: ServerResolver } | undefined
   if (!options?.includeRoot || !options.resolver) return undefined
-  return { resolver: options.resolver, includeRoot: options.includeRoot }
+  const diskResolver = options.resolver
+  if (!openBuffers) return { resolver: diskResolver, includeRoot: options.includeRoot }
+  const openByPath = new Map<string, vscode.TextDocument>()
+  for (const candidate of vscode.workspace.textDocuments) {
+    if (candidate.uri.scheme !== 'file') continue
+    const target = canonicalPath(candidate.uri.fsPath)
+    if (target) openByPath.set(target, candidate)
+  }
+  const resolver: ServerResolver = (includePath, ctx) => {
+    const result = diskResolver(includePath, ctx)
+    if (!result.ok) return result
+    const open = openByPath.get(result.id)
+    if (!open) return result
+    const source = open.getText()
+    return { ...result, source, bytes: Buffer.byteLength(source), version: `open:${open.version}` }
+  }
+  return { resolver, includeRoot: options.includeRoot }
+}
+
+function canonicalPath(target: string): string | undefined {
+  try { return realpathSync(target) } catch { return undefined }
+}
+
+function watchedOpenPath(document: vscode.TextDocument): boolean {
+  if (document.uri.scheme !== 'file' || includeWatchedPaths.size === 0) return false
+  return includeWatchedPaths.has(document.uri.fsPath)
+    || includeWatchedPaths.has(canonicalPath(document.uri.fsPath) ?? '')
 }
 
 async function expandIncludesFor(
@@ -435,7 +483,7 @@ async function expandIncludesFor(
   // An unsaved buffer has no folder to resolve a relative target against, so
   // there is nothing to expand rather than something to guess.
   if (document.isUntitled) return undefined
-  const gate = await includeGateFor(context, document)
+  const gate = await includeGateFor(context, document, true)
   if (!gate) return undefined
   try {
     return expandForRender(await engineForExpansion(), {
@@ -513,8 +561,10 @@ function watchIncludeTargets(
 ): void {
   for (const watcher of includeWatchers) watcher.dispose()
   includeWatchers = []
+  includeWatchedPaths = new Set()
   if (!expansion) return
   for (const target of watchTargets(expansion)) {
+    includeWatchedPaths.add(target)
     const watcher = vscode.workspace.createFileSystemWatcher(target)
     const invalidate = (): void => {
       includeCache.invalidate(target)
@@ -692,7 +742,7 @@ async function flattenOpenDocument(
     )
     return undefined
   }
-  const gate = await includeGateFor(context, document)
+  const gate = await includeGateFor(context, document, true)
   if (!gate) {
     void vscode.window.showWarningMessage(
       'Carve: include resolution is off for this document, so there is nothing to flatten. Trust the workspace, or set carve.includes.enabled.',
@@ -700,9 +750,8 @@ async function flattenOpenDocument(
     return undefined
   }
   const engine = (await import('@markup-carve/carve')) as unknown as Engine & Writer
-  // No extension set, deliberately: `carve flatten` parses without one, and the
-  // output has to match the CLI byte for byte. A render passes the set it
-  // renders with (#209); this is the other case.
+  // No extension set: flatten keeps the CLI's parsing rules. Open editor
+  // buffers, including children, are the source for this editor command.
   return flattenDocument(engine, {
     source: document.getText(),
     sourcePath: document.uri.fsPath,

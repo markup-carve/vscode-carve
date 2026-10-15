@@ -220,9 +220,10 @@ export function expandForRender(engine: Engine, input: ExpandInput): ExpansionRe
       refusals.push({ path: includePath, denial: result.denial, ...(result.watch ? { watch: result.watch } : {}) })
       return null
     }
-    const cached = cache?.get(result.id)
+    const openBuffer = result.version?.startsWith('open:') === true
+    const cached = openBuffer ? undefined : cache?.get(result.id)
     if (cached !== undefined) return { source: cached, id: result.id }
-    cache?.set(result.id, result.source)
+    if (!openBuffer) cache?.set(result.id, result.source)
     return { source: result.source, id: result.id }
   }
   // Positions on: the warnings carry offsets into the parent source, and a
