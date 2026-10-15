@@ -406,7 +406,7 @@
   },
   "dependencies": {
     "@markup-carve/carve": "0.1.11",
-    "@markup-carve/carve-lsp": "0.1.11",
+    "@markup-carve/carve-lsp": "0.1.12",
     "vscode-languageclient": "^9.0.1",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
