@@ -74,20 +74,41 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     light: { color: '#cf222e', fontWeight: 'bold' },
     dark: { color: '#ff7b72', fontWeight: 'bold' },
   })
-  context.subscriptions.push(boundaryDecoration, operatorDecoration)
+  const plainDecoration = vscode.window.createTextEditorDecorationType({
+    color: new vscode.ThemeColor('editor.foreground'),
+    fontStyle: 'normal',
+    fontWeight: 'normal',
+  })
+  const tableBodyDecoration = vscode.window.createTextEditorDecorationType({
+    light: { backgroundColor: '#f2f7fb' },
+    dark: { backgroundColor: '#25313a' },
+  })
+  const markerDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#98680d' },
+    dark: { color: '#d8aa57' },
+  })
+  const strongDecoration = vscode.window.createTextEditorDecorationType({ fontWeight: 'bold' })
+  const emphasisDecoration = vscode.window.createTextEditorDecorationType({ fontStyle: 'italic' })
+  const decorations = [boundaryDecoration, operatorDecoration, plainDecoration, tableBodyDecoration,
+    markerDecoration, strongDecoration, emphasisDecoration]
+  context.subscriptions.push(...decorations)
   void createTableMarkerScanner(context.extensionPath).then((scanTableMarkers) => {
     const updateTableMarkers = (editor: vscode.TextEditor): void => {
       if (editor.document.languageId !== 'carve') {
-        editor.setDecorations(boundaryDecoration, [])
-        editor.setDecorations(operatorDecoration, [])
+        for (const decoration of decorations) editor.setDecorations(decoration, [])
         return
       }
       const markers = scanTableMarkers(editor.document.getText(), editor.document.uri.toString())
-      const ranges = (kind: 'boundary' | 'operator') => markers
+      const ranges = (kind: typeof markers[number]['kind']) => markers
         .filter((marker) => marker.kind === kind)
         .map((marker) => new vscode.Range(marker.line, marker.start, marker.line, marker.end))
       editor.setDecorations(boundaryDecoration, ranges('boundary'))
       editor.setDecorations(operatorDecoration, ranges('operator'))
+      editor.setDecorations(plainDecoration, ranges('plain'))
+      editor.setDecorations(tableBodyDecoration, ranges('tableBody'))
+      editor.setDecorations(markerDecoration, [...ranges('listMarker'), ...ranges('definitionMarker'), ...ranges('containerMarker')])
+      editor.setDecorations(strongDecoration, ranges('strong'))
+      editor.setDecorations(emphasisDecoration, ranges('emphasis'))
     }
     const tableTimers = new Map<vscode.TextEditor, ReturnType<typeof setTimeout>>()
     const scheduleTableMarkers = (editor: vscode.TextEditor): void => {
