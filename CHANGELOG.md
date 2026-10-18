@@ -6,6 +6,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-10-18
+
+### Changed
+
+- Bundle carve 0.1.12, carve-lsp 0.1.13 and carve-grammars 0.1.17, with the Carve 0.1.10 corpus in the editor checks (#363).
+
+### Fixed
+
+- Refresh a parent preview after an included file changes. Preview, export and flatten use unsaved text from open included files (#364).
+
 ## [0.1.11] - 2026-10-15
 
 ### Changed
