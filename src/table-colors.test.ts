@@ -146,3 +146,19 @@ test('the pinned corpus keeps the editor corrections and their negative boundari
   const plainCsv = corpus('csv-and-tsv-table-bodies', '-3')
   assert.deepEqual(scan(plainCsv).filter((marker) => marker.kind === 'tableBody'), [])
 })
+
+test('source positions agree for LF and CRLF documents', async () => {
+  const scan = await createTableMarkerScanner(root)
+  for (const source of ['- :: t\n  : para\n', '{table}\n```csv\na,b\n```']) {
+    assert.deepEqual(scan(source), scan(source.replaceAll('\n', '\r\n')))
+  }
+})
+
+test('a parser failure leaves existing TextMate table colors available', async (t) => {
+  t.mock.method(console, 'error', () => {})
+  const scan = await createTableMarkerScanner(root, () => { throw new Error('parse failed') })
+  const markers = scan('| A | B |', 'failed-parser')
+  assert.deepEqual(markers.filter((marker) => marker.kind === 'boundary').map((marker) => marker.start), [0, 4, 8])
+  assert.deepEqual(markers.filter((marker) => marker.kind === 'plain'), [])
+  assert.deepEqual(scan('| A | B |', 'failed-parser'), markers)
+})

@@ -23,8 +23,8 @@ interface AstNode {
   target?: AstNode
 }
 
-function sourceMarkers(text: string, lines: string[]): { markers: TableMarker[]; codeLines: Set<number>; tableLines: Set<number> } {
-  const { ast, layout } = parseWithSourceLayout(text)
+function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSourceLayout): { markers: TableMarker[]; codeLines: Set<number>; tableLines: Set<number> } {
+  const { ast, layout } = parse(text)
   const boundaries = new Set<number>([0])
   for (const span of layout.nodes) {
     boundaries.add(span.startByte)
@@ -99,7 +99,10 @@ function sourceMarkers(text: string, lines: string[]): { markers: TableMarker[];
 }
 
 /** Use the same TextMate rules as the editor, including fenced Carve blocks. */
-export async function createTableMarkerScanner(extensionPath: string): Promise<(text: string, key?: string) => TableMarker[]> {
+export async function createTableMarkerScanner(
+  extensionPath: string,
+  parse: typeof parseWithSourceLayout = parseWithSourceLayout,
+): Promise<(text: string, key?: string) => TableMarker[]> {
   const wasm = readFileSync(join(extensionPath, 'node_modules/vscode-oniguruma/release/onig.wasm'))
   await oniguruma.loadWASM(wasm.buffer)
   const registry = new vsctm.Registry({
@@ -118,7 +121,7 @@ export async function createTableMarkerScanner(extensionPath: string): Promise<(
   if (!grammar) throw new Error('Could not load the Carve TextMate grammar')
 
   type ScopeToken = { startIndex: number; endIndex: number; scopes: string[] }
-  const cache = new Map<string, { text: string; lines: string[]; states: vsctm.StackElement[]; markers: TableMarker[][]; tokens: ScopeToken[][]; source: ReturnType<typeof sourceMarkers> }>()
+  const cache = new Map<string, { text: string; lines: string[]; states: vsctm.StackElement[]; markers: TableMarker[][]; tokens: ScopeToken[][]; source: ReturnType<typeof sourceMarkers> | null }>()
   return (text, key = '') => {
     const lines = text.split(/\r?\n/)
     const previous = cache.get(key)
@@ -128,7 +131,11 @@ export async function createTableMarkerScanner(extensionPath: string): Promise<(
         firstChanged++
       }
     }
-    const source = previous?.text === text ? previous.source : sourceMarkers(text, lines)
+    let source = previous?.text === text ? previous.source : null
+    if (previous?.text !== text) {
+      try { source = sourceMarkers(text, lines, parse) }
+      catch (error) { console.error('Carve source highlighting failed', error) }
+    }
     const states = previous?.states.slice(0, firstChanged) ?? []
     const markersByLine = previous?.markers.slice(0, firstChanged) ?? []
     const tokensByLine = previous?.tokens.slice(0, firstChanged) ?? []
@@ -155,15 +162,17 @@ export async function createTableMarkerScanner(extensionPath: string): Promise<(
     cache.set(key, { text, lines, states, markers: markersByLine, tokens: tokensByLine, source })
     if (cache.size > 8) cache.delete(cache.keys().next().value!)
     const plainMarkers: TableMarker[] = []
-    for (let line = 0; line < lines.length; line++) {
-      if (source.codeLines.has(line) || source.tableLines.has(line)) continue
-      for (const token of tokensByLine[line] ?? []) {
-        if (token.endIndex > token.startIndex && token.scopes.includes('markup.raw.block.fenced.code.carve')) {
-          plainMarkers.push({ line, start: token.startIndex, end: token.endIndex, kind: 'plain' })
+    if (source) {
+      for (let line = 0; line < lines.length; line++) {
+        if (source.codeLines.has(line) || source.tableLines.has(line)) continue
+        for (const token of tokensByLine[line] ?? []) {
+          if (token.endIndex > token.startIndex && token.scopes.includes('markup.raw.block.fenced.code.carve')) {
+            plainMarkers.push({ line, start: token.startIndex, end: token.endIndex, kind: 'plain' })
+          }
         }
       }
     }
-    const parserMarkers = source.markers.filter((marker) => {
+    const parserMarkers = (source?.markers ?? []).filter((marker) => {
       if (marker.kind === 'tableBody') return true
       const token = tokensByLine[marker.line]?.find((candidate) => candidate.startIndex <= marker.start && candidate.endIndex > marker.start)
       const scopes = token?.scopes ?? []
