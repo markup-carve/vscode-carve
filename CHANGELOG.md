@@ -15,6 +15,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 - Refresh a parent preview after an included file changes. Preview, export and flatten use unsaved text from open included files (#364).
+- Inline highlighting keeps cross-references, autolinks and link destinations intact inside surrounding markup. Keycap stars stay literal; combined bold-italic no longer opens after a word character or slash, while valid bold inside it stays highlighted (#368).
 
 ## [0.1.11] - 2026-10-15
 
