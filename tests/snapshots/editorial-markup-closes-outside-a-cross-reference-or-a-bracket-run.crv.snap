@@ -1,0 +1,8 @@
+>{+a </#x+}> b+}
+#^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#  ^^^^ text.carve markup.inserted.critic.carve markup.inserted.carve
+#      ^ text.carve markup.inserted.critic.carve markup.inserted.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#       ^ text.carve markup.inserted.critic.carve markup.inserted.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#        ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#          ^^^^^^ text.carve
+>

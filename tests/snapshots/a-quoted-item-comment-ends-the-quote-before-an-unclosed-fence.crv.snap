@@ -1,0 +1,30 @@
+>::: note
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ text.carve markup.other.div.carve
+#    ^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+>> - para
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^ text.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.quote.carve markup.list.unnumbered.carve
+#    ^^^^ text.carve markup.quote.carve
+>> - %% c
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^ text.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.quote.carve markup.list.unnumbered.carve
+#    ^^^^ text.carve markup.quote.carve comment.line.percent.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>code
+#^^^^^ text.carve markup.raw.block.fenced.code.carve
+>::::
+#^^^^^ text.carve markup.raw.block.fenced.code.carve
+>:::
+#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+>after *b*
+#^^^^^^ text.carve
+#      ^ text.carve punctuation.definition.bold.carve
+#       ^ text.carve markup.bold.carve
+#        ^ text.carve punctuation.definition.bold.carve
+>

@@ -1,0 +1,13 @@
+>- :: t
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^ text.carve
+>  : para
+#^^ text.carve
+#  ^^^^^^^ text.carve
+>  - li
+#^^ text.carve markup.list.unnumbered.carve
+#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.unnumbered.carve
+#    ^^^ text.carve
+>
