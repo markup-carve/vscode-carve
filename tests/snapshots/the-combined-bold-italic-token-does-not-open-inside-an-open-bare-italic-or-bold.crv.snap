@@ -1,0 +1,9 @@
+>/a /*x*/ b/
+#^ text.carve markup.italic.carve punctuation.definition.italic.carve
+# ^^^ text.carve markup.italic.carve markup.italic.carve
+#    ^ text.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
+#     ^ text.carve markup.italic.carve markup.italic.carve markup.bold.carve
+#      ^ text.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
+#       ^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#        ^^^^ text.carve
+>

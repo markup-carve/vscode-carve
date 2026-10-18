@@ -1,0 +1,15 @@
+>\</#id>
+#^^ text.carve constant.character.escape.carve
+#  ^ text.carve
+#   ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#    ^^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#      ^^ text.carve
+>
+>x \</#x~>y> y
+#^^ text.carve
+#  ^^ text.carve constant.character.escape.carve
+#    ^ text.carve
+#     ^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#      ^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#       ^^^^^^^ text.carve
+>
