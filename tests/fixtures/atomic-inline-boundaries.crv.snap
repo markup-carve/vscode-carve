@@ -23,4 +23,15 @@
 #            ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
 #             ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
 #               ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+>{~a [x](u~>v) b~}
+#^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#    ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#     ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.inline.carve string.other.link.title.carve
+#      ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#       ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#        ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.inline.carve markup.underline.link.carve
+#            ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#             ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#               ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
 >

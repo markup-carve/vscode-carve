@@ -1,3 +1,4 @@
 x /a </#intro> y
 {~a </#x~> b~}
 {~a [x~>y](u) b~}
+{~a [x](u~>v) b~}

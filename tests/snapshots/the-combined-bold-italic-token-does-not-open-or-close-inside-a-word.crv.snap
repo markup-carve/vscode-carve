@@ -1,3 +1,7 @@
 >a/*y*/ b
-#^^^^^^^^^ text.carve
+#^^ text.carve
+#  ^ text.carve punctuation.definition.bold.carve
+#   ^ text.carve markup.bold.carve
+#    ^ text.carve punctuation.definition.bold.carve
+#     ^^^^ text.carve
 >

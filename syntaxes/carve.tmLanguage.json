@@ -2400,9 +2400,9 @@
           }
         },
         {
-          "comment": "A substitution splits at its first top-level arrow, where code, math, a literal, a comment or an escape is opaque, and each half is inline content (markup-carve/carve#2092). With no top-level arrow the braces are a forced strikethrough. Declared limit: a link, image or autolink that spans the arrow is scoped whole in the deleted half, where the spec splits inside it.",
+          "comment": "A substitution splits at its first top-level arrow, where code, math, a literal, a comment or an escape is opaque, and each half is inline content (markup-carve/carve#2092). With no top-level arrow the braces are a forced strikethrough. A balanced link text and simple destination stay opaque while locating the arrow.",
           "name": "markup.changed.critic.carve",
-          "begin": "(\\{~)(?=(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|</#[^>\\s]+>|<[A-Za-z][A-Za-z0-9+.-]*:[^>\\s]+>|\\[[^\\]\\n]*\\]|[^\\\\`~\\n]|~(?![>}]))*?~>(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|[^\\\\~\\n]|~(?!\\}))*?~\\})",
+          "begin": "(\\{~)(?=(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|</#[^>\\s]+>|<[A-Za-z][A-Za-z0-9+.-]*:[^>\\s]+>|\\[[^\\]\\n]*\\]\\([^\\)\\n]*\\)|\\[[^\\]\\n]*\\]|[^\\\\`~\\n]|~(?![>}]))*?~>(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|[^\\\\~\\n]|~(?!\\}))*?~\\})",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.critic.carve"
@@ -2872,7 +2872,7 @@
         {
           "comment": "A bare bold run may cross soft line breaks, so this rule carries TextMate state with begin/end. A blank or whitespace-only line ends an unclosed run at its paragraph boundary instead of letting it colour the rest of the file (markup-carve/vscode-carve#178).",
           "contentName": "markup.bold.carve",
-          "begin": "(?<![\\w*/])(\\*)(?![\\s*\\p{M}\\x{200D}])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
+          "begin": "(?<![\\w*])(\\*)(?![\\s*\\p{M}\\x{200D}])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
           "end": "(?<=\\S)(\\*)(?![\\p{L}\\p{N}])|^[ \\t]*$",
           "beginCaptures": {
             "1": {
