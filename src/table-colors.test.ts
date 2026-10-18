@@ -150,15 +150,19 @@ test('the pinned corpus keeps the editor corrections and their negative boundari
 test('source positions agree for LF and CRLF documents', async () => {
   const scan = await createTableMarkerScanner(root)
   for (const source of ['- :: t\n  : para\n', '{table}\n```csv\na,b\n```']) {
-    assert.deepEqual(scan(source), scan(source.replaceAll('\n', '\r\n')))
+    const lf = scan(source)
+    assert.ok(lf.some((marker) => marker.kind === 'definitionMarker' || marker.kind === 'tableBody'))
+    assert.deepEqual(lf, scan(source.replaceAll('\n', '\r\n')))
   }
 })
 
 test('a parser failure leaves existing TextMate table colors available', async (t) => {
-  t.mock.method(console, 'error', () => {})
+  const log = t.mock.method(console, 'error', () => {})
   const scan = await createTableMarkerScanner(root, () => { throw new Error('parse failed') })
   const markers = scan('| A | B |', 'failed-parser')
   assert.deepEqual(markers.filter((marker) => marker.kind === 'boundary').map((marker) => marker.start), [0, 4, 8])
   assert.deepEqual(markers.filter((marker) => marker.kind === 'plain'), [])
   assert.deepEqual(scan('| A | B |', 'failed-parser'), markers)
+  assert.ok(scan('| C | D |', 'failed-parser').some((marker) => marker.kind === 'boundary'))
+  assert.equal(log.mock.callCount(), 1)
 })

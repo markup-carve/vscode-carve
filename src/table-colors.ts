@@ -122,6 +122,7 @@ export async function createTableMarkerScanner(
 
   type ScopeToken = { startIndex: number; endIndex: number; scopes: string[] }
   const cache = new Map<string, { text: string; lines: string[]; states: vsctm.StackElement[]; markers: TableMarker[][]; tokens: ScopeToken[][]; source: ReturnType<typeof sourceMarkers> | null }>()
+  const reportedParserFailures = new Set<string>()
   return (text, key = '') => {
     const lines = text.split(/\r?\n/)
     const previous = cache.get(key)
@@ -133,8 +134,15 @@ export async function createTableMarkerScanner(
     }
     let source = previous?.text === text ? previous.source : null
     if (previous?.text !== text) {
-      try { source = sourceMarkers(text, lines, parse) }
-      catch (error) { console.error('Carve source highlighting failed', error) }
+      try {
+        source = sourceMarkers(text, lines, parse)
+        reportedParserFailures.delete(key)
+      } catch (error) {
+        if (!reportedParserFailures.has(key)) {
+          console.error('Carve source highlighting failed', error)
+          reportedParserFailures.add(key)
+        }
+      }
     }
     const states = previous?.states.slice(0, firstChanged) ?? []
     const markersByLine = previous?.markers.slice(0, firstChanged) ?? []
@@ -160,7 +168,11 @@ export async function createTableMarkerScanner(
     }
     cache.delete(key)
     cache.set(key, { text, lines, states, markers: markersByLine, tokens: tokensByLine, source })
-    if (cache.size > 8) cache.delete(cache.keys().next().value!)
+    if (cache.size > 8) {
+      const oldest = cache.keys().next().value!
+      cache.delete(oldest)
+      reportedParserFailures.delete(oldest)
+    }
     const plainMarkers: TableMarker[] = []
     if (source) {
       for (let line = 0; line < lines.length; line++) {
