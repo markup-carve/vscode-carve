@@ -1,7 +1,8 @@
 >[a <https://x]> b](u)
-#^^^ text.carve
-#   ^ text.carve meta.link.autolink.carve punctuation.definition.link.carve
-#    ^^^^^^^^^^ text.carve meta.link.autolink.carve markup.underline.link.carve
-#              ^ text.carve meta.link.autolink.carve punctuation.definition.link.carve
-#               ^^^^^^^ text.carve
+#^ text.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+# ^^^^^^^^^^^^^^^^ text.carve meta.link.inline.carve string.other.link.title.carve
+#                 ^ text.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#                  ^ text.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#                   ^ text.carve meta.link.inline.carve markup.underline.link.carve
+#                    ^ text.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
 >

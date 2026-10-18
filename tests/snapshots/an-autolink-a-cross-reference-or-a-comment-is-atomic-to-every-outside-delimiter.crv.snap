@@ -1,8 +1,9 @@
 >{~a <https://x~>y> b~}
-#^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#  ^^ text.carve markup.changed.critic.carve markup.deleted.carve
-#    ^ text.carve markup.changed.critic.carve markup.deleted.carve meta.link.autolink.carve punctuation.definition.link.carve
-#     ^^^^^^^^^^ text.carve markup.changed.critic.carve markup.deleted.carve meta.link.autolink.carve markup.underline.link.carve
-#               ^ text.carve markup.changed.critic.carve markup.deleted.carve meta.link.autolink.carve punctuation.definition.link.carve
-#                ^^^^^^ text.carve markup.changed.critic.carve markup.deleted.carve
+#^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#    ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.autolink.carve punctuation.definition.link.carve
+#     ^^^^^^^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.autolink.carve markup.underline.link.carve
+#               ^ text.carve markup.strikethrough.carve markup.strikethrough.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#                    ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
 >
