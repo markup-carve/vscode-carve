@@ -3,6 +3,7 @@
 .playwright-mcp/**
 .vscode/**
 .vscode-test/**
+tmp/**
 .gitmodules
 examples/**
 spec/**
