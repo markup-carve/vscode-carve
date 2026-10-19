@@ -60,12 +60,21 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 | `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
 | `carve.formatter` | `"conservative"` | What **Format Document** does: `conservative` normalizes whitespace and line endings only, `migration` rewrites the document into canonical Carve. |
 | `carve.format.alignTables` | `false` | Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without it. |
+| `carve.extensions` | `[]` | Language extensions the server enables for diagnostics and highlighting, such as `semantic-span`. |
+| `carve.platforms` | `[]` | Platforms whose rendering the server checks against; currently `github`. |
+| `carve.severities` | `{}` | Diagnostic severity by rule name: `error`, `warning`, `information`, `hint` or `off`, for example `{ "broken-crossref": "error" }`. |
+| `carve.inlayHints.enabled` | `true` | Show the server's inlay hints: generated heading identifiers, colon-fence closers and the bare list marker hint. |
+| `carve.inlayHints.bareListMarkers` | `true` | Show the hint after a bare list marker on the line being edited. |
 | `carve.includes.enabled` | `"auto"` | Resolve `{{ path }}` include directives (`auto`/`on`/`off`). `auto` resolves them in a trusted workspace and leaves them literal in an untrusted one. |
 | `carve.includes.includeRoot` | `""` | Containment root for include targets, the equivalent of `carve --include-root`. Empty uses the workspace folder the document belongs to, then the document's own folder. |
 | `carve.includes.allowAbsolute` | `false` | Allow an absolute include path. Still subject to root containment. |
 
-The extension sends `carve.formatter` and `carve.format.alignTables` to the
-language server only when you set them, and changing either restarts the server.
+The extension sends the language server settings above (`carve.formatter`
+through `carve.inlayHints.bareListMarkers`) only when you set them, and changing
+one restarts the server. With carve-lsp 0.1.14 or later, a setting you leave
+unset comes from the `carve` section of `.carverc.json` in the workspace, and a
+key set in neither keeps the server default. The include settings come only
+from VS Code.
 
 The extension also sets one editor default for Carve files only:
 

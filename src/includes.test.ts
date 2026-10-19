@@ -328,3 +328,97 @@ test('the installed server aligns tables on Format Document when carve.format.al
   })) as { newText: string }[]
   assert.equal(edits[0]?.newText, '|= Name |= Score |\n| Ada   | 10     |\n')
 })
+
+test('extensions, platforms, severities and inlay hints stay unsent until the user sets them', () => {
+  const sent = carveInitializationOptions({ includes: {}, workspaceTrusted: true })
+  for (const key of ['extensions', 'platforms', 'severities', 'inlayHints']) {
+    assert.equal(key in sent.carve, false, `${key} was sent without being set`)
+  }
+})
+
+test('the four server settings use the shapes carve-lsp reads', () => {
+  const sent = carveInitializationOptions({
+    extensions: ['semantic-span'],
+    platforms: ['github'],
+    severities: { 'platform-issue-reference': 'error' },
+    bareListMarkerHints: false,
+    includes: {},
+    workspaceTrusted: true,
+  }).carve
+  assert.deepEqual(sent.extensions, ['semantic-span'])
+  assert.deepEqual(sent.platforms, ['github'])
+  assert.deepEqual(sent.severities, { 'platform-issue-reference': 'error' })
+  assert.deepEqual(sent.inlayHints, { bareListMarkers: false })
+  const hints = (enabled: boolean, bare?: boolean) => carveInitializationOptions({
+    inlayHintsEnabled: enabled, bareListMarkerHints: bare, includes: {}, workspaceTrusted: true,
+  }).carve.inlayHints
+  assert.equal(hints(false, true), false)
+  assert.deepEqual(hints(true), {})
+  assert.deepEqual(hints(true, true), { bareListMarkers: true })
+})
+
+test('package.json contributes the four server settings', () => {
+  const manifest = JSON.parse(readSource(join(projectRoot, 'package.json'), 'utf8')) as {
+    contributes: { configuration: { properties: Record<string, { type: string; default: unknown }> } }
+  }
+  const properties = manifest.contributes.configuration.properties
+  assert.deepEqual(properties['carve.extensions']?.default, [])
+  assert.deepEqual(properties['carve.platforms']?.default, [])
+  assert.deepEqual(properties['carve.severities']?.default, {})
+  assert.equal(properties['carve.inlayHints.enabled']?.default, true)
+  assert.equal(properties['carve.inlayHints.bareListMarkers']?.default, true)
+})
+
+test('each server setting reaches the installed server', async () => {
+  const { LspStdioClient } = (await import(pathToFileURL(join(lspDist, 'lsp-stdio-client.js')).href)) as {
+    LspStdioClient: { spawnServer(path: string): {
+      notifications: { method: string; params?: { diagnostics?: { code?: string; severity?: number }[] } }[]
+      request(method: string, params: unknown): Promise<unknown>
+      notify(method: string, params: unknown): void
+      stop(): Promise<void>
+    } }
+  }
+  const text = 'Fixed in #12.\n\nUse [x]{samp="y"} here.\n\n- a\n- \n\n# Title\n'
+  const observe = async (input: Partial<Parameters<typeof carveInitializationOptions>[0]>) => {
+    const client = LspStdioClient.spawnServer(join(lspDist, 'server.js'))
+    try {
+      const payload = carveInitializationOptions({ includes: {}, workspaceTrusted: true, ...input })
+      await client.request('initialize', { processId: null, capabilities: {}, workspaceFolders: [], initializationOptions: payload })
+      client.notify('initialized', {})
+      const uri = 'untitled:settings.crv'
+      client.notify('textDocument/didOpen', { textDocument: { uri, languageId: 'carve', version: 1, text } })
+      // Retyping the bare marker makes line 5 the edited line, which the bare marker hint follows.
+      client.notify('textDocument/didChange', {
+        textDocument: { uri, version: 2 },
+        contentChanges: [{ range: { start: { line: 5, character: 0 }, end: { line: 5, character: 2 } }, text: '- ' }],
+      })
+      const hints = (await client.request('textDocument/inlayHint', {
+        textDocument: { uri },
+        range: { start: { line: 0, character: 0 }, end: { line: 8, character: 0 } },
+      })) as { position: { line: number } }[] | null
+      const deadline = Date.now() + 5000
+      let diagnostics: { code?: string; severity?: number }[] | undefined
+      while (Date.now() < deadline) {
+        diagnostics = client.notifications.filter((item) => item.method === 'textDocument/publishDiagnostics').at(-1)?.params?.diagnostics
+        if (diagnostics) break
+        await new Promise((resolve) => setTimeout(resolve, 50))
+      }
+      return {
+        codes: (diagnostics ?? []).map((item) => `${item.code}:${item.severity}`),
+        hintLines: (hints ?? []).map((item) => item.position.line).sort((a, b) => a - b),
+      }
+    } finally {
+      await client.stop()
+    }
+  }
+
+  const unset = await observe({})
+  assert.deepEqual(unset.codes, [])
+  assert.deepEqual(unset.hintLines, [5, 7])
+  assert.deepEqual((await observe({ platforms: ['github'] })).codes, ['platform-issue-reference:2'])
+  assert.deepEqual((await observe({ platforms: ['github'], severities: { 'platform-issue-reference': 'error' } })).codes,
+    ['platform-issue-reference:1'])
+  assert.deepEqual((await observe({ extensions: ['semantic-span'] })).codes, ['semantic-attribute-value-ignored:2'])
+  assert.deepEqual((await observe({ inlayHintsEnabled: false })).hintLines, [])
+  assert.deepEqual((await observe({ bareListMarkerHints: false })).hintLines, [7])
+})
