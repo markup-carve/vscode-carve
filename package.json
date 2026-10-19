@@ -63,6 +63,8 @@
           "meta.embedded.block.json": "json",
           "meta.embedded.block.jsonc": "jsonc",
           "meta.embedded.block.jsonl": "jsonl",
+          "meta.embedded.block.csv": "csv",
+          "meta.embedded.block.tsv": "tsv",
           "meta.embedded.block.yaml": "yaml",
           "meta.embedded.block.toml": "toml",
           "meta.embedded.block.html": "html",
@@ -122,6 +124,14 @@
           "meta.embedded.block.svelte": "svelte",
           "meta.embedded.block.graphql": "graphql"
         }
+      },
+      {
+        "scopeName": "text.csv.carve",
+        "path": "./syntaxes/csv.tmLanguage.json"
+      },
+      {
+        "scopeName": "text.tsv.carve",
+        "path": "./syntaxes/tsv.tmLanguage.json"
       },
       {
         "scopeName": "markdown.carve.codeblock",

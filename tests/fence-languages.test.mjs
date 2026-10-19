@@ -77,3 +77,100 @@ test('a fence word is matched literally, not as a pattern', async () => {
   // Unescaped, `c++` would be a possessive `c+` and match `ccc`.
   assert.ok(!(await bodyScopes('```ccc')).some((scope) => scope.startsWith('meta.embedded.block.')))
 })
+
+test('CSV and TSV grammars are contributed without claiming file languages', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+  for (const name of ['csv', 'tsv']) {
+    const contribution = manifest.contributes.grammars.find(({ scopeName }) => scopeName === `text.${name}.carve`)
+    assert.deepEqual(contribution, {
+      scopeName: `text.${name}.carve`,
+      path: `./syntaxes/${name}.tmLanguage.json`,
+    })
+    assert.equal(manifest.contributes.grammars[0].embeddedLanguages[`meta.embedded.block.${name}`], name)
+  }
+})
+
+test('real CSV and TSV grammars tokenize delimited table fences', async () => {
+  const wasm = readFileSync(require.resolve('vscode-oniguruma/release/onig.wasm')).buffer
+  const files = { 'text.carve': 'carve', 'text.csv.carve': 'csv', 'text.tsv.carve': 'tsv' }
+  const registry = new Registry({
+    onigLib: loadWASM(wasm).then(() => ({
+      createOnigScanner: (patterns) => new OnigScanner(patterns),
+      createOnigString: (value) => new OnigString(value),
+    })),
+    loadGrammar: async (scopeName) => {
+      const name = files[scopeName]
+      if (!name) return null
+      return parseRawGrammar(readFileSync(new URL(`../syntaxes/${name}.tmLanguage.json`, import.meta.url), 'utf8'), `${name}.tmLanguage.json`)
+    },
+  })
+  const carve = await registry.loadGrammar('text.carve')
+  const lines = [
+    '{table}', '```csv', 'Plan,Seats,Price per month', 'Starter,1,"$0"',
+    'Team,10,"$49, billed yearly"', 'Note,"line one', 'line two"',
+    'Quote,"say ""hi"""', '```', '```tsv', 'Plan\tSeats', 'Team\t"a\tb"', '```',
+  ]
+  let stack = INITIAL
+  const actual = []
+  for (const [index, line] of lines.entries()) {
+    const result = carve.tokenizeLine(line, stack)
+    stack = result.ruleStack
+    for (const token of result.tokens) {
+      const scopes = token.scopes.filter((scope) => /\.(csv|tsv)$/.test(scope)).join(' ')
+      actual.push(`${index + 1} ${JSON.stringify(line.slice(token.startIndex, token.endIndex))} ${scopes}`.trimEnd())
+    }
+  }
+  assert.deepEqual(actual, GOLDEN)
+})
+
+// One token per entry: line, text, and its csv/tsv scopes.
+const GOLDEN = [
+  '1 "{table}"',
+  '2 "```"',
+  '2 "csv"',
+  '3 "Plan" meta.embedded.block.csv string.unquoted.csv markup.heading.csv',
+  '3 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '3 "Seats" meta.embedded.block.csv string.unquoted.csv markup.heading.csv',
+  '3 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '3 "Price per month" meta.embedded.block.csv string.unquoted.csv markup.heading.csv',
+  '4 "Starter" meta.embedded.block.csv string.unquoted.csv',
+  '4 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '4 "1" meta.embedded.block.csv string.unquoted.csv',
+  '4 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '4 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv',
+  '4 "$0" meta.embedded.block.csv string.quoted.double.csv',
+  '4 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv',
+  '5 "Team" meta.embedded.block.csv string.unquoted.csv',
+  '5 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '5 "10" meta.embedded.block.csv string.unquoted.csv',
+  '5 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '5 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv',
+  '5 "$49, billed yearly" meta.embedded.block.csv string.quoted.double.csv',
+  '5 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv',
+  '6 "Note" meta.embedded.block.csv string.unquoted.csv',
+  '6 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '6 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv',
+  '6 "line one" meta.embedded.block.csv string.quoted.double.csv',
+  '7 "line two" meta.embedded.block.csv string.quoted.double.csv',
+  '7 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv',
+  '8 "Quote" meta.embedded.block.csv string.unquoted.csv',
+  '8 "," meta.embedded.block.csv keyword.operator.separator.csv',
+  '8 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv',
+  '8 "say " meta.embedded.block.csv string.quoted.double.csv',
+  '8 "\\"\\"" meta.embedded.block.csv string.quoted.double.csv constant.character.escape.csv',
+  '8 "hi" meta.embedded.block.csv string.quoted.double.csv',
+  '8 "\\"\\"" meta.embedded.block.csv string.quoted.double.csv constant.character.escape.csv',
+  '8 "\\"" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv',
+  '9 "```"',
+  '10 "```"',
+  '10 "tsv"',
+  '11 "Plan" meta.embedded.block.tsv string.unquoted.tsv markup.heading.tsv',
+  '11 "\\t" meta.embedded.block.tsv keyword.operator.separator.tsv',
+  '11 "Seats" meta.embedded.block.tsv string.unquoted.tsv markup.heading.tsv',
+  '12 "Team" meta.embedded.block.tsv string.unquoted.tsv',
+  '12 "\\t" meta.embedded.block.tsv keyword.operator.separator.tsv',
+  '12 "\\"" meta.embedded.block.tsv string.quoted.double.tsv punctuation.definition.string.begin.tsv',
+  '12 "a\\tb" meta.embedded.block.tsv string.quoted.double.tsv',
+  '12 "\\"" meta.embedded.block.tsv string.quoted.double.tsv punctuation.definition.string.end.tsv',
+  '13 "```"',
+]

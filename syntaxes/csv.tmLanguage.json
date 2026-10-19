@@ -1,0 +1,130 @@
+{
+  "name": "CSV (Carve)",
+  "scopeName": "text.csv.carve",
+  "patterns": [
+    {
+      "include": "#header"
+    },
+    {
+      "include": "#records"
+    }
+  ],
+  "repository": {
+    "header": {
+      "comment": "The first record. Its begin consumes the first field so #records, which starts at a line start, cannot open before the next line; no capture carries patterns, which the IntelliJ TextMate lexer ignores.",
+      "begin": "^(?:([ \\t]*)(\")|([^,\\r\\n]+)|(,))",
+      "beginCaptures": {
+        "2": {
+          "name": "string.quoted.double.csv punctuation.definition.string.begin.csv"
+        },
+        "3": {
+          "name": "string.unquoted.csv markup.heading.csv"
+        },
+        "4": {
+          "name": "keyword.operator.separator.csv"
+        }
+      },
+      "end": "(?=A)(?!A)",
+      "patterns": [
+        {
+          "include": "#records"
+        },
+        {
+          "begin": "\\G(?<=\")",
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "string.quoted.double.csv punctuation.definition.string.end.csv"
+            }
+          },
+          "contentName": "string.quoted.double.csv markup.heading.csv",
+          "patterns": [
+            {
+              "include": "#escape"
+            }
+          ]
+        },
+        {
+          "include": "#header-fields"
+        }
+      ]
+    },
+    "records": {
+      "begin": "^",
+      "end": "(?=A)(?!A)",
+      "patterns": [
+        {
+          "include": "#fields"
+        }
+      ]
+    },
+    "fields": {
+      "patterns": [
+        {
+          "match": ",",
+          "name": "keyword.operator.separator.csv"
+        },
+        {
+          "begin": "(?:^[ \\t]*|(?<=,))(\")",
+          "beginCaptures": {
+            "1": {
+              "name": "string.quoted.double.csv punctuation.definition.string.begin.csv"
+            }
+          },
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "string.quoted.double.csv punctuation.definition.string.end.csv"
+            }
+          },
+          "contentName": "string.quoted.double.csv",
+          "patterns": [
+            {
+              "include": "#escape"
+            }
+          ]
+        },
+        {
+          "match": "[^,\\r\\n]+",
+          "name": "string.unquoted.csv"
+        }
+      ]
+    },
+    "header-fields": {
+      "patterns": [
+        {
+          "match": ",",
+          "name": "keyword.operator.separator.csv"
+        },
+        {
+          "begin": "(?:^[ \\t]*|(?<=,))(\")",
+          "beginCaptures": {
+            "1": {
+              "name": "string.quoted.double.csv punctuation.definition.string.begin.csv"
+            }
+          },
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "string.quoted.double.csv punctuation.definition.string.end.csv"
+            }
+          },
+          "contentName": "string.quoted.double.csv markup.heading.csv",
+          "patterns": [
+            {
+              "include": "#escape"
+            }
+          ]
+        },
+        {
+          "match": "[^,\\r\\n]+",
+          "name": "string.unquoted.csv markup.heading.csv"
+        }
+      ]
+    },
+    "escape": {
+      "match": "\"\"",
+      "name": "constant.character.escape.csv"
+    }
+  }
+}
