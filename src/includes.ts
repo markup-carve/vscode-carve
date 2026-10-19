@@ -34,14 +34,17 @@ export interface IncludeSettingsPayload {
 }
 
 export interface InitializationOptionsInput {
-  formatter: string
+  /** Only what the user set: an omitted key lets the server fall back to `.carverc.json`. */
+  formatter?: string
+  alignTables?: boolean
   includes: IncludeConfiguration
   workspaceTrusted: boolean
 }
 
 export interface CarveInitializationOptions {
   carve: {
-    formatter: string
+    formatter?: string
+    format?: { alignTables: boolean }
     includes: IncludeSettingsPayload
     /** Off: the extension's own export commands already cover the server's export source actions. */
     exportActions: false
@@ -76,12 +79,11 @@ export function includeSettingsPayload(config: IncludeConfiguration): IncludeSet
 export function carveInitializationOptions(
   input: InitializationOptionsInput,
 ): CarveInitializationOptions {
-  return {
-    carve: {
-      formatter: input.formatter,
-      includes: includeSettingsPayload(input.includes),
-      exportActions: false,
-    },
-    workspaceTrusted: input.workspaceTrusted,
+  const carve: CarveInitializationOptions['carve'] = {
+    includes: includeSettingsPayload(input.includes),
+    exportActions: false,
   }
+  if (typeof input.formatter === 'string') carve.formatter = input.formatter
+  if (typeof input.alignTables === 'boolean') carve.format = { alignTables: input.alignTables }
+  return { carve, workspaceTrusted: input.workspaceTrusted }
 }
