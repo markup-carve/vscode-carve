@@ -3,6 +3,7 @@ import { basename } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import * as vscode from 'vscode'
 import {
+  DidChangeConfigurationNotification,
   LanguageClient,
   TransportKind,
   type LanguageClientOptions,
@@ -176,6 +177,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       if (
         event.affectsConfiguration('carve.lsp.enabled') ||
         event.affectsConfiguration('carve.formatter') ||
+        event.affectsConfiguration('carve.format') ||
         // The include settings ride in initializationOptions, which is read
         // once at startup, so a change to them only takes effect on a restart.
         event.affectsConfiguration('carve.includes')
@@ -1034,9 +1036,16 @@ function highlightPreviewLine(
  * question, so a second caller cannot end up with a different containment root
  * than the one the server is enforcing.
  */
+// A setting the user never set stays unsent, so `.carverc.json` decides it.
+function explicitSetting<T>(key: string): T | undefined {
+  const inspected = vscode.workspace.getConfiguration('carve').inspect<T>(key)
+  return inspected?.workspaceFolderValue ?? inspected?.workspaceValue ?? inspected?.globalValue
+}
+
 function includePayload(): CarveInitializationOptions {
   return carveInitializationOptions({
-    formatter: vscode.workspace.getConfiguration('carve').get('formatter', 'conservative'),
+    formatter: explicitSetting<string>('formatter'),
+    alignTables: explicitSetting<boolean>('format.alignTables'),
     includes: {
       enabled: vscode.workspace.getConfiguration('carve.includes').get('enabled'),
       includeRoot: vscode.workspace.getConfiguration('carve.includes').get('includeRoot'),
@@ -1165,6 +1174,13 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
     },
     initializationOptions: includePayload(),
     middleware: {
+      workspace: {
+        // Without this the client sends `settings: null` on every VS Code
+        // settings change, which carve-lsp 0.1.13 reads as "all defaults".
+        didChangeConfiguration: async () => {
+          await client?.sendNotification(DidChangeConfigurationNotification.type, { settings: includePayload() })
+        },
+      },
       provideOnTypeFormattingEdits: async (document, position, ch, options, token, next) => {
         const edits = await next(document, position, ch, options, token)
         if (ch === '\n' && edits) {

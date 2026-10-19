@@ -216,6 +216,11 @@
           ],
           "default": "conservative",
           "markdownDescription": "What **Format Document** does in a Carve file. `migration` round-trips the document through the AST, so it may rewrite lines you did not touch."
+        },
+        "carve.format.alignTables": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without this setting."
         }
       }
     },

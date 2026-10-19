@@ -44,6 +44,28 @@ test('the formatter option the server already relied on survives', () => {
   assert.equal(options().carve.formatter, 'conservative')
 })
 
+test('settings the user did not set stay unsent, so .carverc.json can supply them', () => {
+  const sent = carveInitializationOptions({ includes: {}, workspaceTrusted: true })
+  assert.equal('formatter' in sent.carve, false)
+  assert.equal('format' in sent.carve, false)
+})
+
+test('carve.format.alignTables is sent under carve.format when the user set it', () => {
+  const on = carveInitializationOptions({ alignTables: true, includes: {}, workspaceTrusted: true })
+  assert.deepEqual(on.carve.format, { alignTables: true })
+  const off = carveInitializationOptions({ alignTables: false, includes: {}, workspaceTrusted: true })
+  assert.deepEqual(off.carve.format, { alignTables: false })
+})
+
+test('package.json contributes carve.format.alignTables, off by default', () => {
+  const manifest = JSON.parse(readSource(join(projectRoot, 'package.json'), 'utf8')) as {
+    contributes: { configuration: { properties: Record<string, { type: string; default: unknown }> } }
+  }
+  const setting = manifest.contributes.configuration.properties['carve.format.alignTables']
+  assert.equal(setting?.type, 'boolean')
+  assert.equal(setting?.default, false)
+})
+
 test('an unset gate is auto, which is on for a trusted workspace', () => {
   assert.equal(includeEnabledFrom(undefined), 'auto')
 })
@@ -270,4 +292,39 @@ test('every include setting is declared restricted', () => {
   for (const key of includeKeys) {
     assert.equal(properties[key]?.restricted, true, `${key} is not declared restricted`)
   }
+})
+
+test('a settings change re-sends the payload instead of settings null', () => {
+  const source = readSource(join(projectRoot, 'src', 'extension.ts'), 'utf8')
+  assert.match(
+    source,
+    /didChangeConfiguration:[^}]*DidChangeConfigurationNotification\.type, \{ settings: includePayload\(\) \}/,
+    'without the middleware the client sends settings null, which resets the server settings',
+  )
+})
+
+test('the installed server aligns tables on Format Document when carve.format.alignTables is set', async (context) => {
+  const { LspStdioClient } = (await import(pathToFileURL(join(lspDist, 'lsp-stdio-client.js')).href)) as {
+    LspStdioClient: { spawnServer(path: string): {
+      request(method: string, params: unknown): Promise<unknown>
+      notify(method: string, params: unknown): void
+      stop(): void
+    } }
+  }
+  const client = LspStdioClient.spawnServer(join(lspDist, 'server.js'))
+  context.after(() => client.stop())
+  const payload = carveInitializationOptions({ alignTables: true, includes: {}, workspaceTrusted: true })
+  await client.request('initialize', { processId: null, capabilities: {}, workspaceFolders: [], initializationOptions: payload })
+  client.notify('initialized', {})
+  // What the didChangeConfiguration middleware sends on any VS Code settings change.
+  client.notify('workspace/didChangeConfiguration', { settings: payload })
+  const uri = 'untitled:table.crv'
+  client.notify('textDocument/didOpen', {
+    textDocument: { uri, languageId: 'carve', version: 1, text: '|= Name |= Score |\n| Ada | 10 |\n' },
+  })
+  const edits = (await client.request('textDocument/formatting', {
+    textDocument: { uri },
+    options: { tabSize: 2, insertSpaces: true },
+  })) as { newText: string }[]
+  assert.equal(edits[0]?.newText, '|= Name |= Score |\n| Ada   | 10     |\n')
 })

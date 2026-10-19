@@ -58,9 +58,14 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 | `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
 | `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
 | `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
+| `carve.formatter` | `"conservative"` | What **Format Document** does: `conservative` normalizes whitespace and line endings only, `migration` rewrites the document into canonical Carve. |
+| `carve.format.alignTables` | `false` | Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without it. |
 | `carve.includes.enabled` | `"auto"` | Resolve `{{ path }}` include directives (`auto`/`on`/`off`). `auto` resolves them in a trusted workspace and leaves them literal in an untrusted one. |
 | `carve.includes.includeRoot` | `""` | Containment root for include targets, the equivalent of `carve --include-root`. Empty uses the workspace folder the document belongs to, then the document's own folder. |
 | `carve.includes.allowAbsolute` | `false` | Allow an absolute include path. Still subject to root containment. |
+
+The extension sends `carve.formatter` and `carve.format.alignTables` to the
+language server only when you set them, and changing either restarts the server.
 
 The extension also sets one editor default for Carve files only:
 
