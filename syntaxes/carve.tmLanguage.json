@@ -67,6 +67,9 @@
       "include": "#sup-sub"
     },
     {
+      "include": "#attribute-text-guards"
+    },
+    {
       "include": "#attributes"
     },
     {
@@ -1153,6 +1156,9 @@
           "include": "#autolink"
         },
         {
+          "include": "#attribute-text-guards"
+        },
+        {
           "include": "#attributes"
         },
         {
@@ -2065,6 +2071,150 @@
         }
       ]
     },
+    "attribute-text-guards": {
+      "comment": "Text the engine never reads as an attribute block: a brace after an escaped bracket, an escaped link closer, or a parenthesis that does not end a link destination. Consumed here so `#attributes` does not scope it. Ported from carve-grammars (#738, #740).",
+      "patterns": [
+        {
+          "match": "(?<!\\\\)(?:\\\\\\\\)*(\\\\\\[)((?:[^\\[\\]\\\\\\n]|\\\\.)*)(\\])(?:\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\))?((?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})?)",
+          "captures": {
+            "1": {
+              "name": "constant.character.escape.carve"
+            },
+            "2": {
+              "patterns": [
+                {
+                  "include": "#attribute-text-inline"
+                }
+              ]
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#attribute-text-inline"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "match": "(?<!\\\\)\\[((?:[^\\[\\]\\\\\\n]|\\\\.)*)\\\\\\]\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\)\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#attribute-text-inline"
+                }
+              ]
+            },
+            "2": {
+              "patterns": [
+                {
+                  "include": "#attribute-text-inline"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "match": "(?<!\\\\)(?:\\\\\\\\)*\\\\\\]\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\)\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#attribute-text-inline"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "match": "(?<!\\])\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\)\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}",
+          "captures": {
+            "1": {
+              "patterns": [
+                {
+                  "include": "#attribute-text-inline"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "attribute-text-inline": {
+      "comment": "Inline constructs re-tokenized inside text the attribute guards consume.",
+      "patterns": [
+        {
+          "include": "#links"
+        },
+        {
+          "include": "#images"
+        },
+        {
+          "include": "#footnotes"
+        },
+        {
+          "include": "#citations"
+        },
+        {
+          "include": "#code-callouts"
+        },
+        {
+          "include": "#critic-markup"
+        },
+        {
+          "include": "#forced-emphasis"
+        },
+        {
+          "include": "#sup-sub"
+        },
+        {
+          "include": "#attribute-text-guards"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#raw-inline"
+        },
+        {
+          "include": "#inline-literal"
+        },
+        {
+          "include": "#inline-code"
+        },
+        {
+          "include": "#braced-comment"
+        },
+        {
+          "include": "#trailing-comment"
+        },
+        {
+          "include": "#include-directive"
+        },
+        {
+          "include": "#math"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#extension-inline"
+        },
+        {
+          "include": "#emphasis"
+        },
+        {
+          "include": "#mentions-tags"
+        },
+        {
+          "include": "#smart-typography"
+        },
+        {
+          "include": "#hard-break"
+        }
+      ]
+    },
     "attributes": {
       "patterns": [
         {
@@ -2075,7 +2225,7 @@
         {
           "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons (`{k=v.w}`); a quoted value may contain an escaped quote (`{title=\"a\\\"b\"}`); a bare `{}` stays literal.",
           "name": "meta.attributes.carve",
-          "match": "(?<!\\\\\\{)(?<![\\w\"\\'])(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|\\'(?:\\\\.|[^\\'\\\\\\n])*\\'|[^{}\"\\'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|\\'(?:\\\\.|[^\\'\\\\\\n])*\\'|[^{}\"\\'\\n])*\\})*[ \\t]*$))\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}",
+          "match": "(?<!\\\\\\{)(?<!(?<!\\\\)(?:\\\\\\\\){0,15}\\\\[!-/:-@\\[-`{-~])(?<![\\w\"\\'])(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|\\'(?:\\\\.|[^\\'\\\\\\n])*\\'|[^{}\"\\'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|\\'(?:\\\\.|[^\\'\\\\\\n])*\\'|[^{}\"\\'\\n])*\\})*[ \\t]*$))\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\}",
           "captures": {
             "0": {
               "patterns": [
@@ -2502,6 +2652,9 @@
                   "include": "#sup-sub"
                 },
                 {
+                  "include": "#attribute-text-guards"
+                },
+                {
                   "include": "#attributes"
                 },
                 {
@@ -2595,6 +2748,9 @@
                   "include": "#sup-sub"
                 },
                 {
+                  "include": "#attribute-text-guards"
+                },
+                {
                   "include": "#attributes"
                 },
                 {
@@ -2667,6 +2823,9 @@
         },
         {
           "include": "#sup-sub"
+        },
+        {
+          "include": "#attribute-text-guards"
         },
         {
           "include": "#attributes"
@@ -2945,6 +3104,9 @@
             },
             {
               "include": "#sup-sub"
+            },
+            {
+              "include": "#attribute-text-guards"
             },
             {
               "include": "#attributes"
@@ -3377,6 +3539,9 @@
         },
         {
           "include": "#sup-sub"
+        },
+        {
+          "include": "#attribute-text-guards"
         },
         {
           "include": "#attributes"
@@ -4755,6 +4920,9 @@
           "include": "#sup-sub"
         },
         {
+          "include": "#attribute-text-guards"
+        },
+        {
           "include": "#attributes"
         },
         {
@@ -4977,6 +5145,9 @@
           "include": "#sup-sub"
         },
         {
+          "include": "#attribute-text-guards"
+        },
+        {
           "include": "#attributes"
         },
         {
@@ -5092,6 +5263,9 @@
             },
             {
               "include": "#sup-sub"
+            },
+            {
+              "include": "#attribute-text-guards"
             },
             {
               "include": "#attributes"
@@ -5891,6 +6065,9 @@
           "include": "#sup-sub"
         },
         {
+          "include": "#attribute-text-guards"
+        },
+        {
           "include": "#attributes"
         },
         {
@@ -6076,6 +6253,9 @@
         },
         {
           "include": "#sup-sub"
+        },
+        {
+          "include": "#attribute-text-guards"
         },
         {
           "include": "#attributes"
@@ -6575,6 +6755,9 @@
         },
         {
           "include": "#sup-sub"
+        },
+        {
+          "include": "#attribute-text-guards"
         },
         {
           "include": "#attributes"
