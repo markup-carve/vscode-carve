@@ -510,7 +510,26 @@ let twoParserMismatches = 0
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
 const ENGINE_PIN = '0.1.12'
-const ENGINE_LAG = {}
+const ENGINE_LAG = {
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-10.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-12.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-14.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-2.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-4.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-5.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-6.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-7.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv':
+    'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+}
 const lagWaived = []
 const lagStale = []
 
