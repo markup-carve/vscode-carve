@@ -51,24 +51,30 @@ export async function tokenize(grammar, text) {
     loadGrammar: async (scope) =>
       scope === grammar.scopeName ? vsctm.parseRawGrammar(JSON.stringify(grammar), 'grammar.json') : null,
   })
-  const loaded = await registry.loadGrammar(grammar.scopeName)
-  if (!loaded) throw new Error(`grammar ${grammar.scopeName} did not load`)
-  const tokens = []
-  let stack = vsctm.INITIAL
-  text.split('\n').forEach((line, row) => {
-    const result = loaded.tokenizeLine(line, stack)
-    stack = result.ruleStack
-    for (const token of result.tokens) {
-      tokens.push({
-        row,
-        start: token.startIndex,
-        end: token.endIndex,
-        text: line.slice(token.startIndex, token.endIndex),
-        scopes: token.scopes,
-      })
-    }
-  })
-  return tokens
+  // Disposing frees the wasm scanners; a run that builds a registry per probe
+  // otherwise exhausts the shared Oniguruma heap after ~150 of them.
+  try {
+    const loaded = await registry.loadGrammar(grammar.scopeName)
+    if (!loaded) throw new Error(`grammar ${grammar.scopeName} did not load`)
+    const tokens = []
+    let stack = vsctm.INITIAL
+    text.split('\n').forEach((line, row) => {
+      const result = loaded.tokenizeLine(line, stack)
+      stack = result.ruleStack
+      for (const token of result.tokens) {
+        tokens.push({
+          row,
+          start: token.startIndex,
+          end: token.endIndex,
+          text: line.slice(token.startIndex, token.endIndex),
+          scopes: token.scopes,
+        })
+      }
+    })
+    return tokens
+  } finally {
+    registry.dispose()
+  }
 }
 
 function withProbeScope(grammar, ruleName) {
