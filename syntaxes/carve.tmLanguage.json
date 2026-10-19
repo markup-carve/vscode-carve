@@ -1798,14 +1798,13 @@
           }
         },
         {
-          "name": "meta.span.inline.carve",
-          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(?=\\{\\s*\\}|\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})",
+          "match": "(\\[)([^\\^\\]][^\\]]*)(\\])(\\{\\s*\\}|\\{\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*\\})",
           "captures": {
             "1": {
-              "name": "punctuation.definition.span.begin.carve"
+              "name": "meta.span.inline.carve punctuation.definition.span.begin.carve"
             },
             "2": {
-              "name": "string.other.span.carve",
+              "name": "meta.span.inline.carve string.other.span.carve",
               "patterns": [
                 {
                   "include": "#links"
@@ -1822,10 +1821,29 @@
               ]
             },
             "3": {
-              "name": "punctuation.definition.span.end.carve"
+              "name": "meta.span.inline.carve punctuation.definition.span.end.carve"
+            },
+            "4": {
+              "name": "meta.attributes.carve",
+              "patterns": [
+                {
+                  "name": "support.constant.attribute.carve",
+                  "match": "(?<=[{\\s])kbd(?![\\w=-])"
+                },
+                {
+                  "name": "support.constant.attribute.carve",
+                  "match": "(?<=[{\\s])(?:abbr|time)(?==)"
+                },
+                {
+                  "include": "#attribute-items"
+                },
+                {
+                  "match": "\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'"
+                }
+              ]
             }
           },
-          "comment": "THE BRACE RUN HAS TO BE A REAL ATTRIBUTE BLOCK. The lookahead was `(?={)`, which asked only that a brace follow - so `[a]{xlink:href=u}` scoped as a span while every engine renders the whole line as literal text, because an attribute name admits no colon (spec markup-carve/carve#870, corpus `an-attribute-name-admits-no-colon`). It now looks ahead for the same block the `attributes` rule matches, including the empty `{}` form that is valid only glued to a preceding `]`."
+          "comment": "THE BRACE RUN HAS TO BE A REAL ATTRIBUTE BLOCK. The lookahead was `(?={)`, which asked only that a brace follow - so `[a]{xlink:href=u}` scoped as a span while every engine renders the whole line as literal text, because an attribute name admits no colon (spec markup-carve/carve#870, corpus `an-attribute-name-admits-no-colon`). It now captures the same block the `attributes` rule matches, including the empty `{}` form that is valid only glued to a preceding `]`."
         }
       ]
     },
