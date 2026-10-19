@@ -37,6 +37,11 @@ export interface InitializationOptionsInput {
   /** Only what the user set: an omitted key lets the server fall back to `.carverc.json`. */
   formatter?: string
   alignTables?: boolean
+  extensions?: unknown
+  platforms?: unknown
+  severities?: unknown
+  inlayHintsEnabled?: unknown
+  bareListMarkerHints?: unknown
   includes: IncludeConfiguration
   workspaceTrusted: boolean
 }
@@ -45,6 +50,10 @@ export interface CarveInitializationOptions {
   carve: {
     formatter?: string
     format?: { alignTables: boolean }
+    extensions?: string[]
+    platforms?: string[]
+    severities?: Record<string, string>
+    inlayHints?: false | { bareListMarkers?: boolean }
     includes: IncludeSettingsPayload
     /** Off: the extension's own export commands already cover the server's export source actions. */
     exportActions: false
@@ -85,5 +94,22 @@ export function carveInitializationOptions(
   }
   if (typeof input.formatter === 'string') carve.formatter = input.formatter
   if (typeof input.alignTables === 'boolean') carve.format = { alignTables: input.alignTables }
+  if (isStringArray(input.extensions)) carve.extensions = input.extensions
+  if (isStringArray(input.platforms)) carve.platforms = input.platforms
+  if (isStringRecord(input.severities)) carve.severities = input.severities
+  // The server reads `inlayHints` as `false` or an object of per-hint switches.
+  if (input.inlayHintsEnabled === false) carve.inlayHints = false
+  else if (input.inlayHintsEnabled === true || typeof input.bareListMarkerHints === 'boolean') {
+    carve.inlayHints = typeof input.bareListMarkerHints === 'boolean' ? { bareListMarkers: input.bareListMarkerHints } : {}
+  }
   return { carve, workspaceTrusted: input.workspaceTrusted }
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === 'string')
+}
+
+function isStringRecord(value: unknown): value is Record<string, string> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    && Object.values(value).every((item) => typeof item === 'string')
 }

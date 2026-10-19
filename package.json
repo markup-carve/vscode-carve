@@ -221,6 +221,50 @@
           "type": "boolean",
           "default": false,
           "markdownDescription": "Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without this setting."
+        },
+        "carve.extensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Carve language extensions the language server enables for diagnostics and highlighting, such as `semantic-span`."
+        },
+        "carve.platforms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "github"
+            ]
+          },
+          "default": [],
+          "markdownDescription": "Platforms whose rendering the language server checks against, such as `github`."
+        },
+        "carve.severities": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": [
+              "error",
+              "warning",
+              "information",
+              "hint",
+              "off"
+            ]
+          },
+          "default": {},
+          "markdownDescription": "Diagnostic severity by rule name, for example `{ \"broken-crossref\": \"error\" }`. `off` hides the rule."
+        },
+        "carve.inlayHints.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show the language server's inlay hints."
+        },
+        "carve.inlayHints.bareListMarkers": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show the hint after a bare list marker on the line being edited."
         }
       }
     },

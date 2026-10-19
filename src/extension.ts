@@ -178,6 +178,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         event.affectsConfiguration('carve.lsp.enabled') ||
         event.affectsConfiguration('carve.formatter') ||
         event.affectsConfiguration('carve.format') ||
+        event.affectsConfiguration('carve.extensions') ||
+        event.affectsConfiguration('carve.platforms') ||
+        event.affectsConfiguration('carve.severities') ||
+        event.affectsConfiguration('carve.inlayHints') ||
         // The include settings ride in initializationOptions, which is read
         // once at startup, so a change to them only takes effect on a restart.
         event.affectsConfiguration('carve.includes')
@@ -1046,6 +1050,11 @@ function includePayload(): CarveInitializationOptions {
   return carveInitializationOptions({
     formatter: explicitSetting<string>('formatter'),
     alignTables: explicitSetting<boolean>('format.alignTables'),
+    extensions: explicitSetting('extensions'),
+    platforms: explicitSetting('platforms'),
+    severities: explicitSetting('severities'),
+    inlayHintsEnabled: explicitSetting('inlayHints.enabled'),
+    bareListMarkerHints: explicitSetting('inlayHints.bareListMarkers'),
     includes: {
       enabled: vscode.workspace.getConfiguration('carve.includes').get('enabled'),
       includeRoot: vscode.workspace.getConfiguration('carve.includes').get('includeRoot'),
