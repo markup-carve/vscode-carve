@@ -1,0 +1,145 @@
+{
+  "name": "TSV (Carve)",
+  "scopeName": "text.tsv.carve",
+  "patterns": [
+    {
+      "include": "#header"
+    },
+    {
+      "include": "#records"
+    }
+  ],
+  "repository": {
+    "header": {
+      "comment": "The first record. Its begin consumes the first field so #records, which starts at a line start, cannot open before the next line; no capture carries patterns, which the IntelliJ TextMate lexer ignores.",
+      "begin": "^(?:( *)(\")|([^\\t\"\\r\\n]+)|(\\t))",
+      "beginCaptures": {
+        "2": {
+          "name": "string.quoted.double.tsv punctuation.definition.string.begin.tsv"
+        },
+        "3": {
+          "name": "markup.heading.tsv"
+        },
+        "4": {
+          "name": "punctuation.separator.delimiter.tsv"
+        }
+      },
+      "end": "(?=A)(?!A)",
+      "patterns": [
+        {
+          "include": "#records"
+        },
+        {
+          "begin": "\\G(?<=\")",
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "string.quoted.double.tsv punctuation.definition.string.end.tsv"
+            }
+          },
+          "contentName": "string.quoted.double.tsv",
+          "patterns": [
+            {
+              "include": "#escape"
+            }
+          ]
+        },
+        {
+          "include": "#header-fields"
+        }
+      ]
+    },
+    "records": {
+      "begin": "^",
+      "end": "(?=A)(?!A)",
+      "patterns": [
+        {
+          "include": "#fields"
+        }
+      ]
+    },
+    "fields": {
+      "patterns": [
+        {
+          "match": "\\t",
+          "name": "punctuation.separator.delimiter.tsv"
+        },
+        {
+          "begin": "(?:^ *|(?<=\\t))(\")",
+          "beginCaptures": {
+            "1": {
+              "name": "string.quoted.double.tsv punctuation.definition.string.begin.tsv"
+            }
+          },
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "string.quoted.double.tsv punctuation.definition.string.end.tsv"
+            }
+          },
+          "contentName": "string.quoted.double.tsv",
+          "patterns": [
+            {
+              "include": "#escape"
+            }
+          ]
+        },
+        {
+          "match": "(?<=\")[^\\t\\r\\n]+",
+          "name": "invalid.illegal.text-after-quote.tsv"
+        },
+        {
+          "match": "[^\\t\"\\r\\n]+"
+        },
+        {
+          "match": "\"",
+          "name": "invalid.illegal.quote-in-unquoted-field.tsv"
+        }
+      ]
+    },
+    "header-fields": {
+      "patterns": [
+        {
+          "match": "\\t",
+          "name": "punctuation.separator.delimiter.tsv"
+        },
+        {
+          "begin": "(?:^ *|(?<=\\t))(\")",
+          "beginCaptures": {
+            "1": {
+              "name": "string.quoted.double.tsv punctuation.definition.string.begin.tsv"
+            }
+          },
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "string.quoted.double.tsv punctuation.definition.string.end.tsv"
+            }
+          },
+          "contentName": "string.quoted.double.tsv",
+          "patterns": [
+            {
+              "include": "#escape"
+            }
+          ]
+        },
+        {
+          "match": "(?<=\")[^\\t\\r\\n]+",
+          "name": "invalid.illegal.text-after-quote.tsv"
+        },
+        {
+          "match": "[^\\t\"\\r\\n]+",
+          "name": "markup.heading.tsv"
+        },
+        {
+          "match": "\"",
+          "name": "invalid.illegal.quote-in-unquoted-field.tsv"
+        }
+      ]
+    },
+    "escape": {
+      "match": "\"\"",
+      "name": "constant.character.escape.tsv"
+    }
+  }
+}
