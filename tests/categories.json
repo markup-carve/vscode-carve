@@ -452,6 +452,7 @@
     "blockquote-lazy-continuation-stops-at-a-fenced-block": "Lazy-continuation termination at a fence is block-structure parsing; quote and fence tokens are covered by 07 and 11.",
     "blocks-that-render-to-nothing": "Rendering to nothing is a render-time outcome; the blocks still scope, and those scopes are pinned by `comments` and `definition-lists`.",
     "bold-italic-delimiter-needs-content": "Negative case: an empty `/*..*/` run stays literal. The absence of a scope is the point, and the positive form is pinned by `emphasis`.",
+    "captions-in-list-items-do-not-create-a-paragraph-gap": "Whether a caption in a list item opens a paragraph gap is list looseness, decided at render time; it does not change how a caption or list token is scoped.",
     "classes-are-deduplicated": "Class deduplication happens when emitting the class attribute; both duplicates tokenize identically as class names, which are covered by 17-attributes.",
     "collapsed-reference-link": "A collapsed reference link tokenizes the same as a reference link (covered by 34); collapsing is a resolver concern.",
     "colon-fence-as-a-block-opener-in-a-list-item": "The opener produces the same div tokens wherever it sits, pinned by `fence-opener-with-a-nested-list-body-inside-a-list-item`.",
