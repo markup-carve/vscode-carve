@@ -978,6 +978,7 @@ function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview
     katexAutoRender: asset('media', 'katex', 'auto-render.min.js'),
     hljsJs: asset('media', 'hljs', 'highlight.min.js'),
     hljsCarveJs: asset('media', 'hljs', 'carve.js'),
+    hljsDelimitedJs: asset('media', 'hljs', 'delimited.js'),
     hljsLightCss: asset('media', 'hljs', 'github.min.css'),
     hljsDarkCss: asset('media', 'hljs', 'github-dark.min.css'),
     hljsTableCss: asset('media', 'hljs', 'table-tokens.css'),
