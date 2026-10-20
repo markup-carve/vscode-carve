@@ -107,6 +107,7 @@
     "code-blocks-in-long-colon-container": { "upstream": "fenced_code", "fixture": "container-fences" }
   },
   "localOnlyRules": {
+    "continuation-in-container": "grammar-correctness",
     "container-body": "grammar-correctness"
   }
 }

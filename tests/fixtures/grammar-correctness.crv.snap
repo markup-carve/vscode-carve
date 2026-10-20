@@ -49,6 +49,19 @@
 #^^^^^^^^^^^ text.carve
 >- [ ] todo
 #^^^^^^^^^^^ text.carve
+>
+>- [ ] +
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^ text.carve keyword.operator.continuation.carve
+>```sh
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>npm test
+#^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
 >Attr {title="a\"b"} keeps the whole quoted value
 #^^^^^^^^^^^^ text.carve
 #            ^ text.carve punctuation.definition.smartquote.carve

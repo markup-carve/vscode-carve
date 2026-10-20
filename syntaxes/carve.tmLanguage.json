@@ -3474,12 +3474,15 @@
         }
       ]
     },
+    "continuation-in-container": {
+      "match": "\\G\\+(?=[ \\t]*$)",
+      "name": "keyword.operator.continuation.carve"
+    },
     "container-body": {
       "comment": "The pattern set a container's body reaches, shared by every rule that opens one so they cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only, with `#definitions-in-container` standing in for `#definitions`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the container's content column. `#comment-fence-on-marker-line` is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
       "patterns": [
         {
-          "match": "\\G\\+(?=[ \\t]*$)",
-          "name": "keyword.operator.continuation.carve"
+          "include": "#continuation-in-container"
         },
         {
           "include": "#captionable-blocks-in-container"
@@ -6006,8 +6009,7 @@
     "caption-colon-body": {
       "patterns": [
         {
-          "match": "\\G\\+(?=[ \\t]*$)",
-          "name": "keyword.operator.continuation.carve"
+          "include": "#continuation-in-container"
         },
         {
           "include": "#captionable-blocks"
@@ -6200,8 +6202,7 @@
     "caption-list-body": {
       "patterns": [
         {
-          "match": "\\G\\+(?=[ \\t]*$)",
-          "name": "keyword.operator.continuation.carve"
+          "include": "#continuation-in-container"
         },
         {
           "include": "#captionable-blocks-in-list"
@@ -6706,8 +6707,7 @@
     "note-body": {
       "patterns": [
         {
-          "match": "\\G\\+(?=[ \\t]*$)",
-          "name": "keyword.operator.continuation.carve"
+          "include": "#continuation-in-container"
         },
         {
           "include": "#captionable-blocks-in-container"
