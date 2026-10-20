@@ -38,6 +38,7 @@ import { serverInternalPath, serverModulePath } from './paths.js'
 import { shouldHoldRender } from './preview-hold.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import { createTableMarkerScanner } from './table-colors.js'
+import { carveColors, colorHex } from './color-picker.js'
 import {
   exportHtmlDocument,
   renderMarkdown,
@@ -67,6 +68,18 @@ let includeWatchedPaths = new Set<string>()
 const includeCache = new IncludeCache()
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  context.subscriptions.push(vscode.languages.registerColorProvider('carve', {
+    provideDocumentColors(document) {
+      return carveColors(document.getText()).map((match) => new vscode.ColorInformation(
+        new vscode.Range(document.positionAt(match.start), document.positionAt(match.end)),
+        new vscode.Color(match.red, match.green, match.blue, match.alpha),
+      ))
+    },
+    provideColorPresentations(color, { document, range }) {
+      const original = document.getText(range)
+      return [new vscode.ColorPresentation(colorHex(color, original))]
+    },
+  }))
   const boundaryDecoration = vscode.window.createTextEditorDecorationType({
     light: { color: '#4f7f8d' },
     dark: { color: '#79a8b5' },
