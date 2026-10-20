@@ -80,6 +80,8 @@ const afterOpener = [
   ['description body', ':: t\n: +\n: b\nplain'],
   ['footnote definition', '[^a]: +\n  b\nplain'],
   ['stacked bullets', '- - +\n  - b\nplain'],
+  ['open task item', '- [ ] +\n- b\n> q\nplain'],
+  ['checked task item', '- [x] +\n- b\nplain'],
 ]
 
 for (const [label, src] of afterOpener) {
@@ -99,6 +101,7 @@ for (const [label, src] of afterOpener) {
 for (const [label, src, line] of [
   ['bullet with text', '- + text', 0],
   ['quote with text', '> + text', 0],
+  ['task item with text', '- [ ] + text', 0],
   ['indented plus after a bullet marker line', '- a\n  +', 1],
   ['bullet inside a fence', '```\n- +\n```', 1],
   ['quote inside a fence', '```\n> +\n```', 1],
