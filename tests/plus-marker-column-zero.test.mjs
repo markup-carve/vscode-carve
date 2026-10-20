@@ -57,3 +57,53 @@ for (const [label, src, line, expected] of [
     assert.equal(plusScopes(src, line).includes(continuation), expected)
   })
 }
+
+function lineScopes(src) {
+  let state = vsctm.INITIAL
+  return src.split('\n').map((line) => {
+    const result = grammar.tokenizeLine(line, state)
+    state = result.ruleStack
+    const perChar = []
+    for (const t of result.tokens) {
+      for (let i = t.startIndex; i < Math.min(t.endIndex, line.length); i++) perChar[i] = t.scopes.join(' ')
+    }
+    return perChar
+  })
+}
+
+const afterOpener = [
+  ['bullet', '- +\n- b\n> q\nplain'],
+  ['numbered', '1. +\n2. b\n> q\nplain'],
+  ['quote', '> +\n> b\nplain'],
+  ['quote with a lazy line', '> +\n flush'],
+  ['nested quote', '> > +\n> > b\n> c\nplain'],
+  ['description body', ':: t\n: +\n: b\nplain'],
+  ['footnote definition', '[^a]: +\n  b\nplain'],
+  ['stacked bullets', '- - +\n  - b\nplain'],
+]
+
+for (const [label, src] of afterOpener) {
+  test(`${label}: a plus after the opener is the continuation marker`, () => {
+    const index = src.split('\n').findIndex((l) => l.includes('+'))
+    assert.ok(plusScopes(src, index).includes(continuation))
+  })
+
+  test(`${label}: lines after the marker line keep their scoping`, () => {
+    const marked = lineScopes(src)
+    const control = lineScopes(src.replace('+', 'x'))
+    const index = src.split('\n').findIndex((l) => l.includes('+'))
+    assert.deepEqual(marked.slice(index + 1), control.slice(index + 1))
+  })
+}
+
+for (const [label, src, line] of [
+  ['bullet with text', '- + text', 0],
+  ['quote with text', '> + text', 0],
+  ['indented plus after a bullet marker line', '- a\n  +', 1],
+  ['bullet inside a fence', '```\n- +\n```', 1],
+  ['quote inside a fence', '```\n> +\n```', 1],
+]) {
+  test(`${label}: plus is not the continuation marker`, () => {
+    assert.equal(plusScopes(src, line).includes(continuation), false)
+  })
+}
