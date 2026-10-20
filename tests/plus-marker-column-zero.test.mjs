@@ -116,6 +116,7 @@ for (const [label, src, line] of [
   ['bullet inside a fence', '```\n- +\n```', 1],
   ['quote inside a fence', '```\n> +\n```', 1],
   ['numbered task box in a quote', '> 1. [ ] +', 0],
+  ['footnote with a wide separator', '[^a]:     +\n  b', 0],
 ]) {
   test(`${label}: plus is not the continuation marker`, () => {
     assert.equal(isMarker(plusScopes(src, line)), false)
