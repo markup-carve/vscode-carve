@@ -1317,6 +1317,19 @@
     "block-quotes": {
       "patterns": [
         {
+          "comment": "A lone `+` glued to the last quote marker (`>+`, `>>+`) opens the quote and is its continuation marker; `>+ a` is a paragraph (markup-carve/carve#3445).",
+          "match": "^[ \\t]*((?:> ?)*>)(\\+)(?=[ \\t]*$)",
+          "name": "markup.quote.carve",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          }
+        },
+        {
           "name": "markup.quote.carve",
           "begin": "^[ \\t]*(>)(?= |$)[ ]?",
           "beginCaptures": {
@@ -1336,7 +1349,7 @@
     "lists": {
       "patterns": [
         {
-          "comment": "A lone `+` at column 0 is the list-continuation marker, not a bullet (`+` is never a bullet in Carve); an indented `+` is text (markup-carve/carve#3421).",
+          "comment": "A lone `+` at column 0 is the continuation marker at the marker column of a container opened at column 0 (a list item, quote, footnote or description body), and `+` is never a bullet in Carve (markup-carve/carve#3445). Without one open it is text, and the marker attaches only when the next line starts a block at that column; a line grammar sees neither, so column 0 is scoped as the marker throughout. A lone `+` at a nested item's marker column is scoped by that item's `end`.",
           "name": "markup.list.continuation.carve",
           "match": "^(\\x{FEFF}?)(\\+)(\\s*)$",
           "captures": {
@@ -1362,7 +1375,12 @@
               "name": "constant.language.task-list.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2})",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t]{2})",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1386,7 +1404,12 @@
               "name": "constant.language.task-list.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1404,7 +1427,12 @@
               "name": "punctuation.definition.list.begin.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1422,7 +1450,12 @@
               "name": "punctuation.definition.list.begin.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1440,7 +1473,12 @@
               "name": "punctuation.definition.list.begin.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t]\\3)",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1458,7 +1496,12 @@
               "name": "punctuation.definition.list.begin.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t]\\3)",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1476,7 +1519,12 @@
               "name": "punctuation.definition.list.begin.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1494,7 +1542,12 @@
               "name": "punctuation.definition.list.begin.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -1512,7 +1565,12 @@
               "name": "punctuation.definition.list.begin.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
+          "endCaptures": {
+            "1": {
+              "name": "markup.list.continuation.carve keyword.operator.continuation.carve"
+            }
+          },
+          "end": "^\\1(\\+)(?=[ \\t]*$)|^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
           "patterns": [
             {
               "include": "#caption-list-body"
@@ -3475,8 +3533,24 @@
       ]
     },
     "continuation-in-container": {
-      "match": "\\G\\+(?=[ \\t]*$)",
-      "name": "keyword.operator.continuation.carve"
+      "comment": "A lone `+` first after the last opener on a container's marker line, including stacked bullets after it (`1. - +`, `: - +`), is the continuation marker of the innermost opener (markup-carve/carve#3445).",
+      "patterns": [
+        {
+          "match": "\\G\\+(?=[ \\t]*$)",
+          "name": "keyword.operator.continuation.carve"
+        },
+        {
+          "match": "\\G((?:[-*] +)+)(\\+)(?=[ \\t]*$)",
+          "captures": {
+            "1": {
+              "name": "markup.list.unnumbered.carve punctuation.definition.list.begin.carve"
+            },
+            "2": {
+              "name": "keyword.operator.continuation.carve"
+            }
+          }
+        }
+      ]
     },
     "container-body": {
       "comment": "The pattern set a container's body reaches, shared by every rule that opens one so they cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only, with `#definitions-in-container` standing in for `#definitions`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the container's content column. `#comment-fence-on-marker-line` is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
@@ -5355,6 +5429,9 @@
           },
           "patterns": [
             {
+              "include": "#plus-marker-after-opener"
+            },
+            {
               "include": "#caption-quote-paragraph-inline"
             }
           ]
@@ -5371,6 +5448,15 @@
             }
           },
           "patterns": [
+            {
+              "comment": "An ordered item has no task marker, so `> 1. [ ] +` is text (markup-carve/carve#3445).",
+              "match": "\\G(?<=[0-9A-Za-z.)] )(\\+)(?=[ \\t]*$)",
+              "captures": {
+                "1": {
+                  "name": "markup.list.continuation.carve punctuation.definition.list.continuation.carve"
+                }
+              }
+            },
             {
               "include": "#caption-quote-paragraph-inline"
             }

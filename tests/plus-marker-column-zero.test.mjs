@@ -44,17 +44,26 @@ function plusScopes(src, lineIndex) {
 }
 
 const continuation = 'markup.list.continuation.carve'
+const operator = 'keyword.operator.continuation.carve'
+const isMarker = (scopes) => scopes.includes(continuation) || scopes.includes(operator)
 
 for (const [label, src, line, expected] of [
   ['column zero after an item', '- a\n+\nb', 1, true],
   ['indented at the document level', '  +', 0, false],
   ['indented after an item', '- a\n  +', 1, false],
   ['tab indented after an item', '- a\n\t+', 1, false],
-  ['indented after a nested item', '- a\n  - b\n  +\n  c', 2, false],
+  ['at a nested item\'s marker column', '- a\n  - b\n  +\n  c', 2, true],
+  ['at a deeper nested item\'s marker column', '- a\n  - b\n    - c\n    +\n    > q', 3, true],
+  ['at an outer item\'s marker column below a nested item', '- a\n  - b\n+\npara', 2, true],
+  ['at an indented item\'s marker column', ' - a\n +\n > q', 1, true],
+  ['past a nested item\'s marker column', '- a\n  - b\n    +\n    c', 2, false],
   ['inside a fence', '```\n+\n```', 1, false],
+  ['glued to a quote marker', '>+\nq', 0, true],
+  ['glued to a nested quote marker', '>>+\nq', 0, true],
+  ['glued to a quote marker with text', '>+ a', 0, false],
 ]) {
   test(`${label}: plus continuation scope is ${expected}`, () => {
-    assert.equal(plusScopes(src, line).includes(continuation), expected)
+    assert.equal(isMarker(plusScopes(src, line)), expected)
   })
 }
 
@@ -82,12 +91,14 @@ const afterOpener = [
   ['stacked bullets', '- - +\n  - b\nplain'],
   ['open task item', '- [ ] +\n- b\n> q\nplain'],
   ['checked task item', '- [x] +\n- b\nplain'],
+  ['bullet after a numbered opener', '1. - +\npara'],
+  ['bullet after a quote opener', '> - +\n> q'],
 ]
 
 for (const [label, src] of afterOpener) {
   test(`${label}: a plus after the opener is the continuation marker`, () => {
     const index = src.split('\n').findIndex((l) => l.includes('+'))
-    assert.ok(plusScopes(src, index).includes(continuation))
+    assert.ok(isMarker(plusScopes(src, index)))
   })
 
   test(`${label}: lines after the marker line keep their scoping`, () => {
@@ -105,8 +116,9 @@ for (const [label, src, line] of [
   ['indented plus after a bullet marker line', '- a\n  +', 1],
   ['bullet inside a fence', '```\n- +\n```', 1],
   ['quote inside a fence', '```\n> +\n```', 1],
+  ['numbered task box in a quote', '> 1. [ ] +', 0],
 ]) {
   test(`${label}: plus is not the continuation marker`, () => {
-    assert.equal(plusScopes(src, line).includes(continuation), false)
+    assert.equal(isMarker(plusScopes(src, line)), false)
   })
 }
