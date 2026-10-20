@@ -9,6 +9,11 @@ An inline ^[note here] footnote and a [^ref] reference
 - [?] question
 - [x] done
 - [ ] todo
+
+- [ ] +
+```sh
+npm test
+```
 Attr {title="a\"b"} keeps the whole quoted value
 An escaped ^[a \] b] footnote keeps going
 | c | ^[cell note] |

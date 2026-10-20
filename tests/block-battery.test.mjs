@@ -135,6 +135,17 @@ function tokenize(src) {
 
 const has = (t, needle) => t.scopes.some((s) => s.includes(needle))
 
+test('continuation operators have a different scope from list markers', () => {
+  for (const source of ['- [ ] +', '- +', '1. +', '. +']) {
+    const plus = tokenize(source).find((t) => t.text === '+')
+    assert.ok(plus, `${source} has no + token`)
+    assert.ok(has(plus, 'keyword.operator.continuation.carve'), source)
+  }
+  const bullet = tokenize('- [ ] +').find((t) => t.text === '-')
+  assert.ok(bullet && has(bullet, 'punctuation.definition.list.begin.carve'))
+  assert.ok(!tokenize('- +x').some((t) => has(t, 'keyword.operator.continuation.carve')))
+})
+
 /*
  * A HEADING BEHIND A CONTAINER PREFIX (markup-carve/vscode-carve#131).
  *

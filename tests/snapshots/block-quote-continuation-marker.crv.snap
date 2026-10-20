@@ -3,7 +3,7 @@
 # ^ text.carve markup.quote.carve
 #  ^^^^^^^ text.carve markup.quote.carve
 >+
-#^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+#^ text.carve markup.list.continuation.carve keyword.operator.continuation.carve
 >- item
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.unnumbered.carve
