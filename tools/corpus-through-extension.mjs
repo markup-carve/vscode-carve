@@ -529,6 +529,130 @@ const ENGINE_LAG = {
     'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
   '618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv':
     'caption slots in list items (spec carve#3325); carve-js 0.1.12 predates it, clears with the next engine pin',
+  '291-a-fence-keeps-the-blank-line-at-the-end-of-its-content-5.crv':
+    'ruling on "a fence keeps the blank line at the end of its content" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '291-a-fence-keeps-the-blank-line-at-the-end-of-its-content-6.crv':
+    'ruling on "a fence keeps the blank line at the end of its content" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv':
+    'ruling on "a continuation marker attaches only a flush left block" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '435-the-continuation-marker-s-column-gate-reaches-every-container-16.crv':
+    'ruling on "the continuation marker s column gate reaches every containe" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '616-a-line-is-read-in-the-container-whose-column-it-reaches-18.crv':
+    'ruling on "a line is read in the container whose column it reaches" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-17.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-18.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-19.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-20.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-21.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-22.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-23.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-24.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-25.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '618-captions-in-list-items-do-not-create-a-paragraph-gap-26.crv':
+    'ruling on "captions in list items do not create a paragraph gap" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '620-generated-container-documents-21.crv':
+    'ruling on "generated container documents" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '620-generated-container-documents-22.crv':
+    'ruling on "generated container documents" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-2.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-3.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-4.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-5.crv':
+    'ruling on "a caption after a continuation marker fence stays with the f" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-6.crv':
+    'ruling on "a caption after a continuation marker fence stays with the f" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-7.crv':
+    'ruling on "a caption after a continuation marker fence stays with the f" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-8.crv':
+    'ruling on "a caption after a continuation marker fence stays with the f" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence.crv':
+    'ruling on "a caption after a continuation marker fence stays with the f" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-2.crv':
+    'ruling on "a lazily folded fence opener line does not keep a list tight" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight.crv':
+    'ruling on "a lazily folded fence opener line does not keep a list tight" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-2.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-3.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-4.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-5.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-6.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column.crv':
+    'ruling on "a fence run folded into a child paragraph loosens the outer " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-10.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-11.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-2.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-3.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-4.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-5.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-6.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open.crv':
+    'ruling on "a fence closer outside the child folds and leaves the child " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-2.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-3.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-4.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-5.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-6.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-7.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-8.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth.crv':
+    'ruling on "an indented plus below a nested fence stays content at every" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '627-a-refused-marker-leaves-an-open-fence-s-blank-payload-5.crv':
+    'ruling on "a refused marker leaves an open fence s blank payload" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-2.crv':
+    'ruling on "a column zero marker below an open div attaches beside the d" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-3.crv':
+    'ruling on "a column zero marker below an open div attaches beside the d" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-4.crv':
+    'ruling on "a column zero marker below an open div attaches beside the d" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div.crv':
+    'ruling on "a column zero marker below an open div attaches beside the d" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-11.crv':
+    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-12.crv':
+    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-18.crv':
+    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-7.crv':
+    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-8.crv':
+    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-9.crv':
+    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener.crv':
+    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
 }
 const lagWaived = []
 const lagStale = []
