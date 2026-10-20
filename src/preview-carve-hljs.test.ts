@@ -29,9 +29,24 @@ test('the classic script registers carve with the global hljs', () => {
   assert.match(html, /<span class="hljs-/)
 })
 
+test('the delimited script registers csv and tsv with the global hljs', () => {
+  const context = createContext({})
+  runInContext(readFileSync(hljsFile, 'utf8'), context)
+  runInContext(readFileSync(join(grammarsDir, 'highlightjs', 'delimited.js'), 'utf8'), context)
+  for (const language of ['csv', 'tsv']) {
+    const html = runInContext(`hljs.highlight('a,"b"\\n1,2\\n', { language: '${language}' }).value`, context) as string
+    assert.match(html, /<span class="hljs-/)
+  }
+})
+
 test('the preview loads the carve grammar right after highlight.js', () => {
   const srcs = scriptSrcs(previewDocument('x', { nonce: 'n', cspSource: 'csp', assets }))
   assert.equal(srcs.indexOf('asset:hljsCarveJs'), srcs.indexOf('asset:hljsJs') + 1)
+})
+
+test('the preview loads the csv and tsv grammar right after the carve grammar', () => {
+  const srcs = scriptSrcs(previewDocument('x', { nonce: 'n', cspSource: 'csp', assets }))
+  assert.equal(srcs.indexOf('asset:hljsDelimitedJs'), srcs.indexOf('asset:hljsCarveJs') + 1)
 })
 
 test('the export loads the pinned grammar and table palette from the CDN', () => {
