@@ -3,7 +3,7 @@
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^ text.carve
 >+
-#^ text.carve markup.list.continuation.carve keyword.operator.continuation.carve
+#^ text.carve
 >para
 #^^^^^ text.carve
 >> q

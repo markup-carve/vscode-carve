@@ -62,6 +62,31 @@
 #^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
 >```
 #^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>> - +
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^ text.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.quote.carve markup.list.unnumbered.carve
+#    ^ text.carve markup.quote.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+>> q
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^ text.carve markup.quote.carve
+>
+>:: term
+#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^^^^ text.carve
+>: +
+#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.definition.carve
+#  ^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+>> q
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^ text.carve markup.quote.carve
+>
 >Attr {title="a\"b"} keeps the whole quoted value
 #^^^^^^^^^^^^ text.carve
 #            ^ text.carve punctuation.definition.smartquote.carve

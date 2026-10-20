@@ -8,7 +8,7 @@
 #  ^^ text.carve
 >
 >+
-#^ text.carve markup.list.continuation.carve keyword.operator.continuation.carve
+#^ text.carve
 >c
 #^^ text.carve
 >

@@ -47,20 +47,18 @@ const continuation = 'markup.list.continuation.carve'
 const operator = 'keyword.operator.continuation.carve'
 const isMarker = (scopes) => scopes.includes(continuation) || scopes.includes(operator)
 
+// A lone `+` on its own line is a marker only when the next line starts a block at
+// the right column, which a line grammar cannot see, so every such line stays text.
 for (const [label, src, line, expected] of [
-  ['column zero after an item', '- a\n+\nb', 1, true],
+  ['column zero after an item', '- a\n+\nb', 1, false],
   ['indented at the document level', '  +', 0, false],
   ['indented after an item', '- a\n  +', 1, false],
   ['tab indented after an item', '- a\n\t+', 1, false],
-  ['at a nested item\'s marker column', '- a\n  - b\n  +\n  c', 2, true],
-  ['at a deeper nested item\'s marker column', '- a\n  - b\n    - c\n    +\n    > q', 3, true],
-  ['at an outer item\'s marker column below a nested item', '- a\n  - b\n+\npara', 2, true],
-  ['at an indented item\'s marker column', ' - a\n +\n > q', 1, true],
-  ['past a nested item\'s marker column', '- a\n  - b\n    +\n    c', 2, false],
+  ['at a nested item\'s marker column', '- a\n  - b\n  +\n  c', 2, false],
+  ['at an outer item\'s marker column below a nested item', '- a\n  - b\n+\npara', 2, false],
+  ['after a quote prefix', '> q\n> +\n> r', 1, false],
   ['inside a fence', '```\n+\n```', 1, false],
-  ['glued to a quote marker', '>+\nq', 0, true],
-  ['glued to a nested quote marker', '>>+\nq', 0, true],
-  ['glued to a quote marker with text', '>+ a', 0, false],
+  ['glued to a quote marker', '>+\nq', 0, false],
 ]) {
   test(`${label}: plus continuation scope is ${expected}`, () => {
     assert.equal(isMarker(plusScopes(src, line)), expected)
@@ -81,24 +79,25 @@ function lineScopes(src) {
 }
 
 const afterOpener = [
-  ['bullet', '- +\n- b\n> q\nplain'],
-  ['numbered', '1. +\n2. b\n> q\nplain'],
-  ['quote', '> +\n> b\nplain'],
-  ['quote with a lazy line', '> +\n flush'],
-  ['nested quote', '> > +\n> > b\n> c\nplain'],
-  ['description body', ':: t\n: +\n: b\nplain'],
-  ['footnote definition', '[^a]: +\n  b\nplain'],
-  ['stacked bullets', '- - +\n  - b\nplain'],
-  ['open task item', '- [ ] +\n- b\n> q\nplain'],
-  ['checked task item', '- [x] +\n- b\nplain'],
-  ['bullet after a numbered opener', '1. - +\npara'],
-  ['bullet after a quote opener', '> - +\n> q'],
+  ['bullet', '- +\n- b\n> q\nplain', true],
+  ['numbered', '1. +\n2. b\n> q\nplain', true],
+  ['quote', '> +\n> b\nplain', false],
+  ['quote with a lazy line', '> +\n flush', false],
+  ['nested quote', '> > +\n> > b\n> c\nplain', false],
+  ['description body', ':: t\n: +\n: b\nplain', true],
+  ['footnote definition', '[^a]: +\n  b\nplain', false],
+  ['stacked bullets', '- - +\n  - b\nplain', true],
+  ['open task item', '- [ ] +\n- b\n> q\nplain', true],
+  ['checked task item', '- [x] +\n- b\nplain', true],
+  ['bullet after a numbered opener', '1. - +\npara', true],
+  ['bullet in a quote', '> - +\n> q', true],
+  ['numbered item in a quote', '> 1. +\n> q', true],
 ]
 
-for (const [label, src] of afterOpener) {
-  test(`${label}: a plus after the opener is the continuation marker`, () => {
+for (const [label, src, expected] of afterOpener) {
+  test(`${label}: a plus after the opener is ${expected ? '' : 'not '}the continuation marker`, () => {
     const index = src.split('\n').findIndex((l) => l.includes('+'))
-    assert.ok(isMarker(plusScopes(src, index)))
+    assert.equal(isMarker(plusScopes(src, index)), expected)
   })
 
   test(`${label}: lines after the marker line keep their scoping`, () => {
