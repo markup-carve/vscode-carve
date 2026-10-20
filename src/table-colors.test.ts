@@ -166,3 +166,22 @@ test('a parser failure leaves existing TextMate table colors available', async (
   assert.ok(scan('| C | D |', 'failed-parser').some((marker) => marker.kind === 'boundary'))
   assert.equal(log.mock.callCount(), 1)
 })
+
+test('diff decorations mark only added and removed source prefixes', async () => {
+  const scan = await createTableMarkerScanner(root)
+  const source = '{.diff}\n```js\n  let fileIcon = 1;\n- fileIcon.old();\n+ fileIcon.new();\n  + unchanged;\n```'
+  const markers = scan(source).filter((marker) => marker.kind === 'diffAdd' || marker.kind === 'diffRemove')
+  assert.deepEqual(markers.map((marker) => [marker.line, marker.start, marker.kind]), [
+    [3, 0, 'diffRemove'],
+    [4, 0, 'diffAdd'],
+  ])
+  assert.deepEqual(scan('```js\n+ ordinaryOperator\n```').filter((marker) => marker.kind === 'diffAdd'), [])
+
+  const nested = '- Item\n\n  {.diff}\n  ```js\n  - old();\n  + new();\n  ```'
+  assert.deepEqual(scan(nested).filter((marker) => marker.kind === 'diffAdd' || marker.kind === 'diffRemove')
+    .map((marker) => [marker.line, marker.start, marker.kind]), [[4, 2, 'diffRemove'], [5, 2, 'diffAdd']])
+
+  const quoted = '> {.diff}\n> ```js\n> - old();\n> + new();\n> ```'
+  assert.deepEqual(scan(quoted).filter((marker) => marker.kind === 'diffAdd' || marker.kind === 'diffRemove')
+    .map((marker) => [marker.line, marker.start, marker.kind]), [[2, 2, 'diffRemove'], [3, 2, 'diffAdd']])
+})

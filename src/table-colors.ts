@@ -8,12 +8,14 @@ export interface TableMarker {
   line: number
   start: number
   end: number
-  kind: 'boundary' | 'operator' | 'plain' | 'tableBody' | 'listMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis'
+  kind: 'boundary' | 'operator' | 'plain' | 'tableBody' | 'listMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis' | 'diffAdd' | 'diffRemove'
 }
 
 interface AstNode {
   type: string
   sourceFormat?: string
+  content?: string
+  attrs?: { classes?: string[] }
   children?: AstNode[]
   items?: AstNode[]
   rows?: AstNode[]
@@ -53,6 +55,17 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
     if (start && end) {
       if (node.type === 'code_block' || node.type === 'raw_block') {
         for (let row = start.line; row <= end.line; row++) codeLines.add(row)
+      }
+      if (node.type === 'code_block' && node.attrs?.classes?.includes('diff') && node.content) {
+        node.content.split('\n').forEach((contentLine, index) => {
+          const marker = contentLine[0]
+          if (marker !== '+' && marker !== '-') return
+          const row = start.line + index + 1
+          const sourceLine = lines[row]
+          if (!sourceLine?.endsWith(contentLine)) return
+          const column = sourceLine.length - contentLine.length
+          add(row, column, column + 1, marker === '+' ? 'diffAdd' : 'diffRemove')
+        })
       }
       if (node.type === 'table' && (node.sourceFormat === 'csv' || node.sourceFormat === 'tsv')) {
         for (let row = start.line; row <= end.line; row++) tableLines.add(row)

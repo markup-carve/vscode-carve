@@ -90,8 +90,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   })
   const strongDecoration = vscode.window.createTextEditorDecorationType({ fontWeight: 'bold' })
   const emphasisDecoration = vscode.window.createTextEditorDecorationType({ fontStyle: 'italic' })
+  const diffAddDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#22863a', backgroundColor: 'rgba(46, 160, 67, 0.16)', fontWeight: 'bold' },
+    dark: { color: '#85e89d', backgroundColor: 'rgba(46, 160, 67, 0.16)', fontWeight: 'bold' },
+  })
+  const diffRemoveDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#b31d28', backgroundColor: 'rgba(248, 81, 73, 0.16)', fontWeight: 'bold' },
+    dark: { color: '#fdaeb7', backgroundColor: 'rgba(248, 81, 73, 0.16)', fontWeight: 'bold' },
+  })
   const decorations = [boundaryDecoration, operatorDecoration, plainDecoration, tableBodyDecoration,
-    markerDecoration, strongDecoration, emphasisDecoration]
+    markerDecoration, strongDecoration, emphasisDecoration, diffAddDecoration, diffRemoveDecoration]
   context.subscriptions.push(...decorations)
   void createTableMarkerScanner(context.extensionPath).then((scanTableMarkers) => {
     const updateTableMarkers = (editor: vscode.TextEditor): void => {
@@ -110,6 +118,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       editor.setDecorations(markerDecoration, [...ranges('listMarker'), ...ranges('definitionMarker'), ...ranges('containerMarker')])
       editor.setDecorations(strongDecoration, ranges('strong'))
       editor.setDecorations(emphasisDecoration, ranges('emphasis'))
+      editor.setDecorations(diffAddDecoration, ranges('diffAdd'))
+      editor.setDecorations(diffRemoveDecoration, ranges('diffRemove'))
     }
     const tableTimers = new Map<vscode.TextEditor, ReturnType<typeof setTimeout>>()
     const scheduleTableMarkers = (editor: vscode.TextEditor): void => {
