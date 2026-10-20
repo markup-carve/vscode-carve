@@ -3,8 +3,8 @@
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^ text.carve
 >  +
-#^^ text.carve markup.list.continuation.carve
-#  ^ text.carve markup.list.continuation.carve keyword.operator.continuation.carve
+#^^ text.carve
+#  ^^ text.carve
 >  [r]: /u
 #^^ text.carve meta.link.reference.definition.carve
 #  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
