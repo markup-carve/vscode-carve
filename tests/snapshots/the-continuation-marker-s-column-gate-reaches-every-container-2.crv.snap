@@ -3,7 +3,7 @@
 #     ^ text.carve meta.footnote.definition.carve
 #      ^^^^^^ text.carve
 >+
-#^ text.carve markup.list.continuation.carve keyword.operator.continuation.carve
+#^ text.carve
 > more
 #^ text.carve
 # ^^^^^ text.carve

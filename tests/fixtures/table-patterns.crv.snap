@@ -3,7 +3,7 @@
 # ^ text.carve markup.quote.carve
 #  ^^^^^^^ text.carve markup.quote.carve
 >+
-#^ text.carve markup.list.continuation.carve keyword.operator.continuation.carve
+#^ text.carve
 >- item
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.unnumbered.carve
@@ -18,7 +18,7 @@
 # ^^ text.carve markup.list.definition.carve
 #   ^^^^^^^^^^^^^^^^^^^ text.carve
 >+
-#^ text.carve markup.list.continuation.carve keyword.operator.continuation.carve
+#^ text.carve
 >then a flush-left block joined with +.
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >

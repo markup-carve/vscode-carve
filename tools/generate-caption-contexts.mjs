@@ -285,12 +285,15 @@ updated = replaceEntry(updated, 'caption-prose-continuation-in-list', {
 })
 const attributeGuard = String.raw`(?![ \t]*` + attribute + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$)`
 const content = attributeGuard + String.raw`(?=[ \t]*\S)`
+// A lone `+` right after the opener, tried first inside the paragraph region the opener starts.
+const plusMarker = include('plus-marker-after-opener')
 
 updated = replaceEntry(updated, 'caption-paragraph-in-quote', {
   patterns: [{
     begin: String.raw`(?<=((?:> )+))\G` + content,
     end: String.raw`^(?=[ \t]*\1[ \t]*(?:[ \t]*$|` + interrupt + String.raw`))|^(?![ \t]*\1)(?=[ \t]*(?:[ \t]*$|` + interrupt + '|' + captionStart + '))',
     patterns: [
+      ...plusMarker,
       { match: String.raw`^[ \t]*(?:> )+`, captures: { '0': { patterns: include('caption-quote-prefix') } } },
       ...include('caption-quote-paragraph-inline'),
     ],
@@ -302,6 +305,7 @@ updated = replaceEntry(updated, 'caption-paragraph', {
       begin: String.raw`(?<=^((?:> )+))\G` + content,
       end: String.raw`^(?!\1)|^(?=\1[ \t]*(?:[ \t]*$|` + interrupt + '))',
       patterns: [
+        ...plusMarker,
         { match: '^(?:> )+', captures: { '0': { patterns: include('caption-quote-prefix') } } },
         ...include('caption-quote-paragraph-inline'),
       ],
@@ -314,7 +318,7 @@ updated = replaceEntry(updated, 'caption-paragraph', {
     {
       begin: String.raw`\G(?<=[ \t])` + content,
       end: String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+(?:[ \t]*$|` + interrupt + '))',
-      patterns: include('caption-paragraph-inline'),
+      patterns: [...plusMarker, ...include('caption-paragraph-inline')],
     },
   ],
 })
@@ -329,7 +333,7 @@ updated = replaceEntry(updated, 'caption-paragraph-in-container', {
     {
       begin: String.raw`\G(?<=[ \t])` + content,
       end: String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+` + containerInterrupt + ')',
-      patterns: include('caption-paragraph-inline'),
+      patterns: [...plusMarker, ...include('caption-paragraph-inline')],
     },
   ],
 })
@@ -343,14 +347,14 @@ updated = replaceEntry(updated, 'caption-paragraph-in-list', {
     {
       begin: String.raw`\G(?<=[ \t])` + content,
       end: String.raw`^(?=[ \t]*$)|^(?=[ \t]*` + containerInterrupt + ')',
-      patterns: include('caption-paragraph-inline'),
+      patterns: [...plusMarker, ...include('caption-paragraph-inline')],
     },
   ],
 })
 // A footnote or description body: a list marker interrupts a paragraph only
 // inside a list item, so here it folds into the open paragraph as text.
 const noteParagraphEnd = String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+(?:[ \t]*$|` + interrupt + '))'
-const noteMarkerLineParagraph = { begin: String.raw`\G(?<=[ \t])` + content, end: noteParagraphEnd, patterns: include('caption-paragraph-inline') }
+const noteMarkerLineParagraph = { begin: String.raw`\G(?<=[ \t])` + content, end: noteParagraphEnd, patterns: [...plusMarker, ...include('caption-paragraph-inline')] }
 updated = replaceEntry(updated, 'caption-paragraph-in-note', {
   patterns: [
     { begin: String.raw`^([ \t]+)` + content, end: noteParagraphEnd, patterns: include('caption-paragraph-inline') },
