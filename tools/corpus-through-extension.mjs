@@ -643,8 +643,6 @@ const ENGINE_LAG = {
     'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
   '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-12.crv':
     'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
-  '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-18.crv':
-    'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
   '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-7.crv':
     'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
   '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-8.crv':
@@ -653,6 +651,224 @@ const ENGINE_LAG = {
     'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
   '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener.crv':
     'ruling on "a continuation marker stands alone at column zero or right a" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '154-under-indented-definition-attaches-over-indented-definition-folds-2.crv':
+    'ruling on "under indented definition attaches over indented definition " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '154-under-indented-definition-attaches-over-indented-definition-folds.crv':
+    'ruling on "under indented definition attaches over indented definition " is newer than carve-js 0.1.12; clears with the next engine pin',
+  '327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-5.crv':
+    'ruling on "a continuation marker attaches one block and the boundary is" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv':
+    'ruling on "a continuation marker attaches only a flush left block" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '435-the-continuation-marker-s-column-gate-reaches-every-container-11.crv':
+    'ruling on "the continuation marker s column gate reaches every containe" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv':
+    'ruling on "the continuation marker s column gate reaches every containe" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '435-the-continuation-marker-s-column-gate-reaches-every-container-17.crv':
+    'ruling on "the continuation marker s column gate reaches every containe" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '435-the-continuation-marker-s-column-gate-reaches-every-container-2.crv':
+    'ruling on "the continuation marker s column gate reaches every containe" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '435-the-continuation-marker-s-column-gate-reaches-every-container-4.crv':
+    'ruling on "the continuation marker s column gate reaches every containe" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '435-the-continuation-marker-s-column-gate-reaches-every-container-7.crv':
+    'ruling on "the continuation marker s column gate reaches every containe" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '616-a-line-is-read-in-the-container-whose-column-it-reaches-7.crv':
+    'ruling on "a line is read in the container whose column it reaches" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '620-generated-container-documents.crv':
+    'ruling on "generated container documents" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '627-a-refused-marker-leaves-an-open-fence-s-blank-payload-2.crv':
+    'ruling on "a refused marker leaves an open fence s blank payload" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '627-a-refused-marker-leaves-an-open-fence-s-blank-payload-3.crv':
+    'ruling on "a refused marker leaves an open fence s blank payload" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '627-a-refused-marker-leaves-an-open-fence-s-blank-payload-4.crv':
+    'ruling on "a refused marker leaves an open fence s blank payload" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '627-a-refused-marker-leaves-an-open-fence-s-blank-payload-6.crv':
+    'ruling on "a refused marker leaves an open fence s blank payload" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '627-a-refused-marker-leaves-an-open-fence-s-blank-payload-7.crv':
+    'ruling on "a refused marker leaves an open fence s blank payload" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '627-a-refused-marker-leaves-an-open-fence-s-blank-payload.crv':
+    'ruling on "a refused marker leaves an open fence s blank payload" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-2.crv':
+    'ruling on "a dangling plus marker adds nothing and a nested quote reads" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-3.crv':
+    'ruling on "a dangling plus marker adds nothing and a nested quote reads" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-4.crv':
+    'ruling on "a dangling plus marker adds nothing and a nested quote reads" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6.crv':
+    'ruling on "a dangling plus marker adds nothing and a nested quote reads" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7.crv':
+    'ruling on "a dangling plus marker adds nothing and a nested quote reads" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-8.crv':
+    'ruling on "a dangling plus marker adds nothing and a nested quote reads" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one.crv':
+    'ruling on "a dangling plus marker adds nothing and a nested quote reads" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '631-a-task-item-takes-a-first-block-continuation-marker-after-its-checkbox-4.crv':
+    'ruling on "a task item takes a first block continuation marker after it" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-10.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-11.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-12.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-13.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-15.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-16.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-18.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-19.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-20.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-21.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-22.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-26.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-27.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-28.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-29.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-3.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-30.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-31.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-33.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-34.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column-9.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '632-a-continuation-marker-uses-its-container-column.crv':
+    'ruling on "a continuation marker uses its container column" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-11.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-12.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-13.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-15.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-16.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-17.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-19.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-2.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-20.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-21.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-23.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-24.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-25.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-27.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-28.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-29.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-3.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-32.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-37.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-38.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-39.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-4.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-5.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-6.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-7.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-8.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-9.crv':
+    'ruling on "a first block marker on an indented opener reads two columns" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-10.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-12.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-13.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-14.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-15.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-18.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-19.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-2.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-20.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-21.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-22.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-3.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-31.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-32.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-33.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-35.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-36.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-37.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-38.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-39.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-4.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-40.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text-6.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '634-a-refused-continuation-plus-remains-text.crv':
+    'ruling on "a refused continuation plus remains text" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-3.crv':
+    'ruling on "a refused plus without the inner quote prefix renders as tex" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '637-definition-body-note-and-fence-owner-boundaries-3.crv':
+    'ruling on "definition body note and fence owner boundaries" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '637-definition-body-note-and-fence-owner-boundaries-5.crv':
+    'ruling on "definition body note and fence owner boundaries" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '637-definition-body-note-and-fence-owner-boundaries.crv':
+    'ruling on "definition body note and fence owner boundaries" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '638-nested-plus-below-fence-and-description-2.crv':
+    'ruling on "nested plus below fence and description" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '638-nested-plus-below-fence-and-description-3.crv':
+    'ruling on "nested plus below fence and description" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '638-nested-plus-below-fence-and-description.crv':
+    'ruling on "nested plus below fence and description" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '639-a-folded-fence-run-leaves-a-later-paragraph-loose.crv':
+    'ruling on "a folded fence run leaves a later paragraph loose" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line-2.crv':
+    'ruling on "an unclosed fence run with no closer in its item does not hi" is newer than carve-js 0.1.12; clears with the next engine pin',
+  '641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line.crv':
+    'ruling on "an unclosed fence run with no closer in its item does not hi" is newer than carve-js 0.1.12; clears with the next engine pin',
 }
 const lagWaived = []
 const lagStale = []
