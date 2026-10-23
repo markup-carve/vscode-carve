@@ -22,7 +22,6 @@
     "table_row": { "local": "tables", "fixture": "table-patterns" },
     "multiline_cell": { "local": "tables", "fixture": "table-patterns" },
     "task_item": { "local": "lists", "fixture": "marker-requires-content" },
-    "list_continuation": { "local": "lists", "fixture": "table-patterns" },
     "list_item": { "local": "lists", "fixture": "bullet-glued-attributes" },
     "numbered_item": { "local": "lists", "fixture": "roman-ordered-markers" },
     "escape": { "local": "smart-typography", "fixture": "hard-break" },
@@ -76,7 +75,8 @@
     "block_comment_on_marker_line": { "local": "comment-fence-on-marker-line", "fixture": "container-grammar-rules" },
     "footnote_def": { "local": "definitions", "fixture": "reference-images-and-crossrefs" },
     "heading_in_container": { "local": "headings-behind-a-container-prefix", "fixture": "container-grammar-rules" },
-    "fenced_code_in_container": { "local": "code-block-behind-a-container-prefix", "fixture": "container-grammar-rules" }
+    "fenced_code_in_container": { "local": "code-block-behind-a-container-prefix", "fixture": "container-grammar-rules" },
+    "marker_line_continuation": { "local": "plus-marker-after-opener", "fixture": "grammar-correctness" }
   },
   "localRulesGroupedUpstream": {
     "attribute-items": { "upstream": "attributes", "fixture": "attribute-attachment" },
@@ -104,10 +104,10 @@
     "fenced-code-languages-in-colon-container-3": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
     "fenced-code-languages-in-colon-container-4": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
     "fenced-code-languages-in-colon-container-5": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
-    "code-blocks-in-long-colon-container": { "upstream": "fenced_code", "fixture": "container-fences" }
+    "code-blocks-in-long-colon-container": { "upstream": "fenced_code", "fixture": "container-fences" },
+    "continuation-in-container": { "upstream": "marker_line_continuation", "fixture": "grammar-correctness" }
   },
   "localOnlyRules": {
-    "continuation-in-container": "grammar-correctness",
     "container-body": "grammar-correctness"
   }
 }
