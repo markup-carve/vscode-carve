@@ -38,6 +38,7 @@ import { serverInternalPath, serverModulePath } from './paths.js'
 import { shouldHoldRender } from './preview-hold.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import { createTableMarkerScanner } from './table-colors.js'
+import { columnColorGroups } from './delimited-columns.js'
 import { carveColors, colorHex } from './color-picker.js'
 import {
   exportHtmlDocument,
@@ -66,6 +67,16 @@ let includeDiagnostics: vscode.DiagnosticCollection | undefined
 let includeWatchers: vscode.FileSystemWatcher[] = []
 let includeWatchedPaths = new Set<string>()
 const includeCache = new IncludeCache()
+
+/** Per-column colors for csv and tsv fence bodies, as [light, dark]. It cycles past the last one. */
+const COLUMN_PALETTE: ReadonlyArray<readonly [string, string]> = [
+  ['#0550ae', '#79c0ff'],
+  ['#8250df', '#d2a8ff'],
+  ['#116329', '#7ee787'],
+  ['#953800', '#ffa657'],
+  ['#bf3989', '#ff9bce'],
+  ['#0a7d85', '#56d4dd'],
+]
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   context.subscriptions.push(vscode.languages.registerColorProvider('carve', {
@@ -111,8 +122,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     light: { color: '#b31d28', backgroundColor: 'rgba(248, 81, 73, 0.16)', fontWeight: 'bold' },
     dark: { color: '#fdaeb7', backgroundColor: 'rgba(248, 81, 73, 0.16)', fontWeight: 'bold' },
   })
+  const columnDecorations = COLUMN_PALETTE.map(([light, dark]) => vscode.window.createTextEditorDecorationType({
+    light: { color: light },
+    dark: { color: dark },
+  }))
   const decorations = [boundaryDecoration, operatorDecoration, plainDecoration, tableBodyDecoration,
-    markerDecoration, strongDecoration, emphasisDecoration, diffAddDecoration, diffRemoveDecoration]
+    markerDecoration, strongDecoration, emphasisDecoration, diffAddDecoration, diffRemoveDecoration, ...columnDecorations]
   context.subscriptions.push(...decorations)
   void createTableMarkerScanner(context.extensionPath).then((scanTableMarkers) => {
     const updateTableMarkers = (editor: vscode.TextEditor): void => {
@@ -133,6 +148,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       editor.setDecorations(emphasisDecoration, ranges('emphasis'))
       editor.setDecorations(diffAddDecoration, ranges('diffAdd'))
       editor.setDecorations(diffRemoveDecoration, ranges('diffRemove'))
+      const columnColors = vscode.workspace.getConfiguration('carve', editor.document.uri).get('csv.columnColors', false)
+      columnColorGroups(markers, columnColors, columnDecorations.length).forEach((group, index) => editor.setDecorations(
+        columnDecorations[index],
+        group.map((marker) => new vscode.Range(marker.line, marker.start, marker.line, marker.end)),
+      ))
     }
     const tableTimers = new Map<vscode.TextEditor, ReturnType<typeof setTimeout>>()
     const scheduleTableMarkers = (editor: vscode.TextEditor): void => {
@@ -145,6 +165,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
     for (const editor of vscode.window.visibleTextEditors) updateTableMarkers(editor)
     context.subscriptions.push(
+      vscode.workspace.onDidChangeConfiguration((event) => {
+        if (!event.affectsConfiguration('carve.csv.columnColors')) return
+        for (const editor of vscode.window.visibleTextEditors) updateTableMarkers(editor)
+      }),
       vscode.window.onDidChangeVisibleTextEditors((editors) => {
         for (const editor of editors) updateTableMarkers(editor)
       }),

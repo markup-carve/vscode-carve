@@ -3,17 +3,21 @@ import { join } from 'node:path'
 import { parseWithSourceLayout } from '@markup-carve/carve'
 import oniguruma from 'vscode-oniguruma'
 import vsctm from 'vscode-textmate'
+import { delimitedColumnRanges } from './delimited-columns.js'
 
 export interface TableMarker {
   line: number
   start: number
   end: number
-  kind: 'boundary' | 'operator' | 'plain' | 'tableBody' | 'listMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis' | 'diffAdd' | 'diffRemove'
+  kind: 'boundary' | 'operator' | 'plain' | 'tableBody' | 'listMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis' | 'diffAdd' | 'diffRemove' | 'delimitedColumn'
+  /** Field index, for `delimitedColumn` only. */
+  column?: number
 }
 
 interface AstNode {
   type: string
   sourceFormat?: string
+  lang?: string
   content?: string
   attrs?: { classes?: string[] }
   children?: AstNode[]
@@ -66,6 +70,30 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
           const column = sourceLine.length - contentLine.length
           add(row, column, column + 1, marker === '+' ? 'diffAdd' : 'diffRemove')
         })
+      }
+      const delimited = node.type === 'table' ? node.sourceFormat : node.type === 'code_block' ? node.lang : undefined
+      if (delimited === 'csv' || delimited === 'tsv') {
+        let opener = start.line
+        let fence: RegExpMatchArray | null = null
+        for (; opener <= end.line && !fence; opener++) fence = lines[opener]?.slice(start.column).match(/^(`{3,}|~{3,})/) ?? null
+        if (fence) {
+          const closer = new RegExp(`^${fence[1][0] === '`' ? '`' : '~'}{${fence[1].length},}[ \\t]*\r?$`)
+          const body: string[] = []
+          for (let row = opener; row < lines.length && row <= end.line; row++) {
+            const text = lines[row].slice(start.column)
+            if (closer.test(text)) break
+            body.push(text)
+          }
+          for (const range of delimitedColumnRanges(body, delimited === 'csv' ? ',' : '\t')) {
+            markers.push({
+              line: opener + range.line,
+              start: start.column + range.start,
+              end: start.column + range.end,
+              kind: 'delimitedColumn',
+              column: range.column,
+            })
+          }
+        }
       }
       if (node.type === 'table' && (node.sourceFormat === 'csv' || node.sourceFormat === 'tsv')) {
         for (let row = start.line; row <= end.line; row++) tableLines.add(row)

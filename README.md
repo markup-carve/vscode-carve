@@ -60,6 +60,7 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 | `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
 | `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
 | `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
+| `carve.csv.columnColors` | `false` | Color each column of a `csv` or `tsv` fence body differently, cycling through six colors. Separators keep their own color, and a quoted field that spans lines keeps its column's color. |
 | `carve.formatter` | `"conservative"` | What **Format Document** does: `conservative` normalizes whitespace and line endings only, `migration` rewrites the document into canonical Carve. |
 | `carve.format.alignTables` | `false` | Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without it. |
 | `carve.extensions` | `[]` | Language extensions the server enables for diagnostics and highlighting, such as `semantic-span`. |
