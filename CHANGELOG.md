@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-10-23
+
+### Fixed
+
+- The preview no longer stalls on a list after a leading blank line, and highlights it. The bundled carve-grammars 0.1.19 also fixes description markers under lazy text and at a footnote body's column, in the preview and the HTML export (#397).
+
 ## [0.1.13] - 2026-10-23
 
 ### Changed
