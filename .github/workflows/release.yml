@@ -204,7 +204,7 @@ jobs:
         run: npx vsce package --out vscode-carve.vsix
 
       - name: Upload the packaged vsix as a build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vscode-carve-vsix
           path: vscode-carve.vsix
@@ -332,7 +332,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Re-checked under the approval: main can move while a run waits for a
       # reviewer, and the gate measured the commit that was current then.
