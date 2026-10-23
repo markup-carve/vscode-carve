@@ -6,6 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.13] - 2026-10-23
+
+### Changed
+
+- Bundle carve 0.1.13, carve-lsp 0.1.14 and carve-grammars 0.1.18, with the Carve 0.1.11 corpus in the editor checks. The server reads `.carverc.json` key by key, so table alignment and the other project settings apply in VS Code (#376, #395).
+
+### Added
+
+- Settings for `carve.extensions`, `carve.platforms`, `carve.severities`, inlay hints and `carve.format.alignTables`. Only settings the user set are sent to the server, so `.carverc.json` values are not overridden by defaults (#377, #378).
+- `csv` and `tsv` fence bodies are highlighted, including `{table}` delimited tables, in the editor, the preview and the HTML export (#381, #395).
+- `carve.csv.columnColors` colors each column of a `csv` or `tsv` fence body, off by default (#383, #396).
+- The leading `+` and `-` in `{.diff}` code fences are colored green and red in the editor (#385).
+- A color picker for hex values in `:color[...]` extensions (#391).
+
+### Fixed
+
+- A `+` is scoped as the continuation marker only after a list or description marker on its line (`- +`, `1. - +`, `: +`); a lone or refused `+` and glued `>+` stay text, and the marker is scoped as an operator (#387, #389).
+- Braces after an escaped bracket, an escaped link closer or a non-link parenthesis stay text instead of an attribute block (#379).
+- `kbd`, `abbr` and `time` names in a span's attribute block are scoped as span attributes (#374, #375).
+
 ## [0.1.12] - 2026-10-18
 
 ### Changed
