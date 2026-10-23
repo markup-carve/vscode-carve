@@ -176,6 +176,7 @@ const PREVIEW_ASSETS = {
   katexAutoRender: 'auto-render.js',
   hljsJs: 'highlight.js',
   hljsCarveJs: 'hljs-carve.js',
+  hljsDelimitedJs: 'hljs-delimited.js',
   hljsLightCss: 'github.css',
   hljsDarkCss: 'github-dark.css',
   hljsTableCss: 'table-tokens.css',
@@ -578,18 +579,19 @@ test('a done task item is tellable from an open one at a glance', () => {
     /input\[type="checkbox"\]:checked::after\s*\{/,
     'a done task box has no tick drawn in it, so a filled square is the only signal',
   )
-  // The OPEN state is carve-css's, not the scaffold's - core.css gives every
-  // task box `accent-color: var(--carve-accent)`. Asserted against the bundled
-  // stylesheet rather than the scaffold, because that is the file that has to
-  // keep holding it; asserting it here would pass while the real rule vanished.
+  // The OPEN state is carve-css's, not the scaffold's: since carve-css 0.1.7
+  // core.css draws every task box as a bordered, unfilled square. Asserted
+  // against the bundled stylesheet rather than the scaffold, because that is the
+  // file that has to keep holding it; asserting it here would pass while the
+  // real rule vanished.
   const coreCss = readFileSync(
     join(here, '..', 'media', 'carve-css', 'core.css'),
     'utf8',
   )
   assert.match(
     coreCss,
-    /input\[type="checkbox"\]\s*\{[^}]*accent-color:\s*var\(--carve-accent\)/,
-    'the bundled carve-css no longer tones an open task box, so there is nothing to contrast with',
+    /li > input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none[^}]*border:[^;]*solid[^}]*background:\s*var\(--carve-surface\)/,
+    'the bundled carve-css no longer draws an open task box, so there is nothing to contrast with',
   )
 
   // The label must stay alone. Dimming or striking it was the previous
@@ -976,7 +978,7 @@ test('the preview document rewrites relative images through its resolver', () =>
     nonce: 'n',
     cspSource: 'vscode-webview://x',
     assets: Object.fromEntries(['mermaid', 'chartJs', 'katexJs', 'katexCss', 'katexAutoRender', 'hljsJs',
-      'hljsCarveJs', 'hljsLightCss', 'hljsDarkCss', 'hljsTableCss', 'carveTokensCss', 'carveCoreCss',
+      'hljsCarveJs', 'hljsDelimitedJs', 'hljsLightCss', 'hljsDarkCss', 'hljsTableCss', 'carveTokensCss', 'carveCoreCss',
       'carveExtensionsCss', 'carveRecipesCss'].map((key) => [key, key])) as never,
     resolveImageSource: (relative) => 'https://file+.vscode-resource.vscode-cdn.net/doc/' + relative,
   })

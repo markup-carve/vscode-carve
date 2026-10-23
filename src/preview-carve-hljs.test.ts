@@ -29,17 +29,40 @@ test('the classic script registers carve with the global hljs', () => {
   assert.match(html, /<span class="hljs-/)
 })
 
+test('the delimited script registers csv and tsv with the global hljs', () => {
+  const context = createContext({})
+  runInContext(readFileSync(hljsFile, 'utf8'), context)
+  runInContext(readFileSync(join(grammarsDir, 'highlightjs', 'delimited.js'), 'utf8'), context)
+  for (const language of ['csv', 'tsv']) {
+    const html = runInContext(`hljs.highlight('a,"b"\\n1,2\\n', { language: '${language}' }).value`, context) as string
+    assert.match(html, /<span class="hljs-/)
+  }
+})
+
 test('the preview loads the carve grammar right after highlight.js', () => {
   const srcs = scriptSrcs(previewDocument('x', { nonce: 'n', cspSource: 'csp', assets }))
   assert.equal(srcs.indexOf('asset:hljsCarveJs'), srcs.indexOf('asset:hljsJs') + 1)
 })
 
-test('the export loads the pinned grammar and table palette from the CDN', () => {
+test('the preview loads the csv and tsv grammar right after the carve grammar', () => {
+  const srcs = scriptSrcs(previewDocument('x', { nonce: 'n', cspSource: 'csp', assets }))
+  assert.equal(srcs.indexOf('asset:hljsDelimitedJs'), srcs.indexOf('asset:hljsCarveJs') + 1)
+})
+
+test('the export loads the grammars, csv and tsv included, and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.16/highlightjs/carve.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@v0.1.16\/shiki\/table-tokens\.css/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.18/highlightjs/carve.js')
+  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.18/highlightjs/delimited.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@v0.1.18\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-table-boundary/)
+})
+
+test('the export CDN tag matches the carve-grammars the preview bundles', () => {
+  const { version } = JSON.parse(readFileSync(join(grammarsDir, 'package.json'), 'utf8')) as { version: string }
+  for (const src of scriptSrcs(exportHtmlDocument('x')).filter((s) => s.includes('/carve-grammars@'))) {
+    assert.ok(src.includes(`/carve-grammars@v${version}/`), `${src} is not carve-grammars ${version}`)
+  }
 })
 
 test('the preview loads the table palette beside its highlight.js theme', () => {

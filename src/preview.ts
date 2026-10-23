@@ -249,6 +249,8 @@ export interface PreviewAssets {
   hljsJs: string
   /** Webview URI for the Carve highlight.js grammar, so `carve` fences highlight. */
   hljsCarveJs: string
+  /** Webview URI for the CSV/TSV highlight.js grammar, so `csv` and `tsv` fences highlight. */
+  hljsDelimitedJs: string
   /** Webview URI for the highlight.js light theme stylesheet. */
   hljsLightCss: string
   /** Webview URI for the highlight.js dark theme stylesheet. */
@@ -735,6 +737,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
   <main class="carve">${body}</main>
   <script nonce="${nonce}" src="${assets.hljsJs}"></script>
   <script nonce="${nonce}" src="${assets.hljsCarveJs}"></script>
+  <script nonce="${nonce}" src="${assets.hljsDelimitedJs}"></script>
   <script nonce="${nonce}" src="${assets.katexJs}"></script>
   <script nonce="${nonce}" src="${assets.katexAutoRender}"></script>
   <script nonce="${nonce}" src="${assets.mermaid}"></script>
@@ -1139,10 +1142,11 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.16/highlightjs/carve.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.18/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.18/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.16/shiki/table-tokens.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.18/shiki/table-tokens.css',
 } as const
 
 export interface ExportOptions {
@@ -1256,6 +1260,7 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
   <main>${body}</main>
   <script src="${CDN.hljsJs}"></script>
   <script src="${CDN.hljsCarveJs}"></script>
+  <script src="${CDN.hljsDelimitedJs}"></script>
   <script src="${CDN.katexJs}"></script>
   <script src="${CDN.katexAutoRender}"></script>
   <script src="${CDN.mermaid}"></script>
