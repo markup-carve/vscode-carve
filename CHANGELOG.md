@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+The preview and language server follow the 0.1.12 table span and wrapped attribute rules.
+
+### Fixes
+
+- Padded table span markers and wrapped attributes render consistently in the preview and HTML export (#405).
+
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.14...HEAD
+
 ## [0.1.14] - 2026-10-23
 
 The preview and HTML export now render diagrams consistently and highlight nested content after a leading blank line.
