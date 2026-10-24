@@ -6,24 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.1.15] - 2026-10-24
-
-The preview, export commands, and editor grammar follow the published Carve 0.1.12 wave.
-
-### Fixes
-
-- Padded table spans, wrapped attributes, and refused continuation markers render consistently in the preview and HTML export (#405, #408).
-
-**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.14...v0.1.15
-
 ## [0.1.14] - 2026-10-23
 
-The preview and HTML export now render diagrams consistently and highlight nested content after a leading blank line.
+The preview and HTML export render diagrams consistently, highlight nested content after a leading blank line, and follow the current table span and wrapped attribute rules.
 
 ### Fixes
 
 - The preview highlights lists after a leading blank line and handles description markers under lazy text and at a footnote body column (#397).
 - The HTML export loads the bundled Mermaid version so diagrams render the same as in the preview (#399, #400).
+- Padded table spans, wrapped attributes, and refused continuation markers render consistently in the preview and HTML export (#405, #408).
 
 **Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.13...v0.1.14
 
