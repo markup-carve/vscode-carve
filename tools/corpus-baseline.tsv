@@ -352,6 +352,7 @@
 19-smart-typography-dashes-and-quotes-32.crv	331e65c3fae52a53	340f630575352b15	0	0	0
 19-smart-typography-dashes-and-quotes-33.crv	639e829a46dfb415	c9609980489c57d0	0	0	0
 19-smart-typography-dashes-and-quotes-34.crv	d2b299fe4f8c616e	b4483f9cd6fd3ac7	0	0	0
+19-smart-typography-dashes-and-quotes-35.crv	3141e6089598279d	465cfbac9cab5c5d	0	0	0
 19-smart-typography-dashes-and-quotes-4.crv	bd3b8b62dcd99e05	c490b47f67bafb83	0	0	0
 19-smart-typography-dashes-and-quotes-5.crv	92b9522a4da5afd1	cbfd5b08945168e5	0	0	0
 19-smart-typography-dashes-and-quotes-6.crv	769d204fa32222f0	9e06bc4c0b1adfb8	0	0	0
@@ -2872,6 +2873,11 @@
 656-the-column-of-the-quote-that-owns-a-first-block-plus-stays-eligible-at-every-depth-2.crv	aa5db7cc54343ba2	69326304c57c6d55	0	0	4
 656-the-column-of-the-quote-that-owns-a-first-block-plus-stays-eligible-at-every-depth-3.crv	04b854d9ab36ee93	1a064874b7688f66	0	0	3
 656-the-column-of-the-quote-that-owns-a-first-block-plus-stays-eligible-at-every-depth.crv	70653ddffa1f84b7	c21c3a03037c848c	0	0	3
+657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-2.crv	096c3f27f935e7ee	ece28e6b3cfb9bdf	1	0	2
+657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-3.crv	e38c192af2b0ded0	8ef9e64623564dd2	1	0	2
+657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv	a7e3a3ab5f9e35e3	8d32d270159e8db7	1	0	2
+657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv	1085b041876eb70e	98bd512a6900c424	1	0	2
+658-a-definition-marker-line-keeps-a-straddling-tab-s-residual-columns.crv	f11594094917301d	9a177098d2a5e178	0	0	2
 66-footnote-with-multiple-blocks-2.crv	85664ae9063fc991	6016cdd43e995eb2	0	0	1
 66-footnote-with-multiple-blocks.crv	21af2f84747cd542	b9507527814e650d	0	0	1
 67-empty-delimiters.crv	1ddcc7a16215a783	f949fb158070dd95	0	0	0
