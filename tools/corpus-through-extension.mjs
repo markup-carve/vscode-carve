@@ -511,6 +511,8 @@ let twoParserMismatches = 0
 // string that changes when the engine moves, which is all this key has to be.
 const ENGINE_PIN = '0.1.13'
 const ENGINE_LAG = {
+  '19-smart-typography-dashes-and-quotes-35.crv': 'Carve 0.1.13 predates the quote-boundary corpus ruling',
+  '658-a-definition-marker-line-keeps-a-straddling-tab-s-residual-columns.crv': 'Carve 0.1.13 predates the straddling-tab definition ruling',
 }
 const lagWaived = []
 const lagStale = []
