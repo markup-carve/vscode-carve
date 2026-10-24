@@ -1,0 +1,18 @@
+>- item
+#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ text.carve markup.list.unnumbered.carve
+#  ^^^^^ text.carve
+>
+>  :: Term
+#^^ text.carve markup.list.definition.term.carve
+#  ^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#    ^ text.carve markup.list.definition.term.carve
+#     ^^^^^ text.carve
+>  :  Def
+#^^ text.carve markup.list.definition.carve
+#  ^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+#   ^^ text.carve markup.list.definition.carve
+#     ^^^^ text.carve
+> :  under
+#^^^^^^^^^^ text.carve
+>
