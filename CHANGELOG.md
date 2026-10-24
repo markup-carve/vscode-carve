@@ -6,13 +6,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-The preview and language server follow the 0.1.12 table span and wrapped attribute rules.
+## [0.1.15] - 2026-10-24
+
+The preview, export commands, and editor grammar follow the published Carve 0.1.12 wave.
 
 ### Fixes
 
-- Padded table span markers and wrapped attributes render consistently in the preview and HTML export (#405).
+- Padded table spans, wrapped attributes, and refused continuation markers render consistently in the preview and HTML export (#405, #408).
 
-**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.14...HEAD
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.14...v0.1.15
 
 ## [0.1.14] - 2026-10-23
 
