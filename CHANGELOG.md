@@ -8,10 +8,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [0.1.14] - 2026-10-23
 
-### Fixed
+The preview and HTML export now render diagrams consistently and highlight nested content after a leading blank line.
 
-- The preview no longer stalls on a list after a leading blank line, and highlights it. The bundled carve-grammars 0.1.19 also fixes description markers under lazy text and at a footnote body's column, in the preview and the HTML export (#397).
-- The HTML export loads the same mermaid version the preview bundles, so a diagram renders the same in both (#399, #400).
+### Fixes
+
+- The preview highlights lists after a leading blank line and handles description markers under lazy text and at a footnote body column (#397).
+- The HTML export loads the bundled Mermaid version so diagrams render the same as in the preview (#399, #400).
+
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.13...v0.1.14
 
 ## [0.1.13] - 2026-10-23
 
