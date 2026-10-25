@@ -72,9 +72,9 @@ test('the preview loads the csv and tsv grammar right after the carve grammar', 
 test('the export loads the grammars, csv and tsv included, and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@91ee221d3ab0c9a9d6609e2f7bbae6c9fe839ac2/highlightjs/carve.js')
-  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@91ee221d3ab0c9a9d6609e2f7bbae6c9fe839ac2/highlightjs/delimited.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@91ee221d3ab0c9a9d6609e2f7bbae6c9fe839ac2\/shiki\/table-tokens\.css/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@7bee5c2f4872c6cfe521f4e4e47af5a626b11a9c/highlightjs/carve.js')
+  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@7bee5c2f4872c6cfe521f4e4e47af5a626b11a9c/highlightjs/delimited.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@7bee5c2f4872c6cfe521f4e4e47af5a626b11a9c\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-table-boundary/)
 })
 
