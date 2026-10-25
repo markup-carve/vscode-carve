@@ -29,7 +29,7 @@ test('table markers get colors in Carve fences and ordinary rows', async () => {
   ].join('\n')
   const markers = scan(source)
   const marked = (line: number, kind: 'boundary' | 'operator') => markers
-    .filter((marker) => marker.line === line && marker.kind === kind)
+    .filter((marker) => marker.line === line && (marker.kind === kind || (kind === 'operator' && marker.kind.startsWith('table'))))
     .map((marker) => source.split('\n')[line].slice(marker.start, marker.end))
   assert.deepEqual(marked(1, 'operator'), ['|=', '|='])
   assert.deepEqual(marked(1, 'boundary'), ['|'])
@@ -40,6 +40,47 @@ test('table markers get colors in Carve fences and ordinary rows', async () => {
   assert.deepEqual(marked(7, 'boundary'), [])
   assert.deepEqual(scan(source, 'sample'), markers)
   assert.deepEqual(scan(source.replace('Draft', 'Final'), 'sample').filter((marker) => marker.line === 2).length, 4)
+})
+
+test('editor marker roles match the shared Carve palette', async () => {
+  const scan = await createTableMarkerScanner(root)
+  const source = '- [ ] +\n> Attached quote\n\n- [x] done\n\n. ordered\n\n|=> 2-col header|<|=> header|\n| value | | value |'
+  const lines = source.split('\n')
+  const tokens = scan(source).map(({ line, start, end, kind }) => [kind, lines[line].slice(start, end)])
+  for (const pair of [
+    ['listPunctuation', '-'], ['listPunctuation', '.'], ['taskOpen', ' '],
+    ['taskDone', 'x'], ['continuationMarker', '+'], ['quoteMarker', '>'],
+    ['tableHeader', '|='], ['tableAlignment', '>'], ['tableSpan', '<'],
+  ]) assert.ok(tokens.some((token) => token[0] === pair[0] && token[1] === pair[1]), pair.join(': '))
+  assert.deepEqual(scan('```js\n- [ ] +\n|=> header|<|\n```').filter((marker) =>
+    ['listPunctuation', 'taskOpen', 'continuationMarker', 'tableHeader', 'tableSpan'].includes(marker.kind)), [])
+})
+
+test('a standalone plus gets a continuation color only when the parser accepts it', async () => {
+  const scan = await createTableMarkerScanner(root)
+  const markers = (source: string) => scan(source).filter((marker) => marker.kind === 'continuationMarker')
+  assert.deepEqual(markers('- item\n+\n> attached').map((marker) => marker.line), [1])
+  assert.deepEqual(markers('> - item\n> +\n> > attached').map((marker) => marker.line), [1])
+  assert.deepEqual(markers('- item\n+').map((marker) => marker.line), [])
+  assert.deepEqual(markers('+\nplain').map((marker) => marker.line), [])
+  assert.deepEqual(markers('> +\n> plain').map((marker) => marker.line), [])
+  assert.deepEqual(markers('```\n+\n```').map((marker) => marker.line), [])
+})
+
+test('description markers keep their own color role', async () => {
+  const scan = await createTableMarkerScanner(root)
+  const source = ':: Term\n: body text\n\n- item'
+  const markers = scan(source)
+  assert.deepEqual(markers.filter((marker) => marker.kind === 'listPunctuation').map((marker) => marker.line), [3])
+})
+
+test('only x task states use the checked color', async () => {
+  const scan = await createTableMarkerScanner(root)
+  const roles = { ' ': 'taskOpen', '-': 'taskDropped', '_': 'taskOpen', '>': 'taskDeferred', '?': 'taskUncertain', '/': 'taskProgress', '!': 'taskBlocked', x: 'taskDone', X: 'taskDone' } as const
+  for (const [state, role] of Object.entries(roles)) {
+    assert.ok(scan(`- [${state}] task`).some((item) => item.kind === role), state)
+  }
+  assert.ok(scan('| a | b |\n+ | | continued |').some((item) => item.kind === 'tableContinuation'))
 })
 
 test('alignment markers are colored beside the header or boundary pipe', async () => {
@@ -60,7 +101,7 @@ test('alignment markers are colored beside the header or boundary pipe', async (
   ]
   const markers = scan(lines.join('\n'))
   const marked = (line: number, kind: 'boundary' | 'operator') => markers
-    .filter((marker) => marker.line === line && marker.kind === kind)
+    .filter((marker) => marker.line === line && (marker.kind === kind || (kind === 'operator' && marker.kind.startsWith('table'))))
     .map((marker) => lines[line].slice(marker.start, marker.end))
   assert.deepEqual(marked(0, 'operator'), ['|=', '>', '|='])
   assert.deepEqual(marked(0, 'boundary'), ['|'])

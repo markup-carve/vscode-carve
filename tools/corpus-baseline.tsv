@@ -64,7 +64,7 @@
 05-lists-8.crv	89e500f5a9690345	82f840b3fa2ed07b	1	0	1
 05-lists-9.crv	a4eb548dfee5c40f	9a94f79a5936c83f	0	0	1
 05-lists.crv	1dcd13f787c26308	7484ba3ace7131d8	0	0	1
-06-task-lists-2.crv	82f30d8c861992f7	9fcfa9ba5d2df18b	0	0	1
+06-task-lists-2.crv	f3ef4dd5b2758150	51ce7cb2fa9cde16	0	0	1
 06-task-lists-3.crv	cfebdb218ee7ffcc	eae59b2e6ad3069b	0	0	1
 06-task-lists-4.crv	1b303dabbdc8bf23	4b80035e9cd11aa1	0	0	0
 06-task-lists-5.crv	be8ed797caaad605	1258c0cdba01a9be	0	0	0
@@ -2907,6 +2907,14 @@
 659-table-spans-keep-alignment-defaults-in-physical-columns.crv	9a48666fbcd1ed3e	802447db690ba33a	0	0	0
 66-footnote-with-multiple-blocks-2.crv	85664ae9063fc991	6016cdd43e995eb2	0	0	1
 66-footnote-with-multiple-blocks.crv	21af2f84747cd542	b9507527814e650d	0	0	1
+660-an-empty-link-destination-takes-spaces.crv	7cc8786451bc3688	cb0d76ea5061a5f3	0	0	0
+661-a-tab-cannot-pad-an-empty-link-destination.crv	54d02455da38d8f7	32b70d715492cfd9	0	0	0
+662-a-tab-after-a-comment-marker-stays-in-its-text.crv	6828bfc063830467	c395018357488cbf	0	0	0
+663-a-titled-admonition-skips-an-authored-heading-id.crv	d538a59197fbcc81	a5f400fb38528e32	0	1	2
+664-a-display-math-span-with-trailing-attributes-takes-a-caption.crv	abb21d6b52257612	d49e0dd6d6464815	0	0	1
+665-a-styled-display-math-span-takes-a-caption-across-one-blank-line.crv	9641e98071d26026	fd08492784cfd74f	0	0	1
+666-a-line-at-the-marker-column-leaves-a-closed-nested-body-2.crv	5105e71dc4e9af4d	97967a0d536fec11	0	0	3
+666-a-line-at-the-marker-column-leaves-a-closed-nested-body.crv	eb6fa24b500c9b83	c4a32cdfe4ba2c87	0	0	3
 67-empty-delimiters.crv	1ddcc7a16215a783	f949fb158070dd95	0	0	0
 68-nested-containers-2.crv	3382dd47ad0f57cf	945e4567d0811709	0	0	2
 68-nested-containers-3.crv	6579f5c487b5f50c	483d3149563325f2	0	0	2

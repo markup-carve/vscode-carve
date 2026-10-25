@@ -441,7 +441,10 @@ export function previewDocument(source: string, options: PreviewOptions): string
       --carve-rule: var(--vscode-contrastBorder, var(--vscode-panel-border));
       --carve-quote-border: var(--vscode-contrastBorder, var(--vscode-editor-foreground));
       --carve-table-boundary: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --carve-table-header: var(--vscode-editor-foreground);
       --carve-table-operator: var(--vscode-editorError-foreground);
+      --carve-table-span: var(--vscode-editorInfo-foreground, var(--vscode-editor-foreground));
+      --carve-table-continuation: var(--vscode-gitDecoration-addedResourceForeground, var(--vscode-editor-foreground));
       --carve-border-width: 1px;
       --carve-accent-width: 4px;
       --carve-quote-border-width: var(--carve-accent-width);
@@ -635,76 +638,20 @@ export function previewDocument(source: string, options: PreviewOptions): string
       display: block;
     }
 
-    /* --- Task lists --------------------------------------------------- */
-
-    /*
-     * carve-css styles the checkbox itself but takes no view on what a DONE
-     * item looks like, and a 13px accent box is not a state a reader can scan.
-     *
-     * So the BOX carries the state and the text is left alone: a checked item
-     * takes the success tone, an unchecked one keeps the accent. Done reads as
-     * a positive state you can still read, which is what a task list is for.
-     *
-     * Nothing sets a text-decoration or an inherited colour, so a nested item
-     * needs no carve-out - a finished parent cannot reach its children, rather
-     * than reaching them and being pushed back. The earlier treatment dimmed
-     * and struck the text, which needed a :not(:has(:is(ul, ol))) guard because
-     * a decoration on a block box propagates into every descendant and CSS
-     * gives the descendant no way to take it back.
-     */
-    .carve li:has(> input[type="checkbox"]) { list-style: none; }
-    .carve li > input[type="checkbox"] {
-      margin-inline-start: -1.4em;
-      margin-inline-end: var(--carve-space-2);
-      vertical-align: middle;
+    /* Keep the tick legible when the VS Code theme differs from the OS theme. */
+    body.vscode-light,
+    body.vscode-high-contrast-light {
+      --carve-task-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 7l3 3 7-7'/%3E%3C/svg%3E");
     }
-    @supports (float: inline-start) {
-      .carve ul.task-list > li > input[type="checkbox"]:first-child {
-        margin-block-start: calc((var(--carve-line-height) - 1) * 0.5em - 0.1em);
-      }
+    body.vscode-dark,
+    body.vscode-high-contrast {
+      --carve-task-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2314171b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 7l3 3 7-7'/%3E%3C/svg%3E");
     }
-    @supports selector(:has(> a)) and (float: inline-start) {
-      .carve ul > li > input[type="checkbox"]:first-child {
-        margin-block-start: calc((var(--carve-line-height) - 1) * 0.5em - 0.1em);
-      }
-    }
-    /*
-     * accent-color does NOT work here. The engine emits the box as disabled
-     * (it is a rendered state, not a control), and a disabled checkbox is
-     * painted by the UA in its own grey with accent-color ignored - so both
-     * states came out the same washed square whatever tone was asked for.
-     *
-     * So the box is drawn here instead of asked for: appearance:none removes
-     * the UA rendering entirely, and the two states are a bordered empty
-     * square and a filled success square with a drawn tick. That is the
-     * contrast, and it survives being disabled because nothing about it is
-     * the UA's to grey.
-     */
-    .carve li > input[type="checkbox"] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 1em;
-      height: 1em;
-      border: 1.5px solid var(--carve-border);
-      border-radius: 3px;
-      background: var(--carve-surface);
-      position: relative;
-    }
-    .carve li > input[type="checkbox"]:checked {
-      border-color: var(--carve-success);
-      background: var(--carve-success);
-    }
-    /* The tick, drawn rather than glyphed so it scales with the box. */
-    .carve li > input[type="checkbox"]:checked::after {
-      content: "";
-      position: absolute;
-      left: 0.3em;
-      top: 0.12em;
-      width: 0.22em;
-      height: 0.48em;
-      border: solid var(--carve-ink-inverse);
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
+    /* The box carries task state; labels and nested open tasks stay readable. */
+    .carve li[data-task-state="x"],
+    .carve li[data-task-state="-"] {
+      color: var(--carve-ink);
+      text-decoration: none;
     }
 
     /* --- Scroll sync -------------------------------------------------- */
@@ -1151,11 +1098,11 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.20/highlightjs/carve.js',
-  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.20/highlightjs/delimited.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.20/shiki/table-tokens.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/shiki/table-tokens.css',
 } as const
 
 export interface ExportOptions {
@@ -1186,8 +1133,11 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
     :root { color-scheme: light dark; --quote-padding: 1rem; --quote-border-width: 3px; }
     @media (prefers-color-scheme: dark) {
       :root {
-        --carve-table-boundary: #79a8b5;
-        --carve-table-operator: #ff7b72;
+        --carve-table-boundary: #8b949e;
+        --carve-table-header: #79b8ff;
+        --carve-table-operator: #ffab70;
+        --carve-table-span: #b392f0;
+        --carve-table-continuation: #85e89d;
       }
     }
     html { font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
