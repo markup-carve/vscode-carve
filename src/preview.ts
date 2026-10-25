@@ -441,7 +441,10 @@ export function previewDocument(source: string, options: PreviewOptions): string
       --carve-rule: var(--vscode-contrastBorder, var(--vscode-panel-border));
       --carve-quote-border: var(--vscode-contrastBorder, var(--vscode-editor-foreground));
       --carve-table-boundary: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --carve-table-header: var(--vscode-editor-foreground);
       --carve-table-operator: var(--vscode-editorError-foreground);
+      --carve-table-span: var(--vscode-editorInfo-foreground, var(--vscode-editor-foreground));
+      --carve-table-continuation: var(--vscode-gitDecoration-addedResourceForeground, var(--vscode-editor-foreground));
       --carve-border-width: 1px;
       --carve-accent-width: 4px;
       --carve-quote-border-width: var(--carve-accent-width);
@@ -1151,11 +1154,11 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.20/highlightjs/carve.js',
-  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.20/highlightjs/delimited.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@91ee221d3ab0c9a9d6609e2f7bbae6c9fe839ac2/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@91ee221d3ab0c9a9d6609e2f7bbae6c9fe839ac2/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.20/shiki/table-tokens.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@91ee221d3ab0c9a9d6609e2f7bbae6c9fe839ac2/shiki/table-tokens.css',
 } as const
 
 export interface ExportOptions {
@@ -1186,8 +1189,11 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
     :root { color-scheme: light dark; --quote-padding: 1rem; --quote-border-width: 3px; }
     @media (prefers-color-scheme: dark) {
       :root {
-        --carve-table-boundary: #79a8b5;
-        --carve-table-operator: #ff7b72;
+        --carve-table-boundary: #8b949e;
+        --carve-table-header: #79b8ff;
+        --carve-table-operator: #ffab70;
+        --carve-table-span: #b392f0;
+        --carve-table-continuation: #85e89d;
       }
     }
     html { font-family: system-ui, -apple-system, Segoe UI, sans-serif; }

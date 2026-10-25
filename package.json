@@ -478,7 +478,7 @@
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "@markup-carve/carve-css": "^0.1.8",
-    "@markup-carve/carve-grammars": "0.1.20",
+    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#91ee221d3ab0c9a9d6609e2f7bbae6c9fe839ac2",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.2.2",
