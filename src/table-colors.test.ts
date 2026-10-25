@@ -48,12 +48,12 @@ test('editor marker roles match the shared Carve palette', async () => {
   const lines = source.split('\n')
   const tokens = scan(source).map(({ line, start, end, kind }) => [kind, lines[line].slice(start, end)])
   for (const pair of [
-    ['listPunctuation', '-'], ['listPunctuation', '.'], ['taskUnchecked', '[ ]'],
-    ['taskChecked', '[x]'], ['continuationMarker', '+'], ['quoteMarker', '>'],
+    ['listPunctuation', '-'], ['listPunctuation', '.'], ['taskOpen', ' '],
+    ['taskDone', 'x'], ['continuationMarker', '+'], ['quoteMarker', '>'],
     ['tableHeader', '|='], ['tableAlignment', '>'], ['tableSpan', '<'],
   ]) assert.ok(tokens.some((token) => token[0] === pair[0] && token[1] === pair[1]), pair.join(': '))
   assert.deepEqual(scan('```js\n- [ ] +\n|=> header|<|\n```').filter((marker) =>
-    ['listPunctuation', 'taskUnchecked', 'continuationMarker', 'tableHeader', 'tableSpan'].includes(marker.kind)), [])
+    ['listPunctuation', 'taskOpen', 'continuationMarker', 'tableHeader', 'tableSpan'].includes(marker.kind)), [])
 })
 
 test('a standalone plus gets a continuation color only when the parser accepts it', async () => {
@@ -76,12 +76,9 @@ test('description markers keep their own color role', async () => {
 
 test('only x task states use the checked color', async () => {
   const scan = await createTableMarkerScanner(root)
-  for (const state of [' ', '-', '_', '>', '?']) {
-    const marker = scan(`- [${state}] task`).find((item) => item.kind === 'taskUnchecked')
-    assert.ok(marker, `state ${JSON.stringify(state)}`)
-  }
-  for (const state of ['x', 'X']) {
-    assert.ok(scan(`- [${state}] task`).some((item) => item.kind === 'taskChecked'), state)
+  const roles = { ' ': 'taskOpen', '-': 'taskDropped', '_': 'taskOpen', '>': 'taskDeferred', '?': 'taskUncertain', '/': 'taskProgress', '!': 'taskBlocked', x: 'taskDone', X: 'taskDone' } as const
+  for (const [state, role] of Object.entries(roles)) {
+    assert.ok(scan(`- [${state}] task`).some((item) => item.kind === role), state)
   }
   assert.ok(scan('| a | b |\n+ | | continued |').some((item) => item.kind === 'tableContinuation'))
 })

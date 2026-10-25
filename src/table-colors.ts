@@ -33,6 +33,7 @@ interface AstNode {
 const TASK_KIND: Record<string, TableMarker['kind']> = {
   ' ': 'taskOpen', _: 'taskOpen', '/': 'taskProgress', '!': 'taskBlocked',
   x: 'taskDone', X: 'taskDone', '-': 'taskDropped', '>': 'taskDeferred', '?': 'taskUncertain',
+}
 
 function standaloneContinuationMarkers(lines: string[], ast: AstNode): TableMarker[] {
   const occupied: NonNullable<AstNode['pos']>[] = []
