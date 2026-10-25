@@ -9,7 +9,7 @@ export interface TableMarker {
   line: number
   start: number
   end: number
-  kind: 'boundary' | 'operator' | 'plain' | 'tableBody' | 'listMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis' | 'diffAdd' | 'diffRemove' | 'delimitedColumn'
+  kind: 'boundary' | 'operator' | 'plain' | 'tableBody' | 'listMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis' | 'diffAdd' | 'diffRemove' | 'delimitedColumn' | 'taskOpen' | 'taskProgress' | 'taskBlocked' | 'taskDone' | 'taskDropped' | 'taskDeferred' | 'taskUncertain'
   /** Field index, for `delimitedColumn` only. */
   column?: number
 }
@@ -27,6 +27,11 @@ interface AstNode {
   caption?: AstNode[]
   title?: AstNode[]
   target?: AstNode
+}
+
+const TASK_KIND: Record<string, TableMarker['kind']> = {
+  ' ': 'taskOpen', _: 'taskOpen', '/': 'taskProgress', '!': 'taskBlocked',
+  x: 'taskDone', X: 'taskDone', '-': 'taskDropped', '>': 'taskDeferred', '?': 'taskUncertain',
 }
 
 function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSourceLayout): { markers: TableMarker[]; codeLines: Set<number>; tableLines: Set<number> } {
@@ -115,8 +120,13 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
         })
       }
       if (node.type === 'list_item') {
-        const match = lines[start.line]?.slice(start.column).match(/^(?:[-*]|\d+[.)]|[A-Za-z][.)]|\.) +(?:\[[ xX_>?-]\] +)?/)
+        const match = lines[start.line]?.slice(start.column).match(/^(?:[-*]|\d+[.)]|[A-Za-z][.)]|\.) +(?:\[[ xX_\/>!?-]\] +)?/)
         if (match) add(start.line, start.column, start.column + match[0].length, 'listMarker')
+        const task = lines[start.line]?.slice(start.column).match(/^[-*](?:\{[^{}\n]*\})? +\[([ xX_\/>!?-])\] +/)
+        if (task) {
+          const stateColumn = start.column + task[0].indexOf('[') + 1
+          add(start.line, stateColumn, stateColumn + 1, TASK_KIND[task[1]]!)
+        }
       }
       if (node.type === 'definition_term' || node.type === 'definition_description') {
         const match = lines[start.line]?.slice(start.column).match(/^:{1,2} +/)
@@ -204,6 +214,12 @@ export async function createTableMarkerScanner(
             ? 'operator'
             : undefined
         if (kind) markers.push({ line, start: token.startIndex, end: token.endIndex, kind })
+        if (scopes.includes('constant.language.task-list.carve')) {
+          for (const task of sourceLine.slice(token.startIndex, token.endIndex).matchAll(/\[([ xX_\/>!?-])\]/g)) {
+            const start = token.startIndex + task.index + 1
+            markers.push({ line, start, end: start + 1, kind: TASK_KIND[task[1]]! })
+          }
+        }
       }
       markersByLine[line] = markers
     }
@@ -227,6 +243,8 @@ export async function createTableMarkerScanner(
     }
     const parserMarkers = (source?.markers ?? []).filter((marker) => {
       if (marker.kind === 'tableBody') return true
+      if (marker.kind.startsWith('task')) return !(markersByLine[marker.line] ?? []).some((candidate) =>
+        candidate.start === marker.start && candidate.end === marker.end && candidate.kind === marker.kind)
       const token = tokensByLine[marker.line]?.find((candidate) => candidate.startIndex <= marker.start && candidate.endIndex > marker.start)
       const scopes = token?.scopes ?? []
       if (marker.kind === 'listMarker') return !scopes.some((scope) => scope.startsWith('markup.list.'))

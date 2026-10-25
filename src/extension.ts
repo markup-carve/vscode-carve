@@ -112,6 +112,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     light: { color: '#98680d' },
     dark: { color: '#d8aa57' },
   })
+  const taskStyles = [
+    ['taskOpen', '#5a626d', '#9aa4b0'],
+    ['taskProgress', '#14607f', '#6fb6d4'],
+    ['taskBlocked', '#9c2c1c', '#f4a69d'],
+    ['taskDone', '#1f6b45', '#85e89d'],
+    ['taskDropped', '#5a626d', '#9aa4b0'],
+    ['taskDeferred', '#14607f', '#6fb6d4'],
+    ['taskUncertain', '#6f42c1', '#b392f0'],
+  ] as const
+  const taskDecorations = taskStyles.map(([, light, dark]) => vscode.window.createTextEditorDecorationType({
+    light: { color: light, fontWeight: 'bold' },
+    dark: { color: dark, fontWeight: 'bold' },
+  }))
   const strongDecoration = vscode.window.createTextEditorDecorationType({ fontWeight: 'bold' })
   const emphasisDecoration = vscode.window.createTextEditorDecorationType({ fontStyle: 'italic' })
   const diffAddDecoration = vscode.window.createTextEditorDecorationType({
@@ -127,7 +140,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     dark: { color: dark },
   }))
   const decorations = [boundaryDecoration, operatorDecoration, plainDecoration, tableBodyDecoration,
-    markerDecoration, strongDecoration, emphasisDecoration, diffAddDecoration, diffRemoveDecoration, ...columnDecorations]
+    markerDecoration, strongDecoration, emphasisDecoration, diffAddDecoration, diffRemoveDecoration, ...taskDecorations, ...columnDecorations]
   context.subscriptions.push(...decorations)
   void createTableMarkerScanner(context.extensionPath).then((scanTableMarkers) => {
     const updateTableMarkers = (editor: vscode.TextEditor): void => {
@@ -144,6 +157,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       editor.setDecorations(plainDecoration, ranges('plain'))
       editor.setDecorations(tableBodyDecoration, ranges('tableBody'))
       editor.setDecorations(markerDecoration, [...ranges('listMarker'), ...ranges('definitionMarker'), ...ranges('containerMarker')])
+      taskStyles.forEach(([kind], index) => editor.setDecorations(taskDecorations[index], ranges(kind)))
       editor.setDecorations(strongDecoration, ranges('strong'))
       editor.setDecorations(emphasisDecoration, ranges('emphasis'))
       editor.setDecorations(diffAddDecoration, ranges('diffAdd'))
