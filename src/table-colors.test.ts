@@ -115,6 +115,20 @@ test('nested definition and list markers follow the parsed source layout', async
     .map((marker) => [marker.line, marker.start]), [[2, 2], [3, 2]])
 })
 
+test('task marker characters receive their own editor colors', async () => {
+  const scan = await createTableMarkerScanner(root)
+  for (const [state, kind] of [
+    [' ', 'taskOpen'], ['_', 'taskOpen'], ['/', 'taskProgress'],
+    ['!', 'taskBlocked'], ['x', 'taskDone'], ['-', 'taskDropped'],
+    ['>', 'taskDeferred'], ['?', 'taskUncertain'],
+  ] as const) {
+    const source = `- [${state}] task`
+    assert.deepEqual(scan(source).filter((marker) => marker.kind === kind)
+      .map((marker) => source.slice(marker.start, marker.end)), [state])
+  }
+  assert.deepEqual(scan('- [|] literal').filter((marker) => marker.kind.startsWith('task')), [])
+})
+
 test('only parsed CSV and TSV tables receive table body highlighting', async () => {
   const scan = await createTableMarkerScanner(root)
   const lines = ['{table}', '```csv', 'a,b', '```', '', '```csv', 'x,y', '```', '', '{table}', '```tsv', 'a\tb', '```']

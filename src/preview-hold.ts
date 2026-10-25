@@ -13,7 +13,7 @@
 // alpha and roman branches stay disjoint so the fence prefix cannot backtrack
 // exponentially.
 export const MARKER = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdm]{2,}[.)]|[IVXLCDM]{2,}[.)]|\.)`
-const TASK = String.raw`\[[ xX_>?-]\]`
+const TASK = String.raw`\[[ xX_/>!?-]\]`
 const BARE_MARKER = new RegExp(
   String.raw`^[ \t]*(?:>[ \t]*)*${MARKER}(?:[ \t]+${TASK})?[ \t]*$`,
 )
