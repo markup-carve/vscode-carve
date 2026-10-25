@@ -99,6 +99,34 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     light: { color: '#cf222e', fontWeight: 'bold' },
     dark: { color: '#ff7b72', fontWeight: 'bold' },
   })
+  const tableHeaderDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#005cc5', fontWeight: 'bold' },
+    dark: { color: '#79b8ff', fontWeight: 'bold' },
+  })
+  const tableAlignmentDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#e36209' },
+    dark: { color: '#ffab70' },
+  })
+  const tableSpanDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#6f42c1', fontWeight: 'bold' },
+    dark: { color: '#b392f0', fontWeight: 'bold' },
+  })
+  const tableContinuationDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#22863a', fontWeight: 'bold' },
+    dark: { color: '#85e89d', fontWeight: 'bold' },
+  })
+  const listPunctuationDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#d73a49', fontWeight: 'bold' },
+    dark: { color: '#f97583', fontWeight: 'bold' },
+  })
+  const continuationDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#8250df', fontWeight: 'bold' },
+    dark: { color: '#d2a8ff', fontWeight: 'bold' },
+  })
+  const quoteMarkerDecoration = vscode.window.createTextEditorDecorationType({
+    light: { color: '#22863a', fontWeight: 'bold' },
+    dark: { color: '#85e89d', fontWeight: 'bold' },
+  })
   const plainDecoration = vscode.window.createTextEditorDecorationType({
     color: new vscode.ThemeColor('editor.foreground'),
     fontStyle: 'normal',
@@ -139,8 +167,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     light: { color: light },
     dark: { color: dark },
   }))
-  const decorations = [boundaryDecoration, operatorDecoration, plainDecoration, tableBodyDecoration,
-    markerDecoration, strongDecoration, emphasisDecoration, diffAddDecoration, diffRemoveDecoration, ...taskDecorations, ...columnDecorations]
+  const decorations = [boundaryDecoration, operatorDecoration, tableHeaderDecoration, tableAlignmentDecoration,
+    tableSpanDecoration, tableContinuationDecoration, listPunctuationDecoration, continuationDecoration,
+    quoteMarkerDecoration, plainDecoration, tableBodyDecoration, markerDecoration, strongDecoration,
+    emphasisDecoration, diffAddDecoration, diffRemoveDecoration, ...taskDecorations, ...columnDecorations]
   context.subscriptions.push(...decorations)
   void createTableMarkerScanner(context.extensionPath).then((scanTableMarkers) => {
     const updateTableMarkers = (editor: vscode.TextEditor): void => {
@@ -154,9 +184,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         .map((marker) => new vscode.Range(marker.line, marker.start, marker.line, marker.end))
       editor.setDecorations(boundaryDecoration, ranges('boundary'))
       editor.setDecorations(operatorDecoration, ranges('operator'))
+      editor.setDecorations(tableHeaderDecoration, ranges('tableHeader'))
+      editor.setDecorations(tableAlignmentDecoration, ranges('tableAlignment'))
+      editor.setDecorations(tableSpanDecoration, ranges('tableSpan'))
+      editor.setDecorations(tableContinuationDecoration, ranges('tableContinuation'))
+      editor.setDecorations(listPunctuationDecoration, [...ranges('listPunctuation'), ...ranges('listMarker')])
+      editor.setDecorations(continuationDecoration, ranges('continuationMarker'))
+      editor.setDecorations(quoteMarkerDecoration, ranges('quoteMarker'))
       editor.setDecorations(plainDecoration, ranges('plain'))
       editor.setDecorations(tableBodyDecoration, ranges('tableBody'))
-      editor.setDecorations(markerDecoration, [...ranges('listMarker'), ...ranges('definitionMarker'), ...ranges('containerMarker')])
+      editor.setDecorations(markerDecoration, [...ranges('definitionMarker'), ...ranges('containerMarker')])
       taskStyles.forEach(([kind], index) => editor.setDecorations(taskDecorations[index], ranges(kind)))
       editor.setDecorations(strongDecoration, ranges('strong'))
       editor.setDecorations(emphasisDecoration, ranges('emphasis'))

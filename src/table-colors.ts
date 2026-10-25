@@ -9,13 +9,14 @@ export interface TableMarker {
   line: number
   start: number
   end: number
-  kind: 'boundary' | 'operator' | 'plain' | 'tableBody' | 'listMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis' | 'diffAdd' | 'diffRemove' | 'delimitedColumn' | 'taskOpen' | 'taskProgress' | 'taskBlocked' | 'taskDone' | 'taskDropped' | 'taskDeferred' | 'taskUncertain'
+  kind: 'boundary' | 'operator' | 'tableHeader' | 'tableAlignment' | 'tableSpan' | 'tableContinuation' | 'plain' | 'tableBody' | 'listMarker' | 'listPunctuation' | 'continuationMarker' | 'quoteMarker' | 'definitionMarker' | 'containerMarker' | 'strong' | 'emphasis' | 'diffAdd' | 'diffRemove' | 'delimitedColumn' | 'taskOpen' | 'taskProgress' | 'taskBlocked' | 'taskDone' | 'taskDropped' | 'taskDeferred' | 'taskUncertain'
   /** Field index, for `delimitedColumn` only. */
   column?: number
 }
 
 interface AstNode {
   type: string
+  pos?: { startLine: number; endLine: number; startColumn: number; endColumn: number }
   sourceFormat?: string
   lang?: string
   content?: string
@@ -32,6 +33,32 @@ interface AstNode {
 const TASK_KIND: Record<string, TableMarker['kind']> = {
   ' ': 'taskOpen', _: 'taskOpen', '/': 'taskProgress', '!': 'taskBlocked',
   x: 'taskDone', X: 'taskDone', '-': 'taskDropped', '>': 'taskDeferred', '?': 'taskUncertain',
+
+function standaloneContinuationMarkers(lines: string[], ast: AstNode): TableMarker[] {
+  const occupied: NonNullable<AstNode['pos']>[] = []
+  const visit = (node: unknown): void => {
+    if (!node || typeof node !== 'object') return
+    if (Array.isArray(node)) { node.forEach(visit); return }
+    const value = node as AstNode
+    if (value.type === 'link' && value.pos) occupied.push(value.pos)
+    const children = Object.entries(value).filter(([key, child]) => key !== 'pos' && key !== 'attrs' && child && typeof child === 'object')
+    if (children.length) children.forEach(([, child]) => visit(child))
+    else if (value.pos) occupied.push(value.pos)
+  }
+  visit(ast)
+  const markers: TableMarker[] = []
+  lines.forEach((line, index) => {
+    if (!/^(?:[ \t]*>[ \t]+)*[ \t]*\+[ \t]*$/.test(line)) return
+    const start = line.indexOf('+')
+    const column = [...line.slice(0, start)].length + 1
+    const lineNumber = index + 1
+    if (occupied.some((pos) => lineNumber >= pos.startLine && lineNumber <= pos.endLine
+      && (lineNumber !== pos.startLine || column >= pos.startColumn)
+      && (lineNumber !== pos.endLine || column < pos.endColumn))) return
+    markers.push({ line: index, start, end: start + 1, kind: 'continuationMarker' })
+  })
+  return markers
+
 }
 
 function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSourceLayout): { markers: TableMarker[]; codeLines: Set<number>; tableLines: Set<number> } {
@@ -146,6 +173,7 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
     }
   }
   walk(ast as AstNode, '')
+  markers.push(...standaloneContinuationMarkers(lines, ast as AstNode))
   return { markers, codeLines, tableLines }
 }
 
@@ -213,12 +241,28 @@ export async function createTableMarkerScanner(
           : scopes.some((scope) => scope.startsWith('keyword.operator.table.') || scope === 'punctuation.definition.table.separator.carve')
             ? 'operator'
             : undefined
-        if (kind) markers.push({ line, start: token.startIndex, end: token.endIndex, kind })
-        if (scopes.includes('constant.language.task-list.carve')) {
-          for (const task of sourceLine.slice(token.startIndex, token.endIndex).matchAll(/\[([ xX_\/>!?-])\]/g)) {
+
+        const has = (scope: string) => scopes.includes(scope)
+        const role: TableMarker['kind'] | undefined = has('keyword.operator.table.header.carve') ? 'tableHeader'
+          : has('keyword.operator.table.alignment.carve') ? 'tableAlignment'
+            : has('keyword.operator.table.colspan.carve') || has('keyword.operator.table.rowspan.carve') ? 'tableSpan'
+              : has('keyword.operator.table.continuation.carve') ? 'tableContinuation'
+                : has('punctuation.definition.list.begin.carve')
+                    && (has('markup.list.unnumbered.carve') || has('markup.list.numbered.carve')) ? 'listPunctuation'
+                  : has('punctuation.definition.list.continuation.carve') || has('keyword.operator.continuation.carve') ? 'continuationMarker'
+                    : has('punctuation.definition.quote.carve') ? 'quoteMarker'
+                      : undefined
+        if (role) markers.push({ line, start: token.startIndex, end: token.endIndex, kind: role })
+        if (kind && !(kind === 'operator' && role?.startsWith('table'))) {
+          markers.push({ line, start: token.startIndex, end: token.endIndex, kind })
+        }
+        if (has('constant.language.task-list.carve')) {
+          const content = sourceLine.slice(token.startIndex, token.endIndex)
+          for (const task of content.matchAll(/\[([ xX_\/>!?-])\]/g)) {
             const start = token.startIndex + task.index + 1
             markers.push({ line, start, end: start + 1, kind: TASK_KIND[task[1]]! })
           }
+
         }
       }
       markersByLine[line] = markers
