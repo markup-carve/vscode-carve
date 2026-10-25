@@ -551,64 +551,17 @@ test('the copy button asks the extension host and reports the outcome', () => {
   )
 })
 
-test('a done task item is tellable from an open one at a glance', () => {
+test('the preview uses shared checkbox colors and alignment', () => {
   const style = scaffoldStyle()
+  const coreCss = readFileSync(join(here, '..', 'media', 'carve-css', 'core.css'), 'utf8')
 
-  // The maintainer could not tell the two states apart, then chose how they
-  // should differ: the BOX carries the state and the label is left readable.
-  // A done item is a positive state you can still read, which is what a task
-  // list is for - not a struck-out line you have to squint past.
-  //
-  // Asserted as a pair, because the signal is the CONTRAST between them. A
-  // rule that tones every box the same way would satisfy either half alone.
-  // accent-color is NOT the mechanism and must not be asserted as one: the
-  // engine emits the box disabled, and a disabled checkbox is painted by the
-  // UA in its own grey with accent-color ignored. The box is drawn instead.
-  assert.match(
-    style,
-    /input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none/,
-    'the task box is back to the UA rendering, which greys a disabled box and flattens both states',
-  )
-  assert.match(
-    style,
-    /input\[type="checkbox"\]:checked\s*\{[^}]*background:\s*var\(--carve-success\)/,
-    'a done task box no longer fills with the success tone, so the two states read alike',
-  )
-  assert.match(
-    style,
-    /input\[type="checkbox"\]:checked::after\s*\{/,
-    'a done task box has no tick drawn in it, so a filled square is the only signal',
-  )
-  // The OPEN state is carve-css's, not the scaffold's: since carve-css 0.1.7
-  // core.css draws every task box as a bordered, unfilled square. Asserted
-  // against the bundled stylesheet rather than the scaffold, because that is the
-  // file that has to keep holding it; asserting it here would pass while the
-  // real rule vanished.
-  const coreCss = readFileSync(
-    join(here, '..', 'media', 'carve-css', 'core.css'),
-    'utf8',
-  )
-  assert.match(
-    coreCss,
-    /li > input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none[^}]*border:[^;]*solid[^}]*background:\s*var\(--carve-surface\)/,
-    'the bundled carve-css no longer draws an open task box, so there is nothing to contrast with',
-  )
-
-  // The label must stay alone. Dimming or striking it was the previous
-  // treatment and it needed a :not(:has(:is(ul, ol))) guard, because a
-  // decoration on a block box reaches every descendant and CSS gives the
-  // descendant no way to refuse it - a finished parent struck its open
-  // children. Nothing here sets either, so the carve-out is not needed.
-  assert.doesNotMatch(
-    style,
-    /:checked\)[^{]*\{[^}]*text-decoration:\s*line-through/,
-    'a done item strikes its label again, which reaches into nested open items',
-  )
-  assert.doesNotMatch(
-    style,
-    /:checked\)\s*\{\s*color:\s*var\(--carve-ink-soft\)/,
-    'a done item dims its label again, which reaches into nested open items',
-  )
+  assert.doesNotMatch(style, /li > input\[type="checkbox"\]/, 'the preview overrides the shared checkbox rules')
+  assert.match(coreCss, /li > input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none[^}]*border:[^;]*solid var\(--carve-ink-soft\)/)
+  assert.match(coreCss, /li > input\[type="checkbox"\]:checked\s*\{[^}]*background:[^;]*var\(--carve-task-check-icon\)/)
+  assert.match(coreCss, /ul\.task-list > li > input\[type="checkbox"\]:first-child\s*\{[^}]*float:\s*inline-start/)
+  assert.match(style, /body\.vscode-light,[\s\S]*?--carve-task-check-icon:[^;]*stroke='%23fff'/)
+  assert.match(style, /body\.vscode-dark,[\s\S]*?--carve-task-check-icon:[^;]*stroke='%2314171b'/)
+  assert.match(style, /li\[data-task-state="x"\],[\s\S]*?li\[data-task-state="-"\]\s*\{[^}]*color:\s*var\(--carve-ink\);[^}]*text-decoration:\s*none/)
 })
 
 test('the preview follows a theme switch while it is open', () => {
