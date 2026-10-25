@@ -658,6 +658,16 @@ export function previewDocument(source: string, options: PreviewOptions): string
       margin-inline-end: var(--carve-space-2);
       vertical-align: middle;
     }
+    @supports (float: inline-start) {
+      .carve ul.task-list > li > input[type="checkbox"]:first-child {
+        margin-block-start: calc((var(--carve-line-height) - 1) * 0.5em - 0.1em);
+      }
+    }
+    @supports selector(:has(> a)) and (float: inline-start) {
+      .carve ul > li > input[type="checkbox"]:first-child {
+        margin-block-start: calc((var(--carve-line-height) - 1) * 0.5em - 0.1em);
+      }
+    }
     /*
      * accent-color does NOT work here. The engine emits the box as disabled
      * (it is a rendered state, not a control), and a disabled checkbox is
@@ -679,7 +689,6 @@ export function previewDocument(source: string, options: PreviewOptions): string
       border-radius: 3px;
       background: var(--carve-surface);
       position: relative;
-      top: 0.05em;
     }
     .carve li > input[type="checkbox"]:checked {
       border-color: var(--carve-success);
