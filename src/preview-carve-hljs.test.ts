@@ -72,21 +72,22 @@ test('the preview loads the csv and tsv grammar right after the carve grammar', 
 test('the export loads the grammars, csv and tsv included, and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@7bee5c2f4872c6cfe521f4e4e47af5a626b11a9c/highlightjs/carve.js')
-  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@7bee5c2f4872c6cfe521f4e4e47af5a626b11a9c/highlightjs/delimited.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@7bee5c2f4872c6cfe521f4e4e47af5a626b11a9c\/shiki\/table-tokens\.css/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/carve.js')
+  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/delimited.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@v0.1.22\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-table-boundary/)
 })
 
-test('the export CDN commit matches the carve-grammars the preview bundles', () => {
+test('the export CDN tag matches the installed carve-grammars package', () => {
   const lock = JSON.parse(readFileSync(join(process.cwd(), 'package-lock.json'), 'utf8')) as {
-    packages: Record<string, { resolved?: string }>
+    packages: Record<string, { version?: string; resolved?: string }>
   }
-  const resolved = lock.packages['node_modules/@markup-carve/carve-grammars'].resolved
-  const commit = resolved?.match(/#([0-9a-f]{40})$/)?.[1]
-  assert.ok(commit, 'carve-grammars must be pinned to a Git commit')
+  const packageEntry = lock.packages['node_modules/@markup-carve/carve-grammars']
+  const installed = JSON.parse(readFileSync(join(grammarsDir, 'package.json'), 'utf8')) as { version: string }
+  assert.equal(packageEntry.version, installed.version)
+  assert.equal(packageEntry.resolved, `https://registry.npmjs.org/@markup-carve/carve-grammars/-/carve-grammars-${installed.version}.tgz`)
   for (const src of scriptSrcs(exportHtmlDocument('x')).filter((s) => s.includes('/carve-grammars@'))) {
-    assert.ok(src.includes(`/carve-grammars@${commit}/`), `${src} is not carve-grammars ${commit}`)
+    assert.ok(src.includes(`/carve-grammars@v${installed.version}/`), `${src} is not carve-grammars ${installed.version}`)
   }
 })
 

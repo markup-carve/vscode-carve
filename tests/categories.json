@@ -181,6 +181,13 @@
     "unquoted-attribute-values-may-contain-dots-and-colons": "unquoted-attribute-values-may-contain-dots-and-colons.crv"
   },
   "skip": {
+    "a-display-math-span-with-trailing-attributes-takes-a-caption": "Caption attachment is resolved by the parser; the math and attribute scopes are already covered.",
+    "a-line-at-the-marker-column-leaves-a-closed-nested-body": "Nested list closure is a parser boundary; its marker and fence scopes are already covered.",
+    "a-styled-display-math-span-takes-a-caption-across-one-blank-line": "Caption attachment across a blank line is resolved by the parser; the math and attribute scopes are already covered.",
+    "a-tab-after-a-comment-marker-stays-in-its-text": "The tab is comment text; comment scopes are already covered.",
+    "a-tab-cannot-pad-an-empty-link-destination": "A tab makes the empty destination invalid; valid link and literal text scopes are already covered.",
+    "a-titled-admonition-skips-an-authored-heading-id": "Generated ID allocation is renderer behavior; heading and admonition scopes are already covered.",
+    "an-empty-link-destination-takes-spaces": "Padding in an empty link destination is parser behavior; link scopes are already covered.",
     "a-backslash-in-a-link-destination-is-a-literal-character": "How a backslash inside a destination is interpreted is link parsing; the link tokens are covered by 03 and the escape token by 60.",
     "a-band-paragraph-after-an-invisible-line-leaves-the-item-loose": "Measured against the bundled TextMate grammar: every scope produced by every file in this category is already pinned by a covered corpus snapshot or a committed focused fixture. Looseness is a render-time list property - it decides whether the item gets a `<p>`, not how any token is scoped.",
     "a-bare-attribute-block-on-its-own-line-is-literal": "Negative case: '{}' stays literal. The attribute-block pattern requires at least one character, so there is no token to assert; block attribute lines are covered by 84.",

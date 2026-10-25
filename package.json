@@ -469,16 +469,16 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "0.1.14",
-    "@markup-carve/carve-lsp": "0.1.14",
+    "@markup-carve/carve": "0.1.15",
+    "@markup-carve/carve-lsp": "0.1.15",
     "vscode-languageclient": "^9.0.1",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
   },
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
-    "@markup-carve/carve-css": "github:markup-carve/carve-css#9d0981948305b42f20784497fdbdcfd8081fc82c",
-    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#7bee5c2f4872c6cfe521f4e4e47af5a626b11a9c",
+    "@markup-carve/carve-css": "0.1.9",
+    "@markup-carve/carve-grammars": "0.1.22",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.2.2",
@@ -489,6 +489,6 @@
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "overrides": {
-    "@markup-carve/carve": "0.1.14"
+    "@markup-carve/carve": "0.1.15"
   }
 }
