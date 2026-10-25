@@ -6,6 +6,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-10-26
+
+Task markers now show their state in both the editor and preview. Table and list markers are easier to distinguish while editing.
+
+### Fixes
+
+- Progress and blocked tasks display their authored states, and `_` remains an open task alias (#418, #416).
+- Task boxes align with their list text in the preview (#414).
+
+### Improvements
+
+- List, quote, continuation, and table markers use consistent editor colors. Table headers, alignment, spans, and continuation markers have distinct preview colors (#416).
+
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.15...v0.1.16
+
 ## [0.1.15] - 2026-10-24
 
 The preview and HTML export follow the current table span, wrapped attribute, and continuation marker rules.
