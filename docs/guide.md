@@ -1,0 +1,158 @@
+# vscode-carve
+
+VS Code support for [Carve](https://github.com/markup-carve/carve), a lightweight markup language for documents and the web.
+
+## Features
+
+- Language registration for `.crv` files, with a dedicated file icon in the Explorer.
+- Carve highlighting in the Markdown editor for fences labeled `carve` or `crv`.
+- Syntax highlighting for headings, emphasis, strong, links, images, lists, tables, code, raw blocks, comments, attributes, footnotes, mentions, tags, math, and frontmatter.
+- Color picker for hex values inside `:color[...]`.
+- Fenced code bodies in the editor highlight in the fence's language (`js`, `ts`, `python`, `sh`, `yaml`, `html`, `rust`, `go`, `c++`, `latex` and about 60 more) when VS Code has a grammar for it; a `carve` or `crv` fence highlights as Carve. Some languages, such as Blade, Twig, Vue, Svelte, GraphQL, TOML and Kotlin, need their VS Code extension installed. Other fences stay plain code. The list is the shared [fence-language table](https://github.com/markup-carve/carve-grammars/tree/main/fence-languages) every Carve editor grammar uses.
+- `csv` and `tsv` fence bodies, including `{table}` delimited tables, highlight separators, quoted fields and header rows.
+- Language server integration via [`markup-carve/carve-lsp`](https://github.com/markup-carve/carve-lsp):
+  - diagnostics for parser errors and Djot/Markdown migration warnings,
+  - quick fixes for migration warnings where the rewrite is mechanical,
+  - hover help for common Carve syntax,
+  - document symbols generated from heading structure,
+  - semantic tokens for parser-aware highlighting in themes that support LSP semantic colorization,
+  - context-aware completion: admonition kinds after `:::`, heading ids after `</#`, footnote labels after `[^`, and link reference labels after `][`,
+  - document formatting (and format-on-save) that trims trailing whitespace, collapses blank-line runs, and normalizes the final newline without touching code, raw, or comment blocks,
+  - continuation on Enter: a new line inside a block quote, a table or a description list starts with the right prefix, and Enter on a `:::` opener writes the closer. This runs through format-on-type, which the extension turns on for Carve files (see settings below),
+  - Tab and Shift+Tab on a list item line nest the item under the one above it and move it back out, placing the marker at the column Carve needs for the sublist to parse. Elsewhere, and on a first item or a top-level item where there is nothing to nest under or out of, the keys keep their usual behavior. The bundled carve-lsp supplies the `carve.listIndent` command, and since carve-lsp 0.1.14 a moved item keeps its continuation marker `+` on its marker column. With an older server or with `carve.lsp.enabled` off, Tab and Shift+Tab indent as usual,
+  - folding for headings/sections and multi-line blocks,
+  - rename for footnote and link reference labels (definition and all references),
+  - code lens showing the reference count above each footnote definition.
+- Snippets for common constructs: headings, emphasis, links, images, tables, lists, code/raw blocks, footnotes, math, divs, attributes, and frontmatter (type `h2`, `link`, `table`, `codeblock`, etc.).
+- Preview command: **Carve: Open Preview** renders the active document in a VS Code webview, reachable from the editor title bar button, the command palette, or `ctrl+shift+v` (`cmd+shift+v` on macOS). The preview:
+  - renders [Mermaid](https://mermaid.js.org/) diagrams from ` ```mermaid ` code blocks,
+  - typesets inline and display math with [KaTeX](https://katex.org/),
+  - syntax-highlights fenced code blocks with highlight.js (light/dark aware),
+  - follows the active Carve editor, syncs scrolling line-by-line in both directions, and highlights the block under the cursor,
+  - keeps its last render while the cursor line holds only a list marker (`- `, `1. `, `- [ ] `), so starting a new item does not flash the marker as text folded into the item above; it renders once the line gets content or the cursor leaves it,
+  - shows images given by a path relative to the document, from the document's folder or its workspace folder,
+  - links `@mentions` and `#tags` and renders `:emoji:` shortcodes when configured (see settings below).
+- Export commands:
+  - **Carve: Export to HTML** writes a self-contained HTML file (Mermaid, KaTeX, and highlight.js load from a CDN; theming follows the reader's color scheme).
+  - **Carve: Export Bundle (document and its includes)** writes the document and every file it pulls in into a folder beside it, keeping the directives and the file boundaries.
+  - **Carve: Print Preview / Export PDF** opens the system print dialog on the preview, so you can save to PDF.
+- Import command: **Carve: Import from Markdown or HTML** converts a `.md` or `.html` file to a sibling `.crv` with the carve-js importer and opens it. It works on the active editor, a file from the explorer context menu, or a file picked from a dialog, and asks before overwriting an existing `.crv`.
+- Editor rules for comments (Toggle Line Comment writes `%%`), brackets, autoclosing pairs, folding markers, and word patterns.
+- An example document in the repository, `examples/demo.crv`, exercising every supported construct - open it and run **Carve: Open Preview** to see the rendering features in action.
+
+The canonical structural grammar for Carve lives in [`markup-carve/tree-sitter-carve`](https://github.com/markup-carve/tree-sitter-carve). VS Code extensions currently use TextMate grammars for built-in syntax colorization, so this extension ships a TextMate grammar aligned with the Tree-sitter grammar and uses the LSP for semantic behavior.
+
+### Highlighting limits
+
+A TextMate rule sees one line at a time, so a few shapes color differently from how Carve reads them.
+
+- A bare bold run can cross a soft line break, so its opener cannot check for a closer first. When the only closer-shaped `*` sits inside a code span, or there is none, the run colors to the end of its paragraph: `` x *a `b* c` d `` renders as text but shows as bold. The same happens to the `*/}` left after `{/a *b {/c/}*/}`.
+- A braced span whose closer is on a later line, such as `x{*` followed by `*}` on the next line, is not scoped as a span.
+- A bare italic, underline, strikethrough or highlight run is scoped only when its closer is on the same line. `/a` followed by `b/` on the next line is one italic run, and shows as text.
+- Inside a fenced code block that embeds a language, a bare fence line shorter than the opener (a ```` ``` ```` line inside a ```` ```` ```` block) ends the language highlighting for the rest of the block. The block itself stays open until its real closer. Carve fences are exempt. Fences inside a block quote are not embedded.
+
+## Settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `carve.lsp.enabled` | `true` | Enable the Carve language server. |
+| `carve.trace.server` | `"off"` | Trace VS Code ↔ language-server communication (`off`/`messages`/`verbose`) in the output channel, for debugging. |
+| `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
+| `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
+| `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
+| `carve.csv.columnColors` | `false` | Color each column of a `csv` or `tsv` fence body differently, cycling through six colors. Separators keep their own color, and a quoted field that spans lines keeps its column's color. |
+| `carve.formatter` | `"conservative"` | What **Format Document** does: `conservative` normalizes whitespace and line endings only, `migration` rewrites the document into canonical Carve. |
+| `carve.format.alignTables` | `false` | Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without it. |
+| `carve.extensions` | `[]` | Language extensions the server enables for diagnostics and highlighting, such as `semantic-span`. |
+| `carve.platforms` | `[]` | Platforms whose rendering the server checks against; currently `github`. |
+| `carve.severities` | `{}` | Diagnostic severity by rule name: `error`, `warning`, `information`, `hint` or `off`, for example `{ "broken-crossref": "error" }`. |
+| `carve.inlayHints.enabled` | `true` | Show the server's inlay hints: generated heading identifiers, colon-fence closers and the bare list marker hint. |
+| `carve.inlayHints.bareListMarkers` | `true` | Show the hint after a bare list marker on the line being edited. |
+| `carve.includes.enabled` | `"auto"` | Resolve `{{ path }}` include directives (`auto`/`on`/`off`). `auto` resolves them in a trusted workspace and leaves them literal in an untrusted one. |
+| `carve.includes.includeRoot` | `""` | Containment root for include targets, the equivalent of `carve --include-root`. Empty uses the workspace folder the document belongs to, then the document's own folder. |
+| `carve.includes.allowAbsolute` | `false` | Allow an absolute include path. Still subject to root containment. |
+
+The extension sends the language server settings above (`carve.formatter`
+through `carve.inlayHints.bareListMarkers`) only when you set them, and changing
+one restarts the server. With carve-lsp 0.1.14 or later, a setting you leave
+unset comes from the `carve` section of `.carverc.json` in the workspace, and a
+key set in neither keeps the server default. The include settings come only
+from VS Code.
+
+The extension also sets one editor default for Carve files only:
+
+| Setting | Default for `[carve]` | Description |
+|---------|-----------------------|-------------|
+| `editor.formatOnType` | `true` | Lets the language server continue a block on Enter. VS Code only asks the server when this is on, and its own default is off. To turn it off, set `"[carve]": { "editor.formatOnType": false }` in your settings. |
+
+### Includes
+
+A `{{ chapters/intro.crv }}` directive is resolved against the workspace folder
+the document belongs to, falling back to the document's own folder - never the
+process working directory, so a document here and the same document rendered by
+the `carve` CLI agree on what is reachable. With the gate open you get
+go-to-definition and path completion on the target, headings from an included
+file in the document's symbol list, and a diagnostic where a directive would
+otherwise sit in the page looking like ordinary prose. A target that does not
+exist yet is watched too, so creating it refreshes the document that wanted it.
+
+The include settings are read when the language server starts, so changing one
+restarts it. The same gate governs the **preview** and the HTML and Markdown
+exports, so one setting answers "may this document read that file" everywhere.
+
+**The preview expands includes.** The children are merged through the engine's
+own expansion pass, so what you see is what `carve` renders. Three things ride
+along, each invisible when it is missing: the preview re-renders when an
+*included* file changes, including a target that did not exist yet, so creating
+it refreshes the page; every refusal the spec names - an unresolved target, a
+cycle, a containment denial, a depth or a size refusal - is published as a
+diagnostic rather than left looking like ordinary prose; and child sources are
+cached on identity plus modification time, so a keystroke does not re-read every
+chapter.
+
+One extension set does the parse and the render, so turning includes on cannot
+change how the document's own text is read. A CHILD is still parsed without that
+set, which is an engine limit rather than a choice here -
+[carve-js#1693](https://github.com/markup-carve/carve-js/issues/1693) - so
+extension syntax in an included file can read differently from the same syntax
+in the parent.
+
+A child's relative links and images are rebased against the CHILD's folder. For example, a
+chapter at `chapters/intro.crv` writing `[see](figures/one.png)` means
+`chapters/figures/one.png`, and that is what the preview and the exports resolve
+- not `figures/one.png` beside the book, which is how a link silently reaches a
+different existing file.
+
+**Bundling** hands the whole document over as a set of files. **Carve: Export
+Bundle** writes the open document and every file it includes, transitively, into
+`name.bundle` beside it, laid out relative to the containment root so the
+directives still resolve. The files are copied, not merged, which is what makes
+it the right shape for "send it to a colleague who will keep editing it". A
+target that could not be read is named in the result rather than quietly left
+out, and nothing outside the containment root is written into the bundle.
+
+The bundle runs the language server's own include walk, through the same gate
+and the same containment root the server enforces, so it cannot reach a file the
+server would have refused. With includes off for a document there is nothing to
+bundle and the command says so.
+
+**Flattening** hands the whole document over as ONE document. **Carve: Export as
+a self-contained Carve file** writes `name.flat.crv` beside the original, and
+**Carve: Copy as a single document** puts the same text on the clipboard.
+
+It is deliberately a separate command rather than a mode of the Carve export:
+spec I15 requires writing a document back as Carve to return the author's
+document, so a plain Carve export must never expand. Both commands report the
+two side effects that are invisible in the result - the output is canonical
+Carve, so formatting is normalized rather than preserved, and colliding explicit
+ids and footnote labels are renamed (spec I5), so a flattened document can carry
+`intro-2`.
+
+A child's relative links are NOT rebased when flattening, unlike in the preview:
+`carve flatten` does not rewrite them, and matching the CLI byte for byte is
+worth more here than being independently right.
+
+## Development
+
+See the [development guide](../docs/development.md) for setup, testing, corpus
+updates, and local packaging.
