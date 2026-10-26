@@ -28,21 +28,21 @@
 #                        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
 >
 >:: Term one %% trailing comment stays a comment
-#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 #  ^ text.carve markup.list.definition.term.carve
 #   ^^^^^^^^^ text.carve
 #            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
 >:  Definition of term one.
-#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 # ^^ text.carve markup.list.definition.carve
 #   ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >
 >:: Term two
-#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 #  ^ text.carve markup.list.definition.term.carve
 #   ^^^^^^^^^ text.carve
 >:  Definition of term two.
-#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 # ^^ text.carve markup.list.definition.carve
 #   ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
 >
