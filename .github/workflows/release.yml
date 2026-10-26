@@ -210,10 +210,10 @@ jobs:
           path: vscode-carve.vsix
 
       - name: Publish to VS Code Marketplace
-        run: npx vsce publish --packagePath vscode-carve.vsix
+        run: npx vsce publish --packagePath vscode-carve.vsix --skip-duplicate
 
       - name: Publish to Open VSX
-        run: npx ovsx publish vscode-carve.vsix
+        run: npx ovsx publish vscode-carve.vsix --skip-duplicate
 
       # Ask the registries rather than the exit code, and ask them for the
       # VERSION. The step this replaced asked Open VSX for an HTTP 200 on the

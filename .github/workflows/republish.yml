@@ -1,0 +1,146 @@
+name: Republish an existing tag
+
+# Finishes a release whose publish job failed after the tag was created, for
+# example an Open VSX timeout. Both publishes skip a version the marketplace
+# already has, so this only fills in what is missing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to publish, with its leading v (e.g. v0.1.16)'
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: ${{ inputs.tag }}
+
+jobs:
+  republish:
+    name: Publish an existing tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: release
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+    permissions:
+      contents: write
+    steps:
+      - name: The tag exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$RELEASE_TAG" --jq .object.sha
+
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
+          submodules: recursive
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Prefer HTTPS for Git dependencies
+        run: |
+          git config --global --add url."https://github.com/".insteadOf ssh://git@github.com/
+          git config --global --add url."https://github.com/".insteadOf git@github.com:
+
+      - name: The package version matches the tag
+        run: |
+          got="$(node -p "require('./package.json').version")"
+          [ "$got" = "${RELEASE_TAG#v}" ] || { echo "::error::package.json is $got, tag is $RELEASE_TAG"; exit 1; }
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Package extension
+        run: npx vsce package --out vscode-carve.vsix
+
+      - name: Publish to VS Code Marketplace
+        run: npx vsce publish --packagePath vscode-carve.vsix --skip-duplicate
+
+      - name: Publish to Open VSX
+        run: npx ovsx publish vscode-carve.vsix --skip-duplicate
+
+      - name: Both marketplaces actually serve this version
+        run: |
+          want="${RELEASE_TAG#v}"
+
+          ovsx_served() {
+            curl -sS --max-time 25 \
+              "https://open-vsx.org/api/markup-carve/vscode-carve/latest" 2>/dev/null \
+              | jq -r '.version // empty' 2>/dev/null || true
+          }
+
+          vsce_served() {
+            curl -sS --max-time 25 -X POST \
+              "https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery" \
+              -H 'Accept: application/json;api-version=7.2-preview.1' \
+              -H 'Content-Type: application/json' \
+              -d '{"filters":[{"criteria":[{"filterType":7,"value":"markup-carve.vscode-carve"}]}],"flags":16}' \
+              2>/dev/null \
+              | jq -r '.results[0].extensions[0].versions[0].version // empty' 2>/dev/null || true
+          }
+
+          ovsx_seen=""
+          vsce_seen=""
+          for _ in $(seq 1 20); do
+            if [ "$ovsx_seen" != "$want" ]; then ovsx_seen="$(ovsx_served)"; fi
+            if [ "$vsce_seen" != "$want" ]; then vsce_seen="$(vsce_served)"; fi
+            if [ "$ovsx_seen" = "$want" ] && [ "$vsce_seen" = "$want" ]; then
+              break
+            fi
+            sleep 45
+          done
+
+          fail=0
+          if [ "$ovsx_seen" = "$want" ]; then
+            echo "Open VSX serves $want"
+          else
+            echo "::error::Open VSX serves ${ovsx_seen:-nothing}, expected $want"
+            fail=1
+          fi
+          if [ "$vsce_seen" = "$want" ]; then
+            echo "VS Code Marketplace serves $want"
+          else
+            echo "::error::VS Code Marketplace serves ${vsce_seen:-nothing}, expected $want"
+            fail=1
+          fi
+          exit $fail
+
+      # A registry publish is not finished until the release page exists. The
+      # tag is pushed, CI publishes, the registry answers 200, and "released"
+      # feels done - while `/releases` still shows a draft, so a reader has no
+      # notes and no changelog for the version they just installed. Doing it
+      # here rather than by hand also means the draft stops being a thing
+      # someone has to remember to publish at the right moment.
+      #
+      # Last, deliberately: a draft that stays a draft is recoverable, and one
+      # published beside a failed publish is not.
+      - name: Publish the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          id="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$RELEASE_TAG\" and .draft)] | first | .id // empty")"
+          if [ -z "$id" ]; then
+            echo "No draft release for $RELEASE_TAG; nothing to publish."
+            exit 0
+          fi
+          # `tag_name` goes with every PATCH of a release. Omit it on a DRAFT
+          # and GitHub replaces the tag with a generated `untagged-*`
+          # placeholder, because a draft's tag is a string on the object rather
+          # than a git ref - so the field has nothing to fall back to.
+          # `-F` (not `-f`) for draft, so it is sent as a boolean.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" -X PATCH \
+            -f tag_name="$RELEASE_TAG" -F draft=false --jq '"published \(.tag_name)"'
+          # Read it back: exit status does not tell you whether the tag survived.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" \
+            --jq '"draft=\(.draft) tag=\(.tag_name)"'
