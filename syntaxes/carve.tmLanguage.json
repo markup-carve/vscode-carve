@@ -1528,7 +1528,7 @@
               "name": "markup.list.definition.term.carve"
             },
             "1": {
-              "name": "punctuation.definition.list.begin.carve"
+              "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
             }
           },
           "end": "^(?![ \\t]*$)(?![ \\t]*::?[ \\t])(?![ \\t])",
@@ -1554,7 +1554,7 @@
               "name": "markup.list.definition.term.carve"
             },
             "2": {
-              "name": "punctuation.definition.list.begin.carve"
+              "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
             }
           },
           "end": "^(?![ \\t]*$)(?![ \\t]*::?[ \\t])(?!\\1[ \\t])",
@@ -1585,7 +1585,7 @@
               "name": "markup.list.definition.carve"
             },
             "2": {
-              "name": "punctuation.definition.list.begin.carve"
+              "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
             },
             "4": {
               "name": "markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve"
@@ -1626,7 +1626,7 @@
               "name": "markup.list.definition.carve"
             },
             "2": {
-              "name": "punctuation.definition.list.begin.carve"
+              "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
             }
           },
           "end": "^(?![ \\t]*$)(?!\\1[ \\t])",
@@ -1655,7 +1655,7 @@
               "name": "markup.list.definition.carve"
             },
             "3": {
-              "name": "punctuation.definition.list.begin.carve"
+              "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
             },
             "5": {
               "name": "markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve"
@@ -5411,7 +5411,7 @@
               "name": "markup.list.definition.term.carve"
             },
             "1": {
-              "name": "punctuation.definition.list.begin.carve"
+              "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
             }
           },
           "patterns": [
@@ -5429,7 +5429,7 @@
                   "name": "markup.list.definition.term.carve"
                 },
                 "3": {
-                  "name": "punctuation.definition.list.begin.carve"
+                  "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
                 }
               }
             },
@@ -5447,7 +5447,7 @@
                   "name": "markup.list.definition.carve"
                 },
                 "3": {
-                  "name": "punctuation.definition.list.begin.carve"
+                  "name": "keyword.control.definition.carve punctuation.definition.list.begin.carve"
                 }
               }
             },

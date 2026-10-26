@@ -364,3 +364,42 @@ test("a sibling block at the term's column is released by the region", () => {
     )
   }
 })
+
+test('definition markers expose a keyword fallback inside a Carve fence', () => {
+  const tokens = tokenize('````carve\n:: Safe Mode\n: Removes unsafe HTML.\n\nparagraph\n: orphan\n````\n')
+  for (const [line, marker] of [
+    [':: Safe Mode', '::'],
+    [': Removes unsafe HTML.', ':'],
+  ]) {
+    const mark = tokens.find((t) => t.line === line && t.text === marker)
+    assert.ok(mark && has(mark, 'keyword.control.definition.carve'), report(tokens))
+    assert.ok(has(mark, 'punctuation.definition.list.begin.carve'), report(tokens))
+    assert.ok(
+      mark.scopes.indexOf('keyword.control.definition.carve') <
+        mark.scopes.indexOf('punctuation.definition.list.begin.carve'),
+      report(tokens),
+    )
+    for (const t of tokens.filter((x) => x.line === line && x.text !== marker)) {
+      assert.ok(!has(t, 'keyword.control.definition.carve'), report(tokens))
+    }
+  }
+  const orphan = tokens.filter((t) => t.line === ': orphan')
+  assert.ok(orphan.every((t) => !has(t, 'keyword.control.definition.carve')), report(tokens))
+})
+
+test('definition markers expose the same fallback at top level and in quotes', () => {
+  for (const source of [
+    ':: Safe Mode\n: Removes unsafe HTML.\n',
+    '> :: Safe Mode\n> : Removes unsafe HTML.\n',
+  ]) {
+    const tokens = tokenize(source)
+    for (const marker of ['::', ':']) {
+      const mark = tokens.find((t) => t.text === marker)
+      assert.ok(mark && has(mark, 'keyword.control.definition.carve'), report(tokens))
+      assert.ok(has(mark, 'punctuation.definition.list.begin.carve'), report(tokens))
+    }
+    for (const t of tokens.filter((x) => x.text !== '::' && x.text !== ':')) {
+      assert.ok(!has(t, 'keyword.control.definition.carve'), report(tokens))
+    }
+  }
+})
