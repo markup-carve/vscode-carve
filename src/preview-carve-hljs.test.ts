@@ -72,28 +72,39 @@ test('the preview loads the csv and tsv grammar right after the carve grammar', 
 test('the export loads the grammars, csv and tsv included, and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/carve.js')
-  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/delimited.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@v0.1.22\/shiki\/table-tokens\.css/)
-  assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-table-boundary/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ac2eea2f/highlightjs/carve.js')
+  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ac2eea2f/highlightjs/delimited.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@ac2eea2f\/shiki\/table-tokens\.css/)
+  assert.match(exportHtmlDocument('x'), /setAttribute\('data-theme', colorScheme\?\.matches \? 'dark' : 'light'\)/)
+  assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-syntax-list: #f2cc60/)
+  const dark = (JSON.parse(readFileSync(join(grammarsDir, 'themes', 'palette.json'), 'utf8')) as { dark: Record<string, string> }).dark
+  const exported = exportHtmlDocument('x')
+  for (const role of ['definition', 'list', 'task', 'language', 'muted']) {
+    assert.ok(exported.includes(`--carve-syntax-${role}: ${dark[role]};`), role)
+  }
+  for (const role of ['Boundary', 'Header', 'Operator', 'Span', 'Continuation']) {
+    assert.ok(exported.includes(`--carve-table-${role.toLowerCase()}: ${dark[`table${role}`]};`), role)
+  }
 })
 
-test('the export CDN tag matches the installed carve-grammars package', () => {
+test('the export CDN revision matches the installed carve-grammars package', () => {
   const lock = JSON.parse(readFileSync(join(process.cwd(), 'package-lock.json'), 'utf8')) as {
     packages: Record<string, { version?: string; resolved?: string }>
   }
   const packageEntry = lock.packages['node_modules/@markup-carve/carve-grammars']
   const installed = JSON.parse(readFileSync(join(grammarsDir, 'package.json'), 'utf8')) as { version: string }
   assert.equal(packageEntry.version, installed.version)
-  assert.equal(packageEntry.resolved, `https://registry.npmjs.org/@markup-carve/carve-grammars/-/carve-grammars-${installed.version}.tgz`)
+  const revision = packageEntry.resolved?.match(/#([0-9a-f]{40})$/)?.[1].slice(0, 8)
+  assert.equal(revision, 'ac2eea2f')
   for (const src of scriptSrcs(exportHtmlDocument('x')).filter((s) => s.includes('/carve-grammars@'))) {
-    assert.ok(src.includes(`/carve-grammars@v${installed.version}/`), `${src} is not carve-grammars ${installed.version}`)
+    assert.ok(src.includes(`/carve-grammars@${revision}/`), `${src} is not carve-grammars ${revision}`)
   }
 })
 
 test('the preview loads the table palette beside its highlight.js theme', () => {
   const html = previewDocument('x', { nonce: 'n', cspSource: 'csp', assets })
   assert.match(html, /href="asset:hljsTableCss"/)
+  assert.match(html, /href="asset:hljsCarveCss"/)
 })
 
 test('a Carve table fence separates boundaries, headers, alignment, and spans', () => {

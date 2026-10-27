@@ -24,6 +24,7 @@ const files = [
   [join(nm, '@markup-carve', 'carve-grammars', 'highlightjs', 'carve.js'), join(media, 'hljs', 'carve.js')],
   [join(nm, '@markup-carve', 'carve-grammars', 'highlightjs', 'delimited.js'), join(media, 'hljs', 'delimited.js')],
   [join(nm, '@markup-carve', 'carve-grammars', 'shiki', 'table-tokens.css'), join(media, 'hljs', 'table-tokens.css')],
+  [join(nm, '@markup-carve', 'carve-grammars', 'themes', 'carve-code.css'), join(media, 'hljs', 'carve-code.css')],
   // @markup-carve/carve-css - the shared token layer and the rules built on it.
   // Linked as four separate files rather than through carve.css, because that
   // entry point pulls its layers in with relative `@import`s and the preview

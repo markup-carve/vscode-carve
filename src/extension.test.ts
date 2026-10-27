@@ -180,6 +180,7 @@ const PREVIEW_ASSETS = {
   hljsLightCss: 'github.css',
   hljsDarkCss: 'github-dark.css',
   hljsTableCss: 'table-tokens.css',
+  hljsCarveCss: 'carve-code.css',
   carveTokensCss: 'carve-css/tokens.css',
   carveCoreCss: 'carve-css/core.css',
   carveExtensionsCss: 'carve-css/extensions.css',
@@ -931,7 +932,7 @@ test('the preview document rewrites relative images through its resolver', () =>
     nonce: 'n',
     cspSource: 'vscode-webview://x',
     assets: Object.fromEntries(['mermaid', 'chartJs', 'katexJs', 'katexCss', 'katexAutoRender', 'hljsJs',
-      'hljsCarveJs', 'hljsDelimitedJs', 'hljsLightCss', 'hljsDarkCss', 'hljsTableCss', 'carveTokensCss', 'carveCoreCss',
+      'hljsCarveJs', 'hljsDelimitedJs', 'hljsLightCss', 'hljsDarkCss', 'hljsTableCss', 'hljsCarveCss', 'carveTokensCss', 'carveCoreCss',
       'carveExtensionsCss', 'carveRecipesCss'].map((key) => [key, key])) as never,
     resolveImageSource: (relative) => 'https://file+.vscode-resource.vscode-cdn.net/doc/' + relative,
   })
