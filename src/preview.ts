@@ -1137,6 +1137,20 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
   <link rel="stylesheet" href="${CDN.hljsCarveCss}">
   <style>
     :root { color-scheme: light dark; --quote-padding: 1rem; --quote-border-width: 3px; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --carve-syntax-definition: #d2a8ff;
+        --carve-syntax-list: #f2cc60;
+        --carve-syntax-task: #3fb950;
+        --carve-syntax-language: #79c0ff;
+        --carve-syntax-muted: #8b949e;
+        --carve-table-boundary: #6a737d;
+        --carve-table-header: #79b8ff;
+        --carve-table-operator: #ffab70;
+        --carve-table-span: #b392f0;
+        --carve-table-continuation: #85e89d;
+      }
+    }
     html { font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
     body { margin: 0; padding: 24px; line-height: 1.55; }
     main { max-width: 760px; margin: 0 auto; }

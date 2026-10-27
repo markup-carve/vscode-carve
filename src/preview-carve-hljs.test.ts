@@ -76,6 +76,15 @@ test('the export loads the grammars, csv and tsv included, and table palette fro
   assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@648d3409/highlightjs/delimited.js')
   assert.match(exportHtmlDocument('x'), /carve-grammars@648d3409\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /setAttribute\('data-theme', colorScheme\?\.matches \? 'dark' : 'light'\)/)
+  assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-syntax-list: #f2cc60/)
+  const dark = (JSON.parse(readFileSync(join(grammarsDir, 'themes', 'palette.json'), 'utf8')) as { dark: Record<string, string> }).dark
+  const exported = exportHtmlDocument('x')
+  for (const role of ['definition', 'list', 'task', 'language', 'muted']) {
+    assert.ok(exported.includes(`--carve-syntax-${role}: ${dark[role]};`), role)
+  }
+  for (const role of ['Boundary', 'Header', 'Operator', 'Span', 'Continuation']) {
+    assert.ok(exported.includes(`--carve-table-${role.toLowerCase()}: ${dark[`table${role}`]};`), role)
+  }
 })
 
 test('the export CDN revision matches the installed carve-grammars package', () => {
