@@ -45,6 +45,7 @@ jobs:
           git config --global --get-all url."https://github.com/".insteadOf
 
       - run: npm ci
+      - run: npm run check:themes
       - run: npm run build
       - run: npm test
 

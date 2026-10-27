@@ -1070,6 +1070,7 @@ function previewAssets(context: vscode.ExtensionContext, webview: vscode.Webview
     hljsLightCss: asset('media', 'hljs', 'github.min.css'),
     hljsDarkCss: asset('media', 'hljs', 'github-dark.min.css'),
     hljsTableCss: asset('media', 'hljs', 'table-tokens.css'),
+    hljsCarveCss: asset('media', 'hljs', 'carve-code.css'),
     carveTokensCss: asset('media', 'carve-css', 'tokens.css'),
     carveCoreCss: asset('media', 'carve-css', 'core.css'),
     carveExtensionsCss: asset('media', 'carve-css', 'extensions.css'),

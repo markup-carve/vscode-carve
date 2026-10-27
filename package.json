@@ -30,6 +30,18 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "themes": [
+      {
+        "label": "Carve Light",
+        "uiTheme": "vs",
+        "path": "./themes/carve-light-color-theme.json"
+      },
+      {
+        "label": "Carve Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/carve-dark-color-theme.json"
+      }
+    ],
     "languages": [
       {
         "id": "carve",
@@ -455,7 +467,9 @@
     ]
   },
   "scripts": {
-    "build": "tsc && npm run copy-assets",
+    "build": "npm run build:themes && tsc && npm run copy-assets",
+    "build:themes": "node scripts/build-color-themes.mjs",
+    "check:themes": "node scripts/build-color-themes.mjs --check",
     "copy-assets": "node scripts/copy-assets.mjs",
     "prepare": "npm run build",
     "vscode:prepublish": "npm run build",
@@ -478,7 +492,8 @@
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "@markup-carve/carve-css": "0.1.9",
-    "@markup-carve/carve-grammars": "0.1.22",
+    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#cf70a81c4906092d5bab66bba8123e4a46ac54ce",
+    "@shikijs/themes": "^4.5.0",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.2.2",

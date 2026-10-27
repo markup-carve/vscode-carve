@@ -257,6 +257,8 @@ export interface PreviewAssets {
   hljsDarkCss: string
   /** Boundary and operator colors for Carve table code. */
   hljsTableCss: string
+  /** Carve token colors layered over the highlight.js theme. */
+  hljsCarveCss: string
   /** Webview URI for the carve-css token layer. */
   carveTokensCss: string
   /** Webview URI for the carve-css core stylesheet. */
@@ -331,6 +333,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
   <link id="hljs-light" rel="stylesheet" href="${assets.hljsLightCss}" disabled>
   <link id="hljs-dark" rel="stylesheet" href="${assets.hljsDarkCss}" disabled>
   <link rel="stylesheet" href="${assets.hljsTableCss}">
+  <link rel="stylesheet" href="${assets.hljsCarveCss}">
   <link rel="stylesheet" href="${assets.carveTokensCss}">
   <link rel="stylesheet" href="${assets.carveCoreCss}">
   <link rel="stylesheet" href="${assets.carveExtensionsCss}">
@@ -705,6 +708,7 @@ export function previewDocument(source: string, options: PreviewOptions): string
         || document.body.classList.contains('vscode-high-contrast')
 
       function applyHljsTheme() {
+        document.documentElement.setAttribute('data-theme', isDark() ? 'dark' : 'light')
         const light = document.getElementById('hljs-light')
         const dark = document.getElementById('hljs-dark')
         if (light) light.disabled = isDark()
@@ -1098,11 +1102,12 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/carve.js',
-  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/highlightjs/delimited.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@cf70a81c/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@cf70a81c/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@v0.1.22/shiki/table-tokens.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@cf70a81c/shiki/table-tokens.css',
+  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@cf70a81c/themes/carve-code.css',
 } as const
 
 export interface ExportOptions {
@@ -1129,17 +1134,9 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
   <link rel="stylesheet" href="${CDN.hljsLightCss}" media="(prefers-color-scheme: light)">
   <link rel="stylesheet" href="${CDN.hljsDarkCss}" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="${CDN.hljsTableCss}">
+  <link rel="stylesheet" href="${CDN.hljsCarveCss}">
   <style>
     :root { color-scheme: light dark; --quote-padding: 1rem; --quote-border-width: 3px; }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --carve-table-boundary: #8b949e;
-        --carve-table-header: #79b8ff;
-        --carve-table-operator: #ffab70;
-        --carve-table-span: #b392f0;
-        --carve-table-continuation: #85e89d;
-      }
-    }
     html { font-family: system-ui, -apple-system, Segoe UI, sans-serif; }
     body { margin: 0; padding: 24px; line-height: 1.55; }
     main { max-width: 760px; margin: 0 auto; }
@@ -1226,7 +1223,11 @@ export function exportHtmlDocument(source: string, options: ExportOptions = {}):
   <script src="${CDN.chartJs}"></script>
   <script>
     (function () {
-      const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      const colorScheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)')
+      const dark = !!colorScheme?.matches
+      const setTheme = () => document.documentElement.setAttribute('data-theme', colorScheme?.matches ? 'dark' : 'light')
+      setTheme()
+      colorScheme?.addEventListener('change', setTheme)
       if (typeof renderMathInElement === 'function') {
         renderMathInElement(document.body, {
           delimiters: [
