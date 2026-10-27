@@ -10,11 +10,11 @@
 #  ^^^^^ text.carve
 >
 >:: term
-#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 #  ^ text.carve markup.list.definition.term.carve
 #   ^^^^^ text.carve
 >:  A first paragraph,
-#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 # ^^ text.carve markup.list.definition.carve
 #   ^^^^^^^^^^^^^^^^^^^ text.carve
 >+

@@ -75,11 +75,11 @@
 #  ^^ text.carve markup.quote.carve
 >
 >:: term
-#^^ text.carve markup.list.definition.term.carve punctuation.definition.list.begin.carve
+#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 #  ^ text.carve markup.list.definition.term.carve
 #   ^^^^^ text.carve
 >: +
-#^ text.carve markup.list.definition.carve punctuation.definition.list.begin.carve
+#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.definition.carve
 #  ^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
 >> q
