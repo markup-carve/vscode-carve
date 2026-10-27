@@ -72,9 +72,9 @@ test('the preview loads the csv and tsv grammar right after the carve grammar', 
 test('the export loads the grammars, csv and tsv included, and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@cf70a81c/highlightjs/carve.js')
-  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@cf70a81c/highlightjs/delimited.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@cf70a81c\/shiki\/table-tokens\.css/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@648d3409/highlightjs/carve.js')
+  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@648d3409/highlightjs/delimited.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@648d3409\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /setAttribute\('data-theme', colorScheme\?\.matches \? 'dark' : 'light'\)/)
 })
 
@@ -86,7 +86,7 @@ test('the export CDN revision matches the installed carve-grammars package', () 
   const installed = JSON.parse(readFileSync(join(grammarsDir, 'package.json'), 'utf8')) as { version: string }
   assert.equal(packageEntry.version, installed.version)
   const revision = packageEntry.resolved?.match(/#([0-9a-f]{40})$/)?.[1].slice(0, 8)
-  assert.equal(revision, 'cf70a81c')
+  assert.equal(revision, '648d3409')
   for (const src of scriptSrcs(exportHtmlDocument('x')).filter((s) => s.includes('/carve-grammars@'))) {
     assert.ok(src.includes(`/carve-grammars@${revision}/`), `${src} is not carve-grammars ${revision}`)
   }
