@@ -44,7 +44,8 @@ jobs:
           git config --global --add url."https://github.com/".insteadOf git@github.com:
           git config --global --get-all url."https://github.com/".insteadOf
 
-      - run: npm ci
+      # Check the committed themes before prepare/build can regenerate them.
+      - run: npm ci --ignore-scripts
       - run: npm run check:themes
       - run: npm run build
       - run: npm test
