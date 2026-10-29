@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixes
+
+- Captioned `{.diff}` fences show added and removed lines in the editor and preview (#427).
+- Captions use the updated grammar colors in the editor and preview (#427).
+
 ## [0.1.16] - 2026-10-26
 
 Task markers now show their state in both the editor and preview. Table and list markers are easier to distinguish while editing.
