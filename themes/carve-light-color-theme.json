@@ -742,14 +742,14 @@
     {
       "scope": "punctuation.definition.caption",
       "settings": {
-        "foreground": "#e36209",
+        "foreground": "#bc4c00",
         "fontStyle": "bold"
       }
     },
     {
       "scope": "markup.caption",
       "settings": {
-        "foreground": "#6a737d",
+        "foreground": "#57606a",
         "fontStyle": "italic"
       }
     },

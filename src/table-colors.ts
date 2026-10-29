@@ -85,7 +85,7 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
   const add = (lineNumber: number, start: number, end: number, kind: TableMarker['kind']) => {
     if (end > start) markers.push({ line: lineNumber, start, end, kind })
   }
-  const walk = (node: AstNode, path: string): void => {
+  const walk = (node: AstNode, path: string, figureDiff = false): void => {
     const span = spans.get(path)
     const start = span && locations.get(span.startByte)
     const end = span && locations.get(span.endByte)
@@ -93,7 +93,7 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
       if (node.type === 'code_block' || node.type === 'raw_block') {
         for (let row = start.line; row <= end.line; row++) codeLines.add(row)
       }
-      if (node.type === 'code_block' && node.attrs?.classes?.includes('diff') && node.content) {
+      if (node.type === 'code_block' && (node.attrs?.classes?.includes('diff') || figureDiff) && node.content) {
         node.content.split('\n').forEach((contentLine, index) => {
           const marker = contentLine[0]
           if (marker !== '+' && marker !== '-') return
@@ -168,7 +168,7 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
         if (match) add(start.line, start.column, start.column + match[0].length, 'containerMarker')
       }
     }
-    if (node.target) walk(node.target, `${path}/target`)
+    if (node.target) walk(node.target, `${path}/target`, node.type === 'figure' && node.attrs?.classes?.includes('diff'))
     for (const key of ['children', 'items', 'rows', 'cells', 'caption', 'title'] as const) {
       node[key]?.forEach((child, index) => walk(child, `${path}/${key}/${index}`))
     }

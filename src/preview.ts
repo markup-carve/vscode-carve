@@ -939,7 +939,8 @@ export function previewDocument(source: string, options: PreviewOptions): string
         if (typeof hljs === 'undefined') return
         document.querySelectorAll('pre code:not(.language-mermaid)').forEach((el) => {
           const pre = el.parentElement
-          if (pre && pre.classList.contains('diff')) {
+          if (pre && (pre.classList.contains('diff') || (pre.parentElement?.tagName === 'FIGURE' && pre.parentElement.classList.contains('diff')))) {
+            pre.classList.add('diff')
             try { renderLanguageDiff(el, pre) } catch (err) { console.error('diff render failed', err) }
             return
           }
@@ -1102,12 +1103,12 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ac2eea2f/highlightjs/carve.js',
-  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ac2eea2f/highlightjs/delimited.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e6ad26c2/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e6ad26c2/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ac2eea2f/shiki/table-tokens.css',
-  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ac2eea2f/themes/carve-code.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e6ad26c2/shiki/table-tokens.css',
+  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e6ad26c2/themes/carve-code.css',
 } as const
 
 export interface ExportOptions {

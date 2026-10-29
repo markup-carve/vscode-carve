@@ -30,3 +30,32 @@ for (const [name, html] of [
     }
   })
 }
+
+test('captioned diff fences use whole class tokens in the preview', () => {
+  const script = inlineScripts(previewDocument(SOURCE, { nonce: 'n', cspSource: 'csp', assets }))
+    .find((body) => body.includes('function renderLanguageDiff'))
+  assert.ok(script)
+  const functions = script.slice(script.indexOf('function escapeHtml'), script.indexOf('function renderMath'))
+  const run = new Function('document', 'hljs', `${functions}\nhighlightCode()`)
+  for (const [figureClass, expectedDiff] of [['diff', true], ['side-diff', false]] as const) {
+    const preClasses = new Set<string>()
+    const code = {
+      classList: ['language-js'],
+      textContent: '-old()\n+new()',
+      innerHTML: '',
+      parentElement: {
+        classList: { contains: (name: string) => preClasses.has(name), add: (name: string) => preClasses.add(name) },
+        parentElement: { tagName: 'FIGURE', classList: { contains: (name: string) => name === figureClass } },
+      },
+    }
+    let highlighted = false
+    run({ querySelectorAll: () => [code] }, {
+      getLanguage: () => false,
+      highlightElement: () => { highlighted = true },
+    })
+    assert.equal(preClasses.has('has-diff'), expectedDiff)
+    assert.equal(preClasses.has('diff'), expectedDiff)
+    assert.equal(code.innerHTML.includes('diff-marker'), expectedDiff)
+    assert.equal(highlighted, !expectedDiff)
+  }
+})

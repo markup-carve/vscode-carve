@@ -232,6 +232,12 @@ test('diff decorations mark only added and removed source prefixes', async () =>
   ])
   assert.deepEqual(scan('```js\n+ ordinaryOperator\n```').filter((marker) => marker.kind === 'diffAdd'), [])
 
+  const captioned = '{#lst .diff}\n```js\n- old();\n+ new();\n```\n^ Listing #: cap'
+  assert.deepEqual(scan(captioned).filter((marker) => marker.kind === 'diffAdd' || marker.kind === 'diffRemove')
+    .map((marker) => [marker.line, marker.start, marker.kind]), [[2, 0, 'diffRemove'], [3, 0, 'diffAdd']])
+  const sideDiff = captioned.replace('.diff', '.side-diff')
+  assert.deepEqual(scan(sideDiff).filter((marker) => marker.kind === 'diffAdd' || marker.kind === 'diffRemove'), [])
+
   const nested = '- Item\n\n  {.diff}\n  ```js\n  - old();\n  + new();\n  ```'
   assert.deepEqual(scan(nested).filter((marker) => marker.kind === 'diffAdd' || marker.kind === 'diffRemove')
     .map((marker) => [marker.line, marker.start, marker.kind]), [[4, 2, 'diffRemove'], [5, 2, 'diffAdd']])
