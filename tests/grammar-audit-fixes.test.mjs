@@ -258,4 +258,8 @@ test('a letter or roman marker with a dot needs two spaces', () => {
   assert.ok(scoped(tokens, 4, 'a.', 'punctuation.definition.list.begin'), report(tokens))
   assert.ok(scoped(tokens, 6, 'iv.', 'punctuation.definition.list.begin'), report(tokens))
   assert.ok(scoped(tokens, 8, 'b)', 'punctuation.definition.list.begin'), report(tokens))
+  // With glued attributes the two spaces follow the brace.
+  const glued = tokenize('a.{#x}  item\n\na.{#x} text\n')
+  assert.ok(scoped(glued, 0, 'a.', 'punctuation.definition.list.begin'), report(glued))
+  assert.ok(!glued.some((t) => t.row === 2 && has(t, 'punctuation.definition.list.begin')), report(glued))
 })
