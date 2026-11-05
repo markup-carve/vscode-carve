@@ -1,5 +1,7 @@
 import { existsSync, realpathSync } from 'node:fs'
-import { basename } from 'node:path'
+import { writeFile, unlink } from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
+import { basename, dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import * as vscode from 'vscode'
 import {
@@ -40,6 +42,7 @@ import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import { createTableMarkerScanner } from './table-colors.js'
 import { columnColorGroups } from './delimited-columns.js'
 import { carveColors, colorHex } from './color-picker.js'
+import { browserPdfArgs, crv2pdfArgs, executablePath, findBrowser, MISSING_PDF_TOOL_MESSAGE, pdfPrintHtml, runPdfTool, type PdfMargins, type PdfPaperSize, type PdfPlatform } from './pdf-export.js'
 import {
   exportHtmlDocument,
   renderMarkdown,
@@ -243,6 +246,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     includeDiagnostics,
     vscode.commands.registerCommand('carve.openPreview', () => openPreview(context)),
     vscode.commands.registerCommand('carve.exportHtml', () => exportHtml(context)),
+    vscode.commands.registerCommand('carve.exportPdf', () => exportPdf(context)),
     vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown(context)),
     vscode.commands.registerCommand('carve.importFile', (uri?: vscode.Uri) => importFile(uri)),
     vscode.commands.registerCommand('carve.exportBundle', () => exportBundle(context)),
@@ -742,33 +746,76 @@ async function exportHtml(context: vscode.ExtensionContext): Promise<void> {
     void vscode.window.showWarningMessage('Open a Carve document to export it.')
     return
   }
-  const name = editor.document.fileName.split(/[\\/]/).pop() ?? 'Carve document'
-  const extensions = previewExtensions()
-  const expansion = await expandIncludesFor(context, editor.document, extensions)
-  reportRefusals(expansion)
-  const render = previewRenderOptions()
-  render.extensions = extensions
-  if (expansion) render.document = expansion.doc
-  const html = exportHtmlDocument(editor.document.getText(), {
-    title: name,
-    render,
-  })
+  const html = await renderExportHtml(context, editor.document)
   const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.html'
   const target = await vscode.window.showSaveDialog({
     defaultUri: editor.document.uri.with({ path: defaultPath }),
     filters: { HTML: ['html'] },
     saveLabel: 'Export HTML',
   })
-  if (!target) {
-    return
-  }
+  if (!target) return
   await vscode.workspace.fs.writeFile(target, new TextEncoder().encode(html))
   const pick = await vscode.window.showInformationMessage(
     `Exported ${target.path.split('/').pop()}`,
     'Open in Browser',
   )
-  if (pick === 'Open in Browser') {
-    await vscode.env.openExternal(target)
+  if (pick === 'Open in Browser') await vscode.env.openExternal(target)
+}
+
+async function renderExportHtml(context: vscode.ExtensionContext, document: vscode.TextDocument): Promise<string> {
+  const name = document.fileName.split(/[\\/]/).pop() ?? 'Carve document'
+  const extensions = previewExtensions()
+  const expansion = await expandIncludesFor(context, document, extensions)
+  reportRefusals(expansion)
+  const render = previewRenderOptions()
+  render.extensions = extensions
+  if (expansion) render.document = expansion.doc
+  return exportHtmlDocument(document.getText(), {
+    title: name,
+    render,
+  })
+}
+
+async function exportPdf(context: vscode.ExtensionContext): Promise<void> {
+  const editor = vscode.window.activeTextEditor
+  if (!editor || editor.document.languageId !== 'carve' || editor.document.uri.scheme !== 'file') {
+    void vscode.window.showWarningMessage('Open a local Carve document to export a PDF.')
+    return
+  }
+  const config = vscode.workspace.getConfiguration('carve.pdf')
+  const platform = process.platform as PdfPlatform
+  const crv2pdf = executablePath(config.get<string>('crv2pdfPath')?.trim() || 'crv2pdf', platform)
+  const browser = crv2pdf ? undefined : findBrowser(platform, process.env, undefined, config.get<string>('browserPath') ?? '')
+  if (!crv2pdf && !browser) {
+    void vscode.window.showErrorMessage(MISSING_PDF_TOOL_MESSAGE)
+    return
+  }
+  const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.pdf'
+  const target = await vscode.window.showSaveDialog({
+    defaultUri: editor.document.uri.with({ path: defaultPath }),
+    filters: { PDF: ['pdf'] },
+    saveLabel: 'Export PDF',
+  })
+  if (!target || target.scheme !== 'file') return
+  try {
+    if (crv2pdf) {
+      if (!(await editor.document.save())) throw new Error('Save the Carve document before exporting it with crv2pdf.')
+      await runPdfTool(crv2pdf, crv2pdfArgs(editor.document.uri.fsPath, target.fsPath), target.fsPath)
+    } else if (browser) {
+      const html = await renderExportHtml(context, editor.document)
+      const paperSize = config.get<PdfPaperSize>('paperSize', 'A4')
+      const margins = config.get<PdfMargins>('margins', 'default')
+      const temporaryHtml = join(dirname(editor.document.uri.fsPath), `.carve-pdf-${randomUUID()}.html`)
+      try {
+        await writeFile(temporaryHtml, pdfPrintHtml(html, paperSize, margins))
+        await runPdfTool(browser, browserPdfArgs(temporaryHtml, target.fsPath), target.fsPath)
+      } finally {
+        await unlink(temporaryHtml).catch(() => undefined)
+      }
+    }
+    void vscode.window.showInformationMessage(`Exported ${basename(target.fsPath)}`)
+  } catch (error) {
+    void vscode.window.showErrorMessage(`PDF export failed: ${error instanceof Error ? error.message : String(error)}`)
   }
 }
 

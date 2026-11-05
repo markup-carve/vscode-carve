@@ -170,6 +170,28 @@
           "default": true,
           "description": "Enable the Carve language server."
         },
+        "carve.pdf.crv2pdfPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to crv2pdf. Empty searches PATH."
+        },
+        "carve.pdf.browserPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Chrome, Chromium, or Edge for PDF export when crv2pdf is unavailable. Empty searches installed browsers."
+        },
+        "carve.pdf.paperSize": {
+          "type": "string",
+          "enum": ["A4", "Letter", "Legal"],
+          "default": "A4",
+          "description": "Paper size used by browser PDF export. crv2pdf uses its own layout."
+        },
+        "carve.pdf.margins": {
+          "type": "string",
+          "enum": ["default", "none", "narrow", "wide"],
+          "default": "default",
+          "description": "Page margins used by browser PDF export. crv2pdf uses its own layout."
+        },
         "carve.preview.mentionUrl": {
           "type": "string",
           "default": "",
@@ -306,6 +328,10 @@
         "title": "Carve: Export to HTML"
       },
       {
+        "command": "carve.exportPdf",
+        "title": "Carve: Export to PDF"
+      },
+      {
         "command": "carve.exportMarkdown",
         "title": "Carve: Export to Markdown"
       },
@@ -327,7 +353,7 @@
       },
       {
         "command": "carve.printPreview",
-        "title": "Carve: Print Preview / Export PDF"
+        "title": "Carve: Print Preview"
       },
       {
         "command": "carve.restartLanguageServer",
@@ -381,6 +407,11 @@
           "command": "carve.exportHtml",
           "when": "resourceLangId == carve",
           "group": "1_carve@2"
+        },
+        {
+          "command": "carve.exportPdf",
+          "when": "resourceLangId == carve",
+          "group": "1_carve@2.5"
         },
         {
           "command": "carve.exportMarkdown",
@@ -457,7 +488,7 @@
           {
             "id": "carve.export",
             "title": "Export to HTML or PDF",
-            "description": "Run __Carve: Export to HTML__ for a self-contained file, or __Carve: Print Preview / Export PDF__ to save a PDF.",
+            "description": "Run __Carve: Export to HTML__ for a self-contained file, or __Carve: Export to PDF__ to save a PDF using crv2pdf or an installed browser.",
             "media": {
               "markdown": "walkthroughs/export.md"
             }
