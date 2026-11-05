@@ -95,26 +95,24 @@ test('a description list opened on a quote line is scoped', () => {
   assert.ok(scoped(tokens, 1, ':', 'markup.list.definition'), report(tokens))
 })
 
-test('a quoted star with no closer on its line stays text', () => {
+test('a quoted abbreviation definition is a definition, not bold', () => {
+  // markup-carve/carve#4874: an abbreviation definition defines in every container.
   const source = '> *[HTML]: Hyper Text\n'
-  assert.match(carveToHtml(source), /<p>\*\[HTML\]: Hyper Text<\/p>/)
+  assert.match(carveToHtml(source), /^<blockquote>\s*<\/blockquote>/)
   const tokens = tokenize(source)
   assert.ok(!tokens.some((t) => has(t, 'markup.bold') || has(t, 'punctuation.definition.bold')), report(tokens))
+  assert.ok(scoped(tokens, 0, 'HTML', 'entity.name.abbreviation'), report(tokens))
 })
 
-test('an unclosed front matter block ends at the first line no YAML mapping starts', () => {
-  // The engine reads the whole unclosed block as prose. The grammar cannot see
-  // the missing closer, so mapping-shaped lines before the break stay front
-  // matter; everything from the first line that cannot be YAML is Carve again.
+test('an unclosed front matter block runs to the end of the document', () => {
+  // markup-carve/carve#5016: a first-line opener with no closer is front matter through EOF.
   const source = '---\ntitle: x\nSome prose with *bold*.\n\n## Heading\n'
-  const html = carveToHtml(source)
-  assert.match(html, /<hr>\s*<p>title: x\nSome prose with <strong>bold<\/strong>\.<\/p>/)
+  assert.equal(carveToHtml(source).trim(), '')
   const tokens = tokenize(source)
-  for (const t of tokens.filter((x) => x.row >= 2)) {
-    assert.ok(!has(t, 'meta.frontmatter'), report(tokens))
+  for (const t of tokens.filter((x) => x.row >= 1 && x.text !== '')) {
+    assert.ok(has(t, 'meta.frontmatter'), report(tokens))
   }
-  assert.ok(scoped(tokens, 2, 'bold', 'markup.bold'), report(tokens))
-  assert.ok(scoped(tokens, 4, '##', 'punctuation.definition.heading'), report(tokens))
+  assert.ok(!tokens.some((t) => has(t, 'markup.bold') || has(t, 'punctuation.definition.heading')), report(tokens))
 })
 
 test('a closed front matter block holding a bare scalar stays front matter', () => {
@@ -123,15 +121,14 @@ test('a closed front matter block holding a bare scalar stays front matter', () 
   assert.ok(tokens.filter((t) => t.row === 3).every((t) => !has(t, 'meta.frontmatter')), report(tokens))
 })
 
-test('a list marker under a footnote or description paragraph is paragraph text', () => {
-  const source = 'x[^n]\n\n[^n]: Note text\n  - not a list\n\n:: term\n: body text\n  1. not a list\n'
+test('a list marker under a footnote or description paragraph opens a list', () => {
+  const source = 'x[^n]\n\n[^n]: Note text\n  - a list\n\n:: term\n: body text\n  1. a list\n'
   const html = carveToHtml(source)
-  assert.match(html, /<dd>body text\n1\. not a list<\/dd>/)
-  assert.match(html, /<p>Note text\n- not a list<a /)
+  assert.match(html, /<dd>\s*<p>body text<\/p>\s*<ol>\s*<li>a list<\/li>/)
+  assert.match(html, /<p>Note text<\/p>\s*<ul>\s*<li>a list<\/li>/)
   const tokens = tokenize(source)
-  for (const row of [3, 7]) {
-    assert.ok(!tokens.some((t) => t.row === row && has(t, 'punctuation.definition.list.begin')), report(tokens))
-  }
+  assert.ok(scoped(tokens, 3, '-', 'punctuation.definition.list.begin'), report(tokens))
+  assert.ok(scoped(tokens, 7, '1.', 'punctuation.definition.list.begin'), report(tokens))
 })
 
 test('a list marker under a list item paragraph still opens a sublist', () => {
@@ -168,22 +165,21 @@ test('a trailing comment on a heading line stays a comment', () => {
   assert.ok(tokens.some((t) => t.text.includes('note') && has(t, 'comment')), report(tokens))
 })
 
-test('an unclosed fence inside a colon container closes at the container closer', () => {
+test('an unclosed fence inside a colon container takes no closer from it', () => {
+  // An unclosed code fence takes no closer from its host (PART 2, markup-carve/carve#4018).
   const source = '::: note\n```js\nlet x\n:::\n\nafter *b*\n'
-  assert.match(carveToHtml(source), /<\/aside>\s*<p>after <strong>b<\/strong><\/p>/)
+  assert.match(carveToHtml(source), /<code class="language-js">let x\n:::\n\nafter \*b\*\n<\/code>/)
   const tokens = tokenize(source)
-  assert.ok(scoped(tokens, 3, ':::', 'punctuation.definition.div'), report(tokens))
-  assert.ok(!tokens.some((t) => t.row >= 3 && has(t, 'markup.raw.block')), report(tokens))
-  assert.ok(scoped(tokens, 5, 'b', 'markup.bold'), report(tokens))
+  assert.ok(tokens.filter((t) => t.row >= 3 && t.text !== '').every((t) => has(t, 'markup.raw.block')), report(tokens))
+  assert.ok(!tokens.some((t) => has(t, 'markup.bold')), report(tokens))
 })
 
-test('an unclosed fence inside a container of six or more colons closes at its closer', () => {
+test('an unclosed fence inside a container of six or more colons takes no closer from it', () => {
   const source = ':::::: note\n```js\nlet x\n::::::\n\nafter *b*\n'
-  assert.match(carveToHtml(source), /<\/aside>\s*<p>after <strong>b<\/strong><\/p>/)
+  assert.match(carveToHtml(source), /<code class="language-js">let x\n::::::\n\nafter \*b\*\n<\/code>/)
   const tokens = tokenize(source)
-  assert.ok(scoped(tokens, 3, '::::::', 'punctuation.definition.div'), report(tokens))
-  assert.ok(!tokens.some((t) => t.row >= 3 && has(t, 'markup.raw.block')), report(tokens))
-  assert.ok(scoped(tokens, 5, 'b', 'markup.bold'), report(tokens))
+  assert.ok(tokens.filter((t) => t.row >= 3 && t.text !== '').every((t) => has(t, 'markup.raw.block')), report(tokens))
+  assert.ok(!tokens.some((t) => has(t, 'markup.bold')), report(tokens))
 })
 
 test('a long container ends only at a closer of its own length', () => {
@@ -235,4 +231,31 @@ test('an escape wins over the math, symbol and attribute it would open', () => {
   for (const scope of ['markup.other.math', 'constant.language.symbol', 'meta.attributes']) {
     assert.ok(!tokens.some((t) => has(t, scope)), `${scope}:\n${report(tokens)}`)
   }
+})
+
+test('braced cell alignment is scoped as table alignment', () => {
+  // markup-carve/carve#5091 D3: the alignment symbols lead the cell's attribute block.
+  const source = '|={>} Qty |={~^ .c} Mid |= N |\n|{> .num} 12 |{?v} y |{~ x ~} z |\n'
+  assert.match(carveToHtml(source), /<th scope="col" style="text-align: right;">Qty<\/th>/)
+  const tokens = tokenize(source)
+  assert.ok(scoped(tokens, 0, '>', 'keyword.operator.table.alignment'), report(tokens))
+  assert.ok(scoped(tokens, 0, '~^', 'keyword.operator.table.alignment'), report(tokens))
+  assert.ok(scoped(tokens, 0, '.c', 'entity.other.attribute-name.class'), report(tokens))
+  assert.ok(scoped(tokens, 1, '>', 'keyword.operator.table.alignment'), report(tokens))
+  assert.ok(scoped(tokens, 1, '?v', 'keyword.operator.table.alignment'), report(tokens))
+  assert.ok(!tokens.some((t) => t.row === 1 && t.text.includes('~') && has(t, 'table.alignment')), report(tokens))
+})
+
+test('a letter or roman marker with a dot needs two spaces', () => {
+  // markup-carve/carve#4828: `a. x` and `iv. x` are paragraph text; `a) x` keeps one space.
+  const source = 'a. one\n\niv. two\n\na.  three\n\niv.  four\n\nb) five\n'
+  const html = carveToHtml(source)
+  assert.match(html, /<p>a\. one<\/p>\s*<p>iv\. two<\/p>/)
+  const tokens = tokenize(source)
+  for (const row of [0, 2]) {
+    assert.ok(!tokens.some((t) => t.row === row && has(t, 'punctuation.definition.list.begin')), report(tokens))
+  }
+  assert.ok(scoped(tokens, 4, 'a.', 'punctuation.definition.list.begin'), report(tokens))
+  assert.ok(scoped(tokens, 6, 'iv.', 'punctuation.definition.list.begin'), report(tokens))
+  assert.ok(scoped(tokens, 8, 'b)', 'punctuation.definition.list.begin'), report(tokens))
 })

@@ -17,9 +17,8 @@
  *
  * A `=` THAT BEGINS A SMART-TYPOGRAPHY PATTERN IS NOT AN OPENER
  * (carve-grammars#325). `grammar.ebnf` consumes the pattern first: `=>` is the
- * arrow, never a highlight opener. The guard belongs on the OPENER alone - once
- * a highlight is open the closer beats the pattern, which is why `x =y z<= w`
- * marks `y z<`.
+ * arrow, never a highlight opener. The `=` of `!=`, `<=` and `>=` neither opens
+ * nor closes a highlight (markup-carve/carve#4197), so `x =y z<= w` marks nothing.
  *
  * WHY THIS IS AN ASSERTION AND NOT A SNAPSHOT, for the reason
  * tests/marker-line-quote.test.mjs already gives: a snapshot is self-consistency
@@ -147,7 +146,8 @@ const ROWS = [
   // smart typography once the highlight is open, and a comparison in front of
   // an opener is still resolved by position rather than by a lookbehind.
   ['x =b= y', 'b'],
-  ['x =y z<= w', 'y z<'],
+  ['x =y z<= w', ''],
+  ['x =a >= b= y', 'a >= b'],
   ['x =y z=> w', 'y z'],
   ['a \\!=b c= d', 'b c'],
   ['a <=b c= d', ''],
