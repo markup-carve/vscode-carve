@@ -17,10 +17,12 @@ test('discovers browsers at platform defaults and PATH, including paths with spa
 
 test('builds shell-free PDF arguments and page style', () => {
   assert.deepEqual(crv2pdfArgs('/a b/doc.crv', '/a b/doc.pdf'), ['/a b/doc.crv', '/a b/doc.pdf', '--pdf'])
-  assert.deepEqual(browserPdfArgs('/a b/page.html', '/a b/doc.pdf'), [
+  assert.deepEqual(browserPdfArgs('/a b/page.html', '/a b/doc.pdf', false), [
     '--headless', '--disable-gpu', '--no-first-run', '--no-pdf-header-footer', '--print-to-pdf=/a b/doc.pdf', 'file:///a%20b/page.html',
   ])
+  assert.ok(browserPdfArgs('/a b/page.html', '/a b/doc.pdf', true).includes('--no-sandbox'))
   assert.match(pdfPrintHtml('<html><head></head><body>x</body></html>', 'Letter', 'narrow'), /@page \{ size: Letter; margin: 10mm; \}/)
+  assert.match(pdfPrintHtml('<html><head></head><body><img src="x.png"></body></html>', 'A4', 'default', '/read only/source'), /<base href="file:\/\/\/read%20only\/source\/">/)
 })
 
 test('missing tools give installation and configuration options', () => {
@@ -47,8 +49,6 @@ test('browser fallback produces a PDF when headless Chromium is installed', asyn
   const html = join(dir, 'page with spaces.html')
   const pdf = join(dir, 'page with spaces.pdf')
   await writeFile(html, pdfPrintHtml('<html><head></head><body>Carve PDF test</body></html>', 'A4', 'default'))
-  const args = browserPdfArgs(html, pdf)
-  if (process.platform !== 'win32' && process.getuid?.() === 0) args.unshift('--no-sandbox')
-  await runPdfTool(browser, args, pdf, 60_000)
+  await runPdfTool(browser, browserPdfArgs(html, pdf), pdf, 60_000)
   assert.equal((await readFile(pdf)).subarray(0, 5).toString(), '%PDF-')
 })

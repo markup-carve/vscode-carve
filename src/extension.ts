@@ -805,9 +805,9 @@ async function exportPdf(context: vscode.ExtensionContext): Promise<void> {
       const html = await renderExportHtml(context, editor.document)
       const paperSize = config.get<PdfPaperSize>('paperSize', 'A4')
       const margins = config.get<PdfMargins>('margins', 'default')
-      const temporaryHtml = join(dirname(editor.document.uri.fsPath), `.carve-pdf-${randomUUID()}.html`)
+      const temporaryHtml = join(dirname(target.fsPath), `.carve-pdf-${randomUUID()}.html`)
       try {
-        await writeFile(temporaryHtml, pdfPrintHtml(html, paperSize, margins))
+        await writeFile(temporaryHtml, pdfPrintHtml(html, paperSize, margins, dirname(editor.document.uri.fsPath)))
         await runPdfTool(browser, browserPdfArgs(temporaryHtml, target.fsPath), target.fsPath)
       } finally {
         await unlink(temporaryHtml).catch(() => undefined)

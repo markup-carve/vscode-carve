@@ -64,14 +64,15 @@ export function findBrowser(platform: PdfPlatform, env: NodeJS.ProcessEnv = proc
   return undefined
 }
 
-export function pdfPrintHtml(html: string, paperSize: PdfPaperSize, margins: PdfMargins): string {
+export function pdfPrintHtml(html: string, paperSize: PdfPaperSize, margins: PdfMargins, sourceDirectory?: string): string {
   const margin = { default: '20mm', none: '0', narrow: '10mm', wide: '30mm' }[margins]
   const style = `<style>@page { size: ${paperSize}; margin: ${margin}; }</style>`
-  return html.replace('</head>', `${style}</head>`)
+  const base = sourceDirectory ? `<base href="${pathToFileURL(sourceDirectory.endsWith('/') || sourceDirectory.endsWith('\\') ? sourceDirectory : `${sourceDirectory}/`).href.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}">` : ''
+  return html.replace('</head>', `${base}${style}</head>`)
 }
 
-export function browserPdfArgs(inputHtml: string, outputPdf: string): string[] {
-  return ['--headless', '--disable-gpu', '--no-first-run', '--no-pdf-header-footer', `--print-to-pdf=${outputPdf}`, pathToFileURL(inputHtml).href]
+export function browserPdfArgs(inputHtml: string, outputPdf: string, isRoot = process.getuid?.() === 0): string[] {
+  return ['--headless', '--disable-gpu', '--no-first-run', ...(isRoot ? ['--no-sandbox'] : []), '--no-pdf-header-footer', `--print-to-pdf=${outputPdf}`, pathToFileURL(inputHtml).href]
 }
 
 export function crv2pdfArgs(inputCrv: string, outputPdf: string): string[] {
