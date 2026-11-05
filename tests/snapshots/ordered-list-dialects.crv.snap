@@ -1,9 +1,5 @@
->a.  apple
-#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#  ^^ text.carve markup.list.numbered.carve
-#    ^^^^^^ text.carve
->b.  banana
-#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#  ^^ text.carve markup.list.numbered.carve
-#    ^^^^^^^ text.carve
+>a. apple
+#^^^^^^^^^ text.carve
+>b. banana
+#^^^^^^^^^^ text.carve
 >

@@ -61,9 +61,10 @@ test('a standalone plus gets a continuation color only when the parser accepts i
   const markers = (source: string) => scan(source).filter((marker) => marker.kind === 'continuationMarker')
   assert.deepEqual(markers('- item\n+\n> attached').map((marker) => marker.line), [1])
   assert.deepEqual(markers('> - item\n> +\n> > attached').map((marker) => marker.line), [1])
-  assert.deepEqual(markers('- item\n+').map((marker) => marker.line), [])
+  // A `+` that attaches nothing is consumed and leaves no node (markup-carve/carve#4409).
+  assert.deepEqual(markers('- item\n+').map((marker) => marker.line), [1])
   assert.deepEqual(markers('+\nplain').map((marker) => marker.line), [])
-  assert.deepEqual(markers('> +\n> plain').map((marker) => marker.line), [])
+  assert.deepEqual(markers('> +\n> plain').map((marker) => marker.line), [0])
   assert.deepEqual(markers('```\n+\n```').map((marker) => marker.line), [])
 })
 
@@ -117,26 +118,17 @@ test('alignment markers are colored beside the header or boundary pipe', async (
   assert.deepEqual(marked(11, 'operator'), [])
 })
 
-test('an unclosed fence under an open container paragraph does not keep code colors', async () => {
+test('a fence opener under an open container paragraph keeps its code colors', async () => {
+  // A code fence opener always interrupts a paragraph (markup-carve/carve#4018).
   const scan = await createTableMarkerScanner(root)
   const lines = ['::: note', 'para', '```', 'code', '::::', ':::', 'after *b*']
-  const markers = scan(lines.join('\n'))
-  const marked = (line: number, kind: string) => markers
-    .filter((marker) => marker.line === line && marker.kind === kind)
-    .map((marker) => lines[line].slice(marker.start, marker.end))
-  assert.deepEqual(marked(2, 'plain'), ['```'])
-  assert.deepEqual(marked(3, 'plain'), ['code'])
-  assert.deepEqual(marked(4, 'plain'), ['::::'])
-  assert.deepEqual(marked(4, 'containerMarker'), ['::::'])
+  assert.deepEqual(scan(lines.join('\n')).filter((marker) => marker.kind === 'plain'), [])
   assert.deepEqual(scan('- item\n  ```\n  code\n  ```').filter((marker) => marker.kind === 'plain'), [])
   assert.deepEqual(scan('```=html\n<b>x</b>\n```').filter((marker) => marker.kind === 'plain'), [])
   assert.deepEqual(scan('- item\n  ```=html\n  <b>x</b>\n  ```').filter((marker) => marker.kind === 'plain'), [])
   assert.deepEqual(scan('```js\na\n```\n^ caption').filter((marker) => marker.kind === 'plain'), [])
   assert.deepEqual(scan('```=html\n<b>x</b>\n```\n^ caption').filter((marker) => marker.kind === 'plain'), [])
-  const open = '::: note\npara\n```\ncode'
-  assert.ok(scan(open, 'editing').some((marker) => marker.kind === 'plain'))
-  assert.deepEqual(scan(`${open}\n\`\`\``, 'editing').filter((marker) => marker.kind === 'plain'), [])
-  assert.ok(scan(open, 'editing').some((marker) => marker.kind === 'plain'))
+  assert.deepEqual(scan('::: note\npara\n```\ncode', 'editing').filter((marker) => marker.kind === 'plain'), [])
 })
 
 test('nested definition and list markers follow the parsed source layout', async () => {
@@ -193,7 +185,7 @@ test('only parsed CSV and TSV tables receive table body highlighting', async () 
 test('the pinned corpus keeps the editor corrections and their negative boundaries', async () => {
   const scan = await createTableMarkerScanner(root)
   const unclosed = corpus('an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing')
-  assert.ok(scan(unclosed).some((marker) => marker.kind === 'plain'))
+  assert.deepEqual(scan(unclosed).filter((marker) => marker.kind === 'plain'), [])
   const nested = corpus('a-line-is-read-in-the-container-whose-column-it-reaches', '-4')
   assert.ok(scan(nested).some((marker) => marker.kind === 'listMarker'))
   const table = corpus('csv-and-tsv-table-bodies', '-2')
