@@ -244,6 +244,9 @@ test('braced cell alignment is scoped as table alignment', () => {
   assert.ok(scoped(tokens, 1, '>', 'keyword.operator.table.alignment'), report(tokens))
   assert.ok(scoped(tokens, 1, '?v', 'keyword.operator.table.alignment'), report(tokens))
   assert.ok(!tokens.some((t) => t.row === 1 && t.text.includes('~') && has(t, 'table.alignment')), report(tokens))
+  // No space after the brace, or an invalid attribute, leaves the cell literal.
+  const literal = tokenize('|={>}X |= B |\n|={> -} X |= B |\n')
+  assert.ok(!literal.some((t) => has(t, 'table.alignment')), report(literal))
 })
 
 test('a letter or roman marker with a dot needs two spaces', () => {
