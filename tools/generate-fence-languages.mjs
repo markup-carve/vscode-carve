@@ -42,20 +42,18 @@ const BARE_FENCE = '[ \\t]*[`~]{3,}[ \\t]*$'
 // Inside a container the embedded body must also stop at a column-0 line so the
 // generic rule's zero-width container boundary gets to close an unclosed fence.
 //
-// Inside a colon container of N colons the engine closes an unclosed fence at
-// the container's closer, so those variants also stop before a bare run of
-// exactly N colons. N is fixed per rule because an end pattern cannot see the
-// container's own begin captures; #colon-containers picks the variant.
+// An unclosed fence takes no closer from its host (PART 2, carve#4018): a fence
+// inside a colon container does not stop at the container's closer. The
+// per-length variants stay so #colon-containers keeps one rule per length.
 export const COLON_CONTAINER_LENGTHS = [3, 4, 5]
 export const LONG_COLON_CLOSER = `[ \\t]*:{${COLON_CONTAINER_LENGTHS.at(-1) + 1},}[ \\t]*$`
-const colonCloser = (n) => `[ \\t]*:{${n}}[ \\t]*$`
 const VARIANTS = [
   ['fenced-code-languages', 'code-blocks', 0, `(^|\\G)(?!${BARE_FENCE})`],
   ['fenced-code-languages-on-a-marker-line', 'code-block-behind-a-container-prefix', 0, `(^|\\G)(?!${BARE_FENCE})(?=[ \\t]|$)`],
   ['fenced-code-languages-at-a-body-column', 'code-block-behind-a-container-prefix', 1, `(^|\\G)(?!${BARE_FENCE})(?=[ \\t]|$)`],
   ...COLON_CONTAINER_LENGTHS.map((n) => [
     `fenced-code-languages-in-colon-container-${n}`, 'code-blocks', 0,
-    `(^|\\G)(?!${BARE_FENCE})(?!${colonCloser(n)})`, `|(?=^${colonCloser(n)})`,
+    `(^|\\G)(?!${BARE_FENCE})`,
   ]),
 ]
 
@@ -92,15 +90,14 @@ export function generate(grammar) {
     entries[`code-blocks-in-colon-container-${n}`] = {
       patterns: [
         { include: `#fenced-code-languages-in-colon-container-${n}` },
-        { ...bare, end: generic.end + `|(?=^${colonCloser(n)})` },
+        { ...bare, end: generic.end },
       ],
     }
   }
-  // Six or more colons share one rule: the fence stops before any bare run of
-  // six or more, and no per-language copies are made, so a fence there is
-  // highlighted without its embedded language.
+  // Six or more colons share one rule with no per-language copies, so a fence
+  // there is highlighted without its embedded language.
   entries['code-blocks-in-long-colon-container'] = {
-    patterns: [{ ...bare, end: generic.end + `|(?=^${LONG_COLON_CLOSER})` }],
+    patterns: [{ ...bare, end: generic.end }],
   }
   return entries
 }

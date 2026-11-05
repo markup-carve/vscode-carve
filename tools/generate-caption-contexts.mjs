@@ -49,7 +49,8 @@ if (payloadStart < 0) throw new Error('Strict attribute payload changed')
 const attribute = attributeMatch.slice(payloadStart)
 const blockAttributes = String.raw`(?:` + attribute + String.raw`)(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
 const interrupt = '(?:%%|' + blockAttributes + '|' + String.raw`(?:(?:-{3,}|\*{3,}|_{3,})[ \t]*$|#{1,6} +(?![ \t]*$)|%{3,}(?: |$)|` + '`{3,}' + String.raw`|~{3,}|:{3,}(?: |$)|>(?: |$)|\|[^\n]*\|[ \t]*$|\+[ \t]*$|\*\[[^\]\n]+\]: |\[[^\]\n]+\]: ))`
-const containerInterrupt = '(?:' + interrupt + String.raw`|(?:[-*]|[0-9]+[.)]|[A-Za-z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.) +|:: +|: +)`
+const listMarker = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z]\.(?=  )|[A-Za-z]\)|[ivxlcdmIVXLCDM]+\.(?=  )|[ivxlcdmIVXLCDM]+\)|\.) +`
+const containerInterrupt = '(?:' + interrupt + '|' + listMarker + String.raw`|:: +|: +)`
 const image = '(?:' + repository.images.patterns.map(rule => rule.match).join('|') + ')' + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
 const fence = repository['code-blocks'].patterns.find(rule => rule.begin)?.begin.slice(1)
 if (!fence || !fence.includes(String.raw`\2`)) throw new Error('Generic fence capture layout changed')
@@ -351,9 +352,9 @@ updated = replaceEntry(updated, 'caption-paragraph-in-list', {
     },
   ],
 })
-// A footnote or description body: a list marker interrupts a paragraph only
-// inside a list item, so here it folds into the open paragraph as text.
-const noteParagraphEnd = String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+(?:[ \t]*$|` + interrupt + '))'
+// A footnote or description body: a list marker at the content column
+// interrupts its paragraph, as in a list item (spec model on carve main).
+const noteParagraphEnd = String.raw`^(?=[ \t]*$|\S)|^(?=[ \t]+(?:[ \t]*$|` + interrupt + '|' + listMarker + '))'
 const noteMarkerLineParagraph = { begin: String.raw`\G(?<=[ \t])` + content, end: noteParagraphEnd, patterns: [...plusMarker, ...include('caption-paragraph-inline')] }
 updated = replaceEntry(updated, 'caption-paragraph-in-note', {
   patterns: [
