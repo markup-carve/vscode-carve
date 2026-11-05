@@ -177,8 +177,7 @@
   "Table": {
     "prefix": "table",
     "body": [
-      "| ${1:Column A} | ${2:Column B} |",
-      "|---|---|",
+      "|= ${1:Column A} |= ${2:Column B} |",
       "| ${3:cell} | ${4:cell} |",
       "$0"
     ],

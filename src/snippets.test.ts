@@ -127,3 +127,11 @@ test('the definition separator is one space', () => {
   const body = snippets['Definition list']!.body as string[]
   assert.equal(body[1], ': ${2:Definition}')
 })
+
+test('the table snippet writes native header cells, not a GFM separator row', () => {
+  // The GFM separator row is a compatibility spelling being retired
+  // (markup-carve/carve#4980); `|=` cells are the canonical header.
+  const body = snippets['Table']!.body as string[]
+  assert.ok(!body.some((line) => /^\|-/.test(line)), body.join('\n'))
+  assert.match(renderPreviewBody(expand(body) + '\n'), /<thead>[\s\S]*<th[^>]*>Column A<\/th>/)
+})
