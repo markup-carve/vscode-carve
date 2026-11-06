@@ -65,7 +65,7 @@
 // gains one leave every total identical (the "compare counts, not sets" defect,
 // markup-carve/carve#927).
 
-import { readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { dirname, join, resolve } from 'node:path'
@@ -125,7 +125,11 @@ const declaredCorpusSize = () => {
     const path = join(examplesDir, page)
     let source
     try {
-      source = readFileSync(path, 'utf8')
+      // carve#4132 stores each edge-case section in its own file under `edge-cases/`.
+      const dir = path.replace(/\.md$/, '')
+      source = existsSync(dir) && statSync(dir).isDirectory()
+        ? readdirSync(dir).filter((file) => file.endsWith('.md')).map((file) => readFileSync(join(dir, file), 'utf8'))
+        : [readFileSync(path, 'utf8')]
     } catch (error) {
       fail(
         `no corpus source page at ${path} (${error instanceof Error ? error.message : String(error)}).\n` +
@@ -136,7 +140,7 @@ const declaredCorpusSize = () => {
           '  tests/corpus inside a markup-carve/carve checkout.',
       )
     }
-    declared += countDeclaredPairs(source.split('\n'))
+    for (const part of source) declared += countDeclaredPairs(part.split('\n'))
   }
   return declared
 }

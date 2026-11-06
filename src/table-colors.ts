@@ -280,8 +280,10 @@ export async function createTableMarkerScanner(
       for (let line = 0; line < lines.length; line++) {
         if (source.codeLines.has(line) || source.tableLines.has(line)) continue
         for (const token of tokensByLine[line] ?? []) {
-          if (token.endIndex > token.startIndex && token.scopes.includes('markup.raw.block.fenced.code.carve')) {
-            plainMarkers.push({ line, start: token.startIndex, end: token.endIndex, kind: 'plain' })
+          // vscode-textmate reports an empty line as one token ending at 1.
+          const end = Math.min(token.endIndex, lines[line]!.length)
+          if (end > token.startIndex && token.scopes.includes('markup.raw.block.fenced.code.carve')) {
+            plainMarkers.push({ line, start: token.startIndex, end, kind: 'plain' })
           }
         }
       }
