@@ -1,6 +1,6 @@
 # vscode-carve
 
-Carve support for VS Code, with TextMate highlighting, preview, and a bundled language server. Extension version 0.1.16 bundles `carve-lsp` 0.1.15. See the [Carve documentation](https://markup-carve.github.io/carve/) for the markup language.
+Carve support for VS Code, with TextMate highlighting, preview, and a bundled language server. Extension version 0.1.16 bundles `carve-lsp` from main at `fb6df1f`, ahead of its next release. See the [Carve documentation](https://markup-carve.github.io/carve/) for the markup language.
 
 ## Features
 
