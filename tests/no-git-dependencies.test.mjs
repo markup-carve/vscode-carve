@@ -28,10 +28,13 @@ function runGuard(manifest) {
 	}
 }
 
+// Built from scratch rather than from the committed manifest, which may carry a
+// git pin of its own; that case is the committed-manifest test below.
+const REGISTRY_DEPS = { 'vscode-languageclient': '^9.0.1', 'vscode-textmate': '^7.0.1' }
 const withDep = (field, spec) => ({
-	...baseline,
-	dependencies: { ...baseline.dependencies, '@markup-carve/carve': '0.1.15' },
-	[field]: { ...(field === 'dependencies' ? baseline.dependencies : {}), '@markup-carve/carve': spec },
+	name: 'scratch',
+	dependencies: { ...REGISTRY_DEPS },
+	[field]: { ...(field === 'dependencies' ? REGISTRY_DEPS : {}), '@markup-carve/carve': spec },
 })
 
 const REJECT = [

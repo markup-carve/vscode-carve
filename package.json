@@ -515,7 +515,7 @@
   },
   "dependencies": {
     "@markup-carve/carve": "github:markup-carve/carve-js#99ad0d2a4e5ec192440c3e5a1b4b95f50ed3cfcf",
-    "@markup-carve/carve-lsp": "0.1.15",
+    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#fb6df1f8ef04ee3f1917222bf205e12bb0e34e8f",
     "vscode-languageclient": "^9.0.1",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
