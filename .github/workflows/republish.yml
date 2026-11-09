@@ -56,6 +56,9 @@ jobs:
           got="$(node -p "require('./package.json').version")"
           [ "$got" = "${RELEASE_TAG#v}" ] || { echo "::error::package.json is $got, tag is $RELEASE_TAG"; exit 1; }
 
+      - name: No runtime dependency is installed over git
+        run: node scripts/no-git-dependencies.mjs
+
       - run: npm ci
 
       - run: npm run build

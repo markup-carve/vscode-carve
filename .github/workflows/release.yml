@@ -111,6 +111,11 @@ jobs:
             exit 1
           fi
 
+      # main may pin a merged upstream commit while an engine release is
+      # pending; a marketplace build must not ship one.
+      - name: No runtime dependency is installed over git
+        run: node scripts/no-git-dependencies.mjs
+
       # Only meaningful on a dispatch that will CREATE the tag. A tag push
       # arrives with the tag already on the remote, so this would refuse every
       # run of the legacy path.
@@ -194,6 +199,11 @@ jobs:
       - run: npm ci
 
       - run: npm run build
+
+      # main may pin a merged upstream commit while an engine release is
+      # pending; a marketplace build must not ship one.
+      - name: No runtime dependency is installed over git
+        run: node scripts/no-git-dependencies.mjs
 
       # Package once WITH dependencies. The extension is not bundled: the preview
       # imports @markup-carve/carve at runtime and the language server loads from
