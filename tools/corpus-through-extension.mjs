@@ -65,13 +65,13 @@
 // gains one leave every total identical (the "compare counts, not sets" defect,
 // markup-carve/carve#927).
 
-import { readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { dirname, join, resolve } from 'node:path'
 import { argv, execPath, exit, stderr, stdout } from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { countDeclaredPairs } from './declared-pairs.mjs'
+import { declaredInputs } from './declared-pairs.mjs'
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -120,12 +120,16 @@ const fail = (message) => {
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 const declaredCorpusSize = () => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
-  let declared = 0
+  const declared = new Set()
   for (const page of EXAMPLE_PAGES) {
     const path = join(examplesDir, page)
     let source
     try {
-      source = readFileSync(path, 'utf8')
+      // carve#4132 stores each edge-case section in its own file under `edge-cases/`.
+      const dir = path.replace(/\.md$/, '')
+      source = existsSync(dir) && statSync(dir).isDirectory()
+        ? readdirSync(dir).filter((file) => file.endsWith('.md') && file !== 'README.md').map((file) => readFileSync(join(dir, file), 'utf8'))
+        : [readFileSync(path, 'utf8')]
     } catch (error) {
       fail(
         `no corpus source page at ${path} (${error instanceof Error ? error.message : String(error)}).\n` +
@@ -136,9 +140,9 @@ const declaredCorpusSize = () => {
           '  tests/corpus inside a markup-carve/carve checkout.',
       )
     }
-    declared += countDeclaredPairs(source.split('\n'))
+    for (const part of source) for (const input of declaredInputs(part.split('\n'))) declared.add(input)
   }
-  return declared
+  return declared.size
 }
 
 let documents
@@ -163,8 +167,8 @@ if (declared === 0) {
 if (documents.length !== declared) {
   fail(
     `${corpusDir} holds ${documents.length} documents, but the spec's example pages declare ${declared}.\n` +
-      '  Every carve fence in a ::: compare block in resources/examples/{core,extensions,edge-cases}.md becomes one\n' +
-      '  corpus pair, so a difference means this is not the corpus those pages describe: a\n' +
+      '  Every distinct carve fence input in a ::: compare block in resources/examples/{core,extensions,edge-cases}\n' +
+      '  becomes one corpus pair, so a difference means this is not the corpus those pages describe: a\n' +
       '  truncated or stale checkout, a wrong --corpus, or a corpus that needs regenerating\n' +
       '  (npm run corpus:build in the spec repository). Every number below would describe a\n' +
       '  population nobody chose.',
