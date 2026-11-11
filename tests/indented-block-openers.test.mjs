@@ -67,6 +67,7 @@ const SHAPES = [
   ['a list under a nested term', ':: a\n: b\n  :: c\n    - x\n', '    - x', '-', 'markup.list.unnumbered'],
   ['a term under a paragraph', 'para\n:: c\n', ':: c', '::', 'markup.list.definition.term'],
   ['a span marker in a header cell', '|= a |= < |\n', '|= a |= < |', '<', 'keyword.operator.table.colspan'],
+  ['a span marker in a first body cell', '| < | b |\n', '| < | b |', '<', 'keyword.operator.table.colspan'],
   ['a rowspan marker in a header cell', '|= a |\n|= ^ |\n', '|= ^ |', '^', 'keyword.operator.table.rowspan'],
   ['a quoted div opener', '> ::: note\n> body\n> :::\n', '> ::: note', 'note', 'entity.name.type.div'],
   ['a quoted div closer', '> ::: note\n> body\n> :::\n', '> :::', ':::', 'punctuation.definition.div'],
