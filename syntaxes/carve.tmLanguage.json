@@ -3814,6 +3814,34 @@
           "include": "#table-rows-behind-a-container-prefix"
         },
         {
+          "comment": "A div marker line behind a quote prefix (`> ::: note`, `> :::`), as `#divs` reads it at the line start.",
+          "name": "markup.other.div.carve",
+          "match": "\\G[ \\t]*(?:([-*])[ \\t]+)?(:::+)(?: +([^\\s{\\[\"]+))?(?: +(\"[^\"]*\")(?: +(\\[[^\\]]*\\]))?| *(\\[[^\\]]*\\])(?: +(\"[^\"]*\"))?)?[ \\t]*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.list.begin.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.div.carve"
+            },
+            "3": {
+              "name": "entity.name.type.div.carve"
+            },
+            "4": {
+              "name": "string.quoted.double.carve"
+            },
+            "5": {
+              "name": "entity.name.label.carve"
+            },
+            "6": {
+              "name": "entity.name.label.carve"
+            },
+            "7": {
+              "name": "string.quoted.double.carve"
+            }
+          }
+        },
+        {
           "comment": "A quoted footnote definition, ahead of the link definition below for the same reason as in `#definitions-in-container`.",
           "name": "meta.footnote.definition.carve",
           "match": "\\G\\s*(\\[\\^[^\\]]+\\]:)(?=[ \\t]+\\S)",
