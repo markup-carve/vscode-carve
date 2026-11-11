@@ -48,7 +48,7 @@ const payloadStart = attributeMatch?.indexOf(String.raw`\{\s*(?:`) ?? -1
 if (payloadStart < 0) throw new Error('Strict attribute payload changed')
 const attribute = attributeMatch.slice(payloadStart)
 const blockAttributes = String.raw`(?:` + attribute + String.raw`)(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
-const interrupt = '(?:%%|' + blockAttributes + '|' + String.raw`(?:(?:-{3,}|\*{3,}|_{3,})[ \t]*$|#{1,6} +(?![ \t]*$)|%{3,}(?: |$)|` + '`{3,}' + String.raw`|~{3,}|:{3,}(?: |$)|>(?: |$)|\|[^\n]*\|[ \t]*$|\+[ \t]*$|\*\[[^\]\n]+\]: |\[[^\]\n]+\]: ))`
+const interrupt = '(?:%%|' + blockAttributes + '|' + String.raw`(?:(?:-{3,}|\*{3,}|_{3,})[ \t]*$|#{1,6} +(?![ \t]*$)|%{3,}(?: |$)|` + '`{3,}' + String.raw`|~{3,}|:{3,}(?: |$)|>(?: |$)|\|[^\n]*\|[ \t]*$|\+[ \t]*$|\*\[[^\]\n]+\]: |\[[^\]\n]+\]: |:: +(?![ \t]*$)))`
 const listMarker = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z]\.(?=  )|[A-Za-z]\)|[ivxlcdmIVXLCDM]+\.(?=  )|[ivxlcdmIVXLCDM]+\)|\.) +`
 const containerInterrupt = '(?:' + interrupt + '|' + listMarker + String.raw`|:: +|: +)`
 const image = '(?:' + repository.images.patterns.map(rule => rule.match).join('|') + ')' + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`

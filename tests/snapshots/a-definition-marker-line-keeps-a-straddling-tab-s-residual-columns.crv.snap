@@ -7,7 +7,13 @@
 # ^ text.carve markup.list.definition.carve
 #  ^^ text.carve
 >	:: t
-#^^^^^^ text.carve
+#^ text.carve markup.list.definition.term.carve
+# ^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.definition.term.carve
+#    ^^ text.carve
 >  : zq
-#^^^^^^^ text.carve
+#^^ text.carve markup.list.definition.carve
+#  ^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#   ^ text.carve markup.list.definition.carve
+#    ^^^ text.carve
 >

@@ -1,4 +1,6 @@
 >   # H
-#^^^ text.carve
-#   ^^^^ text.carve
+#^^^ text.carve markup.heading.carve
+#   ^ text.carve markup.heading.carve punctuation.definition.heading.carve
+#    ^ text.carve markup.heading.carve
+#     ^ text.carve markup.heading.carve entity.name.section.carve
 >

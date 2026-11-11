@@ -51,6 +51,7 @@ const VARIANTS = [
   ['fenced-code-languages', 'code-blocks', 0, `(^|\\G)(?!${BARE_FENCE})`],
   ['fenced-code-languages-on-a-marker-line', 'code-block-behind-a-container-prefix', 0, `(^|\\G)(?!${BARE_FENCE})(?=[ \\t]|$)`],
   ['fenced-code-languages-at-a-body-column', 'code-block-behind-a-container-prefix', 1, `(^|\\G)(?!${BARE_FENCE})(?=[ \\t]|$)`],
+  ['fenced-code-languages-at-an-indent', 'code-block-at-an-indent', 0, `(^|\\G)(?!${BARE_FENCE})`],
   ...COLON_CONTAINER_LENGTHS.map((n) => [
     `fenced-code-languages-in-colon-container-${n}`, 'code-blocks', 0,
     `(^|\\G)(?!${BARE_FENCE})`,
