@@ -6,10 +6,25 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.17] - 2026-11-12
+
+The extension follows the Carve 0.1.14 wave through carve-js 0.1.16 and carve-lsp 0.1.16, exports to PDF, and ships shared Carve colors.
+
 ### Fixes
 
-- Captioned `{.diff}` fences show added and removed lines in the editor and preview (#427).
-- Captions use the updated grammar colors in the editor and preview (#427).
+- Block openers at an indent at document level (headings, breaks, tables, fences) and definitions in every container get their scopes, and a block opener under a definition term ends the term (#436, #437).
+- Captioned `{.diff}` fences show added and removed lines in the editor and preview (#427, #428).
+- Captions use the updated grammar colors in the editor and preview (#427, #428).
+- The bundled demo document renders correctly on the engine, and the table snippet writes native `|=` header cells (#429).
+- Definition markers take theme colors (#425).
+
+### Improvements
+
+- Carve documents export to PDF through crv2pdf or an installed browser, also from read-only sources (#432).
+- Carve light and dark editor themes and a shared preview palette (#426).
+- The bundled engine (carve-js 0.1.16) and language server (carve-lsp 0.1.16) follow the Carve 0.1.14 readings: braced cell alignment (`|={>}`) with a quick fix for the deprecated glued prefix, frontmatter without a closer, two spaces after a letter or roman dot marker, hint-severity lint findings, and the renamed lint rules (#438, #439).
+
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.16...v0.1.17
 
 ## [0.1.16] - 2026-10-26
 
