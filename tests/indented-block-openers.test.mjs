@@ -92,3 +92,22 @@ test('a line under a term that is not a marker line ends the term', () => {
   const t = on(':: c\n  more\n', '  more', 'more')
   assert.ok(t && !has(t, 'markup.list.definition'), t && t.scopes.join(' '))
 })
+
+// carve-js renders each source as one code block whose body holds the deeper fence line.
+const DEEPER_CLOSERS = [
+  ['a quoted fence', '>   ```js\n>   x\n>     ```\n>   y\n>   ```\n', '>   y'],
+  ['an indented fence under a deeper spaces closer', '  ```js\n  x\n    ```\n  y\n  ```\n', '  y'],
+  ['an indented fence under a tab closer', '  ```js\n  x\n\t```\n  y\n  ```\n', '  y'],
+]
+
+for (const [label, src, line] of DEEPER_CLOSERS) {
+  test(`${label} stays open past a closer deeper than its opener`, () => {
+    const t = tokenize(src).find((x) => x.line === line && x.text.trim() !== '')
+    assert.ok(t && has(t, 'markup.raw.block.fenced.code'), t && t.scopes.join(' '))
+  })
+}
+
+test('a quoted fence closes at a shallower closer', () => {
+  const t = on('>   ```js\n>   x\n> ```\n> y\n', '> y', 'y')
+  assert.ok(t && !has(t, 'markup.raw.block.fenced.code'), t && t.scopes.join(' '))
+})
