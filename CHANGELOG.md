@@ -6,6 +6,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.18] - 2026-11-12
+
+A hotfix: 0.1.17 failed to activate, so no Carve feature in VS Code worked.
+
+### Fixes
+
+- The extension activates again with the bundled carve-lsp 0.1.16. The server also lists `carve.exportPdf`, and the second registration of that command failed activation with "command 'carve.exportPdf' already exists". The language client now leaves the commands the extension owns to the extension (#446).
+- Carve code blocks in the preview and in exported HTML highlight a description marker under a term that follows paragraph text, and no longer mark a `- ` line above it as a list bullet (carve-grammars main) (#444, #445).
+
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.17...v0.1.18
+
 ## [0.1.17] - 2026-11-12
 
 The extension follows the Carve 0.1.14 wave through carve-js 0.1.17 and carve-lsp 0.1.16, exports to PDF, and ships shared Carve colors.
