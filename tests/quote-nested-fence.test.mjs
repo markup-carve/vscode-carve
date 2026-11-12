@@ -83,6 +83,7 @@ for (const depth of [1, 2, 3]) {
     [`a comment fence at depth ${depth} closes on an indented closer`, `${p}%%%\n${p}w0\n${p}   %%%\n${p}w1\n`, ['w0'], ['w1']],
     [`a comment fence at depth ${depth} closes on a lazy closer`, `${p}%%%\n${p}w0\n%%%\n${p}w1\n`, ['w0'], ['w1']],
     [`a comment fence at depth ${depth} does not close on a deeper closer`, `${p}%%%\n${p}w0\n${p}> %%%\n${p}w1\n${p}%%%\n${p}w2\n`, ['w0', 'w1'], ['w2']],
+    [`a comment fence at depth ${depth} ends at a glued marker without closing on it`, `${p}%%%\n${p}w0\n${bare(depth)}%%%\n${p}w1\n`, ['w0'], ['w1']],
     [`a comment fence at depth ${depth} opens behind an indent`, `${p}  %%%\n${p}w0\n${p}%%%\n${p}w1\n`, ['w0'], ['w1']],
   )
 }
