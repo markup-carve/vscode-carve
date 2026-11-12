@@ -16,6 +16,7 @@ The extension follows the Carve 0.1.14 wave through carve-js 0.1.16 and carve-ls
 - Block openers at an indent at document level (headings, breaks, tables, fences) and definitions in every container get their scopes, and a block opener under a definition term ends the term (#436, #437).
 - Captioned `{.diff}` fences show added and removed lines in the editor and preview (#427, #428).
 - Captions use the updated grammar colors in the editor and preview (#427, #428).
+- A captioned `{.diff}` fence gets the diff border in the preview (carve-css 0.1.10) (#443).
 - The bundled demo document renders correctly on the engine, and the table snippet writes native `|=` header cells (#429).
 - Definition markers take theme colors (#425).
 
