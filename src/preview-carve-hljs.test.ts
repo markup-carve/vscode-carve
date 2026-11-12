@@ -39,14 +39,17 @@ test('a list after a leading blank line is scoped without stalling the preview',
   assert.equal(html.match(/<span class="hljs-bullet">-<\/span>/g)?.length, 12)
 })
 
-test('a description marker is scoped at a footnote body column and not under lazy text', () => {
+test('a description marker is scoped at a footnote body column and under a term below paragraph text', () => {
   const context = createContext({})
   runInContext(readFileSync(hljsFile, 'utf8'), context)
   runInContext(readFileSync(join(grammarsDir, 'highlightjs', 'carve.js'), 'utf8'), context)
   const highlight = (source: string) =>
     runInContext(`hljs.highlight(${JSON.stringify(source)}, { language: 'carve' }).value`, context) as string
   assert.match(highlight('r[^1]\n\n[^1]: x\n    :: t\n  : e\n'), /<span class="hljs-punctuation"> {2}:<\/span> e/)
-  assert.doesNotMatch(highlight(': x\n- z\n  :: t\n  : e\n'), /hljs-punctuation/)
+  assert.match(highlight('[^1]: x\n  \t:: t\n    : zq\n'), /<span class="hljs-punctuation"> {4}:<\/span> zq/)
+  const belowParagraph = highlight(': x\n- z\n  :: t\n  : zq\n')
+  assert.match(belowParagraph, /<span class="hljs-punctuation"> {2}:<\/span> zq/)
+  assert.doesNotMatch(belowParagraph, /hljs-bullet/)
 })
 
 test('the delimited script registers csv and tsv with the global hljs', () => {
@@ -72,9 +75,9 @@ test('the preview loads the csv and tsv grammar right after the carve grammar', 
 test('the export loads the grammars, csv and tsv included, and table palette from the CDN', () => {
   const srcs = scriptSrcs(exportHtmlDocument('x'))
   const hljs = srcs.findIndex((s) => s.includes('/highlight.min.js'))
-  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e6ad26c2/highlightjs/carve.js')
-  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@e6ad26c2/highlightjs/delimited.js')
-  assert.match(exportHtmlDocument('x'), /carve-grammars@e6ad26c2\/shiki\/table-tokens\.css/)
+  assert.equal(srcs[hljs + 1], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/highlightjs/carve.js')
+  assert.equal(srcs[hljs + 2], 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/highlightjs/delimited.js')
+  assert.match(exportHtmlDocument('x'), /carve-grammars@b4f8c285\/shiki\/table-tokens\.css/)
   assert.match(exportHtmlDocument('x'), /setAttribute\('data-theme', colorScheme\?\.matches \? 'dark' : 'light'\)/)
   assert.match(exportHtmlDocument('x'), /@media \(prefers-color-scheme: dark\)[\s\S]*--carve-syntax-list: #f2cc60/)
   const dark = (JSON.parse(readFileSync(join(grammarsDir, 'themes', 'palette.json'), 'utf8')) as { dark: Record<string, string> }).dark
@@ -95,7 +98,7 @@ test('the export CDN revision matches the installed carve-grammars package', () 
   const installed = JSON.parse(readFileSync(join(grammarsDir, 'package.json'), 'utf8')) as { version: string }
   assert.equal(packageEntry.version, installed.version)
   const revision = packageEntry.resolved?.match(/#([0-9a-f]{40})$/)?.[1].slice(0, 8)
-  assert.equal(revision, 'e6ad26c2')
+  assert.equal(revision, 'b4f8c285')
   for (const src of scriptSrcs(exportHtmlDocument('x')).filter((s) => s.includes('/carve-grammars@'))) {
     assert.ok(src.includes(`/carve-grammars@${revision}/`), `${src} is not carve-grammars ${revision}`)
   }
