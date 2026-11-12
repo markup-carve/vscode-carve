@@ -12,6 +12,7 @@ The extension follows the Carve 0.1.14 wave through carve-js 0.1.16 and carve-ls
 
 ### Fixes
 
+- A fenced code or comment block inside a nested quote, or in a quote on a list marker line, closes at its own depth (#440, #441).
 - Block openers at an indent at document level (headings, breaks, tables, fences) and definitions in every container get their scopes, and a block opener under a definition term ends the term (#436, #437).
 - Captioned `{.diff}` fences show added and removed lines in the editor and preview (#427, #428).
 - Captions use the updated grammar colors in the editor and preview (#427, #428).
