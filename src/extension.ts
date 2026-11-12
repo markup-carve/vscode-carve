@@ -38,6 +38,7 @@ import {
 } from './list-indent.js'
 import { serverInternalPath, serverModulePath } from './paths.js'
 import { shouldHoldRender } from './preview-hold.js'
+import { contributedCommands, EXECUTE_COMMAND_METHOD, skipOwnedCommands } from './server-commands.js'
 import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import { createTableMarkerScanner } from './table-colors.js'
 import { columnColorGroups } from './delimited-columns.js'
@@ -246,7 +247,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     includeDiagnostics,
     vscode.commands.registerCommand('carve.openPreview', () => openPreview(context)),
     vscode.commands.registerCommand('carve.exportHtml', () => exportHtml(context)),
-    vscode.commands.registerCommand('carve.exportPdf', () => exportPdf(context)),
+    vscode.commands.registerCommand('carve.exportPdf', (uri?: vscode.Uri | string) => exportPdf(context, uri)),
     vscode.commands.registerCommand('carve.exportMarkdown', () => exportMarkdown(context)),
     vscode.commands.registerCommand('carve.importFile', (uri?: vscode.Uri) => importFile(uri)),
     vscode.commands.registerCommand('carve.exportBundle', () => exportBundle(context)),
@@ -776,9 +777,12 @@ async function renderExportHtml(context: vscode.ExtensionContext, document: vsco
   })
 }
 
-async function exportPdf(context: vscode.ExtensionContext): Promise<void> {
-  const editor = vscode.window.activeTextEditor
-  if (!editor || editor.document.languageId !== 'carve' || editor.document.uri.scheme !== 'file') {
+async function exportPdf(context: vscode.ExtensionContext, uri?: vscode.Uri | string): Promise<void> {
+  // The language server's export code action passes the document uri.
+  const document = uri === undefined
+    ? vscode.window.activeTextEditor?.document
+    : await vscode.workspace.openTextDocument(typeof uri === 'string' ? vscode.Uri.parse(uri) : uri)
+  if (!document || document.languageId !== 'carve' || document.uri.scheme !== 'file') {
     void vscode.window.showWarningMessage('Open a local Carve document to export a PDF.')
     return
   }
@@ -790,24 +794,24 @@ async function exportPdf(context: vscode.ExtensionContext): Promise<void> {
     void vscode.window.showErrorMessage(MISSING_PDF_TOOL_MESSAGE)
     return
   }
-  const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.pdf'
+  const defaultPath = document.uri.path.replace(/\.crv$/i, '') + '.pdf'
   const target = await vscode.window.showSaveDialog({
-    defaultUri: editor.document.uri.with({ path: defaultPath }),
+    defaultUri: document.uri.with({ path: defaultPath }),
     filters: { PDF: ['pdf'] },
     saveLabel: 'Export PDF',
   })
   if (!target || target.scheme !== 'file') return
   try {
     if (crv2pdf) {
-      if (!(await editor.document.save())) throw new Error('Save the Carve document before exporting it with crv2pdf.')
-      await runPdfTool(crv2pdf, crv2pdfArgs(editor.document.uri.fsPath, target.fsPath), target.fsPath)
+      if (!(await document.save())) throw new Error('Save the Carve document before exporting it with crv2pdf.')
+      await runPdfTool(crv2pdf, crv2pdfArgs(document.uri.fsPath, target.fsPath), target.fsPath)
     } else if (browser) {
-      const html = await renderExportHtml(context, editor.document)
+      const html = await renderExportHtml(context, document)
       const paperSize = config.get<PdfPaperSize>('paperSize', 'A4')
       const margins = config.get<PdfMargins>('margins', 'default')
       const temporaryHtml = join(dirname(target.fsPath), `.carve-pdf-${randomUUID()}.html`)
       try {
-        await writeFile(temporaryHtml, pdfPrintHtml(html, paperSize, margins, dirname(editor.document.uri.fsPath)))
+        await writeFile(temporaryHtml, pdfPrintHtml(html, paperSize, margins, dirname(document.uri.fsPath)))
         await runPdfTool(browser, browserPdfArgs(temporaryHtml, target.fsPath), target.fsPath)
       } finally {
         await unlink(temporaryHtml).catch(() => undefined)
@@ -1352,6 +1356,7 @@ async function startLanguageServer(context: vscode.ExtensionContext): Promise<vo
   }
 
   client = new LanguageClient('carve', 'Carve Language Server', serverOptions, clientOptions)
+  skipOwnedCommands(client.getFeature(EXECUTE_COMMAND_METHOD), contributedCommands(context.extension.packageJSON))
   context.subscriptions.push(client)
   await client.start()
 }

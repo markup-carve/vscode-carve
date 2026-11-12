@@ -519,6 +519,7 @@
     "test:grammar": "node tools/generate-caption-contexts.mjs --check && node --test tests/comment-in-bold.test.mjs tests/heading-comment-in-code-span.test.mjs tests/caption-comment-in-code-span.test.mjs tests/critic-comment-brace.test.mjs tests/coverage.test.mjs tests/block-battery.test.mjs tests/abbreviation-term.test.mjs tests/multiline-bold.test.mjs tests/bold-opener-brace.test.mjs tests/braced-span-content.test.mjs tests/marker-line-comment-fence.test.mjs tests/marker-line-quote.test.mjs tests/plus-marker-column-zero.test.mjs tests/description-body-fence.test.mjs tests/description-term-required.test.mjs tests/container-paragraph-continuation.test.mjs tests/colon-fence-separator.test.mjs tests/highlight-escape-and-arrow.test.mjs tests/frontmatter-delegation.test.mjs tests/include-directive.test.mjs tests/markdown-fence.test.mjs tests/opaque-destination.test.mjs tests/link-text-and-pipe-rows.test.mjs tests/fence-languages.test.mjs tests/grammar-audit-fixes.test.mjs tests/inline-backtracking-time.test.mjs tests/span-semantic-attributes.test.mjs tests/indented-block-openers.test.mjs tests/quote-nested-fence.test.mjs && node tests/run-snapshots.mjs && node tests/run-fixtures.mjs",
     "test:grammar:update": "node tests/run-snapshots.mjs -u && node tests/run-fixtures.mjs -u",
     "test:corpus": "node tools/corpus-through-extension.mjs",
+    "test:activation": "node tests/electron/run.mjs",
     "typecheck": "tsc --noEmit",
     "package": "vsce package"
   },
@@ -536,6 +537,7 @@
     "@shikijs/themes": "^4.5.0",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
+    "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "^3.2.2",
     "chart.js": "^4.5.1",
     "katex": "^0.17.0",

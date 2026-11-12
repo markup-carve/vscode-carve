@@ -50,6 +50,10 @@ jobs:
       - run: npm run build
       - run: npm test
 
+      # Starts the built extension and its bundled language server in a real
+      # VS Code; unit tests cannot see an activation failure.
+      - run: xvfb-run -a npm run test:activation
+
       # The network drift checks (battery, fence languages) run daily in
       # grammar-drift.yml: upstream moving is not a reason for a PR to fail.
       - run: npm run package
