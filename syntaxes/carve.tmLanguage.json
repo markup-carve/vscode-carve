@@ -3527,10 +3527,23 @@
     "comment-fence-on-quote-marker-line": {
       "patterns": [
         {
-          "comment": "A COMMENT FENCE MAY OPEN ON A BLOCK-QUOTE MARKER LINE (`> %%%`) too, and the same rule hides its body: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits (corpus 70-blocks-that-render-to-nothing - `> q` / `> %%%` / `> x` / `> %%%` / `> body` renders the quote with `q` and `body` only, markup-carve/vscode-carve#115). tree-sitter-carve is the reference: it puts a fenced_comment_block INSIDE the quote's content, beside the block_quote_marker rather than over it, with the body as a single opaque content node. This grammar INVERTED it - the `%%%` fell through to #trailing-comment and scoped as a LINE comment so no block opened, and the hidden `[r]: /url` came back as a live meta.link.reference.definition.carve on the line below, which is the same failure #113 fixed one marker over. Reached from #block-quotes rather than from #container-body, and NOT by including #comment-fence-on-marker-line: the begin is identical but the end cannot be shared. That rule's closer is INDENTED (`^[ \\\\t]+`) and its boundary is a column-0 line, and inside a quote both are backwards - the closer carries a `>` marker at column 0 and a column-0 `>` line is the CONTINUATION, not the boundary. Included as-is it closes zero-width on the very next line and hides only the opener. Anchored on \\\\G for the reason markup-carve/vscode-carve#67 gives for the in-quote reference definition beside it: the quote's own begin has already consumed `> `, so ^ can never match again on that line, and vscode-textmate resets \\\\G on every following line so this can never open one. The `(?<=[ \\\\t])` guard keeps it to the marker line - a later match on the same line moves the anchor too, and a percent run glued to the end of one (`> /a/%%%`) is not a fence. Capture 1 is the run of FURTHER markers, so a fence opened at `> > ` is closed at `> > ` and not at `> `; capture 2 is the fence, repeated in the closer so the width matches exactly and `%%%%` does not close `%%%`. The end's second branch is a zero-width quote boundary: an UNMARKED line is where the quote can end, and the engine degrades an unclosed opener to a line comment rather than hiding anything (`> %%%` / `> c` / blank line leaves `c` VISIBLE). Without it an unclosed opener would run to end of document.",
+          "comment": "A COMMENT FENCE MAY OPEN ON A BLOCK-QUOTE MARKER LINE (`> %%%`) too, and the same rule hides its body: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits (corpus 70-blocks-that-render-to-nothing - `> q` / `> %%%` / `> x` / `> %%%` / `> body` renders the quote with `q` and `body` only, markup-carve/vscode-carve#115). tree-sitter-carve is the reference: it puts a fenced_comment_block INSIDE the quote's content, beside the block_quote_marker rather than over it, with the body as a single opaque content node. This grammar INVERTED it - the `%%%` fell through to #trailing-comment and scoped as a LINE comment so no block opened, and the hidden `[r]: /url` came back as a live meta.link.reference.definition.carve on the line below, which is the same failure #113 fixed one marker over. Reached from #block-quotes rather than from #container-body, and NOT by including #comment-fence-on-marker-line: the begin is identical but the end cannot be shared. That rule's closer is INDENTED (`^[ \\\\t]+`) and its boundary is a column-0 line, and inside a quote both are backwards - the closer carries a `>` marker at column 0 and a column-0 `>` line is the CONTINUATION, not the boundary. Included as-is it closes zero-width on the very next line and hides only the opener. Anchored on \\\\G for the reason markup-carve/vscode-carve#67 gives for the in-quote reference definition beside it: the quote's own begin has already consumed `> `, so ^ can never match again on that line, and vscode-textmate resets \\\\G on every following line so this can never open one. The `(?<=[ \\\\t])` guard keeps it to the marker line - a later match on the same line moves the anchor too, and a percent run glued to the end of one (`> /a/%%%`) is not a fence. Captures 1-3 split the FURTHER markers so the end can rebuild the fence's depth (markup-carve/vscode-carve#440): a `%%%` closer behind at most that many markers closes it, lazy and indented closers included as carve-js and the spec model read them, and a line without all of them is the boundary. Capture 4 is the fence, repeated in the closer so `%%%%` does not close `%%%`. The end's second branch is a zero-width quote boundary: an UNMARKED line is where the quote can end, and the engine degrades an unclosed opener to a line comment rather than hiding anything (`> %%%` / `> c` / blank line leaves `c` VISIBLE). Without it an unclosed opener would run to end of document.",
           "name": "comment.block.carve",
-          "begin": "\\G(?<=[ \\t])((?:> )*)(%{3,})(?!%)[^\\n]*$",
-          "end": "^[ \\t]*> \\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)"
+          "begin": "\\G(?<=[ \\t])((?:> )*?)(?:(>)( ))?[ \\t]*(%{3,})(?!%)[^\\n]*$",
+          "beginCaptures": {
+            "1": {
+              "patterns": [
+                {
+                  "match": ">",
+                  "name": "punctuation.definition.quote.carve"
+                }
+              ]
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            }
+          },
+          "end": "^(?![ \\t]*>\\3\\1\\2[ \\t]*>)(?:[ \\t]*>(?= ))*[ \\t]*\\4(?!%)[^\\n]*$|^(?![ \\t]*>\\3\\1\\2(?: |$))"
         }
       ]
     },
@@ -3539,28 +3552,39 @@
         {
           "comment": "A fenced code block inside a quote needs a quote-aware region. A normal multi-line fence child would prevent the enclosing one-line quote rule from ending, so this rule repeats the quote prefix in its closer and stops at the first unmarked line.",
           "name": "markup.raw.block.fenced.code.carve",
-          "begin": "\\G((?:> )*)((?: {0,3}\\t| {4})?)([ \\t]*)((`|~)\\5{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
+          "begin": "\\G(?<=> )((?:> )*?)(?:(>)( ))?((?: {0,3}\\t| {4})?)([ \\t]*)((`|~)\\7{2,})[ \\t]*([^`~\\s\\[\"]+)?[ \\t]*(?:(\"[^\"]*\")[ \\t]*(\\[[^\\]]*\\])?|(\\[[^\\]]*\\])[ \\t]*(\"[^\"]*\")?)?[ \\t]*$",
           "beginCaptures": {
-            "4": {
-              "name": "punctuation.definition.raw.begin.carve"
+            "1": {
+              "patterns": [
+                {
+                  "match": ">",
+                  "name": "punctuation.definition.quote.carve"
+                }
+              ]
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
             },
             "6": {
-              "name": "entity.name.type.language.carve"
-            },
-            "7": {
-              "name": "string.quoted.double.carve"
+              "name": "punctuation.definition.raw.begin.carve"
             },
             "8": {
-              "name": "entity.name.label.carve"
+              "name": "entity.name.type.language.carve"
             },
             "9": {
-              "name": "entity.name.label.carve"
+              "name": "string.quoted.double.carve"
             },
             "10": {
+              "name": "entity.name.label.carve"
+            },
+            "11": {
+              "name": "entity.name.label.carve"
+            },
+            "12": {
               "name": "string.quoted.double.carve"
             }
           },
-          "end": "^[ \\t]*> \\1(?:\\2\\3|(?!\\2\\3[ \\t]) {0,3}(?! )|(?<!> \\1\\2)(?: {4}| {0,3}\\t)(?!\\3[ \\t]) *)(\\4\\5*)[ \\t]*$|^(?![ \\t]*>)",
+          "end": "^[ \\t]*>\\3\\1\\2 (?:\\4\\5|(?!\\4\\5[ \\t]) {0,3}(?! )|(?<!>\\3\\1\\2 \\4)(?: {4}| {0,3}\\t)(?!\\5[ \\t]) *)(\\6\\7*)[ \\t]*$|^(?![ \\t]*>\\3\\1\\2(?: |$))",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.raw.end.carve"
@@ -3794,14 +3818,14 @@
           "include": "#captionable-blocks"
         },
         {
-          "include": "#block-quote-on-marker-line",
-          "comment": "Nested quote bodies must reach their own captionable blocks."
-        },
-        {
           "include": "#code-fence-on-quote-marker-line"
         },
         {
           "include": "#comment-fence-on-quote-marker-line"
+        },
+        {
+          "include": "#block-quote-on-marker-line",
+          "comment": "Nested quote bodies must reach their own captionable blocks."
         },
         {
           "include": "#thematic-break-behind-a-container-prefix"
@@ -4640,13 +4664,13 @@
               "applyEndPatternLast": true,
               "patterns": [
                 {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
                   "include": "#code-blocks"
                 },
                 {
                   "include": "#code-block-behind-a-container-prefix"
-                },
-                {
-                  "include": "#code-fence-on-quote-marker-line"
                 }
               ]
             },
@@ -4690,13 +4714,13 @@
               "applyEndPatternLast": true,
               "patterns": [
                 {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
                   "include": "#code-blocks"
                 },
                 {
                   "include": "#code-block-behind-a-container-prefix"
-                },
-                {
-                  "include": "#code-fence-on-quote-marker-line"
                 }
               ]
             },
@@ -5931,13 +5955,13 @@
               "applyEndPatternLast": true,
               "patterns": [
                 {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
                   "include": "#code-blocks"
                 },
                 {
                   "include": "#code-block-behind-a-container-prefix"
-                },
-                {
-                  "include": "#code-fence-on-quote-marker-line"
                 }
               ]
             },
@@ -7785,13 +7809,13 @@
               "applyEndPatternLast": true,
               "patterns": [
                 {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
                   "include": "#code-blocks"
                 },
                 {
                   "include": "#code-block-behind-a-container-prefix"
-                },
-                {
-                  "include": "#code-fence-on-quote-marker-line"
                 }
               ]
             },
@@ -7835,13 +7859,13 @@
               "applyEndPatternLast": true,
               "patterns": [
                 {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
                   "include": "#code-blocks"
                 },
                 {
                   "include": "#code-block-behind-a-container-prefix"
-                },
-                {
-                  "include": "#code-fence-on-quote-marker-line"
                 }
               ]
             },
@@ -8326,13 +8350,13 @@
               "applyEndPatternLast": true,
               "patterns": [
                 {
+                  "include": "#code-fence-on-quote-marker-line"
+                },
+                {
                   "include": "#code-blocks"
                 },
                 {
                   "include": "#code-block-behind-a-container-prefix"
-                },
-                {
-                  "include": "#code-fence-on-quote-marker-line"
                 }
               ]
             },

@@ -60,7 +60,7 @@ const hosts = [
   ['multiline-image', partialImage, include('caption-multiline-image', 'caption-prose-continuation')],
   ['image', image, include('caption-image-on-host-line', 'caption-prose-continuation')],
   ['table', String.raw`\|[^\n]*\|[ \t]*$`, include('table-row-behind-a-container-prefix', 'tables')],
-  ['fence', fence, include('code-blocks', 'code-block-behind-a-container-prefix', 'code-fence-on-quote-marker-line')],
+  ['fence', fence, include('code-fence-on-quote-marker-line', 'code-blocks', 'code-block-behind-a-container-prefix')],
   ['math', math, include('caption-math-on-host-line', 'caption-prose-continuation')],
   ['colon', String.raw`:{3,} +(?:figure|>)[ \t]*$`, include('caption-colon-host')],
 ]
