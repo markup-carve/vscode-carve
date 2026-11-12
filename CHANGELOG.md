@@ -8,7 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [0.1.17] - 2026-11-12
 
-The extension follows the Carve 0.1.14 wave through carve-js 0.1.16 and carve-lsp 0.1.16, exports to PDF, and ships shared Carve colors.
+The extension follows the Carve 0.1.14 wave through carve-js 0.1.17 and carve-lsp 0.1.16, exports to PDF, and ships shared Carve colors.
 
 ### Fixes
 
@@ -17,6 +17,7 @@ The extension follows the Carve 0.1.14 wave through carve-js 0.1.16 and carve-ls
 - Captioned `{.diff}` fences show added and removed lines in the editor and preview (#427, #428).
 - Captions use the updated grammar colors in the editor and preview (#427, #428).
 - A captioned `{.diff}` fence gets the diff border in the preview (carve-css 0.1.10) (#443).
+- The preview renders prose, comments and nested blocks faster, and a tab-led `{` run that misses its column stays text (carve-js 0.1.17) (#443).
 - The bundled demo document renders correctly on the engine, and the table snippet writes native `|=` header cells (#429).
 - Definition markers take theme colors (#425).
 
@@ -24,7 +25,7 @@ The extension follows the Carve 0.1.14 wave through carve-js 0.1.16 and carve-ls
 
 - Carve documents export to PDF through crv2pdf or an installed browser, also from read-only sources (#432).
 - Carve light and dark editor themes and a shared preview palette (#426).
-- The bundled engine (carve-js 0.1.16) and language server (carve-lsp 0.1.16) follow the Carve 0.1.14 readings: braced cell alignment (`|={>}`) with a quick fix for the deprecated glued prefix, frontmatter without a closer, two spaces after a letter or roman dot marker, hint-severity lint findings, and the renamed lint rules (#438, #439).
+- The bundled engine (carve-js 0.1.17) and language server (carve-lsp 0.1.16) follow the Carve 0.1.14 readings: braced cell alignment (`|={>}`) with a quick fix for the deprecated glued prefix, frontmatter without a closer, two spaces after a letter or roman dot marker, hint-severity lint findings, and the renamed lint rules (#438, #439, #443).
 
 **Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.16...v0.1.17
 

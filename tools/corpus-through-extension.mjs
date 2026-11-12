@@ -513,11 +513,8 @@ let twoParserMismatches = 0
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = '0.1.16'
-const ENGINE_LAG = {
-  '1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-4.crv':
-    'markup-carve/carve#5940: the spec declares this row as carve-js drift at 0.1.14 (resources/engine-cross-read-drift.txt).',
-}
+const ENGINE_PIN = '0.1.17'
+const ENGINE_LAG = {}
 const lagWaived = []
 const lagStale = []
 
