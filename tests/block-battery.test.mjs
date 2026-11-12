@@ -162,6 +162,10 @@ const HEADING_SHAPES = [
   ['a quote marker line', '> # h\n', '# h'],
   ['a quote on an item marker line', '- > # h\n', '# h'],
   ["an item's own body column", '- x\n  # h\n', '  # h'],
+  // Rule A (markup-carve/carve#3887): the model and carve-js read an indent at
+  // document level, and extra spaces after a quote prefix, as the same block.
+  ['the document level at an indent', 'para\n\n  # h\n', '  # h'],
+  ['a quote prefix with extra spaces', '>     # h\n', '    # h'],
 ]
 
 for (const [label, src, line] of HEADING_SHAPES) {
@@ -189,8 +193,6 @@ const NOT_A_HEADING = [
   ['a hash run after an inline match', '- /a/ # h\n', '# h', 'the \\G anchor sits at the content column, not here'],
   ['seven hashes', '- ####### h\n', '####### h', 'carve-js renders `####### h` as item text'],
   ['a hash run with no content', '- #\n', '#', 'a marker with no content is not a heading'],
-  ['an indented hash run at the document level', 'para\n\n  # h\n', '  # h', 'carve-js renders `  # h` as `<p># h</p>`'],
-  ['a hash run behind an alternating prefix', '>     # h\n', '    # h', 'carve-js renders `<blockquote><p># h</p></blockquote>`'],
 ]
 
 for (const [label, src, line, why] of NOT_A_HEADING) {
@@ -224,6 +226,7 @@ const FENCE_SHAPES = [
   ['a tilde fence on a marker line', '- ~~~\n  *c* [l](/u)\n  [r]: /url\n  ~~~\n\nafter\n'],
   ['an ordered marker line', '1. ```\n   *c* [l](/u)\n   [r]: /url\n   ```\n\nafter\n'],
   ['a task marker line', '- [x] ```\n      *c* [l](/u)\n      [r]: /url\n      ```\n\nafter\n'],
+  ['the document level at an indent', 'para\n\n  ```\n  *c* [l](/u)\n  [r]: /url\n  ```\n\nafter\n'],
 ]
 
 const isRaw = (t) => has(t, 'markup.raw.block.fenced.code')
@@ -273,13 +276,14 @@ test('an unclosed fence on a marker line stops at the column-0 line that ends th
   }
 })
 
-test('an indented fence at the document level is not a fence', () => {
-  // carve-js renders `  ```` over `  code` over `  ```` as a paragraph holding
-  // an inline code span, which is why the indent allowance is reachable only
-  // from `#container-body`.
-  for (const t of tokenize('para\n\n  ```\n  code\n  ```\n\nafter\n').filter((x) => x.line.includes('code') || x.line.includes('```'))) {
-    assert.ok(!isRaw(t), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
+test('an indented fence at the document level closes no deeper than its opener', () => {
+  // The model reads `  ```` over `code` over `    ```` as one unclosed block.
+  const tokens = tokenize('  ```\ncode\n    ```\nafter\n')
+  for (const t of tokens.filter((x) => x.line === 'code' || x.line === 'after')) {
+    assert.ok(isRaw(t), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
   }
+  const closed = tokenize('    ```\ncode\n  ```\nafter\n').filter((x) => x.line === 'after')
+  for (const t of closed) assert.ok(!isRaw(t), `the closer did not close: ${t.scopes.join(' ')}`)
 })
 
 /*
@@ -421,18 +425,14 @@ test('two dashes on a marker line are not a break', () => {
   }
 })
 
-test('an indented table row at document level stays paragraph text', () => {
+test('an indented table row at document level is a table row', () => {
   const tokens = tokenize('para\n\n  | a |\n')
-  for (const t of tokens.filter((x) => x.line === '  | a |')) {
-    assert.ok(!has(t, 'markup.table'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
-  }
+  assert.ok(tokens.some((t) => t.line === '  | a |' && has(t, 'markup.table.row')))
 })
 
-test('an indented thematic break at document level stays paragraph text', () => {
+test('an indented thematic break at document level is a break', () => {
   const tokens = tokenize('para\n\n ***\n')
-  for (const t of tokens.filter((x) => x.line === ' ***')) {
-    assert.ok(!has(t, 'meta.separator.thematic-break'), `${JSON.stringify(t.text)} carries ${t.scopes.join(' ')}`)
-  }
+  assert.ok(tokens.some((t) => t.line === ' ***' && has(t, 'meta.separator.thematic-break')))
 })
 
 test('an indented table row and continuation inside an item keep table scopes', () => {

@@ -283,26 +283,18 @@ test('a body indented differently from its term keeps its scope', () => {
   }
 })
 
-test('a block opener on a term continuation line is term text', () => {
-  // corpus 503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth
-  // and 504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth.
-  // A `<dt>` holds inline content, so everything from the term marker to the
-  // first body marker is read inline. The engine renders each of these as one
-  // `<dt>`: `:: t` over `  # heading` is `<dt>t\n  # heading</dt>`.
-  const CONTINUATIONS = [
-    ['a heading', ':: t\n  # heading\n: d\n', '  # heading'],
-    ['a container opener', ':: c\n  ::: note\n  body\n  :::\n', '  ::: note'],
-    ['a reference definition', ':: t\n  [r]: /u\n: d\n', '  [r]: /u'],
+test('a block opener under a term ends the term', () => {
+  // corpus 503-a-block-opener-indented-under-a-definition-term-ends-the-term-at-every-depth:
+  // a term is one line, so `:: t` over `  # heading` is a `<dt>` and then an `<h1>`.
+  const OPENERS = [
+    ['a heading', ':: t\n  # heading\n: d\n', '  # heading', 'markup.heading'],
+    ['a container opener', ':: c\n  ::: note\n  body\n  :::\n', '  ::: note', 'markup.other.div'],
+    ['a reference definition', ':: t\n  [r]: /u\n: d\n', '  [r]: /u', 'meta.link.reference.definition'],
   ]
-  for (const [label, src, line] of CONTINUATIONS) {
+  for (const [label, src, line, scope] of OPENERS) {
     const got = tokenize(src).filter((t) => t.line === line)
     assert.ok(got.length > 0, `${label}: the line was not tokenized at all`)
-    for (const t of got) {
-      assert.ok(
-        t.scopes.length === 1 && t.scopes[0] === 'text.carve',
-        `${label} is term text, got ${JSON.stringify(t.text)} -> ${t.scopes.join(' ')}`,
-      )
-    }
+    assert.ok(got.some((t) => has(t, scope)), `${label} lost ${scope}: ${got.map((t) => t.scopes.join(' ')).join(' | ')}`)
   }
 })
 

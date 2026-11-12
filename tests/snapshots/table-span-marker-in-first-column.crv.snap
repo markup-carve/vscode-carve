@@ -1,6 +1,8 @@
 >|= < |= b |
 #^^ text.carve markup.table.row.carve keyword.operator.table.header.carve
-#  ^^^ text.carve markup.table.row.carve
+#  ^ text.carve markup.table.row.carve
+#   ^ text.carve markup.table.row.carve keyword.operator.table.colspan.carve
+#    ^ text.carve markup.table.row.carve
 #     ^^ text.carve markup.table.row.carve keyword.operator.table.header.carve
 #       ^^^ text.carve markup.table.row.carve
 #          ^ text.carve markup.table.row.carve punctuation.separator.table.carve

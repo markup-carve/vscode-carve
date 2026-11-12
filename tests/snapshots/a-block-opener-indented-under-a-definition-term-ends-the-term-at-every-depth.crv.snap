@@ -1,0 +1,10 @@
+>:: c
+#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ text.carve markup.list.definition.term.carve
+#   ^^ text.carve
+>  # H
+#^^ text.carve markup.heading.carve
+#  ^ text.carve markup.heading.carve punctuation.definition.heading.carve
+#   ^ text.carve markup.heading.carve
+#    ^ text.carve markup.heading.carve entity.name.section.carve
+>
