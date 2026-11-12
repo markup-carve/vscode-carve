@@ -513,10 +513,24 @@ let twoParserMismatches = 0
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = 'github:markup-carve/carve-js#c0533ab15fd5e9d4c42746d42dbe2fc9e87b9237'
-const ENGINE_LAG = {}
+const ENGINE_PIN = '0.1.16'
+const ENGINE_LAG = {
+  '1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-4.crv':
+    'markup-carve/carve#5940: the spec declares this row as carve-js drift at 0.1.14 (resources/engine-cross-read-drift.txt).',
+}
 const lagWaived = []
 const lagStale = []
+
+// Corpus rows that are deliberately invalid: the spec makes the input an error
+// and the row pins what conversion keeps. The language server is right to call
+// them errors, so the expected message is declared here instead.
+const EXPECTED_ERRORS = {
+  '738-invalid-table-metadata-keeps-the-table-3.crv': {
+    message: 'aligns has 3 entries for a 2-column table.',
+    clause: '25-ast-extensions.ebnf SOURCE SPELLING: more entries than columns is an error',
+  },
+}
+const expectedErrorsUnseen = new Set(Object.keys(EXPECTED_ERRORS))
 
 for (const name of documents) {
   const source = readFileSync(join(corpusDir, name), 'utf8')
@@ -578,7 +592,13 @@ for (const name of documents) {
     serverErrors++
   }
   const diagnostics = published.get(uri) ?? []
-  const errors = diagnostics.filter((entry) => (entry.severity ?? ERROR_SEVERITY) === ERROR_SEVERITY)
+  const errors = diagnostics
+    .filter((entry) => (entry.severity ?? ERROR_SEVERITY) === ERROR_SEVERITY)
+    .filter((entry) => {
+      if (EXPECTED_ERRORS[name]?.message !== entry.message) return true
+      expectedErrorsUnseen.delete(name)
+      return false
+    })
   if (errors.length > 0) {
     serverErrors++
     diagnosticFailures.push(`${name}: ${errors.map((entry) => entry.message).join(' | ')}`)
@@ -792,6 +812,12 @@ if (serverErrors > 0) {
     'FAIL: the language server reports errors on documents the corpus says are well-formed.\n',
   )
 }
+if (expectedErrorsUnseen.size > 0) {
+  stdout.write(
+    'FAIL: a declared error no longer appears. Delete its EXPECTED_ERRORS entry:\n' +
+      [...expectedErrorsUnseen].map((n) => `    ${n}\n`).join(''),
+  )
+}
 
 const failures =
   renderMismatches +
@@ -807,5 +833,6 @@ const failures =
   // emptied, has to fail the run. Printing FAIL without reaching the exit code
   // is the shape this tool exists to catch everywhere else.
   lagStale.length +
+  expectedErrorsUnseen.size +
   (Object.keys(ENGINE_LAG).length > 0 && previewPin !== ENGINE_PIN ? 1 : 0)
 exit(failures === 0 ? 0 : 1)
