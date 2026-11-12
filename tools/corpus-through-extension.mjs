@@ -65,13 +65,13 @@
 // gains one leave every total identical (the "compare counts, not sets" defect,
 // markup-carve/carve#927).
 
-import { readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { dirname, join, resolve } from 'node:path'
 import { argv, execPath, exit, stderr, stdout } from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { countDeclaredPairs } from './declared-pairs.mjs'
+import { declaredInputs } from './declared-pairs.mjs'
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -120,12 +120,16 @@ const fail = (message) => {
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 const declaredCorpusSize = () => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
-  let declared = 0
+  const declared = new Set()
   for (const page of EXAMPLE_PAGES) {
     const path = join(examplesDir, page)
     let source
     try {
-      source = readFileSync(path, 'utf8')
+      // carve#4132 stores each edge-case section in its own file under `edge-cases/`.
+      const dir = path.replace(/\.md$/, '')
+      source = existsSync(dir) && statSync(dir).isDirectory()
+        ? readdirSync(dir).filter((file) => file.endsWith('.md') && file !== 'README.md').map((file) => readFileSync(join(dir, file), 'utf8'))
+        : [readFileSync(path, 'utf8')]
     } catch (error) {
       fail(
         `no corpus source page at ${path} (${error instanceof Error ? error.message : String(error)}).\n` +
@@ -136,9 +140,9 @@ const declaredCorpusSize = () => {
           '  tests/corpus inside a markup-carve/carve checkout.',
       )
     }
-    declared += countDeclaredPairs(source.split('\n'))
+    for (const part of source) for (const input of declaredInputs(part.split('\n'))) declared.add(input)
   }
-  return declared
+  return declared.size
 }
 
 let documents
@@ -163,8 +167,8 @@ if (declared === 0) {
 if (documents.length !== declared) {
   fail(
     `${corpusDir} holds ${documents.length} documents, but the spec's example pages declare ${declared}.\n` +
-      '  Every carve fence in a ::: compare block in resources/examples/{core,extensions,edge-cases}.md becomes one\n' +
-      '  corpus pair, so a difference means this is not the corpus those pages describe: a\n' +
+      '  Every distinct carve fence input in a ::: compare block in resources/examples/{core,extensions,edge-cases}\n' +
+      '  becomes one corpus pair, so a difference means this is not the corpus those pages describe: a\n' +
       '  truncated or stale checkout, a wrong --corpus, or a corpus that needs regenerating\n' +
       '  (npm run corpus:build in the spec repository). Every number below would describe a\n' +
       '  population nobody chose.',
@@ -509,10 +513,24 @@ let twoParserMismatches = 0
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = 'github:markup-carve/carve-js#c0533ab15fd5e9d4c42746d42dbe2fc9e87b9237'
-const ENGINE_LAG = {}
+const ENGINE_PIN = '0.1.16'
+const ENGINE_LAG = {
+  '1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-4.crv':
+    'markup-carve/carve#5940: the spec declares this row as carve-js drift at 0.1.14 (resources/engine-cross-read-drift.txt).',
+}
 const lagWaived = []
 const lagStale = []
+
+// Corpus rows that are deliberately invalid: the spec makes the input an error
+// and the row pins what conversion keeps. The language server is right to call
+// them errors, so the expected message is declared here instead.
+const EXPECTED_ERRORS = {
+  '738-invalid-table-metadata-keeps-the-table-3.crv': {
+    message: 'aligns has 3 entries for a 2-column table.',
+    clause: '25-ast-extensions.ebnf SOURCE SPELLING: more entries than columns is an error',
+  },
+}
+const expectedErrorsUnseen = new Set(Object.keys(EXPECTED_ERRORS))
 
 for (const name of documents) {
   const source = readFileSync(join(corpusDir, name), 'utf8')
@@ -574,7 +592,13 @@ for (const name of documents) {
     serverErrors++
   }
   const diagnostics = published.get(uri) ?? []
-  const errors = diagnostics.filter((entry) => (entry.severity ?? ERROR_SEVERITY) === ERROR_SEVERITY)
+  const errors = diagnostics
+    .filter((entry) => (entry.severity ?? ERROR_SEVERITY) === ERROR_SEVERITY)
+    .filter((entry) => {
+      if (EXPECTED_ERRORS[name]?.message !== entry.message) return true
+      expectedErrorsUnseen.delete(name)
+      return false
+    })
   if (errors.length > 0) {
     serverErrors++
     diagnosticFailures.push(`${name}: ${errors.map((entry) => entry.message).join(' | ')}`)
@@ -788,6 +812,12 @@ if (serverErrors > 0) {
     'FAIL: the language server reports errors on documents the corpus says are well-formed.\n',
   )
 }
+if (expectedErrorsUnseen.size > 0) {
+  stdout.write(
+    'FAIL: a declared error no longer appears. Delete its EXPECTED_ERRORS entry:\n' +
+      [...expectedErrorsUnseen].map((n) => `    ${n}\n`).join(''),
+  )
+}
 
 const failures =
   renderMismatches +
@@ -803,5 +833,6 @@ const failures =
   // emptied, has to fail the run. Printing FAIL without reaching the exit code
   // is the shape this tool exists to catch everywhere else.
   lagStale.length +
+  expectedErrorsUnseen.size +
   (Object.keys(ENGINE_LAG).length > 0 && previewPin !== ENGINE_PIN ? 1 : 0)
 exit(failures === 0 ? 0 : 1)

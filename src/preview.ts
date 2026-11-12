@@ -140,6 +140,13 @@ const EXTENSION_FACTORIES: Record<string, () => CarveExtension> = {
 export const TIER1_DECORATING_EXTENSIONS = ['autolink', 'externalLinks'] as const
 
 /**
+ * The enabled extensions that read a shape the core keeps as text: `citations`
+ * takes `[@a]` and `wikilinks` takes `[[x]]`. The corpus pins the core reading
+ * (rows 717 and 867), so the conformance render leaves these out as well.
+ */
+export const TIER1_CLAIMING_EXTENSIONS = ['citations', 'wikilinks'] as const
+
+/**
  * One fresh instance of each enabled extension.
  *
  * Exported because a render that expands includes has to PARSE with the same
@@ -222,12 +229,12 @@ export function renderMarkdown(source: string, document?: unknown): string {
 }
 
 /**
- * The preview render with the Tier-1 decorating extensions left out - what the
+ * The preview render with the Tier-1 decorating and claiming extensions left out - what the
  * spec corpus is measured against. See TIER1_DECORATING_EXTENSIONS for why this
  * is a second function rather than a list of waived documents.
  */
 export function renderConformanceBody(source: string, render: PreviewRenderOptions = {}): string {
-  const decorating = new Set<string>(TIER1_DECORATING_EXTENSIONS)
+  const decorating = new Set<string>([...TIER1_DECORATING_EXTENSIONS, ...TIER1_CLAIMING_EXTENSIONS])
   const extensions = PREVIEW_EXTENSIONS
     .filter((name) => !decorating.has(name))
     .map((name) => EXTENSION_FACTORIES[name]())

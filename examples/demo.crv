@@ -30,6 +30,7 @@ A heading takes an explicit id and classes from an attribute line above it:
 {#inline}
 ## Inline formatting
 
+%% carve-lint-disable-next-line markdown-italic-underline
 /italic/, *bold*, /*bold italic*/, _underline_, ~strikethrough~, =highlight=,
 super{^script^} and sub{,script,}. Inline `code span`, and raw inline passthrough
 `<abbr>HTML</abbr>`{=html} emitted verbatim.
@@ -114,10 +115,10 @@ Definition list:
 {#tables}
 ## Tables
 
-|= Fruit       |=> Price |=~ Stock |
-| Apple        |    1.20 |   In     |
-| Banana       |    0.50 |   In     |
-| Dragon fruit |    4.00 |   Out    |
+|= Fruit       |={>} Price |={~} Stock |
+| Apple        |      1.20 |       In |
+| Banana       |      0.50 |       In |
+| Dragon fruit |      4.00 |      Out |
 ^ Table 1: column alignment - left, right, center.
 
 {#code}

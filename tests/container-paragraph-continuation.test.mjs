@@ -7,11 +7,9 @@
  * before it was written, and the HTML is quoted at the assertion that rests on
  * it.
  *
- * AN ABBREVIATION DEFINITION is a document-level construct, so at a
- * container's content column it is ordinary text and its leading star is an
- * ordinary bold opener. The grammar carried a copy of the definition rule
- * there to keep the inline layer off that star (#179); the engine puts the
- * inline layer on it.
+ * AN ABBREVIATION DEFINITION is a definition in every container
+ * (markup-carve/carve#4874), so at a container's content column it carries the
+ * definition scopes and its leading star opens no bold run.
  *
  * A CONTINUATION ROW folds into the row above it, so with no table open it is
  * text - at the document level as much as at a content column. A `match` rule
@@ -74,106 +72,47 @@ const on = (tokens, line) => tokens.filter((t) => t.line === line)
 /*
  * SHAPE ONE: AN ABBREVIATION DEFINITION AT A CONTAINER'S CONTENT COLUMN.
  *
- * Engine, for each host below, renders the line verbatim inside the container
- * and defines nothing:
+ * markup-carve/carve#4874: the line defines the abbreviation in every host
+ * below. Spec model on carve main, for the description body:
  *
- *   :: t          <dl><dt>t</dt><dd>d
- *   :  d          *[A]: a
- *      *[A]: a    tail</dd></dl>
- *      tail
- *
- * Every one of these is a corpus document; the slugs are named with them.
+ *   :: t          <dl><dt>t</dt><dd>d tail</dd></dl>
+ *   :  d
+ *      *[A]: a
+ *   tail
  */
 const HOSTS = [
-  // 430-below-a-definition-body-s-column-an-invisible-line-folds-as-text-4
   ['a description body', ':: t\n:  d\n   *[A]: a\ntail\n', '   *[A]: a'],
-  // 194-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition
   ['a list item', '- a\n  *[A]: a\ntail\n', '  *[A]: a'],
-  // 447-the-host-does-not-change-which-column-a-definition-reaches-16
   ['a list item inside a description body', ':: t\n:  - a\n    *[A]: a\n', '    *[A]: a'],
-  // 432-an-abbreviation-definition-outside-document-level-is-not-an-invisible-line-2
   ['a footnote body', '[^a]: intro\n  *[A]: a\n  more\n', '  *[A]: a'],
-  // 324-an-abbreviation-definition-in-an-item-body-is-paragraph-text
   ['an item body after a blank line', '- a\n\n  *[A]: a\n', '  *[A]: a'],
-  // A tab is one character but advances to a tab stop, which a column rebuilt
-  // from literal characters gets wrong. Engine: the same literal text.
   ['a tab-indented item body', '- a\n\t*[A]: a\n', '\t*[A]: a'],
 ]
 
 for (const [label, src, line] of HOSTS) {
-  test(`an abbreviation definition in ${label} is not a definition`, () => {
+  test(`an abbreviation definition in ${label} is a definition`, () => {
     const got = on(tokenize(src), line)
-    assert.ok(got.length > 0, `the line was not tokenized at all:\n${report(tokenize(src))}`)
-    for (const t of got) {
-      assert.ok(
-        !has(t, ABBR) && !has(t, 'abbreviation'),
-        `an abbreviation definition outside document level is text, got ${JSON.stringify(t.text)} -> ${t.scopes.join(' ')}`,
-      )
-    }
+    assert.ok(got.some((t) => has(t, ABBR)), `the line carries no definition scope:\n${report(tokenize(src))}`)
+    assert.ok(!got.some((t) => has(t, 'bold')), `the star opened bold:\n${report(tokenize(src))}`)
   })
 }
 
-test('the star on such a line is left to the inline layer', () => {
-  // Engine: `- a` over `  *[A]: x and *b*` renders
-  // `<li>a\n<strong>[A]: x and *b</strong></li>`. Consuming the line to keep
-  // the inline layer off the star was #179's whole argument for the rule, and
-  // the engine does read the star as a bold opener there. So the scope has to
-  // be bold, not merely absent.
-  const tokens = tokenize('- a\n  *[A]: x and *b*\n')
-  const star = on(tokens, '  *[A]: x and *b*').find((t) => t.text === '*')
-  assert.ok(star, `the star was not tokenized at all:\n${report(tokens)}`)
-  assert.ok(
-    has(star, 'bold'),
-    `the star opens bold the way the engine reads it, got ${star.scopes.join(' ')}`,
-  )
-})
-
-test('a line with no closing star opens no bold run across the block below it', () => {
-  // The other half of the rule, and why the line is consumed rather than
-  // simply left alone. Engine: `- a` over blank over `  *[A]: a` over `  - b`
-  // renders `<p>*[A]: a</p>` and then `<ul><li>b</li></ul>` inside the item,
-  // so the nested bullet keeps its own scope. An unclosed bold run starting on
-  // that star crossed the boundary and took it
-  // (corpus 324-an-abbreviation-definition-in-an-item-body-is-paragraph-text-2).
-  const tokens = tokenize('- a\n\n  *[A]: a\n  - b\n')
-  for (const t of on(tokens, '  *[A]: a')) {
-    assert.ok(!has(t, 'bold'), `an unclosed star opens nothing here: ${t.scopes.join(' ')}`)
+test('a definition line keeps the block below it', () => {
+  // Spec model: `<li><p>a</p><ul><li>b</li></ul></li>`.
+  for (const [src, line, below] of [
+    ['- a\n\n  *[A]: a\n  - b\n', '  *[A]: a', '  - b'],
+    ['- a\n\n  *[A]: escaped \\*\n  - b\n', '  *[A]: escaped \\*', '  - b'],
+    ['- a\n\n  *[A]: x \\* and *b*\n  - c\n', '  *[A]: x \\* and *b*', '  - c'],
+    ['- a\n  *[A]: x and *b*\n', '  *[A]: x and *b*', null],
+  ]) {
+    const tokens = tokenize(src)
+    assert.ok(on(tokens, line).some((t) => has(t, ABBR)), report(tokens))
+    assert.ok(!on(tokens, line).some((t) => has(t, 'bold')), report(tokens))
+    if (below) {
+      const bullet = on(tokens, below).find((t) => t.text === '-')
+      assert.ok(bullet && has(bullet, 'punctuation.definition.list.begin.carve'), report(tokens))
+    }
   }
-  const bullet = on(tokens, '  - b').find((t) => t.text === '-')
-  assert.ok(
-    bullet && has(bullet, 'punctuation.definition.list.begin.carve'),
-    `the nested bullet below it lost its scope:\n${report(tokens)}`,
-  )
-})
-
-test('an escaped star does not count as the closing one', () => {
-  // Engine: `- a` over blank over `  *[A]: escaped \\*` over `  - b` renders
-  // `<p>*[A]: escaped *</p>` and then `<ul><li>b</li></ul>`, so the escaped
-  // star closes nothing and the bullet keeps its own scope. A guard written as
-  // a run of non-star characters read `\\*` as a closer, left the line to the
-  // inline layer, and the unclosed run took the bullet.
-  const tokens = tokenize('- a\n\n  *[A]: escaped \\*\n  - b\n')
-  const bullet = on(tokens, '  - b').find((t) => t.text === '-')
-  assert.ok(
-    bullet && has(bullet, 'punctuation.definition.list.begin.carve'),
-    `the bullet below an escaped star lost its scope:\n${report(tokens)}`,
-  )
-})
-
-test('a real closing star beside an escaped one is still bold', () => {
-  // The other side: engine renders `  *[A]: x \\* and *b*` as
-  // `<strong>[A]: x * and *b</strong>`, and the bullet below it still opens a
-  // list. So the consume has to stay off this line.
-  const tokens = tokenize('- a\n\n  *[A]: x \\* and *b*\n  - c\n')
-  assert.ok(
-    on(tokens, '  *[A]: x \\* and *b*').some((t) => has(t, 'bold')),
-    `a closed bold run lost its scope:\n${report(tokens)}`,
-  )
-  const bullet = on(tokens, '  - c').find((t) => t.text === '-')
-  assert.ok(
-    bullet && has(bullet, 'punctuation.definition.list.begin.carve'),
-    `the bullet below it lost its scope:\n${report(tokens)}`,
-  )
 })
 
 test('an abbreviation definition at the document level is still a definition', () => {

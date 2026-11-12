@@ -15,6 +15,7 @@ import { isLineOnScreen, isScrollNotTyping } from './scroll.js'
 import {
   EXCLUDED_EXTENSIONS,
   PREVIEW_EXTENSIONS,
+  TIER1_CLAIMING_EXTENSIONS,
   TIER1_DECORATING_EXTENSIONS,
   previewDocument,
   renderConformanceBody,
@@ -368,6 +369,24 @@ test('exactly the declared extensions decorate Tier-1 output', async () => {
     'the conformance render carries the external-link decoration, so the corpus has stopped ' +
       'measuring what the spec pins',
   )
+})
+
+test('exactly the declared extensions claim core text shapes', async () => {
+  const lib = await import('@markup-carve/carve')
+  const factories = lib as unknown as Record<string, () => never>
+
+  const PROBE = '[@a] and [[x]]'
+  const bare = lib.carveToHtml(PROBE, { extensions: [] })
+
+  const changed = PREVIEW_EXTENSIONS
+    .filter((name) => !(TIER1_DECORATING_EXTENSIONS as readonly string[]).includes(name))
+    .filter((name) => lib.carveToHtml(PROBE, { extensions: [factories[name]()] }) !== bare)
+    .slice()
+    .sort()
+
+  assert.deepEqual(changed, [...TIER1_CLAIMING_EXTENSIONS].sort())
+  assert.notEqual(renderPreviewBody(PROBE), renderConformanceBody(PROBE))
+  assert.equal(renderConformanceBody(PROBE), bare)
 })
 
 // --- Preview: carve-css adoption, the tool strip, and task-list states ---
