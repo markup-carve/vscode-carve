@@ -13,7 +13,7 @@
 ># H
 #^ text.carve markup.heading.carve punctuation.definition.heading.carve
 # ^ text.carve markup.heading.carve
-#  ^ text.carve markup.heading.carve entity.name.section.carve
+#  ^^ text.carve markup.heading.carve entity.name.section.carve
 >
 >[y]{.hl}
 #^ text.carve meta.span.inline.carve punctuation.definition.span.begin.carve

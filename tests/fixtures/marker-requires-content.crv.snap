@@ -7,7 +7,7 @@
 >#  Title
 #^ text.carve markup.heading.carve punctuation.definition.heading.carve
 # ^^ text.carve markup.heading.carve
-#   ^^^^^ text.carve markup.heading.carve entity.name.section.carve
+#   ^^^^^^ text.carve markup.heading.carve entity.name.section.carve
 >
 >-
 #^^ text.carve
@@ -46,7 +46,7 @@
 ># H
 #^ text.carve markup.heading.carve punctuation.definition.heading.carve
 # ^ text.carve markup.heading.carve
-#  ^ text.carve markup.heading.carve entity.name.section.carve
+#  ^^ text.carve markup.heading.carve entity.name.section.carve
 >
 >- item
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve

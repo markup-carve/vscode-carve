@@ -8,11 +8,11 @@
 #            ^^^ text.carve markup.deleted.critic.carve markup.deleted.carve
 #               ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
 #                 ^ text.carve
-#                  ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#                    ^^^ text.carve markup.changed.critic.carve markup.deleted.carve
-#                       ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#                         ^^^ text.carve markup.changed.critic.carve markup.inserted.carve
-#                            ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#                  ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#                    ^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#                       ^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#                        ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
+#                            ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
 #                              ^^ text.carve
 #                                ^^ text.carve comment.block.critic.carve punctuation.definition.critic.carve
 #                                  ^^^^^^ text.carve comment.block.critic.carve comment.block.content.carve

@@ -35,33 +35,6 @@ const TASK_KIND: Record<string, TableMarker['kind']> = {
   x: 'taskDone', X: 'taskDone', '-': 'taskDropped', '>': 'taskDeferred', '?': 'taskUncertain',
 }
 
-function standaloneContinuationMarkers(lines: string[], ast: AstNode): TableMarker[] {
-  const occupied: NonNullable<AstNode['pos']>[] = []
-  const visit = (node: unknown): void => {
-    if (!node || typeof node !== 'object') return
-    if (Array.isArray(node)) { node.forEach(visit); return }
-    const value = node as AstNode
-    if (value.type === 'link' && value.pos) occupied.push(value.pos)
-    const children = Object.entries(value).filter(([key, child]) => key !== 'pos' && key !== 'attrs' && child && typeof child === 'object')
-    if (children.length) children.forEach(([, child]) => visit(child))
-    else if (value.pos) occupied.push(value.pos)
-  }
-  visit(ast)
-  const markers: TableMarker[] = []
-  lines.forEach((line, index) => {
-    if (!/^(?:[ \t]*>[ \t]+)*[ \t]*\+[ \t]*$/.test(line)) return
-    const start = line.indexOf('+')
-    const column = [...line.slice(0, start)].length + 1
-    const lineNumber = index + 1
-    if (occupied.some((pos) => lineNumber >= pos.startLine && lineNumber <= pos.endLine
-      && (lineNumber !== pos.startLine || column >= pos.startColumn)
-      && (lineNumber !== pos.endLine || column < pos.endColumn))) return
-    markers.push({ line: index, start, end: start + 1, kind: 'continuationMarker' })
-  })
-  return markers
-
-}
-
 function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSourceLayout): { markers: TableMarker[]; codeLines: Set<number>; tableLines: Set<number> } {
   const { ast, layout } = parse(text)
   const boundaries = new Set<number>([0])
@@ -174,7 +147,6 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
     }
   }
   walk(ast as AstNode, '')
-  markers.push(...standaloneContinuationMarkers(lines, ast as AstNode))
   return { markers, codeLines, tableLines }
 }
 

@@ -5,8 +5,10 @@
 #^^^^^^^^ text.carve comment.block.carve
 >secret
 #^^^^^^^ text.carve comment.block.carve
->%%% end
-#^^^^^^^ text.carve comment.block.carve
+>end
+#^^^^ text.carve comment.block.carve
+>%%%
+#^^^ text.carve comment.block.carve
 >
 >after
 #^^^^^^ text.carve

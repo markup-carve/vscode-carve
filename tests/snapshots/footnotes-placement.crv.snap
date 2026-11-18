@@ -21,7 +21,7 @@
 >## After
 #^^ text.carve markup.heading.carve punctuation.definition.heading.carve
 #  ^ text.carve markup.heading.carve
-#   ^^^^^ text.carve markup.heading.carve entity.name.section.carve
+#   ^^^^^^ text.carve markup.heading.carve entity.name.section.carve
 >
 >More text.
 #^^^^^^^^^^^ text.carve

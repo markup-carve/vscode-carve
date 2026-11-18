@@ -7,10 +7,7 @@
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^^^^ text.carve
 >  [r]: /u
-#^^ text.carve meta.link.reference.definition.carve
-#  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#      ^ text.carve meta.link.reference.definition.carve
-#       ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^^^^^^ text.carve
 >```
 #^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
 >code

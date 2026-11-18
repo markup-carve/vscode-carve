@@ -2,6 +2,6 @@ foo{*bar*}baz and my{_path_}name and a{/b/}c
 
 {/a/b/} and {/italic *bold*/}
 
-{~gone~} but {~old~>new~} stays editorial
+{~gone~} but {-old-}{+new+} stays editorial
 
 {_path_} is underline, not a boolean attribute

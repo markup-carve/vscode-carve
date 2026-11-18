@@ -12,10 +12,7 @@
 #   ^ text.carve markup.list.unnumbered.carve
 #    ^^^^^ text.carve
 >    [r]: /u
-#^^^^ text.carve meta.link.reference.definition.carve
-#    ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#        ^ text.carve meta.link.reference.definition.carve
-#         ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^^^^^^^^ text.carve
 >x
 #^^ text.carve
 >

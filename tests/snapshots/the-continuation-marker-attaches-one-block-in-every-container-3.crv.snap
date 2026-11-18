@@ -11,7 +11,5 @@
 >para
 #^^^^^ text.carve
 >> q
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^ text.carve markup.quote.carve
+#^^^^ text.carve
 >

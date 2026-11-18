@@ -78,20 +78,21 @@ function lineScopes(src) {
   })
 }
 
+// Carve 0.2 drops the continuation marker (U-014 to U-017): a `+` after any opener is text.
 const afterOpener = [
-  ['bullet', '- +\n- b\n> q\nplain', true],
-  ['numbered', '1. +\n2. b\n> q\nplain', true],
+  ['bullet', '- +\n- b\n> q\nplain', false],
+  ['numbered', '1. +\n2. b\n> q\nplain', false],
   ['quote', '> +\n> b\nplain', false],
   ['quote with a lazy line', '> +\n flush', false],
   ['nested quote', '> > +\n> > b\n> c\nplain', false],
-  ['description body', ':: t\n: +\n: b\nplain', true],
+  ['description body', ':: t\n: +\n: b\nplain', false],
   ['footnote definition', '[^a]: +\n  b\nplain', false],
-  ['stacked bullets', '- - +\n  - b\nplain', true],
-  ['open task item', '- [ ] +\n- b\n> q\nplain', true],
-  ['checked task item', '- [x] +\n- b\nplain', true],
-  ['bullet after a numbered opener', '1. - +\npara', true],
-  ['bullet in a quote', '> - +\n> q', true],
-  ['numbered item in a quote', '> 1. +\n> q', true],
+  ['stacked bullets', '- - +\n  - b\nplain', false],
+  ['open task item', '- [ ] +\n- b\n> q\nplain', false],
+  ['checked task item', '- [x] +\n- b\nplain', false],
+  ['bullet after a numbered opener', '1. - +\npara', false],
+  ['bullet in a quote', '> - +\n> q', false],
+  ['numbered item in a quote', '> 1. +\n> q', false],
 ]
 
 for (const [label, src, expected] of afterOpener) {

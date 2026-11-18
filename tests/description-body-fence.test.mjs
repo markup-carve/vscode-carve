@@ -81,9 +81,10 @@ const run = (tokens, text) => tokens.filter((t) => t.text === text)
  * fail at an indent, and the corpus case is indented by construction once the
  * description list sits in any container.
  */
+// A term right under item text is item text in Carve 0.2 (U-009), so the list cases leave a blank line.
 const OPENERS = [
   ['at column 0', ':: t\n: ```\ncode\n```\n'],
-  ['indented in a list item', '- outer\n  :: t\n  : ```\n  code\n  ```\n'],
+  ['indented in a list item', '- outer\n\n  :: t\n  : ```\n  code\n  ```\n'],
 ]
 
 for (const [label, src] of OPENERS) {
@@ -155,7 +156,7 @@ test('a description body fence takes content and a closer at its content column'
 test('a line below the content column ends the region rather than being consumed', () => {
   // The bound. `  after` is at column 2 where the content column is 4, so the
   // region closes and the text is left to the enclosing context.
-  const tokens = tokenize('- outer\n  :: t\n  : ```js\n    code\n    ```\n  after\n')
+  const tokens = tokenize('- outer\n\n  :: t\n  : ```js\n    code\n    ```\n  after\n')
   for (const t of tokens.filter((x) => x.line === '  after')) {
     assert.ok(!has(t, BLOCK), `the region outran its bound: ${t.scopes.join(' ')}`)
   }
@@ -242,7 +243,7 @@ test('an indented description fence inside a container is still a fenced block',
   // The other side of that split, and why the indented variant exists at all:
   // the engine renders this as a `<dl>` inside the `<li>` whose `<dd>` holds a
   // `<pre><code>`.
-  const tokens = tokenize('- outer\n  :: t\n  : ```\n    code\n    ```\n')
+  const tokens = tokenize('- outer\n\n  :: t\n  : ```\n    code\n    ```\n')
   const content = tokens.filter((t) => t.line === '    code')
   assert.ok(content.length > 0, 'the fence content was not tokenized at all')
   for (const t of content) {

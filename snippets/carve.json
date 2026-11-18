@@ -31,22 +31,22 @@
   },
   "Bold italic": {
     "prefix": "bolditalic",
-    "body": ["/*${1:text}*/$0"],
+    "body": ["*/${1:text}/*$0"],
     "description": "Bold italic"
   },
   "Underline": {
     "prefix": "underline",
-    "body": ["_${1:text}_$0"],
+    "body": ["{_${1:text}_}$0"],
     "description": "Underline"
   },
   "Strikethrough": {
     "prefix": "strike",
-    "body": ["~${1:text}~$0"],
+    "body": ["{~${1:text}~}$0"],
     "description": "Strikethrough"
   },
   "Highlight": {
     "prefix": "highlight",
-    "body": ["=${1:text}=$0"],
+    "body": ["{=${1:text}=}$0"],
     "description": "Highlight / mark"
   },
   "Insert": {

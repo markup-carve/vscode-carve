@@ -7,11 +7,7 @@
 #  ^ text.carve punctuation.definition.bold.carve
 #   ^^^^ text.carve markup.bold.carve
 #       ^ text.carve punctuation.definition.bold.carve
-#        ^^^^^ text.carve
-#             ^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
-#              ^^^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
-#                    ^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
-#                     ^^^^^ text.carve
+#        ^^^^^^^^^^^^^^^^^^ text.carve
 #                          ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
 #                            ^^^^^^^^^^^ text.carve markup.bold.italic.carve markup.bold.italic.carve
 #                                       ^^ text.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
@@ -54,7 +50,7 @@
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^^^ text.carve markup.list.unnumbered.carve constant.language.task-list.carve
-#      ^ text.carve keyword.operator.continuation.carve
+#      ^^ text.carve
 >```sh
 #^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
 #   ^^ text.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
@@ -68,7 +64,7 @@
 # ^ text.carve markup.quote.carve
 #  ^ text.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 #   ^ text.carve markup.quote.carve markup.list.unnumbered.carve
-#    ^ text.carve markup.quote.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+#    ^^ text.carve markup.quote.carve
 >> q
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve
@@ -81,7 +77,7 @@
 >: +
 #^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.definition.carve
-#  ^ text.carve markup.list.continuation.carve punctuation.definition.list.continuation.carve
+#  ^^ text.carve
 >> q
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve

@@ -16,5 +16,10 @@
   "upstream:block_comment_on_quote_on_marker_line": "no fixture holds a comment fence on a quote on a list marker line",
   "upstream:heading_in_container": "no fixture holds a heading behind a container prefix that upstream's rule reaches",
   "upstream:fenced_code_in_container": "no fixture holds a code fence behind a container prefix that upstream's rule reaches",
-  "upstream:list_item": "a task checkbox glued to an attribute block (-{.c} [x]) is left unscoped locally - the known limitation the task branch of lists documents"
+  "upstream:list_item": "a task checkbox glued to an attribute block (-{.c} [x]) is left unscoped locally - the known limitation the task branch of lists documents",
+  "upstream:critic_sub": "carve-grammars next2 leaves the rule unreachable: Carve 0.2 reads the substitution as braced strike (U-069)",
+  "upstream:strike": "carve-grammars next2 leaves the rule unreachable: a bare tilde run is text in Carve 0.2 (U-066)",
+  "upstream:marker_line_continuation": "carve-grammars next2 leaves the rule unreachable: Carve 0.2 has no continuation marker (U-014 to U-017)",
+  "upstream:link_ref_def_in_container": "a definition inside a container is text in Carve 0.2 (C2-B-081); carve-grammars next2 still scopes it",
+  "local:description-body-fence-at-a-body-column": "carve-grammars next2 leaves the description mark of a list item's description list unscoped"
 }

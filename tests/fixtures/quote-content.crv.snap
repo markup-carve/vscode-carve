@@ -16,14 +16,14 @@
 # ^ text.carve markup.quote.carve
 #  ^^ text.carve markup.quote.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
 #    ^ text.carve markup.quote.carve markup.list.numbered.carve
-#     ^^^^^^^^^^^^^^^ text.carve markup.quote.carve
+#     ^^^^^^^^^^^^^^^^ text.carve markup.quote.carve
 >
 >> - a bullet item
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve
 #  ^ text.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 #   ^ text.carve markup.quote.carve markup.list.unnumbered.carve
-#    ^^^^^^^^^^^^^ text.carve markup.quote.carve
+#    ^^^^^^^^^^^^^^ text.carve markup.quote.carve
 >
 >> :: term
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
@@ -37,4 +37,19 @@
 #  ^ text.carve markup.quote.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
 #   ^ text.carve markup.quote.carve markup.list.definition.carve
 #    ^^^^^ text.carve markup.quote.carve
+>
+>> ::: note
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^ text.carve markup.quote.carve markup.other.div.carve punctuation.definition.div.carve
+#     ^ text.carve markup.quote.carve markup.other.div.carve
+#      ^^^^ text.carve markup.quote.carve markup.other.div.carve entity.name.type.div.carve
+>> body
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^^^ text.carve markup.quote.carve
+>> :::
+#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ text.carve markup.quote.carve
+#  ^^^ text.carve markup.quote.carve markup.other.div.carve punctuation.definition.div.carve
 >

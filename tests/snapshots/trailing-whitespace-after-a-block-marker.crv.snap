@@ -2,7 +2,8 @@
 #^^ text.carve
 >
 >--- 
-#^^^^ text.carve meta.separator.thematic-break.carve
+#^^^ text.carve constant.character.typography.carve
+#   ^^ text.carve
 >
 >b
 #^^ text.carve

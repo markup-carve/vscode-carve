@@ -95,15 +95,12 @@ test('a description list opened on a quote line is scoped', () => {
   assert.ok(scoped(tokens, 1, ':', 'markup.list.definition'), report(tokens))
 })
 
-test('a quoted abbreviation definition is a definition, not bold', () => {
-  // markup-carve/carve#4874: an abbreviation definition defines in every container.
-  const source = '> *[HTML]: Hyper Text\n'
-  assert.match(carveToHtml(source), /^<blockquote>\s*<\/blockquote>/)
-  const tokens = tokenize(source)
-  assert.ok(!tokens.some((t) => has(t, 'markup.bold') || has(t, 'punctuation.definition.bold')), report(tokens))
-  assert.ok(scoped(tokens, 0, 'HTML', 'entity.name.abbreviation'), report(tokens))
+test('a quoted abbreviation line is text', () => {
+  // C2-B-081: a definition stands at column 0 outside every container, so the 0.2 reference
+  // engine renders this line as quote text.
+  const tokens = tokenize('> *[HTML]: Hyper Text\n')
+  assert.ok(!tokens.some((t) => has(t, 'entity.name.abbreviation')), report(tokens))
 })
-
 test('an unclosed front matter block runs to the end of the document', () => {
   // markup-carve/carve#5016: a first-line opener with no closer is front matter through EOF.
   const source = '---\ntitle: x\nSome prose with *bold*.\n\n## Heading\n'
@@ -146,7 +143,7 @@ test('a list after a blank line in a footnote body is a list', () => {
 })
 
 test('a heading, a caption, link text and span text scope their inline markup', () => {
-  const source = '# Head *b* [l](u)\n\n![img](a.png)\n^ Cap /i/\n\n[link *c*](u) and [span =m=]{.k}\n'
+  const source = '# Head *b* [l](u)\n\n![img](a.png)\n^ Cap /i/\n\n[link *c*](u) and [span {=m=}]{.k}\n'
   const html = carveToHtml(source)
   assert.match(html, /<h1>Head <strong>b<\/strong> <a href="u">l<\/a><\/h1>/)
   assert.match(html, /<figcaption>Cap <em>i<\/em><\/figcaption>/)
@@ -249,20 +246,13 @@ test('braced cell alignment is scoped as table alignment', () => {
   assert.ok(!literal.some((t) => has(t, 'table.alignment')), report(literal))
 })
 
-test('a letter or roman marker with a dot needs two spaces', () => {
-  // markup-carve/carve#4828: `a. x` and `iv. x` are paragraph text; `a) x` keeps one space.
-  const source = 'a. one\n\niv. two\n\na.  three\n\niv.  four\n\nb) five\n'
-  const html = carveToHtml(source)
-  assert.match(html, /<p>a\. one<\/p>\s*<p>iv\. two<\/p>/)
-  const tokens = tokenize(source)
-  for (const row of [0, 2]) {
-    assert.ok(!tokens.some((t) => t.row === row && has(t, 'punctuation.definition.list.begin')), report(tokens))
-  }
-  assert.ok(scoped(tokens, 4, 'a.', 'punctuation.definition.list.begin'), report(tokens))
-  assert.ok(scoped(tokens, 6, 'iv.', 'punctuation.definition.list.begin'), report(tokens))
-  assert.ok(scoped(tokens, 8, 'b)', 'punctuation.definition.list.begin'), report(tokens))
-  // With glued attributes the two spaces follow the brace.
-  const glued = tokenize('a.{#x}  item\n\na.{#x} text\n')
+test('a letter or roman marker takes one space after its dot', () => {
+  // Carve 0.2 U-103: `a. x` and `iv. x` open ordered items; the 0.2 reference engine renders
+  // all four markers below as lists, and the glued `a.{#x} text` as an item with id `x`.
+  const tokens = tokenize('a. one\n\niv. two\n\nb) five\n')
+  assert.ok(scoped(tokens, 0, 'a.', 'punctuation.definition.list.begin'), report(tokens))
+  assert.ok(scoped(tokens, 2, 'iv.', 'punctuation.definition.list.begin'), report(tokens))
+  assert.ok(scoped(tokens, 4, 'b)', 'punctuation.definition.list.begin'), report(tokens))
+  const glued = tokenize('a.{#x} text\n')
   assert.ok(scoped(glued, 0, 'a.', 'punctuation.definition.list.begin'), report(glued))
-  assert.ok(!glued.some((t) => t.row === 2 && has(t, 'punctuation.definition.list.begin')), report(glued))
 })

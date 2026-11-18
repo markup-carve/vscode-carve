@@ -3,12 +3,14 @@
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^ text.carve
 >  [^f]: x
-#^^ text.carve meta.footnote.definition.carve
-#  ^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#       ^^^ text.carve
->  more
 #^^ text.carve
-#  ^^^^^ text.carve
+#  ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#     ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#      ^^^^ text.carve
+>  more
+#^^^^^^^ text.carve
 >
 >see[^f]
 #^^^ text.carve

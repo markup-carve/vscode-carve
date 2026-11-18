@@ -84,8 +84,6 @@
 #     ^^ text.carve markup.quote.carve meta.image.inline.carve
 #       ^^^^^ text.carve markup.quote.carve meta.image.inline.carve markup.underline.link.image.carve
 #            ^ text.carve markup.quote.carve meta.image.inline.carve
->>
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
 >> ^ Caption behind a quote marker
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve

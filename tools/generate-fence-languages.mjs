@@ -36,7 +36,7 @@ for (const { words, language, textmate } of table.languages) {
 }
 
 const LANGUAGE_CAPTURE = '([^`~\\s\\["]+)?'
-const BARE_FENCE = '[ \\t]*[`~]{3,}[ \\t]*$'
+const BARE_FENCE = '[ \\t]*`{3,}[ \\t]*$'
 // [generated entry, hand-written entry, index among its begin rules, while guard, end suffix]
 // [generated entry, hand-written entry, index among its begin rules, while guard]
 // Inside a container the embedded body must also stop at a column-0 line so the

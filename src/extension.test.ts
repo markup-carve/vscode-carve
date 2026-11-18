@@ -756,34 +756,16 @@ test('grammar: div label-only (no title)', async () => {
   )
 })
 
-test('grammar: GFM delimiter row without alignment colons', async () => {
-  const [row] = await tokenizeLines(['|---|---|'])
-  const seps = row.filter((t) =>
-    t.scopes.some((s) => s.includes('punctuation.definition.table.separator.carve')),
-  )
-  assert.equal(seps.length, 2, 'both delimiter cells should be scoped')
-})
-
-test('grammar: GFM delimiter row with alignment colons', async () => {
-  const [row] = await tokenizeLines(['|:-----|----:|'])
-  // The dash run is the separator punctuation; the alignment colons get a
-  // dedicated alignment scope (matching the canonical carve-grammars grammar).
-  assert.ok(
-    findScoped(row, '-----', 'punctuation.definition.table.separator.carve'),
-    'dash run should be the separator',
-  )
-  assert.ok(
-    findScoped(row, ':', 'keyword.operator.table.alignment.carve'),
-    'leading alignment colon should be scoped',
-  )
-  assert.ok(
-    findScoped(row, '----', 'punctuation.definition.table.separator.carve'),
-    'right-cell dash run should be the separator',
-  )
-  const colons = row.filter((t) =>
-    t.scopes.some((s) => s.includes('keyword.operator.table.alignment.carve')),
-  )
-  assert.equal(colons.length, 2, 'both alignment colons should be scoped')
+// A GFM separator row is an ordinary row of cells in Carve 0.2 (U-055).
+test('grammar: a GFM separator row is an ordinary row', async () => {
+  for (const line of ['|---|---|', '|:-----|----:|']) {
+    const [row] = await tokenizeLines([line])
+    assert.ok(
+      !row.some((t) => t.scopes.some((s) => s.includes('punctuation.definition.table.separator.carve') || s.includes('keyword.operator.table.alignment.carve'))),
+      `${line} should carry no separator or alignment scope`,
+    )
+    assert.ok(row.some((t) => t.scopes.some((s) => s.includes('markup.table.row.carve'))), `${line} should be a table row`)
+  }
 })
 
 test('grammar: dash-only data cell is NOT scoped as a delimiter', async () => {
@@ -795,24 +777,6 @@ test('grammar: dash-only data cell is NOT scoped as a delimiter', async () => {
     undefined,
     'a lone dash in a data row should not be a separator',
   )
-})
-
-test('grammar: delimiter row between data rows still scopes only the delimiter', async () => {
-  const [head, sep, body] = await tokenizeLines(['| H1 | H2 |', '|---|---|', '| a | b |'])
-  // Header and body rows carry no separator-cell scope.
-  assert.equal(
-    findScoped(head, 'H1', 'punctuation.definition.table.separator.carve'),
-    undefined,
-  )
-  assert.equal(
-    findScoped(body, 'a', 'punctuation.definition.table.separator.carve'),
-    undefined,
-  )
-  // The middle row's dash cells are separators.
-  const seps = sep.filter((t) =>
-    t.scopes.some((s) => s.includes('punctuation.definition.table.separator.carve')),
-  )
-  assert.equal(seps.length, 2, 'delimiter row should scope both cells')
 })
 
 test('grammar: |= header row marker still tokenizes (regression)', async () => {

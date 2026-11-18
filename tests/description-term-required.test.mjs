@@ -169,7 +169,8 @@ test('a term with no body is still a term', () => {
 
 test('a description list indented inside a list item is scoped', () => {
   // `<ul><li>outer<dl><dt>t</dt><dd>d</dd></dl></li></ul>`
-  const tokens = tokenize('- outer\n  :: t\n  : d\n')
+  // The blank line keeps the term out of the item's paragraph (U-009).
+  const tokens = tokenize('- outer\n\n  :: t\n  : d\n')
   const term = tokens.filter((t) => t.text === '::').at(0)
   assert.ok(term && has(term, TERM), `the indented term lost its scope:\n${report(tokens)}`)
   const marker = tokens.filter((t) => t.line === '  : d' && t.text === ':').at(0)
@@ -180,7 +181,7 @@ test('a tab-indented description list is scoped', () => {
   // A tab is one character but advances to a tab stop, so a content column
   // rebuilt from literal characters gets this wrong. Engine: a `<dl>` inside
   // the item.
-  const tokens = tokenize('- outer\n\t:: t\n\t: d\n')
+  const tokens = tokenize('- outer\n\n\t:: t\n\t: d\n')
   const term = tokens.filter((t) => t.text === '::').at(0)
   assert.ok(term && has(term, TERM), `the tab-indented term lost its scope:\n${report(tokens)}`)
   const marker = tokens.filter((t) => t.line === '\t: d' && t.text === ':').at(0)
@@ -272,7 +273,9 @@ test('a body indented differently from its term keeps its scope', () => {
   // engine, and TextMate cannot do tab-stop arithmetic, so the region's end
   // takes a marker at ANY indent. Engine for both: a `<dl>` with a `<dd>`.
   //   corpus 154-under-indented-definition-attaches-over-indented-definition-folds
-  for (const src of ['- outer\n\t:: t\n    : d\n', '- one\n  :: term\n :  def\n']) {
+  // A body marker left of the term's column is term text in 0.2 (U-106), so only the
+  // deeper body is a case here.
+  for (const src of ['- outer\n\n\t:: t\n    : d\n']) {
     const tokens = tokenize(src)
     const marker = tokens.filter((t) => t.text === ':').at(0)
     assert.ok(marker, `the body marker was not tokenized at all:\n${report(tokens)}`)
@@ -283,49 +286,29 @@ test('a body indented differently from its term keeps its scope', () => {
   }
 })
 
-test('a block opener under a term ends the term', () => {
-  // corpus 503-a-block-opener-indented-under-a-definition-term-ends-the-term-at-every-depth:
-  // a term is one line, so `:: t` over `  # heading` is a `<dt>` and then an `<h1>`.
-  const OPENERS = [
-    ['a heading', ':: t\n  # heading\n: d\n', '  # heading', 'markup.heading'],
-    ['a container opener', ':: c\n  ::: note\n  body\n  :::\n', '  ::: note', 'markup.other.div'],
-    ['a reference definition', ':: t\n  [r]: /u\n: d\n', '  [r]: /u', 'meta.link.reference.definition'],
-  ]
-  for (const [label, src, line, scope] of OPENERS) {
+test('a container opener under a term ends the term', () => {
+  // A colon fence interrupts the term (C2-B-012); the 0.2 reference engine renders a `<dt>`
+  // and then the admonition.
+  const got = tokenize(':: c\n  ::: note\n  body\n  :::\n').filter((t) => t.line === '  ::: note')
+  assert.ok(got.some((t) => has(t, 'markup.other.div')), got.map((t) => t.scopes.join(' ')).join(' | '))
+})
+
+// A heading or definition line directly under a term, a description or an item is text of
+// that leaf in Carve 0.2 (U-006, U-009, U-106); the 0.2 reference engine renders each of these
+// with no heading and no definition.
+for (const [label, src, line, scope] of [
+  ['a heading under a term', ':: t\n  # heading\n: d\n', '  # heading', 'markup.heading'],
+  ['a reference definition under a term', ':: t\n  [r]: /u\n: d\n', '  [r]: /u', 'meta.link.reference.definition'],
+  ['a heading under description text', ':: t\n:  d\n   # H\n', '   # H', 'markup.heading'],
+  ['a heading under an outdented term', '- outer\n    :: t\n  # H\n  : orphan\n', '  # H', 'markup.heading'],
+  ['a heading under a nested term', ':: a\n: b\n  :: c\n  # H\n', '  # H', 'markup.heading'],
+]) {
+  test(`${label} is text`, () => {
     const got = tokenize(src).filter((t) => t.line === line)
-    assert.ok(got.length > 0, `${label}: the line was not tokenized at all`)
-    assert.ok(got.some((t) => has(t, scope)), `${label} lost ${scope}: ${got.map((t) => t.scopes.join(' ')).join(' | ')}`)
-  }
-})
-
-test('a block in a description BODY is still a block', () => {
-  // The other side of that split, and the reason it is a split: once a `:`
-  // marker has been seen the body is a container, so the engine does render
-  // `:: t` over `:  d` over `   # H` with an `<h1>` inside the `<dd>`.
-  const tokens = tokenize(':: t\n:  d\n   # H\n')
-  const marker = tokens.filter((t) => t.line === '   # H' && t.text === '#').at(0)
-  assert.ok(
-    marker && has(marker, 'punctuation.definition.heading.carve'),
-    `a heading in a description body lost its scope:\n${report(tokens)}`,
-  )
-})
-
-test('an outdented continuation ends the list rather than being held as term text', () => {
-  // The term's inline phase reads from the parent region, not from a child
-  // region of its own, because vscode-textmate does not test an enclosing
-  // region's `end` while a child is open. A child that could not see the
-  // term's column held this past the point where the engine ends the list.
-  // Engine: `<ul><li>outer<dl><dt>t</dt></dl><h1>H</h1>\n<p>: orphan</p></li></ul>`.
-  const tokens = tokenize('- outer\n    :: t\n  # H\n  : orphan\n')
-  const heading = tokens.filter((t) => t.line === '  # H' && t.text === '#').at(0)
-  assert.ok(
-    heading && has(heading, 'punctuation.definition.heading.carve'),
-    `the outdented heading lost its scope:\n${report(tokens)}`,
-  )
-  for (const t of tokens.filter((x) => x.line === '  : orphan')) {
-    assert.ok(!has(t, DEF), `the orphan below it is prose, got ${t.scopes.join(' ')}`)
-  }
-})
+    assert.ok(got.length > 0, 'the line was not tokenized at all')
+    assert.ok(!got.some((t) => has(t, scope)), got.map((t) => t.scopes.join(' ')).join(' | '))
+  })
+}
 
 test("a description body's marker line is read as inline, not as a container marker line", () => {
   // Engine: `<dl><dt>t</dt><dd>+ a |\ntail</dd></dl>`. The body opens a region
@@ -340,21 +323,10 @@ test("a description body's marker line is read as inline, not as a container mar
   }
 })
 
-test("a sibling block at the term's column is released by the region", () => {
-  // The region ends on a line indented PAST the term, not at it. Engine for
-  // corpus 503-...-8: `  # H` under `  :: c` is an `<h1>` beside the list, so
-  // holding every line at the term's column as term text lost its scope.
-  for (const src of [
-    '- outer\n  :: t\n  : d\n\n  # H\n  : orphan\n',
-    ':: a\n: b\n  :: c\n  # H\n',
-  ]) {
-    const tokens = tokenize(src)
-    const heading = tokens.filter((t) => t.line === '  # H' && t.text === '#').at(0)
-    assert.ok(
-      heading && has(heading, 'punctuation.definition.heading.carve'),
-      `the sibling heading lost its scope on ${JSON.stringify(src)}:\n${report(tokens)}`,
-    )
-  }
+test('a heading after a blank line in an item is released from the description', () => {
+  const tokens = tokenize('- outer\n\n  :: t\n  : d\n\n  # H\n  : orphan\n')
+  const heading = tokens.filter((t) => t.line === '  # H' && t.text === '#').at(0)
+  assert.ok(heading && has(heading, 'punctuation.definition.heading.carve'), report(tokens))
 })
 
 test('definition markers expose a keyword fallback inside a Carve fence', () => {
