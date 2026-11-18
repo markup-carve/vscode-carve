@@ -1,5 +1,4 @@
-| Construct | Example        |
-|:----------|:---------------|
+|={<} Construct |={<} Example        |
 | literal   | !`/kaet/`      |
 | attributed| !`x`{.ipa}     |
 | math      | $`x^2`         |

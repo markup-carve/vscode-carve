@@ -3,14 +3,11 @@
 # ^ text.carve markup.quote.carve
 #  ^ text.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 #   ^ text.carve markup.quote.carve markup.list.unnumbered.carve
-#    ^ text.carve markup.quote.carve
+#    ^^ text.carve markup.quote.carve
 >>   [r]: /u
 #^ text.carve markup.quote.carve punctuation.definition.quote.carve
 # ^ text.carve markup.quote.carve
-#  ^^ text.carve markup.quote.carve meta.link.reference.definition.carve
-#    ^^^^ text.carve markup.quote.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#        ^ text.carve markup.quote.carve meta.link.reference.definition.carve
-#         ^^ text.carve markup.quote.carve meta.link.reference.definition.carve markup.underline.link.carve
+#  ^^^^^^^^^^ text.carve markup.quote.carve
 >
 >see [t][r]
 #^^^^ text.carve

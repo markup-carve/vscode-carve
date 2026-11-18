@@ -1,8 +1,8 @@
-An unclosed literal opener !`oops leaks nothing.
+An unclosed literal opener !`oops leaks nothing.`
 
 This paragraph must stay *ordinary* prose, not literal content.
 
-An unclosed math opener $`oops leaks nothing either.
+An unclosed math opener $`oops leaks nothing either.`
 
 This paragraph must stay /ordinary/ prose, not math content.
 

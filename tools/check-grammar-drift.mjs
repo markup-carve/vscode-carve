@@ -40,7 +40,7 @@ if (!upstreamRoot) {
 
 const load = (path) => JSON.parse(readFileSync(path, 'utf8'))
 const localGrammar = load(resolve(root, 'syntaxes/carve.tmLanguage.json'))
-const upstreamGrammar = load(resolve(upstreamRoot, 'textmate/carve.tmLanguage.json'))
+const upstreamGrammar = load(resolve(upstreamRoot, 'textmate/carve2.tmLanguage.json'))
 const local = localGrammar.repository
 const upstream = upstreamGrammar.repository
 const declarations = load(resolve(root, 'tools/grammar-drift-declarations.json'))

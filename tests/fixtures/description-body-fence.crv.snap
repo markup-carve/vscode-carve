@@ -17,6 +17,7 @@
 #^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
 # ^ text.carve markup.list.unnumbered.carve
 #  ^^^^^^ text.carve
+>
 >  :: t
 #^^ text.carve markup.list.definition.term.carve
 #  ^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve

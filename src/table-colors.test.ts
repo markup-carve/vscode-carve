@@ -44,12 +44,12 @@ test('table markers get colors in Carve fences and ordinary rows', async () => {
 
 test('editor marker roles match the shared Carve palette', async () => {
   const scan = await createTableMarkerScanner(root)
-  const source = '- [ ] +\n> Attached quote\n\n- [x] done\n\n. ordered\n\n|=> 2-col header|<|=> header|\n| value | | value |'
+  const source = '- [ ] open\n\n> Quote\n\n- [x] done\n\n. ordered\n\n|={>} 2-col header|<|={>} header|\n| value | | value |'
   const lines = source.split('\n')
   const tokens = scan(source).map(({ line, start, end, kind }) => [kind, lines[line].slice(start, end)])
   for (const pair of [
     ['listPunctuation', '-'], ['listPunctuation', '.'], ['taskOpen', ' '],
-    ['taskDone', 'x'], ['continuationMarker', '+'], ['quoteMarker', '>'],
+    ['taskDone', 'x'], ['quoteMarker', '>'],
     ['tableHeader', '|='], ['tableAlignment', '>'], ['tableSpan', '<'],
   ]) assert.ok(tokens.some((token) => token[0] === pair[0] && token[1] === pair[1]), pair.join(': '))
   assert.deepEqual(scan('```js\n- [ ] +\n|=> header|<|\n```').filter((marker) =>
@@ -87,13 +87,13 @@ test('only x task states use the checked color', async () => {
 test('alignment markers are colored beside the header or boundary pipe', async () => {
   const scan = await createTableMarkerScanner(root)
   const lines = [
-    '|=> Category |= Item |',
-    '|> Right | Plain |',
+    '|={>} Category |= Item |',
+    '|{>} Right | Plain |',
     '```carve',
-    '|=> Stage |= Owner |',
+    '|={>} Stage |= Owner |',
     '```',
-    '|=?^ Heading |= Other |',
-    '|?v Value | Other |',
+    '|={?^} Heading |= Other |',
+    '|{?v} Value | Other |',
     '| x |< |',
     '| a |< span |',
     '|^ x | y |',
@@ -112,7 +112,8 @@ test('alignment markers are colored beside the header or boundary pipe', async (
   assert.deepEqual(marked(5, 'operator'), ['|=', '?^', '|='])
   assert.deepEqual(marked(6, 'operator'), ['?v'])
   assert.deepEqual(marked(7, 'operator'), ['<'])
-  assert.deepEqual(marked(8, 'operator'), ['<'])
+  // A glued `<` before cell text is cell text in Carve 0.2 (U-056).
+  assert.deepEqual(marked(8, 'operator'), [])
   assert.deepEqual(marked(9, 'operator'), [])
   assert.deepEqual(marked(10, 'operator'), [])
   assert.deepEqual(marked(11, 'operator'), [])

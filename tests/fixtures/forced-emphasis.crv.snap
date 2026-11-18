@@ -27,17 +27,18 @@
 #                          ^ text.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
 #                           ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
 >
->{~gone~} but {~old~>new~} stays editorial
+>{~gone~} but {-old-}{+new+} stays editorial
 #^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
 #  ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
 #      ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
 #        ^^^^^ text.carve
-#             ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#               ^^^ text.carve markup.changed.critic.carve markup.deleted.carve
-#                  ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#                    ^^^ text.carve markup.changed.critic.carve markup.inserted.carve
-#                       ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#                         ^^^^^^^^^^^^^^^^^ text.carve
+#             ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#               ^^^ text.carve markup.deleted.critic.carve markup.deleted.carve
+#                  ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                    ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                      ^^^ text.carve markup.inserted.critic.carve markup.inserted.carve
+#                         ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                           ^^^^^^^^^^^^^^^^^ text.carve
 >
 >{_path_} is underline, not a boolean attribute
 #^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve

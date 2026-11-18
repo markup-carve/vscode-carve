@@ -30,13 +30,13 @@ A heading takes an explicit id and classes from an attribute line above it:
 {#inline}
 ## Inline formatting
 
-%% carve-lint-disable-next-line markdown-italic-underline
-/italic/, *bold*, /*bold italic*/, _underline_, ~strikethrough~, =highlight=,
+%% carve-lint-disable-next-line markdown-italic-underline, comment-shaped-emphasis
+/italic/, *bold*, */bold italic/*, {_underline_}, {~strikethrough~}, {=highlight=},
 super{^script^} and sub{,script,}. Inline `code span`, and raw inline passthrough
 `<abbr>HTML</abbr>`{=html} emitted verbatim.
 
 Editorial markup: {+ added text +}, {- deleted text -},
-{~ old phrase ~> new phrase ~}, and an {# editorial note #}.
+{- old phrase -}{+ new phrase +}, and an {# editorial note #}.
 
 Escapes keep specials literal: \*not bold\*, \/not italic\/, \#not-a-tag.
 
@@ -131,14 +131,16 @@ def greet(name: str) -> str:
     return f"Hello, {name}!"
 ```
 
-A tilde fence works too:
+A longer backtick fence holds a shorter one:
 
-~~~yaml
+````carve
+```yaml
 key: value
 list:
   - one
   - two
-~~~
+```
+````
 
 A raw block passes content through to a named format unchanged:
 

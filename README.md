@@ -4,7 +4,7 @@ Carve support for VS Code, with TextMate highlighting, preview, and a bundled la
 
 ## Features
 
-- Highlighting for `.crv` files and code fences.
+- Highlighting for `.crv` files and code fences. On the `next2` branch the TextMate grammar reads Carve 0.2 source; preview, export and the language server still use the bundled 0.1 engine until a 0.2 engine is published.
 - Preview, import, export, and language server features.
 
 ## Install

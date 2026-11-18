@@ -69,7 +69,7 @@ function scratch({ local = localGrammar, upstream = upstreamGrammar, decls = dec
 	mkdirSync(join(dir, 'tests/fixtures'), { recursive: true })
 	mkdirSync(join(dir, 'upstream/textmate'), { recursive: true })
 	writeFileSync(join(dir, 'syntaxes/carve.tmLanguage.json'), JSON.stringify(local))
-	writeFileSync(join(dir, 'upstream/textmate/carve.tmLanguage.json'), JSON.stringify(upstream))
+	writeFileSync(join(dir, 'upstream/textmate/carve2.tmLanguage.json'), JSON.stringify(upstream))
 	writeFileSync(join(dir, 'tools/grammar-drift-declarations.json'), JSON.stringify(decls))
 	if (baseline) writeFileSync(join(dir, 'tools/grammar-construct-baseline.json'), JSON.stringify(baseline))
 	writeFileSync(join(dir, 'tests/fixtures/sample.crv'), fixture)
