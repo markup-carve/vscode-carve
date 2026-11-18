@@ -56,18 +56,14 @@ test('editor marker roles match the shared Carve palette', async () => {
     ['listPunctuation', 'taskOpen', 'continuationMarker', 'tableHeader', 'tableSpan'].includes(marker.kind)), [])
 })
 
-test('a standalone plus gets a continuation color only when the parser accepts it', async () => {
+test('a standalone plus gets no continuation color', async () => {
+  // Carve 0.2 has no continuation marker (U-014 to U-017): every `+` line is text.
   const scan = await createTableMarkerScanner(root)
   const markers = (source: string) => scan(source).filter((marker) => marker.kind === 'continuationMarker')
-  assert.deepEqual(markers('- item\n+\n> attached').map((marker) => marker.line), [1])
-  assert.deepEqual(markers('> - item\n> +\n> > attached').map((marker) => marker.line), [1])
-  // A `+` that attaches nothing is consumed and leaves no node (markup-carve/carve#4409).
-  assert.deepEqual(markers('- item\n+').map((marker) => marker.line), [1])
-  assert.deepEqual(markers('+\nplain').map((marker) => marker.line), [])
-  assert.deepEqual(markers('> +\n> plain').map((marker) => marker.line), [0])
-  assert.deepEqual(markers('```\n+\n```').map((marker) => marker.line), [])
+  for (const source of ['- item\n+\n> attached', '> - item\n> +\n> > attached', '- item\n+', '+\nplain', '> +\n> plain']) {
+    assert.deepEqual(markers(source), [], source)
+  }
 })
-
 test('description markers keep their own color role', async () => {
   const scan = await createTableMarkerScanner(root)
   const source = ':: Term\n: body text\n\n- item'
