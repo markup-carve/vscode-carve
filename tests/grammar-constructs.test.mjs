@@ -144,7 +144,7 @@ test('a grouped declaration whose construct this grammar does not cover fails', 
 	try {
 		const result = run('constructs', scope)
 		assert.equal(result.status, 1, result.stdout)
-		assert.match(result.stderr, /left unhighlighted by text\.carve/)
+		assert.match(result.stderr, /left unhighlighted by the local source\.carve/)
 	} finally {
 		scope.cleanup()
 	}
@@ -177,7 +177,7 @@ test('a local-only declaration upstream actually highlights fails', () => {
 	try {
 		const result = run('constructs', scope)
 		assert.equal(result.status, 1, result.stdout)
-		assert.match(result.stderr, /local-only rule mine: "@@mine".*is highlighted by source\.carve/)
+		assert.match(result.stderr, /local-only rule mine: "@@mine".*is highlighted by the upstream source\.carve/)
 	} finally {
 		scope.cleanup()
 	}
