@@ -83,6 +83,23 @@ test('a child is merged into the document the preview renders', async () => {
   }
 })
 
+test('a nested relative include resolves beside the file that holds it', async () => {
+  // The engine names the including file in the request's `from`; the server
+  // resolver reads it from the stack, so `two.crv` is found in chapters/.
+  const scene = book('{{ chapters/one.crv }}\n', {
+    'chapters/one.crv': 'One.\n\n{{ two.crv }}\n',
+    'chapters/two.crv': 'Two, nested.\n',
+  })
+  try {
+    const result = await expand(scene)
+    assert.match(await html(result.doc), /Two, nested\./)
+    assert.deepEqual(result.refusals, [])
+    assert.deepEqual(result.dependencies.map((d) => d.resolved), [true, true])
+  } finally {
+    scene.cleanup()
+  }
+})
+
 test('a target outside the containment root is refused, and says which class', async () => {
   const scene = book('{{ ../outside.crv }}\n')
   try {
