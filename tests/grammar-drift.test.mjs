@@ -31,7 +31,7 @@ function withUpstream(grammar, callback) {
   const dir = mkdtempSync(resolve(tmpdir(), 'vscode-carve-drift-'))
   try {
     mkdirSync(resolve(dir, 'textmate'))
-    writeFileSync(resolve(dir, 'textmate/carve2.tmLanguage.json'), JSON.stringify(grammar))
+    writeFileSync(resolve(dir, 'textmate/carve.tmLanguage.json'), JSON.stringify(grammar))
     callback({ ...process.env, CARVE_GRAMMARS_DIR: dir })
   } finally {
     rmSync(dir, { recursive: true, force: true })
