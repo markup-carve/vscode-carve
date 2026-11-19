@@ -64,50 +64,54 @@ test('the flattened document renders identically to the expanded original', asyn
   // The invariant `carve flatten` promises, pinned rather than assumed. Nothing
   // else here would catch a writer that produced plausible but different Carve.
   const scene = book('Parent.\n\n{{ chapters/one.crv }}\n\n{{ chapters/two.crv }}\n', {
-    'chapters/one.crv': '# Intro\n\nA note.[^n]\n\n[^n]: First note.\n',
-    'chapters/two.crv': '# Intro\n\nAnother note.[^n]\n\n[^n]: Second note.\n',
+    // Distinct labels: one label in two files is two notes in 0.2 (C2-N-055),
+    // which one flattened file cannot spell; the next tests cover that case.
+    'chapters/one.crv': '# Intro\n\nA note.[^a]\n\n[^a]: First note.\n',
+    'chapters/two.crv': '# Intro\n\nAnother note.[^b]\n\n[^b]: Second note.\n',
   })
   try {
     const result = await flatten(scene)
-    const { carveToHtml, renderDocument } = await import('@markup-carve/carve')
+    assert.equal(result.changed, false)
+    const { render } = await import('@markup-carve/carve')
     assert.equal(
-      carveToHtml(result.text),
-      renderDocument(result.expansion.doc as Parameters<typeof renderDocument>[0], {}),
+      render(result.text),
+      render(result.expansion.doc as Parameters<typeof render>[0]),
     )
   } finally {
     scene.cleanup()
   }
 })
 
-test('a colliding explicit heading id is renamed and counted', async () => {
-  // The attribute block goes BEFORE the heading. Written after it, Carve drops
-  // it, so the heading carries no id, so there is no collision to rename and the
-  // assertion would pass on the footnote rename alone. Measured: with the block
-  // trailing, the only warning raised is `include-footnote-rename`.
+test('a colliding explicit heading id is kept in both files, and the copy renders the same', async () => {
+  // C2-N-057, C2-N-058: 0.2 renames no authored id across files (0.1 wrote
+  // `intro-2` and reported `include-id-rename`, spec I5). The duplicate id is
+  // resolved at render time in the copy as in the expanded document.
   const scene = book('{{ chapters/one.crv }}\n\n{{ chapters/two.crv }}\n', {
     'chapters/one.crv': '{#intro}\n# Intro A\n',
     'chapters/two.crv': '{#intro}\n# Intro B\n',
   })
   try {
     const result = await flatten(scene)
-    assert.deepEqual(result.expansion.warnings.map((w) => w.rule), ['include-id-rename'])
-    assert.equal(result.renames, 1)
-    assert.match(result.text, /\{#intro-2\}/)
-    assert.match(flattenSummary(result, 'book.flat.crv'), /1 colliding id or footnote label was renamed \(spec I5\)/)
+    assert.deepEqual(result.expansion.warnings.map((w) => w.rule), [])
+    assert.equal(result.text.match(/\{#intro\}/g)?.length, 2)
+    assert.equal(result.changed, false)
   } finally {
     scene.cleanup()
   }
 })
 
-test('a colliding footnote label is renamed and counted', async () => {
+test('a colliding footnote label makes the copy render differently, and the summary says so', async () => {
+  // C2-N-055: each file keeps its own note (0.1 renamed the later label and
+  // reported `include-footnote-rename`); one flattened file holds one label.
   const scene = book('{{ chapters/one.crv }}\n\n{{ chapters/two.crv }}\n', {
     'chapters/one.crv': 'One.[^a]\n\n[^a]: First.\n',
     'chapters/two.crv': 'Two.[^a]\n\n[^a]: Second.\n',
   })
   try {
     const result = await flatten(scene)
-    assert.deepEqual(result.expansion.warnings.map((w) => w.rule), ['include-footnote-rename'])
-    assert.equal(result.renames, 1)
+    assert.deepEqual(result.expansion.warnings.map((w) => w.rule), [])
+    assert.equal(result.changed, true)
+    assert.match(flattenSummary(result, 'book.flat.crv'), /defined in more than one file/)
   } finally {
     scene.cleanup()
   }

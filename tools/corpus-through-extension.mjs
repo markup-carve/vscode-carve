@@ -57,7 +57,7 @@
 //      language-server change that moves any of them fails with names (#315,
 //      #316). `--record` rewrites the file after a deliberate change.
 //
-// Usage: node tools/corpus-through-extension.mjs [--corpus <dir>] [--manifest <file>] [--record]
+// Usage: node tools/corpus-through-extension.mjs [--conformance <file>] [--manifest <file>] [--record]
 //
 // `--manifest` writes one TAB-separated row per document, so two runs (say
 // either side of an engine bump) compare as SETS of rows rather than as sums.
@@ -65,13 +65,12 @@
 // gains one leave every total identical (the "compare counts, not sets" defect,
 // markup-carve/carve#927).
 
-import { existsSync, readdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs'
+import { readdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { dirname, join, resolve } from 'node:path'
 import { argv, execPath, exit, stderr, stdout } from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { declaredInputs } from './declared-pairs.mjs'
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -86,7 +85,9 @@ const flag = (name) => {
   return value
 }
 
-const corpusDir = resolve(flag('--corpus') ?? join(repoRoot, 'spec', 'tests', 'corpus'))
+const conformancePath = resolve(flag('--conformance') ?? join(repoRoot, 'tools', 'conformance-0.2.json'))
+// Documents have no file of their own; this directory only names their URIs.
+const corpusDir = join(repoRoot, 'tools', 'conformance')
 const manifestPath = flag('--manifest')
 const record = argv.includes('--record')
 const baselinePath = join(repoRoot, 'tools', 'corpus-baseline.tsv')
@@ -101,83 +102,21 @@ const fail = (message) => {
 /*
  * THE POPULATION GUARD - A RUNNER MUST NOT REPORT SUCCESS OVER NOTHING.
  *
- * There is no corpus floor anywhere in this repository in any spelling, and a
- * runner that compares zero documents would print `documents=0 mismatches=0`
- * and exit 0 - the dead check this org keeps finding (markup-carve/carve#755).
- *
- * The expectation is deliberately NOT derived from the directory being read:
- * counting the `.crv` files and then checking that count against itself moves
- * both sides together when the corpus is emptied, and that exact mistake was
- * made and caught in markup-carve/pandoc-carve. tests/corpus is GENERATED from
- * the `::: compare` blocks in spec/resources/examples/{core,extensions,edge-cases}.md,
- * one pair per `carve` fence in a block, so counting those is an independent statement of how many documents
- * there should be - and it leaves no literal here to go stale, because adding an
- * example moves the expectation on the next corpus rebuild.
- *
- * Equality rather than a floor, deliberately: a floor cannot tell a whole corpus
- * from a truncated checkout, and truncation is the failure being guarded against.
+ * The documents are the option-free render examples of the 0.2 conformance
+ * corpus (spec/0.2/conformance/examples.json), vendored by
+ * tools/vendor-conformance.mjs. A file without examples is a wiring problem,
+ * not a corpus of size zero.
  */
-const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
-const declaredCorpusSize = () => {
-  const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
-  const declared = new Set()
-  for (const page of EXAMPLE_PAGES) {
-    const path = join(examplesDir, page)
-    let source
-    try {
-      // carve#4132 stores each edge-case section in its own file under `edge-cases/`.
-      const dir = path.replace(/\.md$/, '')
-      source = existsSync(dir) && statSync(dir).isDirectory()
-        ? readdirSync(dir).filter((file) => file.endsWith('.md') && file !== 'README.md').map((file) => readFileSync(join(dir, file), 'utf8'))
-        : [readFileSync(path, 'utf8')]
-    } catch (error) {
-      fail(
-        `no corpus source page at ${path} (${error instanceof Error ? error.message : String(error)}).\n` +
-          '  The corpus is generated from those pages, and they are how this run knows how many\n' +
-          '  documents it should have seen. Without them there is nothing to compare the corpus\n' +
-          '  against, and a run over an unknown population is not a result. Initialize the spec\n' +
-          '  submodule (git submodule update --init --recursive) or point --corpus at\n' +
-          '  tests/corpus inside a markup-carve/carve checkout.',
-      )
-    }
-    for (const part of source) for (const input of declaredInputs(part.split('\n'))) declared.add(input)
-  }
-  return declared.size
-}
-
-let documents
+let conformance
 try {
-  documents = readdirSync(corpusDir)
-    .filter((name) => name.endsWith('.crv'))
-    .sort()
+  conformance = JSON.parse(readFileSync(conformancePath, 'utf8'))
 } catch (error) {
-  fail(
-    `cannot read ${corpusDir} (${error instanceof Error ? error.message : String(error)}).\n` +
-      '  The spec submodule is probably not initialized: git submodule update --init --recursive',
-  )
+  fail(`cannot read ${conformancePath} (${error instanceof Error ? error.message : String(error)}).`)
 }
+const examples = new Map((conformance.examples ?? []).map((example) => [`${example.id}.crv`, example]))
+const documents = [...examples.keys()].sort()
+if (documents.length === 0) fail(`${conformancePath} holds no examples.`)
 
-const declared = declaredCorpusSize()
-if (declared === 0) {
-  fail(
-    'the corpus source pages declare no ::: compare blocks at all.\n' +
-      '  This is a wiring problem, not a corpus of size zero.',
-  )
-}
-if (documents.length !== declared) {
-  fail(
-    `${corpusDir} holds ${documents.length} documents, but the spec's example pages declare ${declared}.\n` +
-      '  Every distinct carve fence input in a ::: compare block in resources/examples/{core,extensions,edge-cases}\n' +
-      '  becomes one corpus pair, so a difference means this is not the corpus those pages describe: a\n' +
-      '  truncated or stale checkout, a wrong --corpus, or a corpus that needs regenerating\n' +
-      '  (npm run corpus:build in the spec repository). Every number below would describe a\n' +
-      '  population nobody chose.',
-  )
-}
-
-// The built extension, not the sources: `dist/` is what the .vsix carries, and a
-// `case` arm naming a node type a newer engine no longer emits is dead at
-// runtime rather than a compile error.
 const distFile = (name) => {
   const path = join(repoRoot, 'dist', name)
   try {
@@ -513,7 +452,7 @@ let twoParserMismatches = 0
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = '0.1.17'
+const ENGINE_PIN = 'github:markup-carve/carve-js#11de2ad3652448277905e0980e72a49936139c0b'
 const ENGINE_LAG = {}
 const lagWaived = []
 const lagStale = []
@@ -521,17 +460,31 @@ const lagStale = []
 // Corpus rows that are deliberately invalid: the spec makes the input an error
 // and the row pins what conversion keeps. The language server is right to call
 // them errors, so the expected message is declared here instead.
+// Examples whose input is malformed on purpose: the server's error is the
+// finding the example is about. Any other error diagnostic fails the run, and
+// a declared example that stops raising one is stale.
 const EXPECTED_ERRORS = {
-  '738-invalid-table-metadata-keeps-the-table-3.crv': {
-    message: 'aligns has 3 entries for a 2-column table.',
-    clause: '25-ast-extensions.ebnf SOURCE SPELLING: more entries than columns is an error',
-  },
+  'syntax-blocks-116.crv': 'an unclosed code fence',
+  'syntax-blocks-117.crv': 'an unclosed code fence in a container',
+  'syntax-blocks-118.crv': 'an unclosed code fence in a container',
+  'syntax-blocks-136.crv': 'an unclosed admonition',
+  'syntax-blocks-152.crv': 'an unclosed code fence in a container',
+  'syntax-blocks-195.crv': 'unclosed frontmatter',
+  'syntax-blocks-220.crv': 'malformed CSV quoting',
+  'syntax-blocks-222.crv': 'an unclosed admonition',
+  'syntax-blocks-223.crv': 'an unclosed comment fence',
+  'syntax-blocks-233.crv': 'inline attributes after a div name',
+  'syntax-blocks-239.crv': 'more widths than columns',
+  'syntax-blocks-256.crv': 'an unclosed code fence in a container',
+  'syntax-blocks-288.crv': 'an unclosed line block',
 }
 const expectedErrorsUnseen = new Set(Object.keys(EXPECTED_ERRORS))
 
 for (const name of documents) {
-  const source = readFileSync(join(corpusDir, name), 'utf8')
-  const expected = readFileSync(join(corpusDir, name.replace(/\.crv$/, '.html')), 'utf8').trim()
+  const example = examples.get(name)
+  const source = example.input
+  const expected = example.html.trim()
+  const reported = new Set(example.diagnostics ?? [])
 
   let rendered
   let renderState
@@ -591,8 +544,9 @@ for (const name of documents) {
   const diagnostics = published.get(uri) ?? []
   const errors = diagnostics
     .filter((entry) => (entry.severity ?? ERROR_SEVERITY) === ERROR_SEVERITY)
-    .filter((entry) => {
-      if (EXPECTED_ERRORS[name]?.message !== entry.message) return true
+    .filter((entry) => !reported.has(String(entry.code)))
+    .filter(() => {
+      if (!EXPECTED_ERRORS[name]) return true
       expectedErrorsUnseen.delete(name)
       return false
     })

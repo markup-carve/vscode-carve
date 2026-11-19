@@ -67,8 +67,8 @@ async function expand(scene: { root: string; path: string }, extra?: { cache?: I
 }
 
 async function html(doc: unknown): Promise<string> {
-  const { renderDocument } = await import('@markup-carve/carve')
-  return renderDocument(doc as Parameters<typeof renderDocument>[0], {})
+  const { render } = await import('@markup-carve/carve')
+  return render(doc as Parameters<typeof render>[0])
 }
 
 test('a child is merged into the document the preview renders', async () => {
@@ -88,7 +88,8 @@ test('a target outside the containment root is refused, and says which class', a
   try {
     const result = await expand(scene)
     assert.deepEqual(result.refusals.map((r) => r.denial), ['outside-root'])
-    assert.deepEqual(result.warnings.map((w) => w.rule), ['include-unresolved'])
+    // C2-N-061: 0.2 names the class in the parse code (was `include-unresolved`).
+    assert.deepEqual(result.warnings.map((w) => w.rule), ['include-outside-root'])
     // I7: the class must not reach the rendered message, which would publish
     // host layout into a preview.
     assert.doesNotMatch(result.warnings[0]!.message, /outside-root/)

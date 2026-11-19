@@ -112,11 +112,9 @@ cached on identity plus modification time, so a keystroke does not re-read every
 chapter.
 
 One extension set does the parse and the render, so turning includes on cannot
-change how the document's own text is read. A CHILD is still parsed without that
-set, which is an engine limit rather than a choice here -
-[carve-js#1693](https://github.com/markup-carve/carve-js/issues/1693) - so
-extension syntax in an included file can read differently from the same syntax
-in the parent.
+change how the document's own text is read. Each included file is parsed with
+the same set (Carve 0.2, C2-N-015), so extension syntax reads the same in a
+child as in the parent.
 
 A child's relative links and images are rebased against the CHILD's folder. For example, a
 chapter at `chapters/intro.crv` writing `[see](figures/one.png)` means
@@ -145,9 +143,11 @@ It is deliberately a separate command rather than a mode of the Carve export:
 spec I15 requires writing a document back as Carve to return the author's
 document, so a plain Carve export must never expand. Both commands report the
 two side effects that are invisible in the result - the output is canonical
-Carve, so formatting is normalized rather than preserved, and colliding explicit
-ids and footnote labels are renamed (spec I5), so a flattened document can carry
-`intro-2`.
+Carve, so formatting is normalized rather than preserved, and the copy can
+render differently when two files define the same footnote, reference or
+abbreviation key. Carve 0.2 scopes those keys per file (C2-N-054, C2-N-055) and
+one flattened file holds one scope; the command still writes the copy and says
+so. Explicit ids are not renamed.
 
 A child's relative links are NOT rebased when flattening, unlike in the preview:
 `carve flatten` does not rewrite them, and matching the CLI byte for byte is
