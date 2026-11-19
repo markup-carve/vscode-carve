@@ -9,7 +9,8 @@
  * same child, so machine load scales both: the freeze was about 29,000x prose,
  * today's slowest case is about 350x, and the limit is 1000x. Bold is left out
  * of the styling check: a bare `*` opens the one multi-line inline region,
- * which runs to the blank line.
+ * which runs to the blank line. The ratio limit cannot see quadratic growth
+ * at one length, so the growth test times each line at two lengths.
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -95,6 +96,31 @@ test('long lines of unclosed bare and braced openers tokenize quickly', () => {
 
 test('a closer behind an escape or inside code does not make the run slow', () => {
   run(hidden)
+})
+
+// Eight times the input may take at most this many times as long: linear
+// growth is about 8x, the quadratic tokenizing of vscode-carve#452 was 50x.
+const GROWTH_LIMIT = 24
+const GROWTH_FLOOR_MS = 2
+
+test('unclosed opener runs grow linearly with the line length', () => {
+  const units = ['/*a ', '{*a {/b ', '{/a {*b ', '/a ', '{^a ', '{,a ', '=a ']
+  const cases = units.flatMap((unit) => [2000, 16000].map((n) => [`${unit.trim()} ${n}`, unit.repeat(Math.ceil(n / unit.length)).slice(0, n)]))
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e', script, JSON.stringify(cases)], {
+    cwd: root,
+    timeout: 120000,
+    encoding: 'utf8',
+  })
+  assert.equal(result.error, undefined, 'tokenizing ran past the two-minute deadline')
+  assert.equal(result.status, 0, result.stderr)
+  const measured = JSON.parse(result.stdout)
+  for (const unit of units) {
+    const short = measured[`${unit.trim()} 2000`]
+    const long = measured[`${unit.trim()} 16000`]
+    const growth = long.ms / Math.max(short.ms, GROWTH_FLOOR_MS)
+    assert.ok(growth < GROWTH_LIMIT, `${unit.trim()}: ${short.ms.toFixed(1)} ms at 2,000 characters, ${long.ms.toFixed(1)} ms at 16,000, ${growth.toFixed(1)}x, limit ${GROWTH_LIMIT}x`)
+    assert.equal(long.styled, false, `${unit.trim()}: an unclosed opener was styled`)
+  }
 })
 
 test('a closed span after the unclosed run is still styled', () => {
