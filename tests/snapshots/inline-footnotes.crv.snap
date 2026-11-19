@@ -1,20 +1,20 @@
 >A note^[see *later*] inline. And a ref[^a].
-#^^^^^^ text.carve
-#      ^^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
-#        ^^^^ text.carve meta.footnote.inline.carve
-#            ^ text.carve meta.footnote.inline.carve punctuation.definition.bold.carve
-#             ^^^^^ text.carve meta.footnote.inline.carve markup.bold.carve
-#                  ^ text.carve meta.footnote.inline.carve punctuation.definition.bold.carve
-#                   ^ text.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
-#                    ^^^^^^^^^^^^^^^^^^ text.carve
-#                                      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#                                       ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#                                        ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
-#                                         ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#                                          ^^ text.carve
+#^^^^^^ source.carve
+#      ^^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#        ^^^^ source.carve meta.footnote.inline.carve
+#            ^ source.carve meta.footnote.inline.carve punctuation.definition.bold.carve
+#             ^^^^^ source.carve meta.footnote.inline.carve markup.bold.carve
+#                  ^ source.carve meta.footnote.inline.carve punctuation.definition.bold.carve
+#                   ^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                    ^^^^^^^^^^^^^^^^^^ source.carve
+#                                      ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                       ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                        ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#                                         ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                          ^^ source.carve
 >
 >[^a]: reference body.
-#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#     ^ text.carve meta.footnote.definition.carve
-#      ^^^^^^^^^^^^^^^^ text.carve
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^^^^^^^^^^^^^^^ source.carve
 >

@@ -1,14 +1,14 @@
 >- a
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^ source.carve
 >  - para
-#^^ text.carve markup.list.unnumbered.carve
-#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-#   ^ text.carve markup.list.unnumbered.carve
-#    ^^^^^ text.carve
+#^^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ source.carve markup.list.unnumbered.carve
+#    ^^^^^ source.carve
 >    [r]: /u
-#^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^ source.carve
 >x
-#^^ text.carve
+#^^ source.carve
 >

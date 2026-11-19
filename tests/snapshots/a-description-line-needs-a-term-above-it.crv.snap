@@ -1,11 +1,11 @@
 >:  [r]: /u
-#^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^ source.carve
 >
 >see [t][r]
-#^^^^ text.carve
-#    ^ text.carve meta.link.reference.carve
-#     ^ text.carve meta.link.reference.carve string.other.link.title.carve
-#      ^^ text.carve meta.link.reference.carve
-#        ^ text.carve meta.link.reference.carve constant.other.reference.link.carve
-#         ^ text.carve meta.link.reference.carve
+#^^^^ source.carve
+#    ^ source.carve meta.link.reference.carve
+#     ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#      ^^ source.carve meta.link.reference.carve
+#        ^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#         ^ source.carve meta.link.reference.carve
 >

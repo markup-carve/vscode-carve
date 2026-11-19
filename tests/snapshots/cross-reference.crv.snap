@@ -1,12 +1,12 @@
 ># Getting Started
-#^ text.carve markup.heading.carve punctuation.definition.heading.carve
-# ^ text.carve markup.heading.carve
-#  ^^^^^^^^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
 >
 >See </#Getting-Started>.
-#^^^^ text.carve
-#    ^^^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
-#       ^^^^^^^^^^^^^^^ text.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
-#                      ^ text.carve meta.link.cross-reference.carve punctuation.definition.link.carve
-#                       ^^ text.carve
+#^^^^ source.carve
+#    ^^^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#       ^^^^^^^^^^^^^^^ source.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                      ^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                       ^^ source.carve
 >

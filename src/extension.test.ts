@@ -45,7 +45,7 @@ async function carveGrammar(): Promise<IGrammar> {
     const registry = new Registry({
       onigLib,
       loadGrammar: async (scopeName) => {
-        if (scopeName !== 'text.carve') {
+        if (scopeName !== 'source.carve') {
           return null
         }
         const content = readFileSync(grammarPath, 'utf8')
@@ -53,9 +53,9 @@ async function carveGrammar(): Promise<IGrammar> {
       },
     })
 
-    grammarPromise = registry.loadGrammar('text.carve').then((g) => {
+    grammarPromise = registry.loadGrammar('source.carve').then((g) => {
       if (!g) {
-        throw new Error('Failed to load text.carve grammar')
+        throw new Error('Failed to load source.carve grammar')
       }
       return g
     })
@@ -151,10 +151,12 @@ const previewExtensionMarkers: Array<[string, string, RegExp]> = [
   ['chart', '```chart\n{"type":"bar"}\n```\n', /<script type="application\/json">/],
   ['codeGroup', '::: code-group\n```js [One]\nx\n```\n:::\n', /class="code-group-label"/],
   ['listTable', '::: list-table\n- - a\n  - b\n:::\n', /<table>/],
+  // C2-X-040, C2-X-056: a tab's label is its quoted title; a bracket label no
+  // longer makes a tab, so the 0.1 `[Install]` shape stays a plain div.
   [
     'tabs',
-    ':::: tabs\n::: tab [Install]\nrun it\n:::\n::: tab [Use]\ncall it\n:::\n::::\n',
-    /class="tabs-label"/,
+    ':::: tabs\n::: tab "Install"\nrun it\n:::\n::: tab "Use"\ncall it\n:::\n::::\n',
+    /<div class="tabs" role="group"/,
   ],
 ]
 
@@ -231,15 +233,10 @@ test('wraps preview HTML in a CSP-safe document', () => {
 // decided about. That is what this guard is.
 
 test('every extension the engine ships is either enabled or excluded with a reason', async () => {
-  const lib = (await import('@markup-carve/carve')) as Record<string, unknown>
-
-  // An extension factory is a function returning an object with a non-empty
-  // `name` and at least one lifecycle hook. Anything else an export might be -
-  // a parser helper, a renderer, a profile class - fails this shape.
-  const HOOKS = [
-    'matchInline', 'matchBlock', 'afterParse',
-    'beforeRender', 'renderers', 'blockRenderers', 'inlineRenderers',
-  ]
+  // 0.2 ships its standard extensions from their own entry; a factory returns a
+  // bundle of definitions, renderers or document transforms. `tabs` is the one
+  // standard extension the core entry holds (tabsExtensions, tabsRenderer).
+  const lib = { ...(await import('@markup-carve/carve/extensions')), tabs: () => ({ extensions: [{}] }) } as Record<string, unknown>
   const isFactory = (value: unknown): boolean => {
     if (typeof value !== 'function') return false
     let made: unknown
@@ -249,9 +246,10 @@ test('every extension the engine ships is either enabled or excluded with a reas
       return false
     }
     if (!made || typeof made !== 'object') return false
-    const ext = made as Record<string, unknown>
-    if (typeof ext.name !== 'string' || ext.name.length === 0) return false
-    return HOOKS.some((hook) => hook in ext)
+    const bundle = made as Record<string, unknown>
+    return ['extensions', 'renderers', 'transforms'].some((key) =>
+      Array.isArray(bundle[key]) ? (bundle[key] as unknown[]).length > 0
+        : bundle[key] !== undefined && Object.keys(bundle[key] as object).length > 0)
   }
 
   const classified = new Set<string>([...PREVIEW_EXTENSIONS, ...Object.keys(EXCLUDED_EXTENSIONS)])
@@ -297,23 +295,16 @@ test('headingPermalinks stays off, on purpose and on the record', () => {
   )
 })
 
-test('the four extensions the preview had been missing actually render', () => {
-  // citations changes the PARSE, not just the render: without the extension
-  // there is no citation node at all.
+test('a [@key] citation renders with its reference list', { skip: 'carve-js#5082: 0.2 has no citation extension yet (C2-X-058)' }, () => {
   const cited = renderPreviewBody('See [@knuth1984].\n\n[@knuth1984]: Knuth, D. /The TeXbook/. 1984.')
+  assert.match(cited, /data-cite-key="knuth1984"/)
+  assert.match(cited, /<ol class="references">/)
+})
+
+test('the extensions the preview had been missing actually render', () => {
+  // C2-X-057: the 0.2 wiki matcher claims `:wiki[Page]`; `[[x]]` is core text.
   assert.match(
-    cited,
-    /data-cite-key="knuth1984"/,
-    'a [@key] citation no longer renders. citations() changes the PARSE, not just the render: ' +
-      'without it there is no citation node at all, so the whole construct is unreachable.',
-  )
-  assert.match(
-    cited,
-    /<ol class="references">/,
-    'the citation definition no longer produces a reference list',
-  )
-  assert.match(
-    renderPreviewBody('A [[Wiki Page]] link.'),
+    renderPreviewBody('A :wiki[Wiki Page] link.'),
     /class="wikilink"/,
     'a wikilink no longer renders',
   )
@@ -331,26 +322,27 @@ test('the four extensions the preview had been missing actually render', () => {
 
 test('exactly the declared extensions decorate Tier-1 output', async () => {
   const lib = await import('@markup-carve/carve')
-  const factories = lib as unknown as Record<string, () => never>
+  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => { extensions?: never[]; renderers?: never }>
+  const tabs = () => ({ extensions: lib.tabsExtensions as never[], renderers: { 'carve.tabs': lib.tabsRenderer } as never })
 
   // A link and a bare URL - between them, the Tier-1 constructs the corpus pins
-  // that an extension is most likely to decorate.
+  // that an extension is most likely to decorate. autolink and externalLinks
+  // are host transforms in 0.2 (decorateLinks), so no engine extension may.
   const PROBE = 'See [the site](https://example.com) and https://example.com/bare here.'
-  const bare = lib.carveToHtml(PROBE, { extensions: [] })
+  const bare = lib.render(PROBE)
 
   const changed = PREVIEW_EXTENSIONS
-    .filter((name) => lib.carveToHtml(PROBE, { extensions: [factories[name]()] }) !== bare)
+    .filter((name) => lib.render(PROBE, { ...(name === 'tabs' ? tabs() : extensions[name]!()) }) !== bare)
     .slice()
     .sort()
 
   assert.deepEqual(
     changed,
-    [...TIER1_DECORATING_EXTENSIONS].sort(),
-    'the set of extensions that change Tier-1 link output has moved. Declared: ' +
-      `${[...TIER1_DECORATING_EXTENSIONS].join(', ')}; measured: ${changed.join(', ')}. ` +
-      'An undeclared one makes the corpus measurement quietly stop being about the engine; ' +
-      'a stale declaration hides a real regression behind an intended one.',
+    [],
+    'an enabled engine extension changes Tier-1 link output: ' + changed.join(', ') + '. ' +
+      'An undeclared one makes the corpus measurement quietly stop being about the engine.',
   )
+  assert.notEqual(renderPreviewBody(PROBE), bare, `the ${TIER1_DECORATING_EXTENSIONS.join(' and ')} transform no longer decorates`)
 
   // And the separation must actually do something: the conformance render drops
   // the decoration the preview render keeps.
@@ -373,19 +365,21 @@ test('exactly the declared extensions decorate Tier-1 output', async () => {
 
 test('exactly the declared extensions claim core text shapes', async () => {
   const lib = await import('@markup-carve/carve')
-  const factories = lib as unknown as Record<string, () => never>
+  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => { extensions?: never[]; renderers?: never }>
 
-  const PROBE = '[@a] and [[x]]'
-  const bare = lib.carveToHtml(PROBE, { extensions: [] })
+  // C2-X-057, C2-X-058: 0.2 matchers claim `:wiki[...]` and `:cite[...]`, so no
+  // enabled extension reads `[@a]` or `[[x]]`, which 0.1 citations and
+  // wikilinks claimed. The spoiler div is a core div the corpus pins.
+  const PROBE = '[@a] and [[x]]\n\n::: spoiler\nx\n:::\n'
+  const bare = lib.render(PROBE)
 
   const changed = PREVIEW_EXTENSIONS
-    .filter((name) => !(TIER1_DECORATING_EXTENSIONS as readonly string[]).includes(name))
-    .filter((name) => lib.carveToHtml(PROBE, { extensions: [factories[name]()] }) !== bare)
+    .filter((name) => name !== 'tabs')
+    .filter((name) => lib.render(PROBE, { ...extensions[name]!() }) !== bare)
     .slice()
     .sort()
 
   assert.deepEqual(changed, [...TIER1_CLAIMING_EXTENSIONS].sort())
-  assert.notEqual(renderPreviewBody(PROBE), renderConformanceBody(PROBE))
   assert.equal(renderConformanceBody(PROBE), bare)
 })
 

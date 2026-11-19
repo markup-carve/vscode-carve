@@ -20,7 +20,7 @@ const registry = new vsctm.Registry({
     'carve.tmLanguage.json',
   ),
 })
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 // `i` italic, `b` bold, `u` underline, `s` strikethrough or deletion,
 // `h` highlight, `n` insertion, `c` code; `d` is a delimiter, where either

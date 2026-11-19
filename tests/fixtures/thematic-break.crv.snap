@@ -1,11 +1,11 @@
 >Before.
-#^^^^^^^^ text.carve
+#^^^^^^^^ source.carve
 >
 >***
-#^^^ text.carve meta.separator.thematic-break.carve
+#^^^ source.carve meta.separator.thematic-break.carve
 >
 >- ***
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^ text.carve meta.separator.thematic-break.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^ source.carve meta.separator.thematic-break.carve
 >

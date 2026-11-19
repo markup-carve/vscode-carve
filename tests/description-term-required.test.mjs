@@ -45,7 +45,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {{line: string, text: string, scopes: string[]}[]} one entry per token. */
 function tokenize(src) {

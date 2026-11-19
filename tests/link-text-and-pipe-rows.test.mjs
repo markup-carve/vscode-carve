@@ -10,7 +10,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import vsctm from 'vscode-textmate'
 import oniguruma from 'vscode-oniguruma'
-import { carveToHtml } from '@markup-carve/carve'
+import { render } from '@markup-carve/carve'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const wasm = readFileSync(resolve(root, 'node_modules/vscode-oniguruma/release/onig.wasm'))
@@ -26,7 +26,7 @@ const registry = new vsctm.Registry({
     'carve.tmLanguage.json',
   ),
 })
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 function tokens(source) {
   let stack = vsctm.INITIAL
@@ -56,7 +56,7 @@ const links = [
 
 for (const [source, text, href] of links) {
   test(`${JSON.stringify(source)} scopes ${JSON.stringify(text)} as the link text`, () => {
-    const html = carveToHtml(source)
+    const html = render(source)
     assert.equal(html.match(/<a /g)?.length, 1, html)
     assert.ok(html.includes(`<a href="${href}">`), html)
     assert.equal(linkTitle(source), text)
@@ -84,7 +84,7 @@ const rows = [
 ]
 
 for (const source of rows) {
-  const isRow = carveToHtml(source).includes('<table')
+  const isRow = render(source).includes('<table')
   test(`${JSON.stringify(source)} is ${isRow ? '' : 'not '}a table row`, () => {
     const scoped = tokens(source).filter((token) => token.scopes.some((scope) => scope.startsWith('markup.table.')))
     assert.equal(scoped.length > 0, isRow, JSON.stringify(scoped.map((token) => [token.text, token.scopes.at(-1)])))

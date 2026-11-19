@@ -1,14 +1,14 @@
 >\*lit\* \[x\] \#h \@u
-#^^ text.carve constant.character.escape.carve
-#  ^^^ text.carve
-#     ^^ text.carve constant.character.escape.carve
-#       ^ text.carve
-#        ^^ text.carve constant.character.escape.carve
-#          ^ text.carve
-#           ^^ text.carve constant.character.escape.carve
-#             ^ text.carve
-#              ^^ text.carve constant.character.escape.carve
-#                ^^ text.carve
-#                  ^^ text.carve constant.character.escape.carve
-#                    ^^ text.carve
+#^^ source.carve constant.character.escape.carve
+#  ^^^ source.carve
+#     ^^ source.carve constant.character.escape.carve
+#       ^ source.carve
+#        ^^ source.carve constant.character.escape.carve
+#          ^ source.carve
+#           ^^ source.carve constant.character.escape.carve
+#             ^ source.carve
+#              ^^ source.carve constant.character.escape.carve
+#                ^^ source.carve
+#                  ^^ source.carve constant.character.escape.carve
+#                    ^^ source.carve
 >

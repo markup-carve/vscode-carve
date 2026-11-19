@@ -25,7 +25,8 @@ test('the target is the sibling .crv with only the last extension swapped', () =
 
 test('Markdown converts through the engine migration', () => {
   const { carve, diagnostics } = convertToCarve('# Title\n\n**bold** and *em*\n', 'markdown')
-  assert.equal(carve, '# Title\n\n*bold* and /em/\n')
+  // C2-W-035: the 0.2 writer spells a heading with `=`.
+  assert.equal(carve, '= Title\n\n*bold* and /em/\n')
   assert.equal(diagnostics, 0)
 })
 
@@ -34,9 +35,10 @@ test('Markdown converts through the engine migration', () => {
 // regression here reaches the user's document rather than a diagnostic. Each
 // case fails against 0.1.9.
 test('Markdown import escapes a bracket an emphasis span crosses', () => {
-  // 0.1.9 returned "/a [b/ c]", whose bracket re-reads as Carve markup and
-  // loses the emphasis outright.
-  assert.equal(convertToCarve('*a [b* c]\n', 'markdown').carve, '/a \\[b/ c]\n')
+  // 0.1.9 returned "/a [b/ c]" under 0.1 rules, where the bracket re-read as
+  // markup. C2-W-088: 0.2 escapes only an opener that would form a construct,
+  // and this bracket forms none, so it stays bare and the emphasis still reads.
+  assert.equal(convertToCarve('*a [b* c]\n', 'markdown').carve, '/a [b/ c]\n')
 })
 
 test('Markdown import keeps a lazy continuation inside its quote', () => {
@@ -50,13 +52,15 @@ test('Markdown import keeps the deactivated outer link as text', () => {
   // outer link and dropped the inner one.
   assert.equal(
     convertToCarve('[a [b](/in) c](/out)\n', 'markdown').carve,
-    '\\[a [b](/in) c\\](\\/out)\n',
+    // C2-W-088: only the leftmost opener that would form a link is escaped.
+    '\\[a [b](/in) c](/out)\n',
   )
 })
 
 test('HTML converts through the engine importer and counts its diagnostics', () => {
   assert.deepEqual(convertToCarve('<h1>Title</h1><p><b>bold</b></p>', 'html'), {
-    carve: '# Title\n\n*bold*\n',
+    // C2-W-035: the 0.2 writer spells a heading with `=`.
+    carve: '= Title\n\n*bold*\n',
     diagnostics: 0,
   })
   assert.ok(convertToCarve('<p>x<script>alert(1)</script></p>', 'html').diagnostics > 0)

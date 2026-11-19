@@ -173,7 +173,7 @@ if (isMain()) {
   const next = splice(text, generate(grammar))
   JSON.parse(next)
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
-  const mapping = manifest.contributes.grammars.find((g) => g.scopeName === 'text.carve').embeddedLanguages
+  const mapping = manifest.contributes.grammars.find((g) => g.scopeName === 'source.carve').embeddedLanguages
   const missing = Object.entries(embeddedLanguages()).filter(([scope, id]) => mapping[scope] !== id)
   if (check) {
     const stale = next !== text

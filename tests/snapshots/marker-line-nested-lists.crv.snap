@@ -1,16 +1,16 @@
 >- - A
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-#    ^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#    ^^ source.carve
 >  - B
-#^^ text.carve markup.list.unnumbered.carve
-#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-#   ^ text.carve markup.list.unnumbered.carve
-#    ^^ text.carve
+#^^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ source.carve markup.list.unnumbered.carve
+#    ^^ source.carve
 >  - C
-#^^ text.carve markup.list.unnumbered.carve
-#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-#   ^ text.carve markup.list.unnumbered.carve
-#    ^^ text.carve
+#^^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ source.carve markup.list.unnumbered.carve
+#    ^^ source.carve
 >

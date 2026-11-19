@@ -24,7 +24,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 function plusScopes(src, lineIndex) {
   let state = vsctm.INITIAL

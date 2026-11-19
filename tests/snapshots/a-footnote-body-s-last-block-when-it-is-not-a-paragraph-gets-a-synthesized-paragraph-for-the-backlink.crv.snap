@@ -1,20 +1,20 @@
 >[^a]: note
-#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#     ^ text.carve meta.footnote.definition.carve
-#      ^^^^^ text.carve
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^^^^ source.carve
 >  ```
-#^^ text.carve markup.raw.block.fenced.code.carve
-#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#^^ source.carve markup.raw.block.fenced.code.carve
+#  ^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
 >  code
-#^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+#^^^^^^^ source.carve markup.raw.block.fenced.code.carve
 >  ```
-#^^ text.carve markup.raw.block.fenced.code.carve
-#  ^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+#^^ source.carve markup.raw.block.fenced.code.carve
+#  ^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
 >
 >see[^a]
-#^^^ text.carve
-#   ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#    ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#     ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
-#      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#^^^ source.carve
+#   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#      ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
 >

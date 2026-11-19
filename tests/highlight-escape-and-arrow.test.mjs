@@ -67,7 +67,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {string} the source text this grammar colours as a highlight BODY. */
 function markedRun(src) {

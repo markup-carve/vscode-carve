@@ -1,55 +1,55 @@
 >> A quote with *bold* and /italic/ text.
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^^^^^^^^^^^^ text.carve markup.quote.carve
-#               ^ text.carve markup.quote.carve punctuation.definition.bold.carve
-#                ^^^^ text.carve markup.quote.carve markup.bold.carve
-#                    ^ text.carve markup.quote.carve punctuation.definition.bold.carve
-#                     ^^^^^ text.carve markup.quote.carve
-#                          ^ text.carve markup.quote.carve markup.italic.carve punctuation.definition.italic.carve
-#                           ^^^^^^ text.carve markup.quote.carve markup.italic.carve markup.italic.carve
-#                                 ^ text.carve markup.quote.carve markup.italic.carve punctuation.definition.italic.carve
-#                                  ^^^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^^^^^^^^^^ source.carve markup.quote.carve
+#               ^ source.carve markup.quote.carve punctuation.definition.bold.carve
+#                ^^^^ source.carve markup.quote.carve markup.bold.carve
+#                    ^ source.carve markup.quote.carve punctuation.definition.bold.carve
+#                     ^^^^^ source.carve markup.quote.carve
+#                          ^ source.carve markup.quote.carve markup.italic.carve punctuation.definition.italic.carve
+#                           ^^^^^^ source.carve markup.quote.carve markup.italic.carve markup.italic.carve
+#                                 ^ source.carve markup.quote.carve markup.italic.carve punctuation.definition.italic.carve
+#                                  ^^^^^^^ source.carve markup.quote.carve
 >
 >> 1. an ordered item
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^ text.carve markup.quote.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#    ^ text.carve markup.quote.carve markup.list.numbered.carve
-#     ^^^^^^^^^^^^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^ source.carve markup.quote.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#    ^ source.carve markup.quote.carve markup.list.numbered.carve
+#     ^^^^^^^^^^^^^^^^ source.carve markup.quote.carve
 >
 >> - a bullet item
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^ text.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-#   ^ text.carve markup.quote.carve markup.list.unnumbered.carve
-#    ^^^^^^^^^^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^ source.carve markup.quote.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ source.carve markup.quote.carve markup.list.unnumbered.carve
+#    ^^^^^^^^^^^^^^ source.carve markup.quote.carve
 >
 >> :: term
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^ text.carve markup.quote.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#    ^ text.carve markup.quote.carve markup.list.definition.term.carve
-#     ^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^ source.carve markup.quote.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#    ^ source.carve markup.quote.carve markup.list.definition.term.carve
+#     ^^^^^ source.carve markup.quote.carve
 >> : body
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^ text.carve markup.quote.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#   ^ text.carve markup.quote.carve markup.list.definition.carve
-#    ^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^ source.carve markup.quote.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#   ^ source.carve markup.quote.carve markup.list.definition.carve
+#    ^^^^^ source.carve markup.quote.carve
 >
 >> ::: note
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^^ text.carve markup.quote.carve markup.other.div.carve punctuation.definition.div.carve
-#     ^ text.carve markup.quote.carve markup.other.div.carve
-#      ^^^^ text.carve markup.quote.carve markup.other.div.carve entity.name.type.div.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^ source.carve markup.quote.carve markup.other.div.carve punctuation.definition.div.carve
+#     ^ source.carve markup.quote.carve markup.other.div.carve
+#      ^^^^ source.carve markup.quote.carve markup.other.div.carve entity.name.type.div.carve
 >> body
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^^ source.carve markup.quote.carve
 >> :::
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^^ text.carve markup.quote.carve markup.other.div.carve punctuation.definition.div.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^ source.carve markup.quote.carve markup.other.div.carve punctuation.definition.div.carve
 >

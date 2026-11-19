@@ -49,7 +49,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 // Each row separates at least two of the readings that shipped.
 const TERMS = [

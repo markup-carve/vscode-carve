@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import test from 'node:test'
 
-import { lintCarve } from '@markup-carve/carve'
+import { lint } from '@markup-carve/carve'
 
 import { renderPreviewBody } from './preview.js'
 
@@ -15,7 +15,7 @@ const demo = readFileSync(
 )
 
 test('the demo document lints without findings', () => {
-  assert.deepEqual(lintCarve(demo).map((w) => `${w.line}: ${w.rule}`), [])
+  assert.deepEqual(lint(demo).map((d) => `${d.range?.startOffset}: ${d.code}`), [])
 })
 
 test('the demo document builds the constructs it advertises', () => {

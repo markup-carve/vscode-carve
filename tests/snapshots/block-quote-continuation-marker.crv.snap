@@ -1,9 +1,9 @@
 >> quoted
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^^^^ source.carve markup.quote.carve
 >+
-#^^ text.carve markup.quote.carve
+#^^ source.carve markup.quote.carve
 >- item
-#^^^^^^^ text.carve markup.quote.carve
+#^^^^^^^ source.carve markup.quote.carve
 >

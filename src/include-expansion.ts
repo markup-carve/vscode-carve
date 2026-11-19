@@ -5,11 +5,11 @@
  * decision comes out of the installed language server - `fileSystemResolver`,
  * canonicalize-then-contain, with the denial classes §19 names - so the rule a
  * preview obeys is the one the server is already enforcing for diagnostics and
- * go-to-definition. The MERGE comes out of the engine: `expandIncludes` carries
- * the heading clamp, the explicit-id and footnote renames (I5), the selection
- * options, the depth, byte and resolver-call bounds. Merging children by hand
- * would mean reimplementing all of that with a failure mode of output that
- * looks right and diverges from `carve flatten` silently (#198).
+ * go-to-definition. The MERGE comes out of the engine: `parse` with the
+ * `includes` option carries the heading clamp, the per-file key scopes
+ * (C2-N-054, C2-N-055), the selection options and the depth bound. Merging
+ * children by hand would mean reimplementing all of that with a failure mode of
+ * output that looks right and diverges from `carve flatten` silently (#198).
  *
  * WHAT THE BUDGETS BOUND. §19's byte budget bounds the expanded OUTPUT and
  * explicitly not the work done to produce it: a target is resolved before its
@@ -18,8 +18,8 @@
  * resolver-call bound. Nothing here adds a pre-read size check, which would
  * contradict the clause.
  *
- * DENIALS ARE NOT SWALLOWED. The engine raises `include-unresolved` whenever a
- * resolver returns nothing; only the resolver knows WHY. The class it reports
+ * DENIALS ARE NOT SWALLOWED. The engine reports only the 0.2 error class
+ * (`not_found`, `outside_root`); the server's resolver knows the finer reason. The class it reports
  * is captured per target and handed back, so a preview can say "outside the
  * containment root" instead of leaving a refused include looking like ordinary
  * prose. §19 I7 keeps the class off the rendered message - a resolver's own
@@ -82,7 +82,7 @@ export interface IncludeRefusal {
 }
 
 export interface ExpansionResult {
-  /** The expanded document, ready for `renderDocument`. */
+  /** The expanded document, ready for `render`. */
   doc: unknown
   warnings: IncludeWarning[]
   suppressedWarnings: number
@@ -97,20 +97,22 @@ export interface ExpansionResult {
   rebased: number
 }
 
+/** A diagnostic of the 0.2 engine, as far as this module reads it. */
+export interface EngineDiagnostic {
+  code: string
+  message: string
+  path?: string
+  range?: { startOffset: number; endOffset: number }
+  file?: string
+}
+
 /** The engine surface this module uses, so a test can drive it with a double. */
 export interface Engine {
-  parse: (source: string, options: Record<string, unknown>) => unknown
-  expandIncludes: (
-    doc: unknown,
+  parseWithDiagnostics: (
     source: string,
     options: Record<string, unknown>,
-  ) => {
-    doc: unknown
-    warnings: IncludeWarning[]
-    suppressedWarnings: number
-    dependencies: IncludeDependency[]
-    chargedBytes: number
-  }
+  ) => { document: unknown; diagnostics: EngineDiagnostic[]; suppressedDiagnostics: number }
+  includeDependencies: (doc: unknown) => Array<{ path: string; read: boolean; file?: string }>
 }
 
 export interface ExpandInput {
@@ -211,35 +213,115 @@ export function utf16Offset(source: string, codepointOffset: number): number {
   return units
 }
 
+type V2Resolved = { text: string; id: string } | { error: 'not_found' | 'outside_root' | 'unreadable' }
+
+const OUTSIDE_ROOT: ReadonlySet<IncludeDenial> = new Set(['outside-root', 'absolute-denied', 'remote-not-allowed'])
+
+interface PosNode {
+  pos?: { startOffset: number; endOffset: number; file?: string }
+  [key: string]: unknown
+}
+
+/**
+ * The range of a diagnostic in the ROOT source, as codepoint offsets. A
+ * diagnostic raised inside a child is anchored at the outermost node of its
+ * path that sits in the root, which is the directive that pulled the child in.
+ */
+function rootRange(doc: unknown, diagnostic: EngineDiagnostic, rootFile: string): { start: number; end: number } | undefined {
+  if (diagnostic.range && (diagnostic.file === undefined || diagnostic.file === rootFile)) {
+    return { start: diagnostic.range.startOffset, end: diagnostic.range.endOffset }
+  }
+  let node = doc as PosNode | undefined
+  let anchor: { start: number; end: number } | undefined
+  for (const segment of (diagnostic.path ?? '').split('/').slice(1)) {
+    const next = (node as Record<string, unknown> | undefined)?.[segment.replace(/~1/g, '/').replace(/~0/g, '~')]
+    node = next as PosNode | undefined
+    if (!node || typeof node !== 'object') break
+    if (node.pos && node.pos.file === undefined) anchor = { start: node.pos.startOffset, end: node.pos.endOffset }
+  }
+  return anchor
+}
+
+/** Byte offset to codepoint offset, and the 1-based line and column there. */
+function locate(source: string, byte: number): { offset: number; line: number; column: number } {
+  let bytes = 0
+  let offset = 0
+  let line = 1
+  let column = 1
+  for (const character of source) {
+    if (bytes >= byte) break
+    bytes += Buffer.byteLength(character)
+    offset++
+    if (character === '\n') { line++; column = 1 } else column++
+  }
+  return { offset, line, column }
+}
+
 export function expandForRender(engine: Engine, input: ExpandInput): ExpansionResult {
   const refusals: IncludeRefusal[] = []
   const cache = input.cache
-  const resolve = (includePath: string, ctx: { sourcePath?: string; stack: string[]; depth: number }) => {
-    const result = input.resolve(includePath, ctx)
+  let chargedBytes = 0
+  const resolver = (request: { path: string; from?: string }): V2Resolved => {
+    const result = input.resolve(request.path, {
+      sourcePath: input.sourcePath,
+      stack: request.from === undefined ? [] : [request.from],
+      depth: 0,
+    })
     if (!result.ok) {
-      refusals.push({ path: includePath, denial: result.denial, ...(result.watch ? { watch: result.watch } : {}) })
-      return null
+      refusals.push({ path: request.path, denial: result.denial, ...(result.watch ? { watch: result.watch } : {}) })
+      return { error: OUTSIDE_ROOT.has(result.denial) ? 'outside_root' : 'not_found' }
     }
     const openBuffer = result.version?.startsWith('open:') === true
     const cached = openBuffer ? undefined : cache?.get(result.id)
-    if (cached !== undefined) return { source: cached, id: result.id }
-    if (!openBuffer) cache?.set(result.id, result.source)
-    return { source: result.source, id: result.id }
+    const source = cached ?? result.source
+    if (cached === undefined && !openBuffer) cache?.set(result.id, result.source)
+    chargedBytes += Buffer.byteLength(source)
+    // 0.2 reads LF and CRLF line ends; a lone CR is read as LF here as the server does.
+    return { text: source.replace(/\r(?!\n)/g, '\n'), id: result.id }
   }
   // Positions on: the warnings carry offsets into the parent source, and a
   // diagnostic that cannot say WHERE is barely better than none.
-  const doc = engine.parse(input.source, {
+  const parsed = engine.parseWithDiagnostics(input.source, {
     positions: true,
+    includes: { resolver, file: input.sourcePath },
     ...(input.extensions ? { extensions: input.extensions } : {}),
   })
-  const expanded = engine.expandIncludes(doc, input.source, {
-    resolve,
-    sourcePath: input.sourcePath,
-  })
+  const warnings: IncludeWarning[] = []
+  for (const diagnostic of parsed.diagnostics) {
+    if (!diagnostic.code.startsWith('include')) continue
+    const range = rootRange(parsed.document, diagnostic, input.sourcePath) ?? { start: 0, end: 0 }
+    const start = locate(input.source, range.start)
+    const end = locate(input.source, range.end)
+    warnings.push({
+      line: start.line,
+      column: start.column,
+      rule: diagnostic.code,
+      message: diagnostic.message,
+      start: start.offset,
+      end: end.offset,
+      ...(diagnostic.file !== undefined ? { file: diagnostic.file } : {}),
+    })
+  }
+  const seen = new Set<string>()
+  const dependencies: IncludeDependency[] = []
+  for (const dependency of engine.includeDependencies(parsed.document)) {
+    const id = dependency.file ?? dependency.path
+    if (seen.has(id)) continue
+    seen.add(id)
+    dependencies.push({ id, resolved: dependency.read })
+  }
   // After the merge and before the render: the destinations are the child's
   // until something rewrites them, and the renderer has no way to tell.
-  const rebased = input.rebase === false ? 0 : rebaseChildDestinations(expanded.doc, input.sourcePath)
-  return { ...expanded, refusals, rebased }
+  const rebased = input.rebase === false ? 0 : rebaseChildDestinations(parsed.document, input.sourcePath)
+  return {
+    doc: parsed.document,
+    warnings,
+    suppressedWarnings: parsed.suppressedDiagnostics,
+    dependencies,
+    chargedBytes,
+    refusals,
+    rebased,
+  }
 }
 
 /**

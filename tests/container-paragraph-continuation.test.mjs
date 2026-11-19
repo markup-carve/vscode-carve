@@ -45,7 +45,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {{line: string, text: string, scopes: string[]}[]} one entry per token. */
 function tokenize(src) {
@@ -251,7 +251,7 @@ test('the container table region does not hold its host open', () => {
   const tokens = tokenize('- | a |\n  + b |\ntail\n')
   for (const t of on(tokens, 'tail')) {
     assert.ok(
-      t.scopes.length === 1 && t.scopes[0] === 'text.carve',
+      t.scopes.length === 1 && t.scopes[0] === 'source.carve',
       `the host outran its bound on tail: ${t.scopes.join(' ')}`,
     )
   }

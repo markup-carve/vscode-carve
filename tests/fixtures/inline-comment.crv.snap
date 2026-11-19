@@ -1,30 +1,30 @@
 >A paragraph with {% a hidden note %} in the middle.
-#^^^^^^^^^^^^^^^^^ text.carve
-#                 ^^ text.carve comment.block.inline.carve
-#                   ^^^^^^^^^^^^^^^ text.carve comment.block.inline.carve
-#                                  ^^ text.carve comment.block.inline.carve
-#                                    ^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^^^ source.carve
+#                 ^^ source.carve comment.block.inline.carve
+#                   ^^^^^^^^^^^^^^^ source.carve comment.block.inline.carve
+#                                  ^^ source.carve comment.block.inline.carve
+#                                    ^^^^^^^^^^^^^^^^ source.carve
 >
 >{% *not bold* and `not code` and {.not-an-attribute} %}
-#^^ text.carve comment.block.inline.carve
-#  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.block.inline.carve
-#                                                     ^^ text.carve comment.block.inline.carve
+#^^ source.carve comment.block.inline.carve
+#  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve comment.block.inline.carve
+#                                                     ^^ source.carve comment.block.inline.carve
 >
 >`{% stays code %}` and a trailing %% line comment
-#^ text.carve markup.raw.inline.carve punctuation.definition.raw.carve
-# ^^^^^^^^^^^^^^^^ text.carve markup.raw.inline.carve markup.raw.inline.content.carve
-#                 ^ text.carve markup.raw.inline.carve punctuation.definition.raw.carve
-#                  ^^^^^^^^^^^^^^^^ text.carve
-#                                  ^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+#^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+# ^^^^^^^^^^^^^^^^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                 ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                  ^^^^^^^^^^^^^^^^ source.carve
+#                                  ^^^^^^^^^^^^^^^ source.carve comment.line.percent.carve
 >
 >| a {% cell note %} | b |
-#^ text.carve markup.table.row.carve punctuation.separator.table.carve
-# ^^^ text.carve markup.table.row.carve
-#    ^^ text.carve markup.table.row.carve comment.block.inline.carve
-#      ^^^^^^^^^^^ text.carve markup.table.row.carve comment.block.inline.carve
-#                 ^^ text.carve markup.table.row.carve comment.block.inline.carve
-#                   ^ text.carve markup.table.row.carve
-#                    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
-#                     ^^^ text.carve markup.table.row.carve
-#                        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^^ source.carve markup.table.row.carve comment.block.inline.carve
+#      ^^^^^^^^^^^ source.carve markup.table.row.carve comment.block.inline.carve
+#                 ^^ source.carve markup.table.row.carve comment.block.inline.carve
+#                   ^ source.carve markup.table.row.carve
+#                    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#                     ^^^ source.carve markup.table.row.carve
+#                        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
 >

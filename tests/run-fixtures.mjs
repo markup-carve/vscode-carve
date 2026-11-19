@@ -19,7 +19,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = dirname(here);
 const fixturesDir = join(here, "fixtures");
 const grammar = join(root, "syntaxes", "carve.tmLanguage.json");
-const scope = "text.carve";
+const scope = "source.carve";
 
 const update = process.argv.includes("-u") || process.argv.includes("--updateSnapshot");
 

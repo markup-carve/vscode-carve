@@ -21,7 +21,7 @@ const root = dirname(here);
 const corpusDir = join(root, "spec", "tests", "corpus");
 const snapDir = join(here, "snapshots");
 const grammar = join(root, "syntaxes", "carve.tmLanguage.json");
-const scope = "text.carve";
+const scope = "source.carve";
 
 const update = process.argv.includes("-u") || process.argv.includes("--updateSnapshot");
 

@@ -1,18 +1,18 @@
 >a
-#^^ text.carve
+#^^ source.carve
 >
 >---
-#^^^ text.carve constant.character.typography.carve
+#^^^ source.carve constant.character.typography.carve
 >
 >b
-#^^ text.carve
+#^^ source.carve
 >
 >***
-#^^^ text.carve meta.separator.thematic-break.carve
+#^^^ source.carve meta.separator.thematic-break.carve
 >
 >c
-#^^ text.carve
+#^^ source.carve
 >
 >___
-#^^^^ text.carve
+#^^^^ source.carve
 >

@@ -1,110 +1,110 @@
 >*a **b* c
-#^ text.carve punctuation.definition.bold.carve
-# ^^^^^ text.carve markup.bold.carve
-#      ^ text.carve punctuation.definition.bold.carve
-#       ^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^^^^ source.carve markup.bold.carve
+#      ^ source.carve punctuation.definition.bold.carve
+#       ^^^ source.carve
 >
 >***a***
-#^^^^^^^^ text.carve
+#^^^^^^^^ source.carve
 >
 >*a** b
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^^^^ source.carve
 >
 >**a*
-#^^^^^ text.carve
+#^^^^^ source.carve
 >
 >a *** b
-#^^^^^^^^ text.carve
+#^^^^^^^^ source.carve
 >
 >*a*b*
-#^ text.carve punctuation.definition.bold.carve
-# ^^^ text.carve markup.bold.carve
-#    ^ text.carve punctuation.definition.bold.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^^ source.carve markup.bold.carve
+#    ^ source.carve punctuation.definition.bold.carve
 >
 >a ** b
-#^^^^^^^ text.carve
+#^^^^^^^ source.carve
 >
 >a **b** c
-#^^^^^^^^^^ text.carve
+#^^^^^^^^^^ source.carve
 >
 >*a*
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
 >
 >*a* b
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^^^ source.carve
 >
 >*a *b** c
-#^ text.carve punctuation.definition.bold.carve
-# ^^ text.carve markup.bold.carve
-#   ^ text.carve markup.bold.carve
-#    ^ text.carve markup.bold.carve
-#     ^ text.carve punctuation.definition.bold.carve
-#      ^^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^ source.carve markup.bold.carve
+#   ^ source.carve markup.bold.carve
+#    ^ source.carve markup.bold.carve
+#     ^ source.carve punctuation.definition.bold.carve
+#      ^^^^ source.carve
 >
 >*a**
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^^ source.carve
 >
 >*a***b* c
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^^^^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^^^^^^^ source.carve
 >
 >*a**b* c
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^^^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^^^^^^ source.carve
 >
 >*a {% b** c
-#^ text.carve punctuation.definition.bold.carve
-# ^^ text.carve markup.bold.carve
-#   ^^ text.carve markup.bold.carve
-#     ^^ text.carve markup.bold.carve
-#       ^ text.carve punctuation.definition.bold.carve
-#        ^^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^ source.carve markup.bold.carve
+#   ^^ source.carve markup.bold.carve
+#     ^^ source.carve markup.bold.carve
+#       ^ source.carve punctuation.definition.bold.carve
+#        ^^^^ source.carve
 >
 >*a {# b** c
-#^ text.carve punctuation.definition.bold.carve
-# ^^ text.carve markup.bold.carve
-#   ^^ text.carve markup.bold.carve
-#     ^^ text.carve markup.bold.carve
-#       ^ text.carve punctuation.definition.bold.carve
-#        ^^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^ source.carve markup.bold.carve
+#   ^^ source.carve markup.bold.carve
+#     ^^ source.carve markup.bold.carve
+#       ^ source.carve punctuation.definition.bold.carve
+#        ^^^^ source.carve
 >
 >*a {% b* c %} d*
-#^ text.carve punctuation.definition.bold.carve
-# ^^ text.carve markup.bold.carve
-#   ^^ text.carve markup.bold.carve comment.block.inline.carve
-#     ^^^^^^ text.carve markup.bold.carve comment.block.inline.carve
-#           ^^ text.carve markup.bold.carve comment.block.inline.carve
-#             ^^ text.carve markup.bold.carve
-#               ^ text.carve punctuation.definition.bold.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^ source.carve markup.bold.carve
+#   ^^ source.carve markup.bold.carve comment.block.inline.carve
+#     ^^^^^^ source.carve markup.bold.carve comment.block.inline.carve
+#           ^^ source.carve markup.bold.carve comment.block.inline.carve
+#             ^^ source.carve markup.bold.carve
+#               ^ source.carve punctuation.definition.bold.carve
 >
 >*a {% b**c
-#^ text.carve punctuation.definition.bold.carve
-# ^^ text.carve markup.bold.carve
-#   ^^ text.carve markup.bold.carve
-#     ^^ text.carve markup.bold.carve
-#       ^ text.carve punctuation.definition.bold.carve
-#        ^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^ source.carve markup.bold.carve
+#   ^^ source.carve markup.bold.carve
+#     ^^ source.carve markup.bold.carve
+#       ^ source.carve punctuation.definition.bold.carve
+#        ^^^ source.carve
 >
 >*a {# b**c
-#^ text.carve punctuation.definition.bold.carve
-# ^^ text.carve markup.bold.carve
-#   ^^ text.carve markup.bold.carve
-#     ^^ text.carve markup.bold.carve
-#       ^ text.carve punctuation.definition.bold.carve
-#        ^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^^ source.carve markup.bold.carve
+#   ^^ source.carve markup.bold.carve
+#     ^^ source.carve markup.bold.carve
+#       ^ source.carve punctuation.definition.bold.carve
+#        ^^^ source.carve
 >

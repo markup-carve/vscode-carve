@@ -181,9 +181,11 @@ const seenIds = new Set()
 const falseIds = new Set()
 const localRoot = localGrammar.scopeName
 const upstreamRoot_ = upstreamGrammar.scopeName
+// Both grammars are named source.carve, so tokens are cached by side, not by scope name.
+const sideOf = (grammar) => (grammar === localGrammar ? 'local' : 'upstream')
 const tokenCache = new Map()
 const tokensFor = async (grammar, fixture) => {
-  const key = `${grammar.scopeName}:${fixture}`
+  const key = `${sideOf(grammar)}:${fixture}`
   if (!tokenCache.has(key)) tokenCache.set(key, await tokenize(grammar, fixtureSource(fixture)))
   return tokenCache.get(key)
 }
@@ -203,7 +205,7 @@ async function assertCoverage({ id, owner, fixture, ownerGrammar, ownerRule, oth
   }
   const attributed = await spansOwnedBy(ownerGrammar, ownerRule, fixtureSource(fixture))
   if (attributed === null) {
-    problems.push(`${owner} names ${ownerRule}, which ${ownerGrammar.scopeName} does not have`)
+    problems.push(`${owner} names ${ownerRule}, which the ${sideOf(ownerGrammar)} ${ownerGrammar.scopeName} does not have`)
     return problems
   }
   const owned = attributed.spans
@@ -220,7 +222,7 @@ async function assertCoverage({ id, owner, fixture, ownerGrammar, ownerRule, oth
     if (highlighted !== expect) {
       problems.push(
         `${owner}: ${JSON.stringify(span.text)} at ${fixture}.crv:${span.row + 1}:${span.start + 1} is ` +
-          `${highlighted ? 'highlighted' : 'left unhighlighted'} by ${otherGrammar.scopeName}. ${hint}`,
+          `${highlighted ? 'highlighted' : 'left unhighlighted'} by the ${sideOf(otherGrammar)} ${otherGrammar.scopeName}. ${hint}`,
       )
       break
     }

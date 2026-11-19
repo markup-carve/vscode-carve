@@ -1,5 +1,5 @@
 >#i#j
-#^ text.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
-# ^ text.carve constant.other.symbol.tag.carve variable.other.tag.carve
-#  ^^^ text.carve
+#^ source.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+# ^ source.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#  ^^^ source.carve
 >
