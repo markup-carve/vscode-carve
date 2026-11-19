@@ -1,8 +1,11 @@
-import { parse, render, tabsExtensions, tabsRenderer } from '@markup-carve/carve'
+import { parse, render, renderWithDocumentTransforms, tabsExtensions, tabsRenderer, type DocumentTransform } from '@markup-carve/carve'
 import {
   chart,
+  citations,
   codeGroup,
   details,
+  glossary,
+  index,
   listTable,
   mathBlock,
   mermaid,
@@ -16,10 +19,11 @@ type RenderOptions = NonNullable<Parameters<typeof render>[1]>
 type ExtensionDefinitions = NonNullable<RenderOptions['extensions']>
 type ExtensionRenderers = NonNullable<RenderOptions['renderers']>
 
-/** Extension definitions plus the renderers that draw them, the 0.2 bundle shape. */
+/** Extension definitions, the renderers that draw them and the document transforms that resolve them (C2-X-053). */
 export interface PreviewExtensionSet {
   extensions: ExtensionDefinitions
   renderers: ExtensionRenderers
+  transforms?: readonly DocumentTransform[]
 }
 
 /**
@@ -48,6 +52,9 @@ export const PREVIEW_EXTENSIONS = [
   'listTable',
   'chart',
   'wikilinks',
+  'citations',
+  'glossary',
+  'index',
 ] as const
 
 /**
@@ -95,6 +102,9 @@ const EXTENSION_FACTORIES: Record<string, () => PreviewExtensionSet> = {
   listTable,
   chart,
   wikilinks,
+  citations,
+  glossary,
+  index,
 }
 
 /**
@@ -116,7 +126,7 @@ export const TIER1_CLAIMING_EXTENSIONS = ['spoiler'] as const
 
 function extensionSet(names: readonly string[]): PreviewExtensionSet {
   const merged = withExtensions(...names.map((name) => EXTENSION_FACTORIES[name]!()))
-  return { extensions: merged.extensions ?? [], renderers: merged.renderers ?? {} }
+  return { extensions: merged.extensions ?? [], renderers: merged.renderers ?? {}, transforms: merged.transforms ?? [] }
 }
 
 /**
@@ -255,7 +265,7 @@ export function renderPreviewBody(source: string, options: PreviewRenderOptions 
   const { document, extensions: supplied, ...rest } = options
   const set = supplied ?? previewExtensions()
   const tree = document ?? parse(source, { extensions: set.extensions })
-  return render(decorateLinks(tree) as Parameters<typeof render>[0], engineOptions(rest, set))
+  return renderWithDocumentTransforms(decorateLinks(tree) as Parameters<typeof render>[0], set.transforms ?? [], engineOptions(rest, set)).html
 }
 
 /**
@@ -278,7 +288,7 @@ export function renderConformanceBody(source: string, options: PreviewRenderOpti
   const claiming = new Set<string>(TIER1_CLAIMING_EXTENSIONS as readonly string[])
   const set = extensionSet(PREVIEW_EXTENSIONS.filter((name) => !claiming.has(name)))
   const { document: _document, extensions: _extensions, ...rest } = options
-  return render(source, { ...engineOptions(rest, set), rawHtml: false })
+  return renderWithDocumentTransforms(source, set.transforms ?? [], { ...engineOptions(rest, set), rawHtml: false }).html
 }
 
 export interface PreviewAssets {
