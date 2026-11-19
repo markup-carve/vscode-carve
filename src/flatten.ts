@@ -7,10 +7,10 @@
  * flattening asks for the other document, the one that can be handed to
  * something with no filesystem behind it.
  *
- * The steps are the ones `carve flatten` makes, in the same order, against the
- * same engine: expand, splice each include's children in place, then run the
- * Carve WRITER. Nothing here reimplements the merge semantics, which is what
- * keeps this from diverging from the CLI silently (#198).
+ * Expansion goes through the shared include path, then the engine's `flatten`,
+ * the call `carve flatten` makes, splices each include's children in place and
+ * runs the Carve WRITER. Nothing here reimplements the merge semantics, which is
+ * what keeps this from diverging from the CLI silently (#198).
  *
  * NOT REBASED, on purpose. A child's relative destinations are rewritten for a
  * RENDER (#192) because the result is resolved from the parent's folder. `carve
@@ -23,10 +23,9 @@
  */
 import { expandForRender, type Engine, type ExpandInput, type ExpansionResult } from './include-expansion.js'
 
-/** The writer this module needs, so a test can see exactly what is called. */
+/** The engine call this module needs, so a test can see exactly what is called. */
 export interface Writer {
-  write: (doc: unknown) => string
-  render: (source: unknown) => string
+  flatten: (doc: unknown) => { source: string; same: boolean }
 }
 
 export interface FlattenResult {
@@ -41,44 +40,13 @@ export interface FlattenResult {
   changed: boolean
 }
 
-interface Node {
-  type: string
-  children?: Node[]
-  [key: string]: unknown
-}
-
-// The splice of carve-js `cli/flatten.ts`, which the engine does not export yet.
-function spliced(nodes: readonly Node[]): Node[] {
-  const result: Node[] = []
-  for (const node of nodes) {
-    // An include that did not expand has no children and keeps its directive.
-    if (node.type === 'include' && node.children !== undefined) {
-      result.push(...spliced((node.children ?? []).filter((child) => child.type !== 'frontmatter')))
-    } else result.push(withSplicedSlots(node))
-  }
-  return result
-}
-
-function withSplicedSlots(node: Node): Node {
-  let copy: Node | undefined
-  for (const [key, value] of Object.entries(node)) {
-    if (!Array.isArray(value) || !value.some((item) => typeof item === 'object' && item !== null && 'type' in item)) continue
-    copy ??= { ...node }
-    copy[key] = spliced(value as Node[])
-  }
-  return copy ?? node
-}
-
 export function flattenDocument(
   engine: Engine & Writer,
   input: Omit<ExpandInput, 'rebase'>,
 ): FlattenResult {
   const expansion = expandForRender(engine, { ...input, rebase: false })
-  const document = expansion.doc as Node
-  const tree: Node = { ...document, children: spliced(document.children ?? []) }
-  delete tree.stages
-  const text = engine.write(tree)
-  return { text, expansion, changed: engine.render(text) !== engine.render(document) }
+  const { source, same } = engine.flatten(expansion.doc)
+  return { text: source, expansion, changed: !same }
 }
 
 export const MAX_FLATTEN_CANDIDATES = 100

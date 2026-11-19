@@ -6,7 +6,7 @@ Carve support for VS Code, with TextMate highlighting, preview, and a bundled la
 
 - Highlighting for `.crv` files and code fences. The TextMate grammar reads Carve 0.2 source; its root scope is `source.carve`, as in carve-grammars.
 - Preview, import, export, and language server features, all on the Carve 0.2 engine.
-- The preview enables the standard 0.2 extensions it can draw (details, spoiler, tabs, code groups, list tables, math, mermaid, charts, `:wiki[...]` links) and links bare URLs and opens off-site links in a new tab. Raw HTML is shown, as before. Citations wait for a 0.2 citation extension ([carve-js#5082](https://github.com/markup-carve/carve-js/issues/5082)).
+- The preview enables the standard 0.2 extensions it can draw (details, spoiler, tabs, code groups, list tables, math, mermaid, charts, `:wiki[...]` links, `:cite[...]` citations with a `references` list, `:term[...]` glossary links and `:index[...]` entries) and links bare URLs and opens off-site links in a new tab. Raw HTML is shown, as before.
 - **Carve: Export to Markdown** writes the engine's Markdown export (`toMarkdown`). Markdown and HTML import read Markdown as GFM.
 
 ## Install

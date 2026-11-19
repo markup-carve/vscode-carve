@@ -295,8 +295,9 @@ test('headingPermalinks stays off, on purpose and on the record', () => {
   )
 })
 
-test('a [@key] citation renders with its reference list', { skip: 'carve-js#5082: 0.2 has no citation extension yet (C2-X-058)' }, () => {
-  const cited = renderPreviewBody('See [@knuth1984].\n\n[@knuth1984]: Knuth, D. /The TeXbook/. 1984.')
+// C2-X-058: `:cite[key]` cites, and a `references` directive holds the entries as a definition list.
+test('a :cite[key] citation renders with its reference list', () => {
+  const cited = renderPreviewBody('See :cite[knuth1984].\n\n::: references\n:: knuth1984\n: Knuth, D. /The TeXbook/. 1984.\n:::\n')
   assert.match(cited, /data-cite-key="knuth1984"/)
   assert.match(cited, /<ol class="references">/)
 })
@@ -320,9 +321,16 @@ test('the extensions the preview had been missing actually render', () => {
   )
 })
 
+type Bundle = { extensions?: never[]; renderers?: never; transforms?: never[] }
+
+/** A bundle rendered as the preview renders it: its document transforms run too (C2-X-053). */
+function renderBundle(lib: typeof import('@markup-carve/carve'), source: string, { transforms = [], ...options }: Bundle): string {
+  return lib.renderWithDocumentTransforms(source, transforms, options).html
+}
+
 test('exactly the declared extensions decorate Tier-1 output', async () => {
   const lib = await import('@markup-carve/carve')
-  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => { extensions?: never[]; renderers?: never }>
+  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => Bundle>
   const tabs = () => ({ extensions: lib.tabsExtensions as never[], renderers: { 'carve.tabs': lib.tabsRenderer } as never })
 
   // A link and a bare URL - between them, the Tier-1 constructs the corpus pins
@@ -332,7 +340,7 @@ test('exactly the declared extensions decorate Tier-1 output', async () => {
   const bare = lib.render(PROBE)
 
   const changed = PREVIEW_EXTENSIONS
-    .filter((name) => lib.render(PROBE, { ...(name === 'tabs' ? tabs() : extensions[name]!()) }) !== bare)
+    .filter((name) => renderBundle(lib, PROBE, name === 'tabs' ? tabs() : extensions[name]!()) !== bare)
     .slice()
     .sort()
 
@@ -365,7 +373,7 @@ test('exactly the declared extensions decorate Tier-1 output', async () => {
 
 test('exactly the declared extensions claim core text shapes', async () => {
   const lib = await import('@markup-carve/carve')
-  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => { extensions?: never[]; renderers?: never }>
+  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => Bundle>
 
   // C2-X-057, C2-X-058: 0.2 matchers claim `:wiki[...]` and `:cite[...]`, so no
   // enabled extension reads `[@a]` or `[[x]]`, which 0.1 citations and
@@ -375,7 +383,7 @@ test('exactly the declared extensions claim core text shapes', async () => {
 
   const changed = PREVIEW_EXTENSIONS
     .filter((name) => name !== 'tabs')
-    .filter((name) => lib.render(PROBE, { ...extensions[name]!() }) !== bare)
+    .filter((name) => renderBundle(lib, PROBE, extensions[name]!()) !== bare)
     .slice()
     .sort()
 

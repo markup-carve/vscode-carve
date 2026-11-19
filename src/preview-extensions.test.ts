@@ -22,8 +22,7 @@ const lspDist = join(dirname(require.resolve('@markup-carve/carve-lsp/package.js
 
 /**
  * A details block is the cheapest construct whose PARSE the extension set
- * decides: without the set it is a core `div` (0.2 has no citation extension,
- * carve-js#5082, which was the probe under 0.1).
+ * decides: without the set it is a core `div`.
  */
 const DETAILS = '::: details "More"\nHidden.\n:::'
 
