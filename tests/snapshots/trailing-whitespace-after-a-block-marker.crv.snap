@@ -1,10 +1,10 @@
 >a
-#^^ text.carve
+#^^ source.carve
 >
 >--- 
-#^^^ text.carve constant.character.typography.carve
-#   ^^ text.carve
+#^^^ source.carve constant.character.typography.carve
+#   ^^ source.carve
 >
 >b
-#^^ text.carve
+#^^ source.carve
 >

@@ -1,37 +1,37 @@
 >iv.  lower roman
-#^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#   ^^ text.carve markup.list.numbered.carve
-#     ^^^^^^^^^^^^ text.carve
+#^^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#   ^^ source.carve markup.list.numbered.carve
+#     ^^^^^^^^^^^^ source.carve
 >
 >IV.  upper roman
-#^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#   ^^ text.carve markup.list.numbered.carve
-#     ^^^^^^^^^^^^ text.carve
+#^^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#   ^^ source.carve markup.list.numbered.carve
+#     ^^^^^^^^^^^^ source.carve
 >
 >ivx.  a longer lower run
-#^^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#    ^^ text.carve markup.list.numbered.carve
-#      ^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#    ^^ source.carve markup.list.numbered.carve
+#      ^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >IVX.  a longer upper run
-#^^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#    ^^ text.carve markup.list.numbered.carve
-#      ^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#    ^^ source.carve markup.list.numbered.carve
+#      ^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >mix.  a word made only of roman letters
-#^^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#    ^^ text.carve markup.list.numbered.carve
-#      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#    ^^ source.carve markup.list.numbered.carve
+#      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >Vim. mixed case is prose
-#^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >Mix. mixed case is prose
-#^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >Ix. two letters, mixed case, prose
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >Note. an ordinary sentence start
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >

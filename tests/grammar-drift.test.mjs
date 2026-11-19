@@ -24,7 +24,7 @@ function fakeUpstream() {
   Object.values(declarations.localRulesGroupedUpstream).forEach(({ upstream: name }) => names.add(name))
   const repository = Object.fromEntries([...names].map((name) => [name, { name: `meta.${name}.carve`, match: 'x' }]))
   repository.container_blocks = { patterns: [] }
-  return { scopeName: 'text.carve', patterns: [], repository }
+  return { scopeName: 'source.carve', patterns: [], repository }
 }
 
 function withUpstream(grammar, callback) {

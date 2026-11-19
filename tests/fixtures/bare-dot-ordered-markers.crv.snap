@@ -1,47 +1,47 @@
 >. first
-#^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.numbered.carve
-#  ^^^^^^ text.carve
+#^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.numbered.carve
+#  ^^^^^^ source.carve
 >. second
-#^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.numbered.carve
-#  ^^^^^^^ text.carve
+#^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.numbered.carve
+#  ^^^^^^^ source.carve
 >
 >1. explicit
-#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.numbered.carve
-#   ^^^^^^^^^ text.carve
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.numbered.carve
+#   ^^^^^^^^^ source.carve
 >. continues the same list
-#^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.numbered.carve
-#  ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.numbered.carve
+#  ^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >.{#x} attributed
-#^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve meta.attributes.carve
-#  ^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
-#    ^ text.carve meta.attributes.carve
-#     ^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve meta.attributes.carve
+#  ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#    ^ source.carve meta.attributes.carve
+#     ^^^^^^^^^^^^ source.carve
 >
 >3.{#k v} valued with attrs
-#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#  ^ text.carve meta.attributes.carve
-#   ^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
-#     ^^^ text.carve meta.attributes.carve
-#        ^^^^^^^^^^^^^^^^^^^ text.carve
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve meta.attributes.carve
+#   ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#     ^^^ source.carve meta.attributes.carve
+#        ^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >a.  alpha
-#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#  ^^ text.carve markup.list.numbered.carve
-#    ^^^^^^ text.carve
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^^ source.carve markup.list.numbered.carve
+#    ^^^^^^ source.carve
 >
 >iv.  roman
-#^^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#   ^^ text.carve markup.list.numbered.carve
-#     ^^^^^^ text.carve
+#^^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#   ^^ source.carve markup.list.numbered.carve
+#     ^^^^^^ source.carve
 >
 >1) paren
-#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.numbered.carve
-#   ^^^^^^ text.carve
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.numbered.carve
+#   ^^^^^^ source.carve
 >

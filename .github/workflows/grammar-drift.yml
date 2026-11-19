@@ -65,14 +65,10 @@ jobs:
           CARVE_GRAMMARS_DIR: carve-grammars
         run: tools/report-grammar-drift.sh
 
-      # GATED: the vendored battery and fence-language table are byte copies of
-      # carve-grammars' tables. Moved here from ci.yml because they need network.
-      - name: The vendored block battery still matches carve-grammars
-        if: always()
-        env:
-          CARVE_GRAMMARS_DIR: carve-grammars
-        run: ./tools/check-battery-drift.sh
-
+      # GATED: the vendored fence-language table is a byte copy of carve-grammars'
+      # table. Moved here from ci.yml because it needs network. carve-grammars#903
+      # removed the 0.1 block battery, so tests/lib/block-battery.json is a local
+      # fixture now and has no upstream to drift from.
       - name: The vendored fence-language table still matches carve-grammars
         if: always()
         env:

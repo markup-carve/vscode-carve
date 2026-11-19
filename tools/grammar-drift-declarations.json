@@ -16,9 +16,7 @@
     "figure_group": { "local": "divs", "fixture": "composite-figures" },
     "blockquote_in_container": { "local": "block-quotes", "fixture": "blockquote-marker-spacing" },
     "abbreviation": { "local": "definitions", "fixture": "definition-at-a-content-column" },
-    "abbreviation_in_container": { "local": "definitions-in-container", "fixture": "definition-at-a-content-column" },
     "link_ref_def": { "local": "definitions", "fixture": "reference-images-and-crossrefs" },
-    "link_ref_def_in_container": { "local": "definitions-in-container", "fixture": "definition-at-a-content-column" },
     "table_row": { "local": "tables", "fixture": "table-patterns" },
     "multiline_cell": { "local": "tables", "fixture": "table-patterns" },
     "task_item": { "local": "lists", "fixture": "marker-requires-content" },
@@ -103,10 +101,12 @@
     "fenced-code-languages-in-colon-container-3": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
     "fenced-code-languages-in-colon-container-4": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
     "fenced-code-languages-in-colon-container-5": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
-    "code-blocks-in-long-colon-container": { "upstream": "fenced_code", "fixture": "container-fences" }
+    "code-blocks-in-long-colon-container": { "upstream": "fenced_code", "fixture": "container-fences" },
+    "thematic-break-behind-a-container-prefix": { "upstream": "container_blocks", "fixture": "thematic-break" },
+    "code-block-at-an-indent": { "upstream": "fenced_code", "fixture": "indented-fences" },
+    "fenced-code-languages-at-an-indent": { "upstream": "fenced_code_languages", "fixture": "indented-fences" }
   },
   "localOnlyRules": {
-    "container-body": "grammar-correctness",
-    "thematic-break-behind-a-container-prefix": "thematic-break"
+    "container-body": "grammar-correctness"
   }
 }

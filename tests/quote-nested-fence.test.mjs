@@ -33,7 +33,7 @@ const registry = new vsctm.Registry({
     createOnigString: (str) => new oniguruma.OnigString(str),
   }),
   loadGrammar: async (scope) =>
-    scope === 'text.carve'
+    scope === 'source.carve'
       ? vsctm.parseRawGrammar(
           readFileSync(resolve(root, 'syntaxes/carve.tmLanguage.json'), 'utf8'),
           'carve.tmLanguage.json',
@@ -41,7 +41,7 @@ const registry = new vsctm.Registry({
       : null,
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {Map<string, boolean>} each `wN` word mapped to whether it is verbatim. */
 function verbatimWords(src) {

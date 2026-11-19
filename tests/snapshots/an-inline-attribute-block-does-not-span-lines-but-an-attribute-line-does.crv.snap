@@ -1,8 +1,8 @@
 >*x*{.a
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^^^ text.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^^^^ source.carve
 >.b}
-#^^^^ text.carve
+#^^^^ source.carve
 >

@@ -1,20 +1,20 @@
 >> ![a](i.png)
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^ text.carve markup.quote.carve meta.image.inline.carve punctuation.definition.image.begin.carve
-#    ^ text.carve markup.quote.carve meta.image.inline.carve string.other.image.alt.carve
-#     ^^ text.carve markup.quote.carve meta.image.inline.carve
-#       ^^^^^ text.carve markup.quote.carve meta.image.inline.carve markup.underline.link.image.carve
-#            ^ text.carve markup.quote.carve meta.image.inline.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^ source.carve markup.quote.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#    ^ source.carve markup.quote.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ source.carve markup.quote.carve meta.image.inline.carve
+#       ^^^^^ source.carve markup.quote.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ source.carve markup.quote.carve meta.image.inline.carve
 >> ^ cap
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^ text.carve markup.quote.carve markup.table.caption.carve punctuation.definition.caption.carve
-#   ^ text.carve markup.quote.carve markup.table.caption.carve
-#    ^^^ text.carve markup.quote.carve markup.table.caption.carve string.unquoted.caption.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^ source.carve markup.quote.carve markup.table.caption.carve punctuation.definition.caption.carve
+#   ^ source.carve markup.quote.carve markup.table.caption.carve
+#    ^^^ source.carve markup.quote.carve markup.table.caption.carve string.unquoted.caption.carve
 >
 >> plain
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^^^ source.carve markup.quote.carve
 >

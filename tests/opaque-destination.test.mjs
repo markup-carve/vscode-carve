@@ -26,7 +26,7 @@ const registry = new vsctm.Registry({
     'carve.tmLanguage.json',
   ),
 })
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 // Only the run's own delimiters drop out; a nested link or quote keeps its punctuation.
 const runDelimiter = /^punctuation\.definition\.(?:italic|underline|strike|highlight|bold|bold-italic)\.carve$/

@@ -1,26 +1,26 @@
 >*x*{.a	.b}
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^ text.carve meta.attributes.carve
-#    ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#      ^ text.carve meta.attributes.carve
-#       ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#         ^ text.carve meta.attributes.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^ source.carve meta.attributes.carve
+#    ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#         ^ source.carve meta.attributes.carve
 >
 >*y*{	.c}
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^^ text.carve meta.attributes.carve
-#     ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#       ^ text.carve meta.attributes.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^^ source.carve meta.attributes.carve
+#     ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#       ^ source.carve meta.attributes.carve
 >
 >*z*{.d	}
-#^ text.carve punctuation.definition.bold.carve
-# ^ text.carve markup.bold.carve
-#  ^ text.carve punctuation.definition.bold.carve
-#   ^ text.carve meta.attributes.carve
-#    ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#      ^^ text.carve meta.attributes.carve
+#^ source.carve punctuation.definition.bold.carve
+# ^ source.carve markup.bold.carve
+#  ^ source.carve punctuation.definition.bold.carve
+#   ^ source.carve meta.attributes.carve
+#    ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#      ^^ source.carve meta.attributes.carve
 >

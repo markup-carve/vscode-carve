@@ -28,7 +28,7 @@ const checker = resolve(root, 'tools/check-grammar-drift.mjs')
 const FIXTURE = '*bold* and @@mine and a [ref]: /u\n'
 
 const localGrammar = {
-	scopeName: 'text.carve',
+	scopeName: 'source.carve',
 	patterns: [{ include: '#emphasis' }, { include: '#mine' }, { include: '#definitions' }],
 	repository: {
 		emphasis: {

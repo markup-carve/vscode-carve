@@ -1,48 +1,48 @@
 >foo{*bar*}baz and my{_path_}name and a{/b/}c
-#^^^ text.carve
-#   ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#     ^^^ text.carve markup.bold.carve markup.bold.carve
-#        ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#          ^^^^^^^^^^ text.carve
-#                    ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
-#                      ^^^^ text.carve markup.underline.text.carve markup.underline.text.carve
-#                          ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
-#                            ^^^^^^^^^^ text.carve
-#                                      ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#                                        ^ text.carve markup.italic.carve markup.italic.carve
-#                                         ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#                                           ^^ text.carve
+#^^^ source.carve
+#   ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
+#     ^^^ source.carve markup.bold.carve markup.bold.carve
+#        ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
+#          ^^^^^^^^^^ source.carve
+#                    ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#                      ^^^^ source.carve markup.underline.text.carve markup.underline.text.carve
+#                          ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#                            ^^^^^^^^^^ source.carve
+#                                      ^^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#                                        ^ source.carve markup.italic.carve markup.italic.carve
+#                                         ^^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#                                           ^^ source.carve
 >
 >{/a/b/} and {/italic *bold*/}
-#^^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#  ^ text.carve markup.italic.carve markup.italic.carve
-#   ^ text.carve markup.italic.carve markup.italic.carve
-#    ^ text.carve markup.italic.carve markup.italic.carve
-#     ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#       ^^^^^ text.carve
-#            ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
-#              ^^^^^^^ text.carve markup.italic.carve markup.italic.carve
-#                     ^ text.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
-#                      ^^^^ text.carve markup.italic.carve markup.italic.carve markup.bold.carve
-#                          ^ text.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
-#                           ^^ text.carve markup.italic.carve punctuation.definition.italic.carve
+#^^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#  ^ source.carve markup.italic.carve markup.italic.carve
+#   ^ source.carve markup.italic.carve markup.italic.carve
+#    ^ source.carve markup.italic.carve markup.italic.carve
+#     ^^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#       ^^^^^ source.carve
+#            ^^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#              ^^^^^^^ source.carve markup.italic.carve markup.italic.carve
+#                     ^ source.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
+#                      ^^^^ source.carve markup.italic.carve markup.italic.carve markup.bold.carve
+#                          ^ source.carve markup.italic.carve markup.italic.carve punctuation.definition.bold.carve
+#                           ^^ source.carve markup.italic.carve punctuation.definition.italic.carve
 >
 >{~gone~} but {-old-}{+new+} stays editorial
-#^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
-#  ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
-#      ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
-#        ^^^^^ text.carve
-#             ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
-#               ^^^ text.carve markup.deleted.critic.carve markup.deleted.carve
-#                  ^^ text.carve markup.deleted.critic.carve punctuation.definition.critic.carve
-#                    ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
-#                      ^^^ text.carve markup.inserted.critic.carve markup.inserted.carve
-#                         ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
-#                           ^^^^^^^^^^^^^^^^^ text.carve
+#^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^^^^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#      ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#        ^^^^^ source.carve
+#             ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#               ^^^ source.carve markup.deleted.critic.carve markup.deleted.carve
+#                  ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                    ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                      ^^^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#                         ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                           ^^^^^^^^^^^^^^^^^ source.carve
 >
 >{_path_} is underline, not a boolean attribute
-#^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
-#  ^^^^ text.carve markup.underline.text.carve markup.underline.text.carve
-#      ^^ text.carve markup.underline.text.carve punctuation.definition.underline.carve
-#        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#  ^^^^ source.carve markup.underline.text.carve markup.underline.text.carve
+#      ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >

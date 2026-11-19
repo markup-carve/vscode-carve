@@ -1,21 +1,21 @@
 >- a
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^ source.carve
 >  [^f]: x
-#^^ text.carve
-#  ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#   ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#    ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
-#     ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#      ^^^^ text.carve
+#^^ source.carve
+#  ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#     ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#      ^^^^ source.carve
 >  more
-#^^^^^^^ text.carve
+#^^^^^^^ source.carve
 >
 >see[^f]
-#^^^ text.carve
-#   ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#    ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#     ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
-#      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#^^^ source.carve
+#   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#      ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
 >

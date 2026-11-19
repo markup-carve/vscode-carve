@@ -1,13 +1,13 @@
 >before
-#^^^^^^^ text.carve
+#^^^^^^^ source.carve
 >
 >%%%%
-#^^^^ text.carve comment.block.carve
+#^^^^ source.carve comment.block.carve
 >hidden %%% inner fence stays hidden
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.block.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve comment.block.carve
 >%%%%
-#^^^^ text.carve comment.block.carve
+#^^^^ source.carve comment.block.carve
 >
 >after
-#^^^^^^ text.carve
+#^^^^^^ source.carve
 >

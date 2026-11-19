@@ -1,9 +1,9 @@
 >a
-#^^ text.carve
+#^^ source.carve
 >
 >--
-#^^ text.carve constant.character.typography.carve
+#^^ source.carve constant.character.typography.carve
 >
 >b
-#^^ text.carve
+#^^ source.carve
 >

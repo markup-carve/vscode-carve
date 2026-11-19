@@ -8,9 +8,9 @@
  * kept colouring `-` and `1.` as markers. It was found by someone comparing the
  * copies by hand.
  *
- * tests/lib/block-battery.json is that comparison, made routine: the identical
- * table carve-grammars runs, vendored here, with a drift check keeping the copy
- * honest.
+ * tests/lib/block-battery.json is that comparison, made routine. It was
+ * carve-grammars' table; carve-grammars#903 removed it upstream, so the copy is
+ * a local fixture now.
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -57,7 +57,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 // A trailing line keeps the shape off the last line of the document, where a
 // `$`-anchored rule behaves differently.

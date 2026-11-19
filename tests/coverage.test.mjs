@@ -152,7 +152,7 @@ async function grammarForScopes() {
       ),
   });
 
-  return registry.loadGrammar("text.carve");
+  return registry.loadGrammar("source.carve");
 }
 
 function scopesOf(grammar, source) {
@@ -161,7 +161,7 @@ function scopesOf(grammar, source) {
   for (const line of source.split("\n")) {
     const result = grammar.tokenizeLine(line, rules);
     for (const token of result.tokens) {
-      for (const scope of token.scopes) if (scope !== "text.carve") found.add(scope);
+      for (const scope of token.scopes) if (scope !== "source.carve") found.add(scope);
     }
     rules = result.ruleStack;
   }

@@ -65,7 +65,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /**
  * Whether the OPENER line of `src` is scoped as a container opener.

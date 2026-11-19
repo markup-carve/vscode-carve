@@ -1,17 +1,17 @@
 > Read [intro][x].
-#^ text.carve
-# ^^^^^ text.carve
-#      ^ text.carve meta.link.reference.carve
-#       ^^^^^ text.carve meta.link.reference.carve string.other.link.title.carve
-#            ^^ text.carve meta.link.reference.carve
-#              ^ text.carve meta.link.reference.carve constant.other.reference.link.carve
-#               ^ text.carve meta.link.reference.carve
-#                ^^ text.carve
+#^ source.carve
+# ^^^^^ source.carve
+#      ^ source.carve meta.link.reference.carve
+#       ^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#            ^^ source.carve meta.link.reference.carve
+#              ^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#               ^ source.carve meta.link.reference.carve
+#                ^^ source.carve
 >
 > [x]: /intro "T"
-#^ text.carve
-# ^^^^^^^^^^^^ text.carve
-#             ^ text.carve punctuation.definition.smartquote.carve
-#              ^ text.carve
-#               ^ text.carve punctuation.definition.smartquote.carve
+#^ source.carve
+# ^^^^^^^^^^^^ source.carve
+#             ^ source.carve punctuation.definition.smartquote.carve
+#              ^ source.carve
+#               ^ source.carve punctuation.definition.smartquote.carve
 >

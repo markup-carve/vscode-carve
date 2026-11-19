@@ -1,17 +1,17 @@
 >:: color
-#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.definition.term.carve
-#   ^^^^^^ text.carve
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^^^^^ source.carve
 >:: colour
-#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.definition.term.carve
-#   ^^^^^^^ text.carve
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^^^^^^ source.carve
 >: The visual property of objects.
-#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.definition.carve
-#  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >: A pigment or paint.
-#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.definition.carve
-#  ^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^^^^^^^^^^^^^^^^^^^ source.carve
 >
