@@ -532,7 +532,7 @@
   },
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
-    "@markup-carve/carve-css": "0.1.10",
+    "@markup-carve/carve-css": "github:markup-carve/carve-css#08be7023f6dbc27bbcfce5ab90478b5a7a5e10b4",
     "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#79511c4ba461cb0696e0400132da9eef414147e0",
     "@shikijs/themes": "^4.5.0",
     "@types/node": "^22.10.2",
