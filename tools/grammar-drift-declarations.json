@@ -16,9 +16,7 @@
     "figure_group": { "local": "divs", "fixture": "composite-figures" },
     "blockquote_in_container": { "local": "block-quotes", "fixture": "blockquote-marker-spacing" },
     "abbreviation": { "local": "definitions", "fixture": "definition-at-a-content-column" },
-    "abbreviation_in_container": { "local": "definitions-in-container", "fixture": "definition-at-a-content-column" },
     "link_ref_def": { "local": "definitions", "fixture": "reference-images-and-crossrefs" },
-    "link_ref_def_in_container": { "local": "definitions-in-container", "fixture": "definition-at-a-content-column" },
     "table_row": { "local": "tables", "fixture": "table-patterns" },
     "multiline_cell": { "local": "tables", "fixture": "table-patterns" },
     "task_item": { "local": "lists", "fixture": "marker-requires-content" },
@@ -85,12 +83,11 @@
     "table-rows": { "upstream": "table_row", "fixture": "tables-deflists" },
     "table-rows-behind-a-container-prefix": { "upstream": "table_row", "fixture": "container-grammar-rules" },
     "description-body": { "upstream": "definition_list", "fixture": "tables-deflists" },
+    "description-body-fence-at-a-body-column": { "upstream": "fenced_code_in_container", "fixture": "description-body-fence" },
     "description-body-fence-at-column-zero": { "upstream": "definition_list", "fixture": "description-body-fence" },
-    "description-body-fence-at-a-body-column": { "upstream": "definition_list", "fixture": "description-body-fence" },
     "trailing-comment-cell": { "upstream": "trailing_comment", "fixture": "container-grammar-rules" },
     "code-fence-on-quote-marker-line": { "upstream": "fenced_code_in_container", "fixture": "container-grammar-rules" },
-    "thematic-break-behind-a-container-prefix": { "upstream": "hr", "fixture": "thematic-break" },
-    "block-quote-body": { "upstream": "blockquote_in_container", "fixture": "definition-at-a-content-column" },
+    "block-quote-body": { "upstream": "blockquote_in_container", "fixture": "quote-content" },
     "fenced-code-languages-on-a-marker-line": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" },
     "fenced-code-languages-at-a-body-column": { "upstream": "fenced_code_in_container", "fixture": "fenced-code-embedded-languages" },
     "caption-quote-prefix": { "upstream": "blockquote", "fixture": "container-grammar-rules" },
@@ -105,7 +102,9 @@
     "fenced-code-languages-in-colon-container-4": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
     "fenced-code-languages-in-colon-container-5": { "upstream": "fenced_code_languages", "fixture": "container-fences" },
     "code-blocks-in-long-colon-container": { "upstream": "fenced_code", "fixture": "container-fences" },
-    "continuation-in-container": { "upstream": "marker_line_continuation", "fixture": "grammar-correctness" }
+    "thematic-break-behind-a-container-prefix": { "upstream": "container_blocks", "fixture": "thematic-break" },
+    "code-block-at-an-indent": { "upstream": "fenced_code", "fixture": "indented-fences" },
+    "fenced-code-languages-at-an-indent": { "upstream": "fenced_code_languages", "fixture": "indented-fences" }
   },
   "localOnlyRules": {
     "container-body": "grammar-correctness"

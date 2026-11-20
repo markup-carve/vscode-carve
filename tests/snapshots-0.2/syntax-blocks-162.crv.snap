@@ -1,0 +1,12 @@
+>::: >
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>q
+#^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>^ Attr
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve

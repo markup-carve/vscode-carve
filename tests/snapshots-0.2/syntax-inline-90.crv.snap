@@ -1,0 +1,20 @@
+>See [@doe2020] and [see @doe2020, p. 3; @roe].
+#^^^^ source.carve
+#    ^ source.carve markup.citation.carve punctuation.definition.citation.begin.carve
+#     ^^^^^^^^ source.carve markup.citation.carve variable.other.citation.key.carve
+#             ^ source.carve markup.citation.carve punctuation.definition.citation.end.carve
+#              ^^^^^ source.carve
+#                   ^ source.carve markup.citation.carve punctuation.definition.citation.begin.carve
+#                    ^^^^ source.carve markup.citation.carve
+#                        ^^^^^^^^ source.carve markup.citation.carve variable.other.citation.key.carve
+#                                ^^^^^^ source.carve markup.citation.carve
+#                                      ^ source.carve markup.citation.carve punctuation.separator.citation.carve
+#                                       ^ source.carve markup.citation.carve
+#                                        ^^^^ source.carve markup.citation.carve variable.other.citation.key.carve
+#                                            ^ source.carve markup.citation.carve punctuation.definition.citation.end.carve
+#                                             ^^ source.carve
+>
+>[@doe2020]: /u
+#^^^^^^^^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#           ^ source.carve meta.link.reference.definition.carve
+#            ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve

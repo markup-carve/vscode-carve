@@ -1,0 +1,54 @@
+>1) a
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.numbered.carve
+#   ^^ source.carve
+>2) b
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.numbered.carve
+#   ^^ source.carve
+>
+>- [ ] open
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ source.carve
+>- [x] done
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ source.carve
+>- [-] dropped
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^^ source.carve
+>- [_] kept
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ source.carve
+>- [/] half
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ source.carve
+>- [!] urgent
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^ source.carve
+>- [>] moved
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^ source.carve
+>- [?] unsure
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^ source.carve
+>- [X] Done
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^ source.carve

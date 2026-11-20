@@ -1,0 +1,6 @@
+>> {.a}
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^ source.carve markup.quote.carve
+>%% x
+#^^^^ source.carve comment.line.percent.carve

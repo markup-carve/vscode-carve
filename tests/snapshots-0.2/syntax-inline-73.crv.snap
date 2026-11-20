@@ -1,0 +1,12 @@
+># The Title
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>![x][The Title]
+#^^ source.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#  ^ source.carve meta.image.reference.carve string.other.image.alt.carve
+#   ^ source.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#    ^ source.carve meta.image.reference.carve
+#     ^^^^^^^^^ source.carve meta.image.reference.carve constant.other.reference.link.carve
+#              ^ source.carve meta.image.reference.carve

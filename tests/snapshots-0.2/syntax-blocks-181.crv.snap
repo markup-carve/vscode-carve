@@ -1,0 +1,8 @@
+>text
+#^^^^^ source.carve
+>{{ part.crv }}
+#^^ source.carve meta.directive.include.carve punctuation.definition.directive.begin.carve
+#  ^ source.carve meta.directive.include.carve
+#   ^^^^^^^^ source.carve meta.directive.include.carve string.other.link.include.carve
+#           ^ source.carve meta.directive.include.carve
+#            ^^ source.carve meta.directive.include.carve punctuation.definition.directive.end.carve

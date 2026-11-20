@@ -33,7 +33,7 @@ const registry = new vsctm.Registry({
     createOnigString: (str) => new oniguruma.OnigString(str),
   }),
   loadGrammar: async (scope) =>
-    scope === 'text.carve'
+    scope === 'source.carve'
       ? vsctm.parseRawGrammar(
           readFileSync(resolve(root, 'syntaxes/carve.tmLanguage.json'), 'utf8'),
           'carve.tmLanguage.json',
@@ -41,7 +41,7 @@ const registry = new vsctm.Registry({
       : null,
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {Map<string, boolean>} each `wN` word mapped to whether it is verbatim. */
 function verbatimWords(src) {
@@ -69,7 +69,8 @@ const CASES = []
 for (const depth of [1, 2, 3]) {
   const p = pre(depth)
   const up = pre(depth - 1)
-  for (const fence of ['```', '~~~']) {
+  // Carve 0.2 fences are backticks only (U-049, U-054).
+  for (const fence of ['```']) {
     CASES.push(
       [`a ${fence} fence at depth ${depth} closes`, `${p}${fence}\n${p}w0\n${p}${fence}\n${p}w1\n`, ['w0'], ['w1']],
       [`a ${fence} fence at depth ${depth} keeps a bare marker line`, `${p}${fence}\n${p}w0\n${bare(depth)}\n${p}w1\n${p}${fence}\nw2\n`, ['w0', 'w1'], ['w2']],

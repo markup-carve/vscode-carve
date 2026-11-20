@@ -1,0 +1,12 @@
+>[x][a\]b]
+#^ source.carve meta.link.reference.carve
+# ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#  ^^ source.carve meta.link.reference.carve
+#    ^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#      ^ source.carve meta.link.reference.carve
+#       ^^^ source.carve
+>
+>[a\]b]: /u
+#^^ source.carve
+#  ^^ source.carve constant.character.escape.carve
+#    ^^^^^^^ source.carve

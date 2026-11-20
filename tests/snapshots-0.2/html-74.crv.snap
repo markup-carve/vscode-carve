@@ -1,0 +1,16 @@
+>{align=center}
+#^ source.carve meta.attributes.carve
+# ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^^^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#             ^ source.carve meta.attributes.carve
+>::: |
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>Roses are red,
+#^^^^^^^^^^^^^^^ source.carve
+>violets are blue.
+#^^^^^^^^^^^^^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

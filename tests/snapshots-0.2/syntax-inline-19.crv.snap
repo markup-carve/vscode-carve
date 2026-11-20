@@ -1,0 +1,20 @@
+>`a %% b` and [a](/u%%20c) and [a]{k="a %% b"}
+#^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+# ^^^^^^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#       ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#        ^^^^^ source.carve
+#             ^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#              ^ source.carve meta.link.inline.carve string.other.link.title.carve
+#               ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#                ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#                 ^^^^^^^ source.carve meta.link.inline.carve markup.underline.link.carve
+#                        ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#                         ^^^^^ source.carve
+#                              ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#                               ^ source.carve meta.span.inline.carve string.other.span.carve
+#                                ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#                                 ^ source.carve meta.attributes.carve
+#                                  ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                                   ^ source.carve meta.attributes.carve
+#                                    ^^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                                            ^ source.carve meta.attributes.carve

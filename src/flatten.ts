@@ -7,10 +7,10 @@
  * flattening asks for the other document, the one that can be handed to
  * something with no filesystem behind it.
  *
- * The two calls are the ones `carve flatten` makes, in the same order, against
- * the same engine: expand, then run the Carve WRITER. Nothing here reimplements
- * section 19's merge semantics, which is what keeps this from diverging from the
- * CLI silently (#198).
+ * Expansion goes through the shared include path, then the engine's `flatten`,
+ * the call `carve flatten` makes, splices each include's children in place and
+ * runs the Carve WRITER. Nothing here reimplements the merge semantics, which is
+ * what keeps this from diverging from the CLI silently (#198).
  *
  * NOT REBASED, on purpose. A child's relative destinations are rewritten for a
  * RENDER (#192) because the result is resolved from the parent's folder. `carve
@@ -23,44 +23,32 @@
  */
 import { expandForRender, type Engine, type ExpandInput, type ExpansionResult } from './include-expansion.js'
 
-/** The writer this module needs, so a test can see exactly what is called. */
+/** The engine call this module needs, so a test can see exactly what is called. */
 export interface Writer {
-  renderCarve: (doc: unknown) => string
+  flatten: (doc: unknown) => { source: string; same: boolean }
 }
 
 export interface FlattenResult {
   text: string
   expansion: ExpansionResult
   /**
-   * Explicit ids and footnote labels the merge had to rename because two
-   * children used the same one (I5). Counted from the warnings rather than
-   * guessed: a flattened document can carry `intro-2`, and someone finding that
-   * in a published page instead of in this report is the failure being avoided.
+   * True when the flattened copy renders differently from the expanded
+   * document. Keys that two files each define once are scoped per file
+   * (C2-N-054, C2-N-055) and meet in one scope in the copy; `carve flatten`
+   * refuses such a file, this command writes it and says so.
    */
-  renames: number
+  changed: boolean
 }
-
-const RENAME_RULES = new Set(['include-id-rename', 'include-footnote-rename'])
 
 export function flattenDocument(
   engine: Engine & Writer,
   input: Omit<ExpandInput, 'rebase'>,
 ): FlattenResult {
   const expansion = expandForRender(engine, { ...input, rebase: false })
-  return {
-    text: engine.renderCarve(expansion.doc),
-    expansion,
-    renames: expansion.warnings.filter((warning) => RENAME_RULES.has(warning.rule)).length,
-  }
+  const { source, same } = engine.flatten(expansion.doc)
+  return { text: source, expansion, changed: !same }
 }
 
-/**
- * A free path for the flattened document, or null when the names are taken.
- *
- * Derived from the document's own path rather than typed, so the destination
- * cannot be steered somewhere else and there is no empty string to resolve
- * against the process working directory.
- */
 export const MAX_FLATTEN_CANDIDATES = 100
 
 export function flattenPath(documentPath: string, exists: (candidate: string) => boolean): string | null {
@@ -86,8 +74,8 @@ export function flattenSummary(result: FlattenResult, destination: string): stri
     `Flattened ${count(merged, 'included file')} into ${destination}.`,
     'The output is canonical Carve, so formatting is normalized rather than preserved.',
   ]
-  if (result.renames > 0) {
-    parts.push(`${count(result.renames, 'colliding id or footnote label')} ${result.renames === 1 ? 'was' : 'were'} renamed (spec I5).`)
+  if (result.changed) {
+    parts.push('A footnote, reference or abbreviation key is defined in more than one file, so the flattened copy renders differently.')
   }
   const refused = result.expansion.refusals.length
   if (refused > 0) {

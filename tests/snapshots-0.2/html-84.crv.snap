@@ -1,0 +1,5 @@
+>- [x] %% hidden
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^^^^^^^^ source.carve comment.line.percent.carve

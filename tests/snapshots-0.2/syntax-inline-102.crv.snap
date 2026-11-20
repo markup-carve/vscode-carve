@@ -1,0 +1,16 @@
+>a != b, a <= b, a >= b, 5 +- 1, Carve(tm), (c), x -> y, k => v
+#^^ source.carve
+#  ^^ source.carve constant.character.typography.carve
+#    ^^^^^^ source.carve
+#          ^^ source.carve constant.character.typography.carve
+#            ^^^^^^ source.carve
+#                  ^^ source.carve constant.character.typography.carve
+#                    ^^^^^^ source.carve
+#                          ^^ source.carve constant.character.typography.carve
+#                            ^^^^^^^^^ source.carve
+#                                     ^^^^ source.carve constant.character.typography.carve
+#                                         ^^ source.carve
+#                                           ^^^ source.carve constant.character.typography.carve
+#                                              ^^^^ source.carve
+#                                                  ^^ source.carve constant.character.typography.carve
+#                                                    ^^^^^^^^^^^ source.carve

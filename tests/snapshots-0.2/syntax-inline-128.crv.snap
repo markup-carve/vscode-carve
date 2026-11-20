@@ -1,0 +1,9 @@
+>a ^[see b %% check *this*] c
+#^^ source.carve
+#  ^^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#    ^^^^^^^^^^^^^^^ source.carve meta.footnote.inline.carve
+#                   ^ source.carve meta.footnote.inline.carve punctuation.definition.bold.carve
+#                    ^^^^ source.carve meta.footnote.inline.carve markup.bold.carve
+#                        ^ source.carve meta.footnote.inline.carve punctuation.definition.bold.carve
+#                         ^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                          ^^^ source.carve

@@ -1,0 +1,13 @@
+>a {=a}b=} c and {---} and [s]{=x=}
+#^^ source.carve
+#  ^^ source.carve markup.highlight.carve punctuation.definition.highlight.carve
+#    ^^^ source.carve markup.highlight.carve markup.highlight.carve
+#       ^^ source.carve markup.highlight.carve punctuation.definition.highlight.carve
+#         ^^^^^^^ source.carve
+#                ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                  ^ source.carve markup.deleted.critic.carve markup.deleted.carve
+#                   ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                     ^^^^^^^^ source.carve
+#                             ^^ source.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                               ^ source.carve markup.highlight.carve markup.highlight.carve
+#                                ^^ source.carve markup.highlight.carve punctuation.definition.highlight.carve

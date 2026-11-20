@@ -1,0 +1,11 @@
+># The Title
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>[go][The Title]
+#^ source.carve meta.link.reference.carve
+# ^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#   ^^ source.carve meta.link.reference.carve
+#     ^^^^^^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#              ^ source.carve meta.link.reference.carve

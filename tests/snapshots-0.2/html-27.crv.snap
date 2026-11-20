@@ -1,0 +1,50 @@
+>See[^a].
+#^^^ source.carve
+#   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#      ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#       ^^ source.carve
+>
+>![a](a.png)
+#^^ source.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^ source.carve meta.image.inline.carve string.other.image.alt.carve
+#   ^^ source.carve meta.image.inline.carve
+#     ^^^^^ source.carve meta.image.inline.carve markup.underline.link.image.carve
+#          ^ source.carve meta.image.inline.carve
+>^ Table #: Body
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>[^a]: Note.
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^^^^^ source.carve
+>
+>    | x |
+#^^^^ source.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>    ^ Table #: In the note
+#^^^^ source.carve
+#    ^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+#     ^ source.carve markup.table.caption.carve
+#      ^^^^^^^^^^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>[^b]: Unused.
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^^^^^^^ source.carve
+>
+>    | y |
+#^^^^ source.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>    ^ Table #: Never
+#^^^^ source.carve
+#    ^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+#     ^ source.carve markup.table.caption.carve
+#      ^^^^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve

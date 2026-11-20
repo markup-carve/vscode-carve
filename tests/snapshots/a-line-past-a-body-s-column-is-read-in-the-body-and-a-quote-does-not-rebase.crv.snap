@@ -1,26 +1,23 @@
 >:: t
-#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.definition.term.carve
-#   ^^ text.carve
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^ source.carve
 >: d
-#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.definition.carve
-#  ^^ text.carve
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^ source.carve
 >  - para
-#^^ text.carve markup.list.unnumbered.carve
-#  ^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-#   ^ text.carve markup.list.unnumbered.carve
-#    ^^^^^ text.carve
+#^^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ source.carve markup.list.unnumbered.carve
+#    ^^^^^ source.carve
 >    [r]: /u
-#^^^^ text.carve meta.link.reference.definition.carve
-#    ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#        ^ text.carve meta.link.reference.definition.carve
-#         ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^^^^^^^^ source.carve
 >x
-#^^ text.carve
+#^^ source.carve
 >
 >[r][]
-#^ text.carve meta.link.reference.carve
-# ^ text.carve meta.link.reference.carve string.other.link.title.carve
-#  ^^^ text.carve meta.link.reference.carve
+#^ source.carve meta.link.reference.carve
+# ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#  ^^^ source.carve meta.link.reference.carve
 >

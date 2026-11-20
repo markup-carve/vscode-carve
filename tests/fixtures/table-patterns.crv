@@ -1,14 +1,13 @@
 > quoted
-+
-- item
+>
+> - item
 
 :: term
 :  A first paragraph,
-+
-then a flush-left block joined with +.
 
-| a | b |
-| - | - |
+   then a second paragraph in the description.
+
+|= a |= b |
 + cont |
 
 | [@key] | @user |

@@ -1,0 +1,20 @@
+>- [ ] a
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^ source.carve
+>- [x] b
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^ source.carve
+>- [X] c
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^ source.carve
+>- [_] d
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve markup.list.unnumbered.carve constant.language.task-list.carve
+#      ^^ source.carve

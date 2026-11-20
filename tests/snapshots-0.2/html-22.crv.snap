@@ -1,0 +1,16 @@
+>Hi @ann and #tag and :smile: and :kbd[Tab].
+#^^^ source.carve
+#   ^ source.carve constant.other.symbol.mention.carve punctuation.definition.mention.carve
+#    ^^^ source.carve constant.other.symbol.mention.carve variable.other.mention.carve
+#       ^^^^^ source.carve
+#            ^ source.carve constant.other.symbol.tag.carve punctuation.definition.tag.carve
+#             ^^^ source.carve constant.other.symbol.tag.carve variable.other.tag.carve
+#                ^^^^^ source.carve
+#                     ^^^^^^^ source.carve constant.language.symbol.carve
+#                            ^^^^^ source.carve
+#                                 ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                                  ^^^ source.carve meta.extension.inline.carve entity.name.function.extension.carve
+#                                     ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                                      ^^^ source.carve meta.extension.inline.carve string.unquoted.extension.carve
+#                                         ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                                          ^^ source.carve

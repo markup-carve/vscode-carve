@@ -1,0 +1,43 @@
+>{aligns="left,left,center" widths="25,25"}
+#^ source.carve meta.attributes.carve
+# ^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#       ^ source.carve meta.attributes.carve
+#        ^^^^^^^^^^^^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                          ^ source.carve meta.attributes.carve
+#                           ^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                                 ^ source.carve meta.attributes.carve
+#                                  ^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                                         ^ source.carve meta.attributes.carve
+>|={>} Name |={<} Qty |= Note |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.begin.carve
+#   ^ source.carve markup.table.row.carve meta.attributes.carve keyword.operator.table.alignment.carve
+#    ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.end.carve
+#     ^^^^^^ source.carve markup.table.row.carve
+#           ^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#             ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.begin.carve
+#              ^ source.carve markup.table.row.carve meta.attributes.carve keyword.operator.table.alignment.carve
+#               ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.end.carve
+#                ^^^^^ source.carve markup.table.row.carve
+#                     ^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#                       ^^^^^^ source.carve markup.table.row.carve
+#                             ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| tea |{~} 2 | hot |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^ source.carve markup.table.row.carve
+#      ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#       ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.begin.carve
+#        ^ source.carve markup.table.row.carve meta.attributes.carve keyword.operator.table.alignment.carve
+#         ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.end.carve
+#          ^^^ source.carve markup.table.row.carve
+#             ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#              ^^^^^ source.carve markup.table.row.carve
+#                   ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| milk | 3 | cold |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^ source.carve markup.table.row.carve
+#       ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#        ^^^ source.carve markup.table.row.carve
+#           ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#            ^^^^^^ source.carve markup.table.row.carve
+#                  ^ source.carve markup.table.row.carve punctuation.separator.table.carve

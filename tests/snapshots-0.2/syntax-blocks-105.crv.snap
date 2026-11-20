@@ -1,0 +1,15 @@
+>{.c}
+#^ source.carve meta.attributes.carve
+# ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#   ^ source.carve meta.attributes.carve
+>[b]: /u
+#^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ source.carve meta.link.reference.definition.carve
+#     ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>[x][b]
+#^ source.carve meta.link.reference.carve
+# ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#  ^^ source.carve meta.link.reference.carve
+#    ^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#     ^ source.carve meta.link.reference.carve

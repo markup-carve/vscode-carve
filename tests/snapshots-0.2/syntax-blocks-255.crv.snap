@@ -1,0 +1,9 @@
+>![ ][]
+#^^ source.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#  ^ source.carve meta.image.reference.carve string.other.image.alt.carve
+#   ^ source.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#    ^^ source.carve meta.image.reference.carve
+>^ cap
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve

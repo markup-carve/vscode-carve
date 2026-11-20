@@ -1,17 +1,15 @@
 >:: t
-#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.definition.term.carve
-#   ^^ text.carve
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^ source.carve
 >:  a
-#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-# ^^ text.carve markup.list.definition.carve
-#   ^^ text.carve
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^^ source.carve markup.list.definition.carve
+#   ^^ source.carve
 >+
-#^ text.carve
+#^ source.carve
 >para
-#^^^^^ text.carve
+#^^^^^ source.carve
 >> q
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^ text.carve markup.quote.carve
+#^^^^ source.carve
 >

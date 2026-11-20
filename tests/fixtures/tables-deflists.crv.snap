@@ -1,48 +1,45 @@
->| Left | Center | Right |
-#^ text.carve markup.table.row.carve punctuation.separator.table.carve
-# ^^^^^^ text.carve markup.table.row.carve
-#       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
-#        ^^^^^^^^ text.carve markup.table.row.carve
-#                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
-#                 ^^^^^^^ text.carve markup.table.row.carve
-#                        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
->|:-----|:------:|------:|
-#^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
-# ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
-#  ^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
-#       ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
-#        ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
-#         ^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
-#               ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
-#                ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
-#                 ^^^^^^ text.carve markup.table.row.separator.carve punctuation.definition.table.separator.carve
-#                       ^ text.carve markup.table.row.separator.carve keyword.operator.table.alignment.carve
-#                        ^ text.carve markup.table.row.separator.carve punctuation.separator.table.carve
+>|={<} Left |={~} Center |={>} Right |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.begin.carve
+#   ^ source.carve markup.table.row.carve meta.attributes.carve keyword.operator.table.alignment.carve
+#    ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.end.carve
+#     ^^^^^^ source.carve markup.table.row.carve
+#           ^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#             ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.begin.carve
+#              ^ source.carve markup.table.row.carve meta.attributes.carve keyword.operator.table.alignment.carve
+#               ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.end.carve
+#                ^^^^^^^^ source.carve markup.table.row.carve
+#                        ^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#                          ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.begin.carve
+#                           ^ source.carve markup.table.row.carve meta.attributes.carve keyword.operator.table.alignment.carve
+#                            ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.end.carve
+#                             ^^^^^^^ source.carve markup.table.row.carve
+#                                    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
 >| a    | b      | c     |
-#^ text.carve markup.table.row.carve punctuation.separator.table.carve
-# ^^^^^^ text.carve markup.table.row.carve
-#       ^ text.carve markup.table.row.carve punctuation.separator.table.carve
-#        ^^^^^^^^ text.carve markup.table.row.carve
-#                ^ text.carve markup.table.row.carve punctuation.separator.table.carve
-#                 ^^^^^^^ text.carve markup.table.row.carve
-#                        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^ source.carve markup.table.row.carve
+#       ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#        ^^^^^^^^ source.carve markup.table.row.carve
+#                ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#                 ^^^^^^^ source.carve markup.table.row.carve
+#                        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
 >
 >:: Term one %% trailing comment stays a comment
-#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.definition.term.carve
-#   ^^^^^^^^^ text.carve
-#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve comment.line.percent.carve
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^^^^^^^^ source.carve
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve comment.line.percent.carve
 >:  Definition of term one.
-#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-# ^^ text.carve markup.list.definition.carve
-#   ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^^ source.carve markup.list.definition.carve
+#   ^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >:: Term two
-#^^ text.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.definition.term.carve
-#   ^^^^^^^^^ text.carve
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^^^^^^^^ source.carve
 >:  Definition of term two.
-#^ text.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
-# ^^ text.carve markup.list.definition.carve
-#   ^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^^ source.carve markup.list.definition.carve
+#   ^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >

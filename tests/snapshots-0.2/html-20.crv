@@ -1,0 +1,7 @@
+a[^n] b^[inline *x*] c[^n]
+
+After.
+
+[^n]: Note.
+
+    More.

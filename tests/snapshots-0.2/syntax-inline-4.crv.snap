@@ -1,0 +1,9 @@
+>*a [b* c](/u)
+#^ source.carve punctuation.definition.bold.carve
+# ^^ source.carve markup.bold.carve
+#   ^ source.carve markup.bold.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#    ^^^^ source.carve markup.bold.carve meta.link.inline.carve string.other.link.title.carve
+#        ^ source.carve markup.bold.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#         ^ source.carve markup.bold.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#          ^^ source.carve markup.bold.carve meta.link.inline.carve markup.underline.link.carve
+#            ^ source.carve markup.bold.carve meta.link.inline.carve punctuation.definition.metadata.end.carve

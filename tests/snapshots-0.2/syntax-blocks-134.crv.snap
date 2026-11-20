@@ -1,0 +1,16 @@
+>:::: note
+#^^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#    ^ source.carve markup.other.div.carve
+#     ^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+>::: tip
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+>inner
+#^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>outer
+#^^^^^^ source.carve
+>::::
+#^^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

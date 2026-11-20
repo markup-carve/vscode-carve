@@ -1,4 +1,4 @@
-import { createEditorSession } from '@markup-carve/carve'
+import { parse, stringOffsetOfByte } from '@markup-carve/carve'
 
 export interface CarveColor {
   start: number
@@ -20,18 +20,39 @@ function parseHex(value: string): Omit<CarveColor, 'start' | 'end'> | undefined 
   return { red: channels[0], green: channels[1], blue: channels[2], alpha: channels[3] }
 }
 
+interface TreeNode {
+  type: string
+  name?: string
+  pos?: { startOffset: number; endOffset: number }
+  [key: string]: unknown
+}
+
+function inlineExtensions(node: TreeNode, found: TreeNode[]): void {
+  if (node.type === 'inline_extension') found.push(node)
+  for (const value of Object.values(node)) {
+    for (const child of Array.isArray(value) ? value : [value]) {
+      if (typeof child === 'object' && child !== null && typeof (child as TreeNode).type === 'string') {
+        inlineExtensions(child as TreeNode, found)
+      }
+    }
+  }
+}
+
 export function carveColors(source: string): CarveColor[] {
   if (!source.includes(':color[')) return []
   const colors: CarveColor[] = []
-  const nodes = createEditorSession(source).snapshot().nodes
+  const nodes: TreeNode[] = []
+  inlineExtensions(parse(source) as unknown as TreeNode, nodes)
   for (const node of nodes) {
-    if (node.type !== 'inline_extension') continue
-    const raw = source.slice(node.start, node.end)
+    if (node.name !== 'color' || !node.pos) continue
+    // Tree offsets are UTF-8 bytes; the picker works in UTF-16 code units.
+    const start = stringOffsetOfByte(source, node.pos.startOffset)
+    const raw = source.slice(start, stringOffsetOfByte(source, node.pos.endOffset))
     if (!raw.startsWith(':color[')) continue
     const close = raw.indexOf(']', 7)
     if (close < 0) continue
     const parsed = parseHex(raw.slice(7, close))
-    if (parsed) colors.push({ start: node.start + 7, end: node.start + close, ...parsed })
+    if (parsed) colors.push({ start: start + 7, end: start + close, ...parsed })
   }
   return colors
 }

@@ -1,33 +1,34 @@
 >{~`a~>b~}
-#^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
-#  ^ text.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve punctuation.definition.raw.carve
-#   ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve markup.raw.inline.content.carve
-#       ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#   ^^^^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#       ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
 >
 >{~a `x~>y` b~}
-#^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
-#  ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
-#    ^ text.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve punctuation.definition.raw.carve
-#     ^^^^ text.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve markup.raw.inline.content.carve
-#         ^ text.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve punctuation.definition.raw.carve
-#          ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
-#            ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#    ^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#     ^^^^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#         ^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#          ^^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#            ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
 >
 >{~/old/~>/new/~}
-#^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#  ^ text.carve markup.changed.critic.carve markup.deleted.carve markup.italic.carve punctuation.definition.italic.carve
-#   ^^^ text.carve markup.changed.critic.carve markup.deleted.carve markup.italic.carve markup.italic.carve
-#      ^ text.carve markup.changed.critic.carve markup.deleted.carve markup.italic.carve punctuation.definition.italic.carve
-#       ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
-#         ^ text.carve markup.changed.critic.carve markup.inserted.carve markup.italic.carve punctuation.definition.italic.carve
-#          ^^^ text.carve markup.changed.critic.carve markup.inserted.carve markup.italic.carve markup.italic.carve
-#             ^ text.carve markup.changed.critic.carve markup.inserted.carve markup.italic.carve punctuation.definition.italic.carve
-#              ^^ text.carve markup.changed.critic.carve punctuation.definition.critic.carve
+#^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.italic.carve punctuation.definition.italic.carve
+#   ^^^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.italic.carve markup.italic.carve
+#      ^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.italic.carve punctuation.definition.italic.carve
+#       ^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#        ^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#         ^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.italic.carve punctuation.definition.italic.carve
+#          ^^^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.italic.carve markup.italic.carve
+#             ^ source.carve markup.strikethrough.carve markup.strikethrough.carve markup.italic.carve punctuation.definition.italic.carve
+#              ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
 >
 >{~a\~>b~}
-#^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
-#  ^ text.carve markup.strikethrough.carve markup.strikethrough.carve
-#   ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve constant.character.escape.carve
-#     ^^ text.carve markup.strikethrough.carve markup.strikethrough.carve
-#       ^^ text.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#   ^^ source.carve markup.strikethrough.carve markup.strikethrough.carve constant.character.escape.carve
+#     ^^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#       ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
 >

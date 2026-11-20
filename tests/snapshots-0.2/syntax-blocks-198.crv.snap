@@ -1,0 +1,7 @@
+>----
+#^^^ source.carve meta.frontmatter.unknown.carve punctuation.definition.frontmatter.begin.carve
+#   ^ source.carve meta.frontmatter.unknown.carve entity.name.type.frontmatter.carve
+>title: x
+#^^^^^^^^^ source.carve meta.frontmatter.unknown.carve meta.embedded.block.frontmatter
+>----
+#^^^^^ source.carve meta.frontmatter.unknown.carve meta.embedded.block.frontmatter

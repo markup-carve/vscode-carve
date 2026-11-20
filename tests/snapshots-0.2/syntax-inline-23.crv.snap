@@ -1,0 +1,28 @@
+>*bold*{.c} `code`{.c} <https://a.b>{.c} :note[x]{.c}
+#^ source.carve punctuation.definition.bold.carve
+# ^^^^ source.carve markup.bold.carve
+#     ^ source.carve punctuation.definition.bold.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#         ^ source.carve meta.attributes.carve
+#          ^ source.carve
+#           ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#            ^^^^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                 ^ source.carve meta.attributes.carve
+#                  ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                    ^ source.carve meta.attributes.carve
+#                     ^ source.carve
+#                      ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                       ^^^^^^^^^^^ source.carve meta.link.autolink.carve markup.underline.link.carve
+#                                  ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                                   ^ source.carve meta.attributes.carve
+#                                    ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                      ^ source.carve meta.attributes.carve
+#                                       ^ source.carve
+#                                        ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                                         ^^^^ source.carve meta.extension.inline.carve entity.name.function.extension.carve
+#                                             ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                                              ^ source.carve meta.extension.inline.carve string.unquoted.extension.carve
+#                                               ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                                                ^^^^ source.carve meta.extension.inline.carve meta.attributes.carve

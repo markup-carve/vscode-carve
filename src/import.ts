@@ -1,4 +1,4 @@
-import { htmlToCarve, markdownToCarve } from '@markup-carve/carve'
+import { importDocument } from '@markup-carve/carve/import'
 
 export type ImportFormat = 'markdown' | 'html'
 
@@ -29,12 +29,12 @@ export function importTargetPath(path: string): string {
 
 export interface ImportResult {
   carve: string
-  /** Constructs the HTML importer dropped, unwrapped or degraded. Always 0 for Markdown. */
+  /** Constructs the importer dropped, unwrapped or degraded. */
   diagnostics: number
 }
 
 export function convertToCarve(source: string, format: ImportFormat): ImportResult {
-  if (format === 'markdown') return { carve: markdownToCarve(source), diagnostics: 0 }
-  const result = htmlToCarve(source)
-  return { carve: result.value, diagnostics: result.report.diagnostics.length }
+  // Markdown files are read as GFM, the dialect the 0.1 Markdown importer took.
+  const result = importDocument(source, { from: format === 'markdown' ? 'gfm' : 'html' })
+  return { carve: result.source, diagnostics: result.diagnostics.length }
 }

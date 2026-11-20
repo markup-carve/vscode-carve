@@ -1,0 +1,11 @@
+>text
+#^^^^^ source.carve
+>[a]: /u
+#^^^^^^^^ source.carve
+>
+>[x][a]
+#^ source.carve meta.link.reference.carve
+# ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#  ^^ source.carve meta.link.reference.carve
+#    ^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#     ^ source.carve meta.link.reference.carve

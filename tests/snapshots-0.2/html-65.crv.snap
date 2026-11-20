@@ -1,0 +1,25 @@
+>{style="color: red; " align=center}
+#^ source.carve meta.attributes.carve
+# ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^^^^^^^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                     ^ source.carve meta.attributes.carve
+#                      ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                           ^ source.carve meta.attributes.carve
+#                            ^^^^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                  ^ source.carve meta.attributes.carve
+>T
+#^^ source.carve
+>
+>{style="url(x)" align=center}
+#^ source.carve meta.attributes.carve
+# ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#               ^ source.carve meta.attributes.carve
+#                ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                     ^ source.carve meta.attributes.carve
+#                      ^^^^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                            ^ source.carve meta.attributes.carve
+>U
+#^^ source.carve

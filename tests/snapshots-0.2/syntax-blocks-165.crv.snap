@@ -1,0 +1,9 @@
+>$$`x^2`
+#^^ source.carve markup.other.math.display.carve punctuation.definition.math.carve
+#  ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#   ^^^ source.carve markup.other.math.display.carve markup.other.math.content.carve
+#      ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve
+>^ Equation
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve

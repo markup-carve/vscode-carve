@@ -67,7 +67,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {string} the source text this grammar colours as a highlight BODY. */
 function markedRun(src) {
@@ -154,9 +154,9 @@ const ROWS = [
   ['a !=b c= d', ''],
 ]
 
-for (const [src, expected] of ROWS) {
-  const label = expected === '' ? 'colours nothing' : `colours ${JSON.stringify(expected)}`
-  test(`${JSON.stringify(src)} ${label}`, () => {
-    assert.equal(markedRun(src), expected)
+// A bare `=` pair is text in Carve 0.2 (U-067), so none of these shapes is marked.
+for (const [src] of ROWS) {
+  test(`${JSON.stringify(src)} colours nothing`, () => {
+    assert.equal(markedRun(src), '')
   })
 }

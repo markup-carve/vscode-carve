@@ -1,0 +1,12 @@
+>---toml
+#^^^ source.carve meta.frontmatter.toml.carve punctuation.definition.frontmatter.begin.carve
+#   ^^^^ source.carve meta.frontmatter.toml.carve entity.name.type.frontmatter.carve
+>a = 1
+#^ source.carve meta.frontmatter.toml.carve meta.embedded.block.toml support.type.property-name.toml
+# ^^^ source.carve meta.frontmatter.toml.carve meta.embedded.block.toml
+#    ^ source.carve meta.frontmatter.toml.carve meta.embedded.block.toml constant.numeric.toml
+>---
+#^^^ source.carve meta.frontmatter.toml.carve punctuation.definition.frontmatter.end.carve
+>
+>text
+#^^^^^ source.carve

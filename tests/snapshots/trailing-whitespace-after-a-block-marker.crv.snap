@@ -1,9 +1,10 @@
 >a
-#^^ text.carve
+#^^ source.carve
 >
 >--- 
-#^^^^ text.carve meta.separator.thematic-break.carve
+#^^^ source.carve constant.character.typography.carve
+#   ^^ source.carve
 >
 >b
-#^^ text.carve
+#^^ source.carve
 >

@@ -1,0 +1,13 @@
+>| a | b |{title="p|q" .c}
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#         ^ source.carve markup.table.row.carve meta.attributes.carve
+#          ^^^^^ source.carve markup.table.row.carve meta.attributes.carve entity.other.attribute-name.carve
+#               ^ source.carve markup.table.row.carve meta.attributes.carve
+#                ^^^^^ source.carve markup.table.row.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                     ^ source.carve markup.table.row.carve meta.attributes.carve
+#                      ^^ source.carve markup.table.row.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                        ^ source.carve markup.table.row.carve meta.attributes.carve

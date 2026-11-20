@@ -43,12 +43,12 @@ async function bodyScopes(opener) {
       createOnigString: (value) => new OnigString(value),
     })),
     loadGrammar: async (scopeName) => {
-      if (scopeName === 'text.carve') return parseRawGrammar(grammarText, 'carve.tmLanguage.json')
+      if (scopeName === 'source.carve') return parseRawGrammar(grammarText, 'carve.tmLanguage.json')
       if (stubs.includes(scopeName)) return parseRawGrammar(JSON.stringify({ scopeName, patterns: [] }), `${scopeName}.json`)
       return null
     },
   })
-  const carve = await registry.loadGrammar('text.carve')
+  const carve = await registry.loadGrammar('source.carve')
   let stack = INITIAL
   const lines = [opener, 'body', '```']
   const scopes = lines.map((line) => {
@@ -92,7 +92,7 @@ test('CSV and TSV grammars are contributed without claiming file languages', () 
 
 test('real CSV and TSV grammars tokenize delimited table fences', async () => {
   const wasm = readFileSync(require.resolve('vscode-oniguruma/release/onig.wasm')).buffer
-  const files = { 'text.carve': 'carve', 'text.csv.carve': 'csv', 'text.tsv.carve': 'tsv' }
+  const files = { 'source.carve': 'carve', 'text.csv.carve': 'csv', 'text.tsv.carve': 'tsv' }
   const registry = new Registry({
     onigLib: loadWASM(wasm).then(() => ({
       createOnigScanner: (patterns) => new OnigScanner(patterns),
@@ -104,7 +104,7 @@ test('real CSV and TSV grammars tokenize delimited table fences', async () => {
       return parseRawGrammar(readFileSync(new URL(`../syntaxes/${name}.tmLanguage.json`, import.meta.url), 'utf8'), `${name}.tmLanguage.json`)
     },
   })
-  const carve = await registry.loadGrammar('text.carve')
+  const carve = await registry.loadGrammar('source.carve')
   const lines = [
     '{table}', '```csv', 'Plan,Seats,Price per month', 'Starter,1,"$0"',
     'Team,10,"$49, billed yearly"', 'Note,"line one', 'line two"',

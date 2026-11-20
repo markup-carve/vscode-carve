@@ -45,7 +45,7 @@ async function carveGrammar(): Promise<IGrammar> {
     const registry = new Registry({
       onigLib,
       loadGrammar: async (scopeName) => {
-        if (scopeName !== 'text.carve') {
+        if (scopeName !== 'source.carve') {
           return null
         }
         const content = readFileSync(grammarPath, 'utf8')
@@ -53,9 +53,9 @@ async function carveGrammar(): Promise<IGrammar> {
       },
     })
 
-    grammarPromise = registry.loadGrammar('text.carve').then((g) => {
+    grammarPromise = registry.loadGrammar('source.carve').then((g) => {
       if (!g) {
-        throw new Error('Failed to load text.carve grammar')
+        throw new Error('Failed to load source.carve grammar')
       }
       return g
     })
@@ -147,14 +147,17 @@ const previewExtensionMarkers: Array<[string, string, RegExp]> = [
   // aria-label to this element, and the marker is meant to say the extension
   // ran, not how the engine spells the rest of the tag.
   ['mermaid', '```mermaid\ngraph TD;\n```\n', /<pre class="mermaid"[ >]/],
-  ['mathBlock', '```math\nx^2\n```\n', /<div class="math display">/],
+  ['mathBlock', '```math\nx^2\n```\n', /<div class="math display"[ >]/],
+  ['imgFence', '```img\n<svg width="1" height="1"><rect width="1" height="1"/></svg>\n```\n', /<img [^>]*src="data:image\/svg\+xml,/],
   ['chart', '```chart\n{"type":"bar"}\n```\n', /<script type="application\/json">/],
   ['codeGroup', '::: code-group\n```js [One]\nx\n```\n:::\n', /class="code-group-label"/],
   ['listTable', '::: list-table\n- - a\n  - b\n:::\n', /<table>/],
+  // C2-X-040, C2-X-056: a tab's label is its quoted title; a bracket label no
+  // longer makes a tab, so the 0.1 `[Install]` shape stays a plain div.
   [
     'tabs',
-    ':::: tabs\n::: tab [Install]\nrun it\n:::\n::: tab [Use]\ncall it\n:::\n::::\n',
-    /class="tabs-label"/,
+    ':::: tabs\n::: tab "Install"\nrun it\n:::\n::: tab "Use"\ncall it\n:::\n::::\n',
+    /<div class="tabs" role="group"/,
   ],
 ]
 
@@ -231,15 +234,10 @@ test('wraps preview HTML in a CSP-safe document', () => {
 // decided about. That is what this guard is.
 
 test('every extension the engine ships is either enabled or excluded with a reason', async () => {
-  const lib = (await import('@markup-carve/carve')) as Record<string, unknown>
-
-  // An extension factory is a function returning an object with a non-empty
-  // `name` and at least one lifecycle hook. Anything else an export might be -
-  // a parser helper, a renderer, a profile class - fails this shape.
-  const HOOKS = [
-    'matchInline', 'matchBlock', 'afterParse',
-    'beforeRender', 'renderers', 'blockRenderers', 'inlineRenderers',
-  ]
+  // 0.2 ships its standard extensions from their own entry; a factory returns a
+  // bundle of definitions, renderers or document transforms. `tabs` is the one
+  // standard extension the core entry holds (tabsExtensions, tabsRenderer).
+  const lib = { ...(await import('@markup-carve/carve/extensions')), tabs: () => ({ extensions: [{}] }) } as Record<string, unknown>
   const isFactory = (value: unknown): boolean => {
     if (typeof value !== 'function') return false
     let made: unknown
@@ -249,9 +247,10 @@ test('every extension the engine ships is either enabled or excluded with a reas
       return false
     }
     if (!made || typeof made !== 'object') return false
-    const ext = made as Record<string, unknown>
-    if (typeof ext.name !== 'string' || ext.name.length === 0) return false
-    return HOOKS.some((hook) => hook in ext)
+    const bundle = made as Record<string, unknown>
+    return ['extensions', 'renderers', 'transforms'].some((key) =>
+      Array.isArray(bundle[key]) ? (bundle[key] as unknown[]).length > 0
+        : bundle[key] !== undefined && Object.keys(bundle[key] as object).length > 0)
   }
 
   const classified = new Set<string>([...PREVIEW_EXTENSIONS, ...Object.keys(EXCLUDED_EXTENSIONS)])
@@ -297,23 +296,17 @@ test('headingPermalinks stays off, on purpose and on the record', () => {
   )
 })
 
-test('the four extensions the preview had been missing actually render', () => {
-  // citations changes the PARSE, not just the render: without the extension
-  // there is no citation node at all.
-  const cited = renderPreviewBody('See [@knuth1984].\n\n[@knuth1984]: Knuth, D. /The TeXbook/. 1984.')
+// C2-X-058: `:cite[key]` cites, and a `references` directive holds the entries as a definition list.
+test('a :cite[key] citation renders with its reference list', () => {
+  const cited = renderPreviewBody('See :cite[knuth1984].\n\n::: references\n:: knuth1984\n: Knuth, D. /The TeXbook/. 1984.\n:::\n')
+  assert.match(cited, /data-cite-key="knuth1984"/)
+  assert.match(cited, /<ol class="references">/)
+})
+
+test('the extensions the preview had been missing actually render', () => {
+  // C2-X-057: the 0.2 wiki matcher claims `:wiki[Page]`; `[[x]]` is core text.
   assert.match(
-    cited,
-    /data-cite-key="knuth1984"/,
-    'a [@key] citation no longer renders. citations() changes the PARSE, not just the render: ' +
-      'without it there is no citation node at all, so the whole construct is unreachable.',
-  )
-  assert.match(
-    cited,
-    /<ol class="references">/,
-    'the citation definition no longer produces a reference list',
-  )
-  assert.match(
-    renderPreviewBody('A [[Wiki Page]] link.'),
+    renderPreviewBody('A :wiki[Wiki Page] link.'),
     /class="wikilink"/,
     'a wikilink no longer renders',
   )
@@ -329,28 +322,36 @@ test('the four extensions the preview had been missing actually render', () => {
   )
 })
 
+type Bundle = { extensions?: never[]; renderers?: never; transforms?: never[] }
+
+/** A bundle rendered as the preview renders it: its document transforms run too (C2-X-053). */
+function renderBundle(lib: typeof import('@markup-carve/carve'), source: string, { transforms = [], ...options }: Bundle): string {
+  return lib.renderWithDocumentTransforms(source, transforms, options).html
+}
+
 test('exactly the declared extensions decorate Tier-1 output', async () => {
   const lib = await import('@markup-carve/carve')
-  const factories = lib as unknown as Record<string, () => never>
+  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => Bundle>
+  const tabs = () => ({ extensions: lib.tabsExtensions as never[], renderers: { 'carve.tabs': lib.tabsRenderer } as never })
 
   // A link and a bare URL - between them, the Tier-1 constructs the corpus pins
-  // that an extension is most likely to decorate.
+  // that an extension is most likely to decorate. autolink and externalLinks
+  // are host transforms in 0.2 (decorateLinks), so no engine extension may.
   const PROBE = 'See [the site](https://example.com) and https://example.com/bare here.'
-  const bare = lib.carveToHtml(PROBE, { extensions: [] })
+  const bare = lib.render(PROBE)
 
   const changed = PREVIEW_EXTENSIONS
-    .filter((name) => lib.carveToHtml(PROBE, { extensions: [factories[name]()] }) !== bare)
+    .filter((name) => renderBundle(lib, PROBE, name === 'tabs' ? tabs() : extensions[name]!()) !== bare)
     .slice()
     .sort()
 
   assert.deepEqual(
     changed,
-    [...TIER1_DECORATING_EXTENSIONS].sort(),
-    'the set of extensions that change Tier-1 link output has moved. Declared: ' +
-      `${[...TIER1_DECORATING_EXTENSIONS].join(', ')}; measured: ${changed.join(', ')}. ` +
-      'An undeclared one makes the corpus measurement quietly stop being about the engine; ' +
-      'a stale declaration hides a real regression behind an intended one.',
+    [],
+    'an enabled engine extension changes Tier-1 link output: ' + changed.join(', ') + '. ' +
+      'An undeclared one makes the corpus measurement quietly stop being about the engine.',
   )
+  assert.notEqual(renderPreviewBody(PROBE), bare, `the ${TIER1_DECORATING_EXTENSIONS.join(' and ')} transform no longer decorates`)
 
   // And the separation must actually do something: the conformance render drops
   // the decoration the preview render keeps.
@@ -373,19 +374,21 @@ test('exactly the declared extensions decorate Tier-1 output', async () => {
 
 test('exactly the declared extensions claim core text shapes', async () => {
   const lib = await import('@markup-carve/carve')
-  const factories = lib as unknown as Record<string, () => never>
+  const extensions = await import('@markup-carve/carve/extensions') as unknown as Record<string, () => Bundle>
 
-  const PROBE = '[@a] and [[x]]'
-  const bare = lib.carveToHtml(PROBE, { extensions: [] })
+  // C2-X-057, C2-X-058: 0.2 matchers claim `:wiki[...]` and `:cite[...]`, so no
+  // enabled extension reads `[@a]` or `[[x]]`, which 0.1 citations and
+  // wikilinks claimed. The spoiler div is a core div the corpus pins.
+  const PROBE = '[@a] and [[x]]\n\n::: spoiler\nx\n:::\n'
+  const bare = lib.render(PROBE)
 
   const changed = PREVIEW_EXTENSIONS
-    .filter((name) => !(TIER1_DECORATING_EXTENSIONS as readonly string[]).includes(name))
-    .filter((name) => lib.carveToHtml(PROBE, { extensions: [factories[name]()] }) !== bare)
+    .filter((name) => name !== 'tabs')
+    .filter((name) => renderBundle(lib, PROBE, extensions[name]!()) !== bare)
     .slice()
     .sort()
 
   assert.deepEqual(changed, [...TIER1_CLAIMING_EXTENSIONS].sort())
-  assert.notEqual(renderPreviewBody(PROBE), renderConformanceBody(PROBE))
   assert.equal(renderConformanceBody(PROBE), bare)
 })
 
@@ -576,9 +579,9 @@ test('the preview uses shared checkbox colors and alignment', () => {
   const coreCss = readFileSync(join(here, '..', 'media', 'carve-css', 'core.css'), 'utf8')
 
   assert.doesNotMatch(style, /li > input\[type="checkbox"\]/, 'the preview overrides the shared checkbox rules')
-  assert.match(coreCss, /li > input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none[^}]*border:[^;]*solid var\(--carve-ink-soft\)/)
-  assert.match(coreCss, /li > input\[type="checkbox"\]:checked\s*\{[^}]*background:[^;]*var\(--carve-task-check-icon\)/)
-  assert.match(coreCss, /ul\.task-list > li > input\[type="checkbox"\]:first-child\s*\{[^}]*float:\s*inline-start/)
+  assert.match(coreCss, /\.carve li\.task > input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none[^}]*border:[^;]*solid var\(--carve-ink-soft\)/)
+  assert.match(coreCss, /\.carve li\.task > input\[type="checkbox"\]:checked\s*\{[^}]*background:[^;]*var\(--carve-task-check-icon\)/)
+  assert.match(coreCss, /\.carve ul\.task-list > li\.task > input\[type="checkbox"\]:first-child,[\s\S]*?float:\s*inline-start/)
   assert.match(style, /body\.vscode-light,[\s\S]*?--carve-task-check-icon:[^;]*stroke='%23fff'/)
   assert.match(style, /body\.vscode-dark,[\s\S]*?--carve-task-check-icon:[^;]*stroke='%2314171b'/)
   assert.match(style, /li\[data-task-state="x"\],[\s\S]*?li\[data-task-state="-"\]\s*\{[^}]*color:\s*var\(--carve-ink\);[^}]*text-decoration:\s*none/)
@@ -756,34 +759,16 @@ test('grammar: div label-only (no title)', async () => {
   )
 })
 
-test('grammar: GFM delimiter row without alignment colons', async () => {
-  const [row] = await tokenizeLines(['|---|---|'])
-  const seps = row.filter((t) =>
-    t.scopes.some((s) => s.includes('punctuation.definition.table.separator.carve')),
-  )
-  assert.equal(seps.length, 2, 'both delimiter cells should be scoped')
-})
-
-test('grammar: GFM delimiter row with alignment colons', async () => {
-  const [row] = await tokenizeLines(['|:-----|----:|'])
-  // The dash run is the separator punctuation; the alignment colons get a
-  // dedicated alignment scope (matching the canonical carve-grammars grammar).
-  assert.ok(
-    findScoped(row, '-----', 'punctuation.definition.table.separator.carve'),
-    'dash run should be the separator',
-  )
-  assert.ok(
-    findScoped(row, ':', 'keyword.operator.table.alignment.carve'),
-    'leading alignment colon should be scoped',
-  )
-  assert.ok(
-    findScoped(row, '----', 'punctuation.definition.table.separator.carve'),
-    'right-cell dash run should be the separator',
-  )
-  const colons = row.filter((t) =>
-    t.scopes.some((s) => s.includes('keyword.operator.table.alignment.carve')),
-  )
-  assert.equal(colons.length, 2, 'both alignment colons should be scoped')
+// A GFM separator row is an ordinary row of cells in Carve 0.2 (U-055).
+test('grammar: a GFM separator row is an ordinary row', async () => {
+  for (const line of ['|---|---|', '|:-----|----:|']) {
+    const [row] = await tokenizeLines([line])
+    assert.ok(
+      !row.some((t) => t.scopes.some((s) => s.includes('punctuation.definition.table.separator.carve') || s.includes('keyword.operator.table.alignment.carve'))),
+      `${line} should carry no separator or alignment scope`,
+    )
+    assert.ok(row.some((t) => t.scopes.some((s) => s.includes('markup.table.row.carve'))), `${line} should be a table row`)
+  }
 })
 
 test('grammar: dash-only data cell is NOT scoped as a delimiter', async () => {
@@ -795,24 +780,6 @@ test('grammar: dash-only data cell is NOT scoped as a delimiter', async () => {
     undefined,
     'a lone dash in a data row should not be a separator',
   )
-})
-
-test('grammar: delimiter row between data rows still scopes only the delimiter', async () => {
-  const [head, sep, body] = await tokenizeLines(['| H1 | H2 |', '|---|---|', '| a | b |'])
-  // Header and body rows carry no separator-cell scope.
-  assert.equal(
-    findScoped(head, 'H1', 'punctuation.definition.table.separator.carve'),
-    undefined,
-  )
-  assert.equal(
-    findScoped(body, 'a', 'punctuation.definition.table.separator.carve'),
-    undefined,
-  )
-  // The middle row's dash cells are separators.
-  const seps = sep.filter((t) =>
-    t.scopes.some((s) => s.includes('punctuation.definition.table.separator.carve')),
-  )
-  assert.equal(seps.length, 2, 'delimiter row should scope both cells')
 })
 
 test('grammar: |= header row marker still tokenizes (regression)', async () => {

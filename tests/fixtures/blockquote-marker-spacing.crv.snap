@@ -1,34 +1,34 @@
 >>no space
-#^^^^^^^^^^ text.carve
+#^^^^^^^^^^ source.carve
 >
 >>>x
-#^^^^ text.carve
+#^^^^ source.carve
 >
 >>> x
-#^^^^^ text.carve
+#^^^^^ source.carve
 >
 >>	x
-#^^^^ text.carve
+#^^^^ source.carve
 >
 >>
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
 >
 >> real quote
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^^^^^^^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^^^^^^^^ source.carve markup.quote.carve
 >
 >> > nested
-#^ text.carve markup.quote.carve punctuation.definition.quote.carve
-# ^ text.carve markup.quote.carve
-#  ^ text.carve markup.quote.carve markup.quote.carve punctuation.definition.quote.carve
-#   ^ text.carve markup.quote.carve markup.quote.carve
-#    ^^^^^^^ text.carve markup.quote.carve markup.quote.carve
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^ source.carve markup.quote.carve markup.quote.carve punctuation.definition.quote.carve
+#   ^ source.carve markup.quote.carve markup.quote.carve
+#    ^^^^^^^ source.carve markup.quote.carve markup.quote.carve
 >
 >- > quote opening on a list item's marker line
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^ text.carve markup.quote.carve punctuation.definition.quote.carve
-#   ^ text.carve markup.quote.carve
-#    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve markup.quote.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.quote.carve punctuation.definition.quote.carve
+#   ^ source.carve markup.quote.carve
+#    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve markup.quote.carve
 >

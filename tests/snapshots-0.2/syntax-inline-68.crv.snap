@@ -1,0 +1,19 @@
+>[text][nope] and [nope][] and [a][nope]{.c}
+#^ source.carve meta.link.reference.carve
+# ^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#     ^^ source.carve meta.link.reference.carve
+#       ^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#           ^ source.carve meta.link.reference.carve
+#            ^^^^^ source.carve
+#                 ^ source.carve meta.link.reference.carve
+#                  ^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                      ^^^ source.carve meta.link.reference.carve
+#                         ^^^^^ source.carve
+#                              ^ source.carve meta.link.reference.carve
+#                               ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                                ^^ source.carve meta.link.reference.carve
+#                                  ^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                                      ^ source.carve meta.link.reference.carve
+#                                       ^ source.carve meta.attributes.carve
+#                                        ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                          ^ source.carve meta.attributes.carve

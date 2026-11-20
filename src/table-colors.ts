@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { parseWithSourceLayout } from '@markup-carve/carve'
+import { parseWithLayout } from '@markup-carve/carve'
 import oniguruma from 'vscode-oniguruma'
 import vsctm from 'vscode-textmate'
 import { delimitedColumnRanges } from './delimited-columns.js'
@@ -14,61 +14,52 @@ export interface TableMarker {
   column?: number
 }
 
-interface AstNode {
+interface TreeNode {
   type: string
-  pos?: { startLine: number; endLine: number; startColumn: number; endColumn: number }
-  sourceFormat?: string
-  lang?: string
-  content?: string
+  pos?: { startOffset: number; endOffset: number }
+  syntax?: string
+  value?: string
   attrs?: { classes?: string[] }
-  children?: AstNode[]
-  items?: AstNode[]
-  rows?: AstNode[]
-  cells?: AstNode[]
-  caption?: AstNode[]
-  title?: AstNode[]
-  target?: AstNode
+  [key: string]: unknown
 }
+
+type ParseWithLayout = typeof parseWithLayout
 
 const TASK_KIND: Record<string, TableMarker['kind']> = {
   ' ': 'taskOpen', _: 'taskOpen', '/': 'taskProgress', '!': 'taskBlocked',
   x: 'taskDone', X: 'taskDone', '-': 'taskDropped', '>': 'taskDeferred', '?': 'taskUncertain',
 }
 
-function standaloneContinuationMarkers(lines: string[], ast: AstNode): TableMarker[] {
-  const occupied: NonNullable<AstNode['pos']>[] = []
-  const visit = (node: unknown): void => {
-    if (!node || typeof node !== 'object') return
-    if (Array.isArray(node)) { node.forEach(visit); return }
-    const value = node as AstNode
-    if (value.type === 'link' && value.pos) occupied.push(value.pos)
-    const children = Object.entries(value).filter(([key, child]) => key !== 'pos' && key !== 'attrs' && child && typeof child === 'object')
-    if (children.length) children.forEach(([, child]) => visit(child))
-    else if (value.pos) occupied.push(value.pos)
-  }
-  visit(ast)
-  const markers: TableMarker[] = []
-  lines.forEach((line, index) => {
-    if (!/^(?:[ \t]*>[ \t]+)*[ \t]*\+[ \t]*$/.test(line)) return
-    const start = line.indexOf('+')
-    const column = [...line.slice(0, start)].length + 1
-    const lineNumber = index + 1
-    if (occupied.some((pos) => lineNumber >= pos.startLine && lineNumber <= pos.endLine
-      && (lineNumber !== pos.startLine || column >= pos.startColumn)
-      && (lineNumber !== pos.endLine || column < pos.endColumn))) return
-    markers.push({ line: index, start, end: start + 1, kind: 'continuationMarker' })
-  })
-  return markers
+const isNode = (value: unknown): value is TreeNode =>
+  typeof value === 'object' && value !== null && typeof (value as TreeNode).type === 'string'
 
+/** Each child node with its RFC 6901 path, in source order. */
+function childNodes(node: TreeNode, path: string): Array<[TreeNode, string]> {
+  const children: Array<[TreeNode, string]> = []
+  for (const [key, value] of Object.entries(node)) {
+    if (key === 'pos' || key === 'attrs') continue
+    if (Array.isArray(value)) {
+      value.forEach((child, index) => { if (isNode(child)) children.push([child, `${path}/${key}/${index}`]) })
+    } else if (isNode(value)) {
+      children.push([value, `${path}/${key}`])
+    }
+  }
+  return children
 }
 
-function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSourceLayout): { markers: TableMarker[]; codeLines: Set<number>; tableLines: Set<number> } {
-  const { ast, layout } = parse(text)
+function sourceMarkers(text: string, lines: string[], parse: ParseWithLayout): { markers: TableMarker[]; codeLines: Set<number>; tableLines: Set<number> } {
+  const { document, layout } = parse(text)
+  const formats = new Map(layout.nodes.map((entry) => [entry.path, entry.sourceFormat]))
   const boundaries = new Set<number>([0])
-  for (const span of layout.nodes) {
-    boundaries.add(span.startByte)
-    boundaries.add(span.endByte)
+  const collect = (node: TreeNode, path: string): void => {
+    if (node.pos) {
+      boundaries.add(node.pos.startOffset)
+      boundaries.add(node.pos.endOffset)
+    }
+    for (const [child, childPath] of childNodes(node, path)) collect(child, childPath)
   }
+  collect(document as unknown as TreeNode, '')
+  // Tree offsets are UTF-8 bytes; editor columns are UTF-16 code units.
   const locations = new Map<number, { line: number; column: number }>([[0, { line: 0, column: 0 }]])
   let byte = 0
   let line = 0
@@ -78,74 +69,80 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
     if (character === '\n') { line++; column = 0 } else { column += character.length }
     if (boundaries.has(byte)) locations.set(byte, { line, column })
   }
-  const spans = new Map(layout.nodes.map((entry) => [entry.path, entry]))
   const markers: TableMarker[] = []
   const codeLines = new Set<number>()
   const tableLines = new Set<number>()
   const add = (lineNumber: number, start: number, end: number, kind: TableMarker['kind']) => {
     if (end > start) markers.push({ line: lineNumber, start, end, kind })
   }
-  const walk = (node: AstNode, path: string, figureDiff = false): void => {
-    const span = spans.get(path)
-    const start = span && locations.get(span.startByte)
-    const end = span && locations.get(span.endByte)
+  const fenceAt = (from: number, to: number, indent: number): { row: number; closer: RegExp } | undefined => {
+    for (let row = from; row <= to; row++) {
+      const fence = lines[row]?.slice(indent).match(/^(`{3,}|~{3,})/)
+      if (fence) {
+        return { row, closer: new RegExp(`^${fence[1][0] === '`' ? '`' : '~'}{${fence[1].length},}[ \\t]*\r?$`) }
+      }
+    }
+    return undefined
+  }
+  const walk = (node: TreeNode, path: string): void => {
+    const start = node.pos && locations.get(node.pos.startOffset)
+    const end = node.pos && locations.get(node.pos.endOffset)
     if (start && end) {
       if (node.type === 'code_block' || node.type === 'raw_block') {
         for (let row = start.line; row <= end.line; row++) codeLines.add(row)
       }
-      if (node.type === 'code_block' && (node.attrs?.classes?.includes('diff') || figureDiff) && node.content) {
-        node.content.split('\n').forEach((contentLine, index) => {
-          const marker = contentLine[0]
-          if (marker !== '+' && marker !== '-') return
-          const row = start.line + index + 1
-          const sourceLine = lines[row]
-          if (!sourceLine?.endsWith(contentLine)) return
-          const column = sourceLine.length - contentLine.length
-          add(row, column, column + 1, marker === '+' ? 'diffAdd' : 'diffRemove')
-        })
-      }
-      const delimited = node.type === 'table' ? node.sourceFormat : node.type === 'code_block' ? node.lang : undefined
-      if (delimited === 'csv' || delimited === 'tsv') {
-        let opener = start.line
-        let fence: RegExpMatchArray | null = null
-        for (; opener <= end.line && !fence; opener++) fence = lines[opener]?.slice(start.column).match(/^(`{3,}|~{3,})/) ?? null
+      if (node.type === 'code_block' && node.attrs?.classes?.includes('diff') && node.value) {
+        const fence = fenceAt(start.line, end.line, start.column)
         if (fence) {
-          const closer = new RegExp(`^${fence[1][0] === '`' ? '`' : '~'}{${fence[1].length},}[ \\t]*\r?$`)
+          node.value.split('\n').forEach((contentLine, index) => {
+            const marker = contentLine[0]
+            if (marker !== '+' && marker !== '-') return
+            const row = fence.row + index + 1
+            const sourceLine = lines[row]
+            if (!sourceLine?.endsWith(contentLine)) return
+            const column = sourceLine.length - contentLine.length
+            add(row, column, column + 1, marker === '+' ? 'diffAdd' : 'diffRemove')
+          })
+        }
+      }
+      const tableFormat = node.type === 'table' ? formats.get(path) : undefined
+      const delimited = tableFormat ?? (node.type === 'code_block' ? node.syntax : undefined)
+      if (delimited === 'csv' || delimited === 'tsv') {
+        const separator = delimited === 'csv' ? ',' : '\t'
+        const fence = fenceAt(start.line, end.line, start.column)
+        if (fence) {
           const body: string[] = []
-          for (let row = opener; row < lines.length && row <= end.line; row++) {
+          for (let row = fence.row + 1; row < lines.length && row <= end.line; row++) {
             const text = lines[row].slice(start.column)
-            if (closer.test(text)) break
+            if (fence.closer.test(text)) break
             body.push(text)
           }
-          for (const range of delimitedColumnRanges(body, delimited === 'csv' ? ',' : '\t')) {
+          const ranges = delimitedColumnRanges(body, separator)
+          ranges.forEach((range, index) => {
+            const row = fence.row + 1 + range.line
             markers.push({
-              line: opener + range.line,
+              line: row,
               start: start.column + range.start,
               end: start.column + range.end,
               kind: 'delimitedColumn',
               column: range.column,
             })
-          }
+            // Cells of a CSV or TSV table carry no positions (C2-A-158), so the
+            // separators come from the field ranges.
+            const next = ranges[index + 1]
+            if (tableFormat && next && next.line === range.line && next.column === range.column + 1
+              && body[range.line]?.slice(range.end, next.start) === separator) {
+              add(row, start.column + range.end, start.column + next.start, 'boundary')
+            }
+          })
         }
       }
-      if (node.type === 'table' && (node.sourceFormat === 'csv' || node.sourceFormat === 'tsv')) {
+      if (tableFormat === 'csv' || tableFormat === 'tsv') {
         for (let row = start.line; row <= end.line; row++) tableLines.add(row)
-        for (let row = start.line + 1; row < end.line; row++) {
+        const fence = fenceAt(start.line, end.line, start.column)
+        for (let row = (fence?.row ?? start.line) + 1; row < end.line; row++) {
           add(row, Math.min(start.column, lines[row]?.length ?? 0), lines[row]?.length ?? 0, 'tableBody')
         }
-        node.rows?.forEach((row, rowIndex) => {
-          for (let cell = 1; cell < (row.cells?.length ?? 0); cell++) {
-            const left = spans.get(`${path}/rows/${rowIndex}/cells/${cell - 1}`)
-            const right = spans.get(`${path}/rows/${rowIndex}/cells/${cell}`)
-            const from = left && locations.get(left.endByte)
-            const to = right && locations.get(right.startByte)
-            if (!from || !to || from.line !== to.line) continue
-            const separator = lines[from.line]?.slice(from.column, to.column)
-            if (separator === (node.sourceFormat === 'csv' ? ',' : '\t')) {
-              add(from.line, from.column, to.column, 'boundary')
-            }
-          }
-        })
       }
       if (node.type === 'list_item') {
         const match = lines[start.line]?.slice(start.column).match(/^(?:[-*]|\d+[.)]|[A-Za-z][.)]|\.) +(?:\[[ xX_\/>!?-]\] +)?/)
@@ -168,20 +165,16 @@ function sourceMarkers(text: string, lines: string[], parse: typeof parseWithSou
         if (match) add(start.line, start.column, start.column + match[0].length, 'containerMarker')
       }
     }
-    if (node.target) walk(node.target, `${path}/target`, node.type === 'figure' && node.attrs?.classes?.includes('diff'))
-    for (const key of ['children', 'items', 'rows', 'cells', 'caption', 'title'] as const) {
-      node[key]?.forEach((child, index) => walk(child, `${path}/${key}/${index}`))
-    }
+    for (const [child, childPath] of childNodes(node, path)) walk(child, childPath)
   }
-  walk(ast as AstNode, '')
-  markers.push(...standaloneContinuationMarkers(lines, ast as AstNode))
+  walk(document as unknown as TreeNode, '')
   return { markers, codeLines, tableLines }
 }
 
 /** Use the same TextMate rules as the editor, including fenced Carve blocks. */
 export async function createTableMarkerScanner(
   extensionPath: string,
-  parse: typeof parseWithSourceLayout = parseWithSourceLayout,
+  parse: ParseWithLayout = parseWithLayout,
 ): Promise<(text: string, key?: string) => TableMarker[]> {
   const wasm = readFileSync(join(extensionPath, 'node_modules/vscode-oniguruma/release/onig.wasm'))
   await oniguruma.loadWASM(wasm.buffer)
@@ -190,14 +183,14 @@ export async function createTableMarkerScanner(
       createOnigScanner: (sources) => new oniguruma.OnigScanner(sources),
       createOnigString: (source) => new oniguruma.OnigString(source),
     }),
-    loadGrammar: async (scopeName) => scopeName === 'text.carve'
+    loadGrammar: async (scopeName) => scopeName === 'source.carve'
       ? vsctm.parseRawGrammar(
         readFileSync(join(extensionPath, 'syntaxes/carve.tmLanguage.json'), 'utf8'),
         'carve.tmLanguage.json',
       )
       : null,
   })
-  const grammar = await registry.loadGrammar('text.carve')
+  const grammar = await registry.loadGrammar('source.carve')
   if (!grammar) throw new Error('Could not load the Carve TextMate grammar')
 
   type ScopeToken = { startIndex: number; endIndex: number; scopes: string[] }

@@ -1,0 +1,14 @@
+>pages 1--10 and a---b and a----b and `git log --oneline` and x --- y
+#^^^^^^^ source.carve
+#       ^^ source.carve constant.character.typography.carve
+#         ^^^^^^^^ source.carve
+#                 ^^^ source.carve constant.character.typography.carve
+#                    ^^^^^^^ source.carve
+#                           ^^^ source.carve constant.character.typography.carve
+#                              ^^^^^^^ source.carve
+#                                     ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                      ^^^^^^^^^^^^^^^^^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                                                       ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                                        ^^^^^^^ source.carve
+#                                                               ^^^ source.carve constant.character.typography.carve
+#                                                                  ^^^ source.carve

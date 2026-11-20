@@ -50,7 +50,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /**
  * Every token of `src`, flattened across lines, with its text and scopes.

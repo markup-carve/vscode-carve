@@ -1,0 +1,16 @@
+>[*x*]{???} and [[t](/v)]{.c}
+#^ source.carve
+# ^ source.carve punctuation.definition.bold.carve
+#  ^ source.carve markup.bold.carve
+#   ^ source.carve punctuation.definition.bold.carve
+#    ^^^^^^^^^^^^ source.carve
+#                ^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#                 ^ source.carve meta.link.inline.carve string.other.link.title.carve
+#                  ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#                   ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#                    ^^ source.carve meta.link.inline.carve markup.underline.link.carve
+#                      ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#                       ^ source.carve
+#                        ^ source.carve meta.attributes.carve
+#                         ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                           ^ source.carve meta.attributes.carve

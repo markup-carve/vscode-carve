@@ -1,0 +1,13 @@
+>::: |
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>one
+#^^^^ source.carve
+>  two
+#^^^^^^ source.carve
+>
+>three
+#^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

@@ -1,0 +1,15 @@
+>%% #region intro
+#^^^^^^^^^^^^^^^^ source.carve comment.line.percent.carve
+>%% carve-lint-disable-next-line empty-link-destination
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve comment.line.percent.carve
+>See [a]().
+#^^^^^^^^^^^ source.carve
+>
+>See [b](). %% carve-lint-disable-line
+#^^^^^^^^^^^ source.carve
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve comment.line.percent.carve
+>
+>See [c]().
+#^^^^^^^^^^^ source.carve
+>%% #endregion intro
+#^^^^^^^^^^^^^^^^^^^ source.carve comment.line.percent.carve

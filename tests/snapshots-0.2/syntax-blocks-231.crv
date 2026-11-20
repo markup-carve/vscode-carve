@@ -1,0 +1,8 @@
+%% #region intro
+%% carve-lint-disable-next-line empty-link-destination
+See [a]().
+
+See [b](). %% carve-lint-disable-line
+
+See [c]().
+%% #endregion intro

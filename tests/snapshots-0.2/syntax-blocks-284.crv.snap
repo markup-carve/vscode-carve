@@ -1,0 +1,8 @@
+>v.  x
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^^ source.carve markup.list.numbered.carve
+#    ^^ source.carve
+>vi.  y
+#^^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#   ^^ source.carve markup.list.numbered.carve
+#     ^^ source.carve

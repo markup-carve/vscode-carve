@@ -1,0 +1,16 @@
+>a[^n]
+#^ source.carve
+# ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+>
+>[^n]: ![a][nope]
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#        ^ source.carve meta.image.reference.carve string.other.image.alt.carve
+#         ^ source.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#          ^ source.carve meta.image.reference.carve
+#           ^^^^ source.carve meta.image.reference.carve constant.other.reference.link.carve
+#               ^ source.carve meta.image.reference.carve

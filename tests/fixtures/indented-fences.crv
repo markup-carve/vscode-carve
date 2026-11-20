@@ -1,0 +1,13 @@
+Text before.
+
+  ```js
+  let a = 1
+  ```
+
+  ```carve
+  = Nested
+  ```
+
+ ```
+ plain
+ ```

@@ -197,7 +197,8 @@ test('with the gate open the server reports an unresolved include instead of pro
     )
 
     const missing = await run(broken, 'Hi\n\n{{ chapters/missing.crv }}\n')
-    assert.deepEqual(missing.diagnostics.map((d) => d.code), ['include-unresolved'])
+    // C2-N-070: the parse reports `include-not-found`; `include-unresolved` is the render's loss.
+    assert.deepEqual(missing.diagnostics.map((d) => d.code), ['include-not-found'])
     // The MERELY ATTEMPTED target is watched too, keyed on the resolved
     // candidate rather than the path as written, so creating the file
     // invalidates the document that wanted it.

@@ -1,0 +1,7 @@
+[*foo*
+bar][] and [x][foo
+bar]
+
+[*foo* bar]: /u
+
+[foo bar]: /v

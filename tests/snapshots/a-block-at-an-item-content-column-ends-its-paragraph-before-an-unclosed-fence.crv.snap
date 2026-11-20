@@ -1,24 +1,21 @@
 >::: note
-#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
-#   ^ text.carve markup.other.div.carve
-#    ^^^^ text.carve markup.other.div.carve entity.name.type.div.carve
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
 >- para
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^^ source.carve
 >  [r]: /u
-#^^ text.carve meta.link.reference.definition.carve
-#  ^^^^ text.carve meta.link.reference.definition.carve constant.other.reference.link.carve
-#      ^ text.carve meta.link.reference.definition.carve
-#       ^^ text.carve meta.link.reference.definition.carve markup.underline.link.carve
+#^^^^^^^^^^ source.carve
 >```
-#^^^ text.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
 >code
-#^^^^^ text.carve markup.raw.block.fenced.code.carve
+#^^^^^ source.carve markup.raw.block.fenced.code.carve
 >::::
-#^^^^^ text.carve markup.raw.block.fenced.code.carve
+#^^^^^ source.carve markup.raw.block.fenced.code.carve
 >:::
-#^^^^ text.carve markup.raw.block.fenced.code.carve
+#^^^^ source.carve markup.raw.block.fenced.code.carve
 >after *b*
-#^^^^^^^^^^ text.carve markup.raw.block.fenced.code.carve
+#^^^^^^^^^^ source.carve markup.raw.block.fenced.code.carve
 >

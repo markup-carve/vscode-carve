@@ -8,9 +8,9 @@
  * kept colouring `-` and `1.` as markers. It was found by someone comparing the
  * copies by hand.
  *
- * tests/lib/block-battery.json is that comparison, made routine: the identical
- * table carve-grammars runs, vendored here, with a drift check keeping the copy
- * honest.
+ * tests/lib/block-battery.json is that comparison, made routine. It was
+ * carve-grammars' table; carve-grammars#903 removed it upstream, so the copy is
+ * a local fixture now.
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -57,7 +57,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 // A trailing line keeps the shape off the last line of the document, where a
 // `$`-anchored rule behaves differently.
@@ -135,15 +135,13 @@ function tokenize(src) {
 
 const has = (t, needle) => t.scopes.some((s) => s.includes(needle))
 
-test('continuation operators have a different scope from list markers', () => {
-  for (const source of ['- [ ] +', '- +', '1. +', '. +']) {
-    const plus = tokenize(source).find((t) => t.text === '+')
-    assert.ok(plus, `${source} has no + token`)
-    assert.ok(has(plus, 'keyword.operator.continuation.carve'), source)
+test('a plus after a list marker is text', () => {
+  // Carve 0.2 has no continuation marker (U-014 to U-017).
+  for (const source of ['- [ ] +', '- +', '1. +', '. +', '- +x']) {
+    assert.ok(!tokenize(source).some((t) => has(t, 'keyword.operator.continuation.carve')), source)
   }
   const bullet = tokenize('- [ ] +').find((t) => t.text === '-')
   assert.ok(bullet && has(bullet, 'punctuation.definition.list.begin.carve'))
-  assert.ok(!tokenize('- +x').some((t) => has(t, 'keyword.operator.continuation.carve')))
 })
 
 /*
@@ -161,7 +159,8 @@ const HEADING_SHAPES = [
   ['a task marker line', '- [x] # h\n', '# h'],
   ['a quote marker line', '> # h\n', '# h'],
   ['a quote on an item marker line', '- > # h\n', '# h'],
-  ["an item's own body column", '- x\n  # h\n', '  # h'],
+  // A blank line keeps it out of the item's paragraph (U-006).
+  ["an item's own body column", '- x\n\n  # h\n', '  # h'],
   // Rule A (markup-carve/carve#3887): the model and carve-js read an indent at
   // document level, and extra spaces after a quote prefix, as the same block.
   ['the document level at an indent', 'para\n\n  # h\n', '  # h'],
@@ -223,7 +222,6 @@ for (const [label, src, line, why] of NOT_A_HEADING) {
 const FENCE_SHAPES = [
   ["an item's marker line", '- ```\n  *c* [l](/u)\n  [r]: /url\n  ```\n\nafter\n'],
   ["an item's own body column", '- x\n  ```\n  *c* [l](/u)\n  [r]: /url\n  ```\n\nafter\n'],
-  ['a tilde fence on a marker line', '- ~~~\n  *c* [l](/u)\n  [r]: /url\n  ~~~\n\nafter\n'],
   ['an ordered marker line', '1. ```\n   *c* [l](/u)\n   [r]: /url\n   ```\n\nafter\n'],
   ['a task marker line', '- [x] ```\n      *c* [l](/u)\n      [r]: /url\n      ```\n\nafter\n'],
   ['the document level at an indent', 'para\n\n  ```\n  *c* [l](/u)\n  [r]: /url\n  ```\n\nafter\n'],
@@ -369,14 +367,13 @@ test('a pipe that is not at the content column is not a row', () => {
  * 363-a-task-item-s-checkbox-is-not-decided-by-its-first-block) and `> ---` as
  * an `<hr>` inside the quote.
  */
+// Only a star run is a break in Carve 0.2 (U-044); `---` and `___` are text.
 const BREAK_SHAPES = [
-  ['a dash marker line', '- ---\n', '---'],
-  ['a task marker line', '- [ ] ---\n', '---'],
-  ['an ordered marker line', '1. ---\n', '---'],
-  ['a star run on a marker line', '- ***\n', '***'],
-  ['an underscore run on a marker line', '- ___\n', '___'],
-  ['a quote marker line', '> ---\n', '---'],
-  ["an item's own body column", '- x\n\n  ---\n', '---'],
+  ['a dash marker line', '- ***\n', '***'],
+  ['a task marker line', '- [ ] ***\n', '***'],
+  ['an ordered marker line', '1. ***\n', '***'],
+  ['a quote marker line', '> ***\n', '***'],
+  ["an item's own body column", '- x\n\n  ***\n', '***'],
 ]
 
 for (const [label, src, text] of BREAK_SHAPES) {

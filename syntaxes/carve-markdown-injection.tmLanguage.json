@@ -26,7 +26,7 @@
           "contentName": "meta.embedded.block.carve",
           "patterns": [
             {
-              "include": "text.carve"
+              "include": "source.carve"
             }
           ]
         }

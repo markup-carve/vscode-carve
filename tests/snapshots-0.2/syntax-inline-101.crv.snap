@@ -1,0 +1,18 @@
+>x -- y and wait... really and a --> b <-- c <--> d ==> e <== f <=> g
+#^^ source.carve
+#  ^^ source.carve constant.character.typography.carve
+#    ^^^^^^^^^^^ source.carve
+#               ^^^ source.carve constant.character.typography.carve
+#                  ^^^^^^^^^^^^^^ source.carve
+#                                ^^^ source.carve constant.character.typography.carve
+#                                   ^^^ source.carve
+#                                      ^^^ source.carve constant.character.typography.carve
+#                                         ^^^ source.carve
+#                                            ^^^^ source.carve constant.character.typography.carve
+#                                                ^^^ source.carve
+#                                                   ^^^ source.carve constant.character.typography.carve
+#                                                      ^^^ source.carve
+#                                                         ^^^ source.carve constant.character.typography.carve
+#                                                            ^^^ source.carve
+#                                                               ^^^ source.carve constant.character.typography.carve
+#                                                                  ^^^ source.carve

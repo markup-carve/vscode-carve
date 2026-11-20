@@ -1,18 +1,18 @@
 >::: >
-#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
-#   ^ text.carve markup.other.div.carve
-#    ^ text.carve markup.other.div.carve entity.name.type.div.carve
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
 >Notes:
-#^^^^^^^ text.carve
+#^^^^^^^ source.carve
 >
 >- ship the parser
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^^^^^^^^^^^^^ source.carve
 >- then the renderer
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve markup.list.unnumbered.carve
-#  ^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^^^^^^^^^^^^^^^ source.carve
 >:::
-#^^^ text.carve markup.other.div.carve punctuation.definition.div.carve
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
 >

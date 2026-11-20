@@ -1,0 +1,41 @@
+># Intro
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>See [Intro][] and [x][nope] and ![i][nope] and [^zz].
+#^^^^ source.carve
+#    ^ source.carve meta.link.reference.carve
+#     ^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#          ^^^ source.carve meta.link.reference.carve
+#             ^^^^^ source.carve
+#                  ^ source.carve meta.link.reference.carve
+#                   ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                    ^^ source.carve meta.link.reference.carve
+#                      ^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                          ^ source.carve meta.link.reference.carve
+#                           ^^^^^ source.carve
+#                                ^^ source.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#                                  ^ source.carve meta.image.reference.carve string.other.image.alt.carve
+#                                   ^ source.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#                                    ^ source.carve meta.image.reference.carve
+#                                     ^^^^ source.carve meta.image.reference.carve constant.other.reference.link.carve
+#                                         ^ source.carve meta.image.reference.carve
+#                                          ^^^^^ source.carve
+#                                               ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                                ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                                 ^^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#                                                   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                                                    ^^ source.carve
+>
+>[a](javascript:alert(1)) and <https://example.org>
+#^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+# ^ source.carve meta.link.inline.carve string.other.link.title.carve
+#  ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#   ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#    ^^^^^^^^^^^^^^^^^^^ source.carve meta.link.inline.carve markup.underline.link.carve
+#                       ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#                        ^^^^^ source.carve
+#                             ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                              ^^^^^^^^^^^^^^^^^^^ source.carve meta.link.autolink.carve markup.underline.link.carve
+#                                                 ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve

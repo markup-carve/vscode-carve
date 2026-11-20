@@ -1,0 +1,17 @@
+>::: |
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>a\
+#^ source.carve
+# ^ source.carve constant.character.escape.hard-break.carve
+>\
+#^ source.carve constant.character.escape.hard-break.carve
+>b
+#^^ source.carve
+>
+>c\
+#^ source.carve
+# ^ source.carve constant.character.escape.hard-break.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

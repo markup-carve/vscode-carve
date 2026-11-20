@@ -34,7 +34,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 function tokenize(src) {
   let state = vsctm.INITIAL
@@ -54,18 +54,7 @@ const has = (t, s) => t !== undefined && t.scopes.some((x) => x.includes(s))
 
 // [label, source, line, token, scope]
 const SHAPES = [
-  ['an indented reference definition', ' Read [intro][x].\n\n [x]: /intro "T"\n', ' [x]: /intro "T"', '[x]:', 'constant.other.reference.link'],
-  ['its destination', ' Read [intro][x].\n\n [x]: /intro "T"\n', ' [x]: /intro "T"', '/intro', 'markup.underline.link'],
-  ['an indented footnote definition', ' Note[^fn].\n\n [^fn]: body.\n', ' [^fn]: body.', '[^fn]:', 'meta.footnote.definition'],
-  ['a tab-indented abbreviation definition', 'AB\n\n\t*[AB]: x\n', '\t*[AB]: x', 'AB', 'meta.abbreviation.definition'],
-  ['a definition right under a paragraph line', 'Read [i][x].\n [x]: /u\n', ' [x]: /u', '[x]:', 'meta.link.reference.definition'],
-  ['a footnote definition in an item', '- item\n\n  [^f]: body\n', '  [^f]: body', '[^f]:', 'meta.footnote.definition'],
-  ['a quoted footnote definition', '> [^f]: body\n', '> [^f]: body', '[^f]:', 'meta.footnote.definition'],
-  ['a heading under a term', ':: c\n  # H\n', '  # H', 'H', 'entity.name.section'],
-  ['a heading under a quoted term', '> :: c\n>   # H\n', '>   # H', 'H', 'entity.name.section'],
-  ['a nested term in a description body', ':: a\n: b\n  :: c\n    - x\n', '  :: c', '::', 'markup.list.definition.term'],
-  ['a list under a nested term', ':: a\n: b\n  :: c\n    - x\n', '    - x', '-', 'markup.list.unnumbered'],
-  ['a term under a paragraph', 'para\n:: c\n', ':: c', '::', 'markup.list.definition.term'],
+  ['a list under description text', ':: a\n: b\n  :: c\n    - x\n', '    - x', '-', 'markup.list.unnumbered'],
   ['a span marker in a header cell', '|= a |= < |\n', '|= a |= < |', '<', 'keyword.operator.table.colspan'],
   ['a span marker in a first body cell', '| < | b |\n', '| < | b |', '<', 'keyword.operator.table.colspan'],
   ['a rowspan marker in a header cell', '|= a |\n|= ^ |\n', '|= ^ |', '^', 'keyword.operator.table.rowspan'],
@@ -82,17 +71,39 @@ for (const [label, src, line, text, scope] of SHAPES) {
   })
 }
 
+// Directly under paragraph text these lines continue the paragraph in Carve 0.2
+// (U-004, U-005, U-039), and a definition stands at column 0 outside every container
+// (C2-B-081); the 0.2 reference engine renders each as text.
+const PARAGRAPH_TEXT = [
+  ['a heading under a term', ':: c\n  # H\n', '  # H', 'H', 'entity.name.section'],
+  ['an indented reference definition', ' Read [intro][x].\n\n [x]: /intro "T"\n', ' [x]: /intro "T"', '[x]:', 'constant.other.reference.link'],
+  ['its destination', ' Read [intro][x].\n\n [x]: /intro "T"\n', ' [x]: /intro "T"', '/intro', 'markup.underline.link'],
+  ['an indented footnote definition', ' Note[^fn].\n\n [^fn]: body.\n', ' [^fn]: body.', '[^fn]:', 'meta.footnote.definition'],
+  ['a tab-indented abbreviation definition', 'AB\n\n\t*[AB]: x\n', '\t*[AB]: x', 'AB', 'meta.abbreviation.definition'],
+  ['a footnote definition in an item', '- item\n\n  [^f]: body\n', '  [^f]: body', '[^f]:', 'meta.footnote.definition'],
+  ['a quoted footnote definition', '> [^f]: body\n', '> [^f]: body', '[^f]:', 'meta.footnote.definition'],
+  ['a definition right under a paragraph line', 'Read [i][x].\n [x]: /u\n', ' [x]: /u', '[x]:', 'meta.link.reference.definition'],
+  ['a nested term right under description text', ':: a\n: b\n  :: c\n    - x\n', '  :: c', '::', 'markup.list.definition.term'],
+  ['a term under a paragraph', 'para\n:: c\n', ':: c', '::', 'markup.list.definition.term'],
+]
+
+for (const [label, src, line, text, scope] of PARAGRAPH_TEXT) {
+  test(`${label} carries no ${scope}`, () => {
+    const t = on(src, line, text)
+    assert.ok(!t || !has(t, scope), `${JSON.stringify(text)} -> ${t?.scopes.join(' ')}`)
+  })
+}
+
 test('a footnote body in a container is not a link destination', () => {
   const t = on('- item\n\n  [^f]: body\n', '  [^f]: body', ' body')
-  assert.ok(t && !has(t, 'markup.underline.link'), t && t.scopes.join(' '))
+  assert.ok(!has(t, 'markup.underline.link'), t && t.scopes.join(' '))
 })
 
-test('a line under a term that is not a marker line ends the term', () => {
-  // The model renders `:: c` over `  more` as a `<dt>` and then a paragraph.
-  const t = on(':: c\n  more\n', '  more', 'more')
-  assert.ok(t && !has(t, 'markup.list.definition'), t && t.scopes.join(' '))
+test('a line under a term continues the term', () => {
+  // U-106: the 0.2 reference engine renders `:: c` over `  more` as one `<dt>c more</dt>`.
+  const tokens = tokenize(':: c\n  more\n').filter((t) => t.line === '  more')
+  assert.ok(tokens.length > 0 && tokens.every((t) => !has(t, 'markup.heading') && !has(t, 'markup.raw')))
 })
-
 // carve-js renders each source as one code block whose body holds the deeper fence line.
 const DEEPER_CLOSERS = [
   ['a quoted fence', '>   ```js\n>   x\n>     ```\n>   y\n>   ```\n', '>   y'],

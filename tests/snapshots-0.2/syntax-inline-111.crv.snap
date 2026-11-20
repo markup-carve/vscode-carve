@@ -1,0 +1,25 @@
+>{--->-} and {-<---} and {++-1+} and {++-+} and C++-style and a{%x%}+-b
+#^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#  ^^^ source.carve markup.deleted.critic.carve markup.deleted.carve constant.character.typography.carve
+#     ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#       ^^^^^ source.carve
+#            ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#              ^^^ source.carve markup.deleted.critic.carve markup.deleted.carve constant.character.typography.carve
+#                 ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                   ^^^^^ source.carve
+#                        ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                          ^^ source.carve markup.inserted.critic.carve markup.inserted.carve constant.character.typography.carve
+#                            ^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#                             ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                               ^^^^^ source.carve
+#                                    ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                                      ^^ source.carve markup.inserted.critic.carve markup.inserted.carve constant.character.typography.carve
+#                                        ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                                          ^^^^^^^ source.carve
+#                                                 ^^ source.carve constant.character.typography.carve
+#                                                   ^^^^^^^^^^^ source.carve
+#                                                              ^^ source.carve comment.block.inline.carve
+#                                                                ^ source.carve comment.block.inline.carve
+#                                                                 ^^ source.carve comment.block.inline.carve
+#                                                                   ^^ source.carve constant.character.typography.carve
+#                                                                     ^^ source.carve

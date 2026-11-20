@@ -1,0 +1,30 @@
+>a[^n] b^[inline *x*] c[^n]
+#^ source.carve
+# ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^^ source.carve
+#       ^^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#         ^^^^^^^ source.carve meta.footnote.inline.carve
+#                ^ source.carve meta.footnote.inline.carve punctuation.definition.bold.carve
+#                 ^ source.carve meta.footnote.inline.carve markup.bold.carve
+#                  ^ source.carve meta.footnote.inline.carve punctuation.definition.bold.carve
+#                   ^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#                    ^^ source.carve
+#                      ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                       ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#                        ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#                         ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+>
+>After.
+#^^^^^^^ source.carve
+>
+>[^n]: Note.
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^^^^^ source.carve
+>
+>    More.
+#^^^^ source.carve
+#    ^^^^^^ source.carve

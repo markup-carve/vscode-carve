@@ -1,0 +1,14 @@
+>- item text
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^^^^^^^ source.carve
+>  - child
+#^^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+#   ^ source.carve markup.list.unnumbered.carve
+#    ^^^^^^ source.carve
+>  3. also a child list
+#^^ source.carve markup.list.numbered.carve
+#  ^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#    ^ source.carve markup.list.numbered.carve
+#     ^^^^^^^^^^^^^^^^^^ source.carve

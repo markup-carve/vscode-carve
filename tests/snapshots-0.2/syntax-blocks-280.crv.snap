@@ -1,0 +1,16 @@
+>::: |
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>a
+#^^ source.carve
+>%%%
+#^^^ source.carve comment.block.carve
+>hidden
+#^^^^^^^ source.carve comment.block.carve
+>%%%
+#^^^ source.carve comment.block.carve
+>b
+#^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
