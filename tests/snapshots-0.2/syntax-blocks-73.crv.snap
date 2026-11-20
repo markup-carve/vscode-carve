@@ -1,0 +1,8 @@
+>:: t
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^ source.carve
+>
+>  x
+#^^ source.carve
+#  ^^ source.carve

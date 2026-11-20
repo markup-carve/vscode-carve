@@ -1,0 +1,36 @@
+>{/x/} {*x*} {_x_} {~x~} {=x=} H{,2,}O mc{^2^} {+new+} {-old-}
+#^^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#  ^ source.carve markup.italic.carve markup.italic.carve
+#   ^^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#     ^ source.carve
+#      ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
+#        ^ source.carve markup.bold.carve markup.bold.carve
+#         ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
+#           ^ source.carve
+#            ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#              ^ source.carve markup.underline.text.carve markup.underline.text.carve
+#               ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#                 ^ source.carve
+#                  ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#                    ^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#                     ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#                       ^ source.carve
+#                        ^^ source.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                          ^ source.carve markup.highlight.carve markup.highlight.carve
+#                           ^^ source.carve markup.highlight.carve punctuation.definition.highlight.carve
+#                             ^^ source.carve
+#                               ^^ source.carve markup.subscript.carve punctuation.definition.subscript.carve
+#                                 ^ source.carve markup.subscript.carve markup.subscript.carve
+#                                  ^^ source.carve markup.subscript.carve punctuation.definition.subscript.carve
+#                                    ^^^^ source.carve
+#                                        ^^ source.carve markup.superscript.carve punctuation.definition.superscript.carve
+#                                          ^ source.carve markup.superscript.carve markup.superscript.carve
+#                                           ^^ source.carve markup.superscript.carve punctuation.definition.superscript.carve
+#                                             ^ source.carve
+#                                              ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                                                ^^^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#                                                   ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                                                     ^ source.carve
+#                                                      ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                                                        ^^^ source.carve markup.deleted.critic.carve markup.deleted.carve
+#                                                           ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve

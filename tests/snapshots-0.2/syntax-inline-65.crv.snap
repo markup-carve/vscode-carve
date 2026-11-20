@@ -1,0 +1,9 @@
+><https://example.com/a_b?c=*d*> and <a@b.com> and <a@b> and <not a link>
+#^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve meta.link.autolink.carve markup.underline.link.carve
+#                              ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                               ^^^^^ source.carve
+#                                    ^ source.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+#                                     ^^^^^^^ source.carve meta.link.autolink.email.carve markup.underline.link.carve
+#                                            ^ source.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+#                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve

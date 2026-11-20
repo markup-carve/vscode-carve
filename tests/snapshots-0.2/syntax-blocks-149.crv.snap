@@ -1,0 +1,11 @@
+>- one
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve
+>
+>%% c
+#^^^^ source.carve comment.line.percent.carve
+>- two
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve

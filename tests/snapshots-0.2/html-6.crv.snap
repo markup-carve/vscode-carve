@@ -1,0 +1,13 @@
+>- one
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve
+>- two
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^ source.carve
+>
+>- three
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^^^ source.carve

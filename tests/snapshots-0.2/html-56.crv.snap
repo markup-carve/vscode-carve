@@ -1,0 +1,22 @@
+>::: note "[^a]"
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+#        ^ source.carve markup.other.div.carve
+#         ^^^^^^ source.carve markup.other.div.carve string.quoted.double.carve
+>[^b]
+#^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+# ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>[^a]: A
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve
+>[^b]: B
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve

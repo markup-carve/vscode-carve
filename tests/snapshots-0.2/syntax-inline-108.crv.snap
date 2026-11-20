@@ -1,0 +1,19 @@
+><https://例え.jp/パス?q=1#f> <h:x> <a@b.co.uk> <x+y@b-c.de>
+#^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+# ^^^^^^^^^^^^^^^^^^^^^^ source.carve meta.link.autolink.carve markup.underline.link.carve
+#                       ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                        ^ source.carve
+#                         ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                          ^^^ source.carve meta.link.autolink.carve markup.underline.link.carve
+#                             ^ source.carve meta.link.autolink.carve punctuation.definition.link.carve
+#                              ^ source.carve
+#                               ^ source.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+#                                ^^^^^^^^^ source.carve meta.link.autolink.email.carve markup.underline.link.carve
+#                                         ^ source.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+#                                          ^ source.carve
+#                                           ^ source.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+#                                            ^^^^^^^^^^ source.carve meta.link.autolink.email.carve markup.underline.link.carve
+#                                                      ^ source.carve meta.link.autolink.email.carve punctuation.definition.link.carve
+>
+><1a:x> <http://a b> <http://a|b> <a@b.c1> <a_b@c_d.e-f>
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve

@@ -1,0 +1,26 @@
+>> {.c}
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^ source.carve markup.quote.carve
+>> ![a](y.png)
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^ source.carve markup.quote.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#    ^ source.carve markup.quote.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ source.carve markup.quote.carve meta.image.inline.carve
+#       ^^^^^ source.carve markup.quote.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ source.carve markup.quote.carve meta.image.inline.carve
+>
+>- {#i}
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve meta.attributes.carve
+#   ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#     ^ source.carve meta.attributes.carve
+>  ![b](z.png)
+#^^ source.carve
+#  ^^ source.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#    ^ source.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ source.carve meta.image.inline.carve
+#       ^^^^^ source.carve meta.image.inline.carve markup.underline.link.image.carve
+#            ^ source.carve meta.image.inline.carve

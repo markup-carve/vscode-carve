@@ -1,0 +1,16 @@
+{table}
+```csv
+Name,Price
+tea,2
+```
+
+{table header-rows=0}
+```csv
+a,b
+```
+
+{table header-rows=5}
+```csv
+a,b
+c,d
+```

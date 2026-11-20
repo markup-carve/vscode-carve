@@ -1,0 +1,12 @@
+>{.c}
+#^ source.carve meta.attributes.carve
+# ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#   ^ source.carve meta.attributes.carve
+>%%%
+#^^^ source.carve comment.block.carve
+>hidden
+#^^^^^^^ source.carve comment.block.carve
+>%%%
+#^^^ source.carve comment.block.carve
+>para
+#^^^^^ source.carve

@@ -1,0 +1,9 @@
+>word{k="v"} and "v"
+#^^^^^^^ source.carve
+#       ^ source.carve punctuation.definition.smartquote.carve
+#        ^ source.carve
+#         ^ source.carve punctuation.definition.smartquote.carve
+#          ^^^^^^ source.carve
+#                ^ source.carve punctuation.definition.smartquote.carve
+#                 ^ source.carve
+#                  ^ source.carve punctuation.definition.smartquote.carve

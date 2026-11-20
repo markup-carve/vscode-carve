@@ -1,0 +1,6 @@
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>%% not a comment
+#^^^^^^^^^^^^^^^^^ source.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve

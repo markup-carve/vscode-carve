@@ -1,0 +1,24 @@
+>x[^n]
+#^ source.carve
+# ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+>
+>[^n]: a
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve
+>[^n]: [x][d]
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^ source.carve meta.link.reference.carve
+#       ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#        ^^ source.carve meta.link.reference.carve
+#          ^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#           ^ source.carve meta.link.reference.carve
+>
+>[d]: /u
+#^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ source.carve meta.link.reference.definition.carve
+#     ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve

@@ -1,0 +1,9 @@
+::: figure
+![b](b.png)
+^ (b) B
+
+:::: figure
+![a](a.png)
+^ (a) A
+::::
+:::

@@ -1,0 +1,21 @@
+>{.verse}
+#^ source.carve meta.attributes.carve
+# ^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#       ^ source.carve meta.attributes.carve
+>::: |
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>roses
+#^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>1) one
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.numbered.carve
+#   ^^^^ source.carve
+>2) two
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.numbered.carve
+#   ^^^^ source.carve

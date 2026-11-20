@@ -1,0 +1,48 @@
+>{body-rows=1,1 body-header-rows=0,1 body-header-cols=1,0 footer-rows=1}
+#^ source.carve meta.attributes.carve
+# ^^^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#          ^ source.carve meta.attributes.carve
+#           ^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#              ^ source.carve meta.attributes.carve
+#               ^^^^^^^^^^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                               ^ source.carve meta.attributes.carve
+#                                ^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                   ^ source.carve meta.attributes.carve
+#                                    ^^^^^^^^^^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                                                    ^ source.carve meta.attributes.carve
+#                                                     ^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                                        ^ source.carve meta.attributes.carve
+#                                                         ^^^^^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                                                                    ^ source.carve meta.attributes.carve
+#                                                                     ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                                                      ^ source.carve meta.attributes.carve
+>|= Item |= Qty |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^^^^^^ source.carve markup.table.row.carve
+#        ^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#          ^^^^^ source.carve markup.table.row.carve
+#               ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| tea | 2 |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^ source.carve markup.table.row.carve
+#      ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#       ^^^ source.carve markup.table.row.carve
+#          ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| Later | |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#         ^ source.carve markup.table.row.carve
+#          ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| milk | 1 |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^ source.carve markup.table.row.carve
+#       ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#        ^^^ source.carve markup.table.row.carve
+#           ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| Total | 3 |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^^^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#         ^^^ source.carve markup.table.row.carve
+#            ^ source.carve markup.table.row.carve punctuation.separator.table.carve

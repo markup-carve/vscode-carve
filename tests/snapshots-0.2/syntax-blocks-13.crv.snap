@@ -1,0 +1,8 @@
+>text
+#^^^^^ source.carve
+>| a | b |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve

@@ -1,0 +1,26 @@
+>[text][ref] and [ref][] and [ref] and ![img][ref]
+#^ source.carve meta.link.reference.carve
+# ^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#     ^^ source.carve meta.link.reference.carve
+#       ^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#          ^ source.carve meta.link.reference.carve
+#           ^^^^^ source.carve
+#                ^ source.carve meta.link.reference.carve
+#                 ^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                    ^^^ source.carve meta.link.reference.carve
+#                       ^^^^^^^^^^^^^^^ source.carve
+#                                      ^^ source.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#                                        ^^^ source.carve meta.image.reference.carve string.other.image.alt.carve
+#                                           ^ source.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#                                            ^ source.carve meta.image.reference.carve
+#                                             ^^^ source.carve meta.image.reference.carve constant.other.reference.link.carve
+#                                                ^ source.carve meta.image.reference.carve
+>
+>[ref]: /u "T"
+#^^^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#      ^ source.carve meta.link.reference.definition.carve
+#       ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve
+#         ^ source.carve
+#          ^ source.carve punctuation.definition.smartquote.carve
+#           ^ source.carve
+#            ^ source.carve punctuation.definition.smartquote.carve

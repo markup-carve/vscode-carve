@@ -1,0 +1,26 @@
+>[s]{ID=x Class=y .z} and [s]{k=v :en}
+#^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+# ^ source.carve meta.span.inline.carve string.other.span.carve
+#  ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#   ^ source.carve meta.attributes.carve
+#    ^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#      ^ source.carve meta.attributes.carve
+#       ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#        ^ source.carve meta.attributes.carve
+#         ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#              ^ source.carve meta.attributes.carve
+#               ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                ^ source.carve meta.attributes.carve
+#                 ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                   ^ source.carve meta.attributes.carve
+#                    ^^^^^ source.carve
+#                         ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#                          ^ source.carve meta.span.inline.carve string.other.span.carve
+#                           ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#                            ^ source.carve meta.attributes.carve
+#                             ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                              ^ source.carve meta.attributes.carve
+#                               ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                ^ source.carve meta.attributes.carve
+#                                 ^^^ source.carve meta.attributes.carve entity.other.attribute-name.language.carve
+#                                    ^ source.carve meta.attributes.carve

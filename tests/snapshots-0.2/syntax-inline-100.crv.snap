@@ -1,0 +1,8 @@
+>a--->b and a<---b and a --> b
+#^ source.carve
+# ^^^ source.carve constant.character.typography.carve
+#    ^^^^^^^^ source.carve
+#            ^^^ source.carve constant.character.typography.carve
+#               ^^^^^^^^^ source.carve
+#                        ^^^ source.carve constant.character.typography.carve
+#                           ^^^ source.carve

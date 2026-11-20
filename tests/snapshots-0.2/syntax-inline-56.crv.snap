@@ -1,0 +1,17 @@
+>{-old-}{+new+} and {-old-}{+new+}{.k}
+#^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#  ^^^ source.carve markup.deleted.critic.carve markup.deleted.carve
+#     ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#       ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#         ^^^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#            ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#              ^^^^^ source.carve
+#                   ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                     ^^^ source.carve markup.deleted.critic.carve markup.deleted.carve
+#                        ^^ source.carve markup.deleted.critic.carve punctuation.definition.critic.carve
+#                          ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                            ^^^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#                               ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#                                 ^ source.carve meta.attributes.carve
+#                                  ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                    ^ source.carve meta.attributes.carve

@@ -1,0 +1,8 @@
+>```  b
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ source.carve markup.raw.block.fenced.code.carve
+#     ^ source.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>text
+#^^^^^ source.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve

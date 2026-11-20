@@ -1,0 +1,11 @@
+>:: t
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^ source.carve
+>: d
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^ source.carve
+>
+>not indented
+#^^^^^^^^^^^^^ source.carve

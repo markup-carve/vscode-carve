@@ -1,0 +1,10 @@
+>glob *.js or src/* and 5 *3 and 4* 2
+#^^^^^ source.carve
+#     ^ source.carve punctuation.definition.bold.carve
+#      ^^^^^^^^^^^ source.carve markup.bold.carve
+#                 ^ source.carve punctuation.definition.bold.carve
+#                  ^^^^^^^ source.carve
+#                         ^ source.carve punctuation.definition.bold.carve
+#                          ^^^^^^^ source.carve markup.bold.carve
+#                                 ^ source.carve punctuation.definition.bold.carve
+#                                  ^^^ source.carve

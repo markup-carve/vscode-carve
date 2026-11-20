@@ -1,0 +1,4 @@
+>[s]{.a.b} [s]{k=} [s]{1=2} [s]{#} word{.c} a {.b} c
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
+#                              ^^ source.carve comment.block.critic.carve punctuation.definition.critic.carve
+#                                ^^^^^^^^^^^^^^^^^^^^ source.carve comment.block.critic.carve comment.block.content.carve

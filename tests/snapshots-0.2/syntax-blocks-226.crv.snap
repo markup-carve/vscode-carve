@@ -1,0 +1,8 @@
+>== A long heading that
+#^^ source.carve markup.heading.carve punctuation.definition.heading.carve
+#  ^ source.carve markup.heading.carve
+#   ^^^^^^^^^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>   continues here
+#^^^^^^^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>and a paragraph
+#^^^^^^^^^^^^^^^^ source.carve

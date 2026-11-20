@@ -1,0 +1,11 @@
+>- | a |
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#   ^^^ source.carve markup.table.row.carve
+#      ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>  ^ in the item
+#^^ source.carve
+#  ^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+#   ^ source.carve markup.table.caption.carve
+#    ^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve

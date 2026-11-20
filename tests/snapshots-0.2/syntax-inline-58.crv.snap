@@ -1,0 +1,5 @@
+>{# note *x* #} and {**} and {==}
+#^^ source.carve comment.block.critic.carve punctuation.definition.critic.carve
+#  ^^^^^^^^^^ source.carve comment.block.critic.carve comment.block.content.carve
+#            ^^ source.carve comment.block.critic.carve punctuation.definition.critic.carve
+#              ^^^^^^^^^^^^^^^^^^^ source.carve

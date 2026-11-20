@@ -1,0 +1,7 @@
+>see config:items[0]
+#^^^^^^^^^^ source.carve
+#          ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#           ^^^^^ source.carve meta.extension.inline.carve entity.name.function.extension.carve
+#                ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve
+#                 ^ source.carve meta.extension.inline.carve string.unquoted.extension.carve
+#                  ^ source.carve meta.extension.inline.carve punctuation.definition.extension.carve

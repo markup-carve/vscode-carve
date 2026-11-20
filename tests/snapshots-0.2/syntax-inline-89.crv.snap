@@ -1,0 +1,26 @@
+>The HTML spec and HTMLs and XHTML and *HTML* and `HTML` and [HTML](/u).
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
+#                                      ^ source.carve punctuation.definition.bold.carve
+#                                       ^^^^ source.carve markup.bold.carve
+#                                           ^ source.carve punctuation.definition.bold.carve
+#                                            ^^^^^ source.carve
+#                                                 ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                                  ^^^^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                                                      ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                                       ^^^^^ source.carve
+#                                                            ^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#                                                             ^^^^ source.carve meta.link.inline.carve string.other.link.title.carve
+#                                                                 ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#                                                                  ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#                                                                   ^^ source.carve meta.link.inline.carve markup.underline.link.carve
+#                                                                     ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#                                                                      ^^ source.carve
+>
+>*[HTML]: Hypertext Markup Language
+#^ source.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+# ^ source.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#  ^^^^ source.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
+#      ^ source.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#       ^ source.carve meta.abbreviation.definition.carve punctuation.separator.carve
+#        ^ source.carve meta.abbreviation.definition.carve
+#         ^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve

@@ -1,0 +1,17 @@
+>- a
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^ source.carve
+>  %%%
+#^^^^^ source.carve comment.block.carve
+>  hidden
+#^^^^^^^^^ source.carve comment.block.carve
+>%%%
+#^^^ source.carve comment.block.carve
+>- b
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^ source.carve
+>
+>after
+#^^^^^^ source.carve

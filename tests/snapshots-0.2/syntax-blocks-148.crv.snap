@@ -1,0 +1,8 @@
+>:: %% c
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^^^ source.carve comment.line.percent.carve
+>: d
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^ source.carve

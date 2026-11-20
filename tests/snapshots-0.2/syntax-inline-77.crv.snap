@@ -1,0 +1,19 @@
+>[*foo*
+#^ source.carve
+# ^ source.carve punctuation.definition.bold.carve
+#  ^^^ source.carve markup.bold.carve
+#     ^ source.carve punctuation.definition.bold.carve
+>bar][] and [x][foo
+#^^^^^^^^^^^^^^^^^^^ source.carve
+>bar]
+#^^^^^ source.carve
+>
+>[*foo* bar]: /u
+#^^^^^^^^^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#            ^ source.carve meta.link.reference.definition.carve
+#             ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve
+>
+>[foo bar]: /v
+#^^^^^^^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#          ^ source.carve meta.link.reference.definition.carve
+#           ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve
