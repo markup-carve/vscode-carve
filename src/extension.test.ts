@@ -579,9 +579,9 @@ test('the preview uses shared checkbox colors and alignment', () => {
   const coreCss = readFileSync(join(here, '..', 'media', 'carve-css', 'core.css'), 'utf8')
 
   assert.doesNotMatch(style, /li > input\[type="checkbox"\]/, 'the preview overrides the shared checkbox rules')
-  assert.match(coreCss, /li > input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none[^}]*border:[^;]*solid var\(--carve-ink-soft\)/)
-  assert.match(coreCss, /li > input\[type="checkbox"\]:checked\s*\{[^}]*background:[^;]*var\(--carve-task-check-icon\)/)
-  assert.match(coreCss, /ul\.task-list > li > input\[type="checkbox"\]:first-child\s*\{[^}]*float:\s*inline-start/)
+  assert.match(coreCss, /\.carve li\.task > input\[type="checkbox"\]\s*\{[^}]*appearance:\s*none[^}]*border:[^;]*solid var\(--carve-ink-soft\)/)
+  assert.match(coreCss, /\.carve li\.task > input\[type="checkbox"\]:checked\s*\{[^}]*background:[^;]*var\(--carve-task-check-icon\)/)
+  assert.match(coreCss, /\.carve ul\.task-list > li\.task > input\[type="checkbox"\]:first-child,[\s\S]*?float:\s*inline-start/)
   assert.match(style, /body\.vscode-light,[\s\S]*?--carve-task-check-icon:[^;]*stroke='%23fff'/)
   assert.match(style, /body\.vscode-dark,[\s\S]*?--carve-task-check-icon:[^;]*stroke='%2314171b'/)
   assert.match(style, /li\[data-task-state="x"\],[\s\S]*?li\[data-task-state="-"\]\s*\{[^}]*color:\s*var\(--carve-ink\);[^}]*text-decoration:\s*none/)
