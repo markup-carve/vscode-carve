@@ -1,0 +1,10 @@
+>a
+#^^ source.carve
+>{*x
+#^ source.carve
+# ^ source.carve punctuation.definition.bold.carve
+#  ^^ source.carve markup.bold.carve
+>%% c
+#^^^^^ source.carve markup.bold.carve
+>*} b
+#^^^^^ source.carve markup.bold.carve

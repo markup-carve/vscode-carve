@@ -1,0 +1,18 @@
+>[s]{} and [s]{}{.b} and *a*{} and a {} b
+#^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+# ^ source.carve meta.span.inline.carve string.other.span.carve
+#  ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#   ^^ source.carve meta.attributes.carve
+#     ^^^^^ source.carve
+#          ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#           ^ source.carve meta.span.inline.carve string.other.span.carve
+#            ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#             ^^ source.carve meta.attributes.carve
+#               ^ source.carve meta.attributes.carve
+#                ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                  ^ source.carve meta.attributes.carve
+#                   ^^^^^ source.carve
+#                        ^ source.carve punctuation.definition.bold.carve
+#                         ^ source.carve markup.bold.carve
+#                          ^ source.carve punctuation.definition.bold.carve
+#                           ^^^^^^^^^^^^^^ source.carve

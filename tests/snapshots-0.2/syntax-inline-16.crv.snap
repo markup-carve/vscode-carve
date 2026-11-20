@@ -1,0 +1,5 @@
+>a %% comment
+#^^ source.carve
+#  ^^^^^^^^^^ source.carve comment.line.percent.carve
+>b and 50%% and a%%b
+#^^^^^^^^^^^^^^^^^^^^ source.carve

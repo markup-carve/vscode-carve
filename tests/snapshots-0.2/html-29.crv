@@ -1,0 +1,9 @@
+Text[^1].
+
+::: footnotes "Notes"
+:::
+
+[^1]: A note.
+
+::: footnotes
+:::

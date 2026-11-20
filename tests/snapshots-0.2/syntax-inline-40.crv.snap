@@ -1,0 +1,10 @@
+>/*both*/ and */both/*
+#^^ source.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#  ^^^^ source.carve markup.bold.italic.carve markup.bold.italic.carve
+#      ^^ source.carve markup.bold.italic.carve punctuation.definition.bold-italic.carve
+#        ^^^^^ source.carve
+#             ^ source.carve punctuation.definition.bold.carve
+#              ^ source.carve markup.bold.carve markup.italic.carve punctuation.definition.italic.carve
+#               ^^^^ source.carve markup.bold.carve markup.italic.carve markup.italic.carve
+#                   ^ source.carve markup.bold.carve markup.italic.carve punctuation.definition.italic.carve
+#                    ^ source.carve punctuation.definition.bold.carve

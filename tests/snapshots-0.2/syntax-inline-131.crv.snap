@@ -1,0 +1,9 @@
+># :smile:
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^ source.carve markup.heading.carve entity.name.section.carve constant.language.symbol.carve
+>
+>[:smile:][]
+#^ source.carve meta.link.reference.carve
+# ^^^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#        ^^^ source.carve meta.link.reference.carve

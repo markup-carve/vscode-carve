@@ -1,0 +1,14 @@
+See[^a].
+
+![a](a.png)
+^ Table #: Body
+
+[^a]: Note.
+
+    | x |
+    ^ Table #: In the note
+
+[^b]: Unused.
+
+    | y |
+    ^ Table #: Never

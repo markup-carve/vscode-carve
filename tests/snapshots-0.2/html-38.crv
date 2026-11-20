@@ -1,0 +1,7 @@
+:::: figure
+![a](a.png)
+^ First
+
+| t |
+^ Second
+::::

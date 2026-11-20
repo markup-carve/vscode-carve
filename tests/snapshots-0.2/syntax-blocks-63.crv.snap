@@ -1,0 +1,15 @@
+>:: term
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^^^^ source.carve
+>more term text
+#^^^^^^^^^^^^^^^ source.carve
+>: first description
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^^^^^^^^^^^^^^^^^ source.carve
+>
+>: second description
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^^^^^^^^^^^^^^^^^^ source.carve

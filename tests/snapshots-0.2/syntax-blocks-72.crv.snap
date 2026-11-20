@@ -1,0 +1,16 @@
+>:: t
+#^^ source.carve markup.list.definition.term.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.definition.term.carve
+#   ^^ source.carve
+>: d
+#^ source.carve markup.list.definition.carve keyword.control.definition.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.definition.carve
+#  ^^ source.carve
+>  ```
+#^^ source.carve markup.raw.block.fenced.code.carve
+#  ^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>  code
+#^^^^^^^ source.carve markup.raw.block.fenced.code.carve
+>  ```
+#^^ source.carve markup.raw.block.fenced.code.carve
+#  ^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve

@@ -1,0 +1,19 @@
+># A bold title
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>[A *bold* title][] and [x][A {*bold*} title]
+#^ source.carve meta.link.reference.carve
+# ^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#   ^ source.carve meta.link.reference.carve string.other.link.title.carve punctuation.definition.bold.carve
+#    ^^^^ source.carve meta.link.reference.carve string.other.link.title.carve markup.bold.carve
+#        ^ source.carve meta.link.reference.carve string.other.link.title.carve punctuation.definition.bold.carve
+#         ^^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#               ^^^ source.carve meta.link.reference.carve
+#                  ^^^^^ source.carve
+#                       ^ source.carve meta.link.reference.carve
+#                        ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                         ^^ source.carve meta.link.reference.carve
+#                           ^^^^^^^^^^^^^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                                           ^ source.carve meta.link.reference.carve

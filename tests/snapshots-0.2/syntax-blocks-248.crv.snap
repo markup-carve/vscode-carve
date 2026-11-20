@@ -1,0 +1,8 @@
+>= Title
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>%% note
+#^^^^^^^ source.carve markup.heading.carve entity.name.section.carve comment.line.percent.carve
+>  continues
+#^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve

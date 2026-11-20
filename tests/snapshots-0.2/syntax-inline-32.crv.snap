@@ -1,0 +1,22 @@
+>[s]{#id} and [s]{#id#} and [s]{#id k=v#}
+#^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+# ^ source.carve meta.span.inline.carve string.other.span.carve
+#  ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#   ^ source.carve meta.attributes.carve
+#    ^^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#       ^ source.carve meta.attributes.carve
+#        ^^^^^^^^ source.carve
+#                ^^ source.carve comment.block.critic.carve punctuation.definition.critic.carve
+#                  ^^ source.carve comment.block.critic.carve comment.block.content.carve
+#                    ^^ source.carve comment.block.critic.carve punctuation.definition.critic.carve
+#                      ^^^^^ source.carve
+#                           ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#                            ^ source.carve meta.span.inline.carve string.other.span.carve
+#                             ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#                              ^ source.carve meta.attributes.carve
+#                               ^^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#                                  ^ source.carve meta.attributes.carve
+#                                   ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                                    ^ source.carve meta.attributes.carve
+#                                     ^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                       ^ source.carve meta.attributes.carve

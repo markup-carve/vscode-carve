@@ -1,0 +1,18 @@
+{#fig-sun}
+![a](x.png)
+^ Figure #: The sun
+
+{#l1}
+```js
+x
+```
+^ Listing #: Code
+
+> q
+^ Someone
+
+{#e1}
+$$`E=mc^2`
+^ Equation #: Mass
+
+See </#fig-sun>, </#l1>, </#e1> and </#none>.

@@ -1,0 +1,10 @@
+>%%%
+#^^^ source.carve comment.block.carve
+>x
+#^^ source.carve comment.block.carve
+>%%% not a closer
+#^^^^^^^^^^^^^^^^^ source.carve comment.block.carve
+>%%%
+#^^^ source.carve comment.block.carve
+>after
+#^^^^^^ source.carve

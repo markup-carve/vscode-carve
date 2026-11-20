@@ -1,0 +1,12 @@
+>Text[^n] here.
+#^^^^ source.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#      ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#       ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#        ^^^^^^^ source.carve
+>
+>[^n]: The note.
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^^^^^^^^^ source.carve

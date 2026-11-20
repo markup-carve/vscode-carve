@@ -1,0 +1,25 @@
+># It's a\*b
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+#        ^^ source.carve markup.heading.carve entity.name.section.carve constant.character.escape.carve
+#          ^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>[It's a\*b][] and [go][It’s a*b] and [go][It\'s a\*b]
+#^ source.carve meta.link.reference.carve
+# ^^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#       ^^ source.carve meta.link.reference.carve string.other.link.title.carve constant.character.escape.carve
+#         ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#          ^^^ source.carve meta.link.reference.carve
+#             ^^^^^ source.carve
+#                  ^ source.carve meta.link.reference.carve
+#                   ^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                     ^^ source.carve meta.link.reference.carve
+#                       ^^^^^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                               ^ source.carve meta.link.reference.carve
+#                                ^^^^^ source.carve
+#                                     ^ source.carve meta.link.reference.carve
+#                                      ^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                                        ^^ source.carve meta.link.reference.carve
+#                                          ^^^^^^^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                                                    ^ source.carve meta.link.reference.carve

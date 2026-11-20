@@ -1,0 +1,25 @@
+>{valigns="top,bottom" aligns="left,right"}
+#^ source.carve meta.attributes.carve
+# ^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#        ^ source.carve meta.attributes.carve
+#         ^^^^^^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                     ^ source.carve meta.attributes.carve
+#                      ^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                            ^ source.carve meta.attributes.carve
+#                             ^^^^^^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                                         ^ source.carve meta.attributes.carve
+>|= A |={?^} B |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^^^ source.carve markup.table.row.carve
+#     ^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#       ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.begin.carve
+#        ^^ source.carve markup.table.row.carve meta.attributes.carve keyword.operator.table.alignment.carve
+#          ^ source.carve markup.table.row.carve meta.attributes.carve punctuation.definition.attributes.end.carve
+#           ^^^ source.carve markup.table.row.carve
+#              ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| a | b |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve

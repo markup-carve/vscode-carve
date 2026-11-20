@@ -1,0 +1,5 @@
+>[a]{abbr}
+#^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+# ^ source.carve meta.span.inline.carve string.other.span.carve
+#  ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#   ^^^^^^ source.carve meta.attributes.carve

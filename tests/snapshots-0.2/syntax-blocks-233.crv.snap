@@ -1,0 +1,30 @@
+>::: glossary>
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^^^^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+>q
+#^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>```js}
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^ source.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>code
+#^^^^^ source.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>```=html~
+#^^^^^^^^^^ source.carve
+><b>x</b>
+#^^^^^^^^^ source.carve
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>
+>::: note{.x}
+#^^^^^^^^^^^^^ source.carve markup.raw.block.fenced.code.carve
+>n
+#^^ source.carve markup.raw.block.fenced.code.carve
+>:::
+#^^^^ source.carve markup.raw.block.fenced.code.carve

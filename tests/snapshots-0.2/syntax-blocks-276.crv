@@ -1,0 +1,3 @@
+See [Example][ex] and ![logo][ex]{.wide}.
+
+[ex]: /a.png "Home" {.external}

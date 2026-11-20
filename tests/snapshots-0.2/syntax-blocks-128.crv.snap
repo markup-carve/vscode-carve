@@ -1,0 +1,11 @@
+>```php "t" [Composer]
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^ source.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+#      ^ source.carve markup.raw.block.fenced.code.carve
+#       ^^^ source.carve markup.raw.block.fenced.code.carve string.quoted.double.carve
+#          ^ source.carve markup.raw.block.fenced.code.carve
+#           ^^^^^^^^^^ source.carve markup.raw.block.fenced.code.carve entity.name.label.carve
+>code
+#^^^^^ source.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve

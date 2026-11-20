@@ -1,0 +1,21 @@
+::: note
+Plain.
+:::
+
+::: warning "Be careful"
+Body.
+:::
+
+::: tip [Tab]
+Labeled.
+:::
+
+::: custom "Title"
+c
+:::
+
+::: toc "Contents"
+:::
+
+::: index
+:::

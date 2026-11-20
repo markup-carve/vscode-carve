@@ -1,0 +1,11 @@
+># Café
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>See </#Café>.
+#^^^^ source.carve
+#    ^^^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#       ^^^^^ source.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#            ^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#             ^^ source.carve

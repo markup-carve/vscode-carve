@@ -1,0 +1,12 @@
+>[x][no]{.c}{#i}
+#^ source.carve meta.link.reference.carve
+# ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#  ^^ source.carve meta.link.reference.carve
+#    ^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#      ^ source.carve meta.link.reference.carve
+#       ^ source.carve meta.attributes.carve
+#        ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#          ^ source.carve meta.attributes.carve
+#           ^ source.carve meta.attributes.carve
+#            ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#              ^ source.carve meta.attributes.carve

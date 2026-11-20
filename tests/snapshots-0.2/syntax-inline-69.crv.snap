@@ -1,0 +1,14 @@
+>[*a*][nope] and [a ^[n] b][nope]
+#^ source.carve meta.link.reference.carve
+# ^ source.carve meta.link.reference.carve string.other.link.title.carve punctuation.definition.bold.carve
+#  ^ source.carve meta.link.reference.carve string.other.link.title.carve markup.bold.carve
+#   ^ source.carve meta.link.reference.carve string.other.link.title.carve punctuation.definition.bold.carve
+#    ^^ source.carve meta.link.reference.carve
+#      ^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#          ^ source.carve meta.link.reference.carve
+#           ^^^^^ source.carve
+#                ^ source.carve meta.link.reference.carve
+#                 ^^^^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                         ^^ source.carve meta.link.reference.carve
+#                           ^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                               ^ source.carve meta.link.reference.carve

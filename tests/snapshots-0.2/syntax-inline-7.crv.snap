@@ -1,0 +1,15 @@
+>`a\*b` and [x](/a\(b) and \[not a span]{.c}
+#^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+# ^^^^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#     ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#      ^^^^^ source.carve
+#           ^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#            ^ source.carve meta.link.inline.carve string.other.link.title.carve
+#             ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#              ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#               ^^^^^ source.carve meta.link.inline.carve markup.underline.link.carve
+#                    ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#                     ^^^^^ source.carve
+#                          ^^ source.carve constant.character.escape.carve
+#                            ^^^^^^^^^^ source.carve
+#                                      ^^^^^ source.carve

@@ -1,0 +1,12 @@
+>  ```
+#^^ source.carve markup.raw.block.fenced.code.carve
+#  ^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>  a
+#^^^^ source.carve markup.raw.block.fenced.code.carve
+>    b
+#^^^^^^ source.carve markup.raw.block.fenced.code.carve
+> c
+#^^^ source.carve markup.raw.block.fenced.code.carve
+>  ```
+#^^ source.carve markup.raw.block.fenced.code.carve
+#  ^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve

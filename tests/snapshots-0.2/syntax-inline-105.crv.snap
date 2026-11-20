@@ -1,0 +1,6 @@
+>[open and (x and {*y and {% z and ^[w and :ext[v and <http://u
+#^^^^^^^^^^^^^^^^^^ source.carve
+#                  ^ source.carve punctuation.definition.bold.carve
+#                   ^^^^^^ source.carve markup.bold.carve
+#                         ^^ source.carve markup.bold.carve comment.block.inline.carve
+#                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve markup.bold.carve comment.block.inline.carve

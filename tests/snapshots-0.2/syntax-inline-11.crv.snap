@@ -1,0 +1,18 @@
+>!`/kaet/` and !`a<b>`{.ipa} and \!`x`
+#^ source.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+# ^ source.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#  ^^^^^^ source.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#        ^ source.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#         ^^^^^ source.carve
+#              ^ source.carve markup.raw.inline.literal.carve punctuation.definition.literal.carve
+#               ^ source.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                ^^^^ source.carve markup.raw.inline.literal.carve markup.raw.inline.content.carve
+#                    ^ source.carve markup.raw.inline.literal.carve punctuation.definition.raw.carve
+#                     ^ source.carve meta.attributes.carve
+#                      ^^^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                          ^ source.carve meta.attributes.carve
+#                           ^^^^^ source.carve
+#                                ^^ source.carve constant.character.escape.carve
+#                                  ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                   ^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                                    ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve

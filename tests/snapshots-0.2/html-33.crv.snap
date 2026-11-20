@@ -1,0 +1,24 @@
+>[see *this[^a]* and ^[inline] page[^b]](/u)
+#^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+# ^^^^ source.carve meta.link.inline.carve string.other.link.title.carve
+#     ^ source.carve meta.link.inline.carve string.other.link.title.carve punctuation.definition.bold.carve
+#      ^^^^ source.carve meta.link.inline.carve string.other.link.title.carve markup.bold.carve
+#          ^ source.carve meta.link.inline.carve string.other.link.title.carve markup.bold.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#           ^ source.carve meta.link.inline.carve string.other.link.title.carve markup.bold.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#            ^ source.carve meta.link.inline.carve string.other.link.title.carve markup.bold.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#             ^ source.carve meta.link.inline.carve string.other.link.title.carve markup.bold.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#              ^ source.carve meta.link.inline.carve string.other.link.title.carve punctuation.definition.bold.carve
+#               ^^^^^^^^^^^^^^^^^^^^^^^ source.carve meta.link.inline.carve string.other.link.title.carve
+#                                      ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#                                       ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#                                        ^^ source.carve meta.link.inline.carve markup.underline.link.carve
+#                                          ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+>
+>[^a]: A
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve
+>[^b]: B
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve

@@ -1,0 +1,8 @@
+>"double" and 'single' and it's and '90s and "'nested'"
+#^ source.carve punctuation.definition.smartquote.carve
+# ^^^^^^ source.carve
+#       ^ source.carve punctuation.definition.smartquote.carve
+#        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
+#                                            ^ source.carve punctuation.definition.smartquote.carve
+#                                             ^^^^^^^^ source.carve
+#                                                     ^ source.carve punctuation.definition.smartquote.carve

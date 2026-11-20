@@ -1,0 +1,10 @@
+>> a
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^ source.carve markup.quote.carve
+>>
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+>> %% c
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^ source.carve markup.quote.carve comment.line.percent.carve

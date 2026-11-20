@@ -1,0 +1,13 @@
+{#fig-x}
+::: figure
+{#fig-x-a}
+![a](a.png)
+^ Before
+
+{#fig-x-b}
+![b](b.png)
+^ After
+:::
+^ Figure #: Both
+
+See </#fig-x-b> and </#fig-x>.

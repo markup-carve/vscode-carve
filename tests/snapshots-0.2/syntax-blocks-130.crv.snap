@@ -1,0 +1,12 @@
+>::: |
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>- not a list
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^^^^^^^^^ source.carve
+>%% text, not a comment
+#^^^^^^^^^^^^^^^^^^^^^^ source.carve comment.line.percent.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

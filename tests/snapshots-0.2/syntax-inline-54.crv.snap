@@ -1,0 +1,7 @@
+>{+a {*b+} c*}
+#^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#  ^^^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#     ^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#      ^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#       ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#         ^^^^^ source.carve

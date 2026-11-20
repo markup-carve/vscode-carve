@@ -1,0 +1,12 @@
+>$$`E = mc^2`
+#^^ source.carve markup.other.math.display.carve punctuation.definition.math.carve
+#  ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#   ^^^^^^^^ source.carve markup.other.math.display.carve markup.other.math.content.carve
+#           ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve
+>
+>text $$`E = mc^2`
+#^^^^^ source.carve
+#     ^^ source.carve markup.other.math.display.carve punctuation.definition.math.carve
+#       ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#        ^^^^^^^^ source.carve markup.other.math.display.carve markup.other.math.content.carve
+#                ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve

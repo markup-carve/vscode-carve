@@ -1,0 +1,18 @@
+>a^[x] and b[^n]{#fn1}
+#^ source.carve
+# ^^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#   ^ source.carve meta.footnote.inline.carve
+#    ^ source.carve meta.footnote.inline.carve punctuation.definition.footnote.carve
+#     ^^^^^^ source.carve
+#           ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#            ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#             ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#              ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#               ^ source.carve meta.attributes.carve
+#                ^^^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#                    ^ source.carve meta.attributes.carve
+>
+>[^n]: y
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve

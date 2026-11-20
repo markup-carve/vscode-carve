@@ -1,0 +1,9 @@
+>[a][no
+#^^^^^^^ source.carve
+>pe]{.c #i}
+#^^^ source.carve
+#   ^ source.carve meta.attributes.carve
+#    ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#         ^ source.carve meta.attributes.carve

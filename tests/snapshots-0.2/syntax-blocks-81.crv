@@ -1,0 +1,4 @@
+One[^a] two[^b].
+
+[^a]: first
+[^b]: second

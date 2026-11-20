@@ -1,0 +1,22 @@
+>a %% c
+#^^ source.carve
+#  ^^^^ source.carve comment.line.percent.carve
+>
+>{% only %}
+#^^ source.carve comment.block.inline.carve
+#  ^^^^^^ source.carve comment.block.inline.carve
+#        ^^ source.carve comment.block.inline.carve
+>
+>%%%
+#^^^ source.carve comment.block.carve
+>block
+#^^^^^^ source.carve comment.block.carve
+>%%%
+#^^^ source.carve comment.block.carve
+>
+>b {% mid %} c
+#^^ source.carve
+#  ^^ source.carve comment.block.inline.carve
+#    ^^^^^ source.carve comment.block.inline.carve
+#         ^^ source.carve comment.block.inline.carve
+#           ^^^ source.carve

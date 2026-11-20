@@ -1,0 +1,9 @@
+>a[^my
+#^^^^^^ source.carve
+>note] b
+#^^^^^^^^ source.carve
+>
+>[^my note]: Text.
+#^^^^^^^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#           ^ source.carve meta.footnote.definition.carve
+#            ^^^^^^ source.carve

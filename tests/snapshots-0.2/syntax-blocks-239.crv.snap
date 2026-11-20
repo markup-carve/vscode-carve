@@ -1,0 +1,28 @@
+>{aligns=right,x widths=25,,25 footer-rows=two .t}
+#^ source.carve meta.attributes.carve
+# ^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#       ^ source.carve meta.attributes.carve
+#        ^^^^^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#               ^ source.carve meta.attributes.carve
+#                ^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                      ^ source.carve meta.attributes.carve
+#                       ^^^^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                             ^ source.carve meta.attributes.carve
+#                              ^^^^^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                                         ^ source.carve meta.attributes.carve
+#                                          ^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                             ^ source.carve meta.attributes.carve
+#                                              ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                                ^ source.carve meta.attributes.carve
+>| a | b |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| c | d |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve

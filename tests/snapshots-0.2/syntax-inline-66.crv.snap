@@ -1,0 +1,18 @@
+>![alt](/i.png) and ![*alt*](/i.png "T"){.c} and a ![x] b
+#^^ source.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^^^ source.carve meta.image.inline.carve string.other.image.alt.carve
+#     ^^ source.carve meta.image.inline.carve
+#       ^^^^^^ source.carve meta.image.inline.carve markup.underline.link.image.carve
+#             ^ source.carve meta.image.inline.carve
+#              ^^^^^ source.carve
+#                   ^^ source.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#                     ^^^^^ source.carve meta.image.inline.carve string.other.image.alt.carve
+#                          ^^ source.carve meta.image.inline.carve
+#                            ^^^^^^ source.carve meta.image.inline.carve markup.underline.link.image.carve
+#                                  ^^ source.carve meta.image.inline.carve
+#                                    ^ source.carve meta.image.inline.carve string.quoted.double.image-title.carve
+#                                     ^^ source.carve meta.image.inline.carve
+#                                       ^ source.carve meta.attributes.carve
+#                                        ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                          ^ source.carve meta.attributes.carve
+#                                           ^^^^^^^^^^^^^^ source.carve

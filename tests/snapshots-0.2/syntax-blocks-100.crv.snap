@@ -1,0 +1,8 @@
+>::{.c} t
+#^^ source.carve
+#  ^ source.carve meta.attributes.carve
+#   ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#     ^ source.carve meta.attributes.carve
+#      ^^^ source.carve
+>: d
+#^^^^ source.carve

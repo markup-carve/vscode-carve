@@ -1,0 +1,57 @@
+>{table}
+#^^^^^^^ source.carve meta.attributes.carve
+>```csv
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^ source.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>a,"b ""q"" c", d
+#^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.unquoted.csv markup.heading.csv
+# ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv keyword.operator.separator.csv
+#  ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv
+#   ^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv markup.heading.csv
+#     ^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv markup.heading.csv constant.character.escape.csv
+#       ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv markup.heading.csv
+#        ^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv markup.heading.csv constant.character.escape.csv
+#          ^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv markup.heading.csv
+#            ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv
+#             ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv keyword.operator.separator.csv
+#              ^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.unquoted.csv markup.heading.csv
+>*x*,
+#^^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.unquoted.csv
+#   ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv keyword.operator.separator.csv
+>
+>"m
+#^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv
+# ^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv
+>n"x,y
+#^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv
+# ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv
+#  ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.unquoted.csv
+#   ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv keyword.operator.separator.csv
+#    ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.unquoted.csv
+>
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>{table}
+#^^^^^^^ source.carve meta.attributes.carve
+>```CSV
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^ source.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>a,b
+#^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.unquoted.csv markup.heading.csv
+# ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv keyword.operator.separator.csv
+#  ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.csv string.unquoted.csv markup.heading.csv
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>
+>{table}
+#^^^^^^^ source.carve meta.attributes.carve
+>```tsv
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^^ source.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>a	b,c
+#^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.tsv string.unquoted.tsv markup.heading.tsv
+# ^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.tsv keyword.operator.separator.tsv
+#  ^^^ source.carve markup.raw.block.fenced.code.carve meta.embedded.block.tsv string.unquoted.tsv markup.heading.tsv
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve

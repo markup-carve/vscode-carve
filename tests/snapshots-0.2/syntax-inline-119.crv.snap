@@ -1,0 +1,38 @@
+>{#manual}
+#^ source.carve meta.attributes.carve
+# ^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#        ^ source.carve meta.attributes.carve
+># Intro
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>[Intro][] and [manual][] and ![x][Intro] and [Intro] and [Setup][]
+#^ source.carve meta.link.reference.carve
+# ^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#      ^^^ source.carve meta.link.reference.carve
+#         ^^^^^ source.carve
+#              ^ source.carve meta.link.reference.carve
+#               ^^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                     ^^^ source.carve meta.link.reference.carve
+#                        ^^^^^ source.carve
+#                             ^^ source.carve meta.image.reference.carve punctuation.definition.image.begin.carve
+#                               ^ source.carve meta.image.reference.carve string.other.image.alt.carve
+#                                ^ source.carve meta.image.reference.carve punctuation.definition.image.end.carve
+#                                 ^ source.carve meta.image.reference.carve
+#                                  ^^^^^ source.carve meta.image.reference.carve constant.other.reference.link.carve
+#                                       ^ source.carve meta.image.reference.carve
+#                                        ^^^^^^^^^^^^^^^^^ source.carve
+#                                                         ^ source.carve meta.link.reference.carve
+#                                                          ^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                                                               ^^^ source.carve meta.link.reference.carve
+>
+># Setup
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>[Setup]: /setup
+#^^^^^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#        ^ source.carve meta.link.reference.definition.carve
+#         ^^^^^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve

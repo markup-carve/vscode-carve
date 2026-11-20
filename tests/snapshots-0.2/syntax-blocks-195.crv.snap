@@ -1,0 +1,9 @@
+>---
+#^^^ source.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.begin.carve
+>title: x
+#^^^^^ source.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml entity.name.tag.yaml
+#     ^ source.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml punctuation.separator.key-value.yaml
+#      ^^^ source.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml
+>
+>text
+#^^^^^ source.carve meta.frontmatter.yaml.carve meta.embedded.block.yaml

@@ -1,0 +1,6 @@
+>a ===> b <==> c
+#^^^ source.carve
+#   ^^^ source.carve constant.character.typography.carve
+#      ^^^ source.carve
+#         ^^^ source.carve constant.character.typography.carve
+#            ^^^^ source.carve

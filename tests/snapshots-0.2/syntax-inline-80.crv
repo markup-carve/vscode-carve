@@ -1,0 +1,3 @@
+a[^n] and b[^missing] and c^[inline *note*] and d^[unclosed
+
+[^n]: The note.

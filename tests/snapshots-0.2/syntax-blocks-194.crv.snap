@@ -1,0 +1,7 @@
+>---
+#^^^ source.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.begin.carve
+>---
+#^^^ source.carve meta.frontmatter.yaml.carve punctuation.definition.frontmatter.end.carve
+>
+>text
+#^^^^^ source.carve

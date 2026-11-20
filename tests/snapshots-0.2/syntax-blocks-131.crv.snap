@@ -1,0 +1,10 @@
+>::: |
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>Roses are red
+#^^^^^^^^^^^^^^ source.carve
+>  Violets are blue
+#^^^^^^^^^^^^^^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
