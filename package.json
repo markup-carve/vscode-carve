@@ -524,8 +524,8 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#32a638230abcc321dfcab8c814106f16a2a8093e",
-    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#344d5617b32ed24982eefe4d2a9ae9c502923fec",
+    "@markup-carve/carve": "github:markup-carve/carve-js#456e04a9fb0b9e8b4315bade2d4012357235e410",
+    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#adf318e5bbf9202a95b56823b7b060340f55f281",
     "vscode-languageclient": "^9.0.1",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
@@ -533,7 +533,7 @@
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "@markup-carve/carve-css": "0.1.10",
-    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#b4f8c2858c638f82f5b8798b4d9e99bc13f6c275",
+    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#79511c4ba461cb0696e0400132da9eef414147e0",
     "@shikijs/themes": "^4.5.0",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
@@ -546,6 +546,6 @@
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "overrides": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#32a638230abcc321dfcab8c814106f16a2a8093e"
+    "@markup-carve/carve": "github:markup-carve/carve-js#456e04a9fb0b9e8b4315bade2d4012357235e410"
   }
 }

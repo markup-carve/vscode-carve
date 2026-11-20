@@ -147,7 +147,8 @@ const previewExtensionMarkers: Array<[string, string, RegExp]> = [
   // aria-label to this element, and the marker is meant to say the extension
   // ran, not how the engine spells the rest of the tag.
   ['mermaid', '```mermaid\ngraph TD;\n```\n', /<pre class="mermaid"[ >]/],
-  ['mathBlock', '```math\nx^2\n```\n', /<div class="math display">/],
+  ['mathBlock', '```math\nx^2\n```\n', /<div class="math display"[ >]/],
+  ['imgFence', '```img\n<svg width="1" height="1"><rect width="1" height="1"/></svg>\n```\n', /<img [^>]*src="data:image\/svg\+xml,/],
   ['chart', '```chart\n{"type":"bar"}\n```\n', /<script type="application\/json">/],
   ['codeGroup', '::: code-group\n```js [One]\nx\n```\n:::\n', /class="code-group-label"/],
   ['listTable', '::: list-table\n- - a\n  - b\n:::\n', /<table>/],

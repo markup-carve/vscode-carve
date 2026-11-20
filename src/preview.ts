@@ -5,6 +5,7 @@ import {
   codeGroup,
   details,
   glossary,
+  imgFence,
   index,
   listTable,
   mathBlock,
@@ -55,6 +56,7 @@ export const PREVIEW_EXTENSIONS = [
   'citations',
   'glossary',
   'index',
+  'imgFence',
 ] as const
 
 /**
@@ -105,6 +107,7 @@ const EXTENSION_FACTORIES: Record<string, () => PreviewExtensionSet> = {
   citations,
   glossary,
   index,
+  imgFence,
 }
 
 /**
@@ -1160,12 +1163,12 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/highlightjs/carve.js',
-  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/highlightjs/delimited.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@79511c4b/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@79511c4b/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/shiki/table-tokens.css',
-  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/themes/carve-code.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@79511c4b/shiki/table-tokens.css',
+  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@79511c4b/themes/carve-code.css',
 } as const
 
 export interface ExportOptions {
