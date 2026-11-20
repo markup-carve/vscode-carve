@@ -1,17 +1,16 @@
 import assert from 'node:assert/strict'
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import test from 'node:test'
 import { createTableMarkerScanner } from './table-colors.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
-const corpusDir = join(root, 'spec/tests/corpus')
-const corpusFiles = readdirSync(corpusDir)
-const corpus = (slug: string, variant = ''): string => {
-  const file = corpusFiles.find((name) => name.endsWith(`${slug}${variant}.crv`))
-  assert.ok(file, `Missing corpus case ${slug}${variant}`)
-  return readFileSync(join(corpusDir, file), 'utf8')
+const examples = JSON.parse(readFileSync(join(root, 'tools/conformance-0.2.json'), 'utf8')).examples as { id: string; input: string }[]
+const corpus = (id: string): string => {
+  const example = examples.find((item) => item.id === id)
+  assert.ok(example, `Missing 0.2 conformance example ${id}`)
+  return example.input
 }
 
 test('table markers get colors in Carve fences and ordinary rows', async () => {
@@ -181,13 +180,14 @@ test('only parsed CSV and TSV tables receive table body highlighting', async () 
 
 test('the pinned corpus keeps the editor corrections and their negative boundaries', async () => {
   const scan = await createTableMarkerScanner(root)
-  const unclosed = corpus('an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing')
+  const unclosed = corpus('syntax-blocks-116')
   assert.deepEqual(scan(unclosed).filter((marker) => marker.kind === 'plain'), [])
-  const nested = corpus('a-line-is-read-in-the-container-whose-column-it-reaches', '-4')
+  const nested = corpus('syntax-blocks-15')
   assert.ok(scan(nested).some((marker) => marker.kind === 'listMarker'))
-  const table = corpus('csv-and-tsv-table-bodies', '-2')
+  const table = corpus('syntax-blocks-214')
   assert.ok(scan(table).some((marker) => marker.kind === 'tableBody'))
-  const plainCsv = corpus('csv-and-tsv-table-bodies', '-3')
+  // The 0.2 render examples cover table CSV but not a bare CSV fence.
+  const plainCsv = '```csv\na,b\n```'
   assert.deepEqual(scan(plainCsv).filter((marker) => marker.kind === 'tableBody'), [])
 })
 
