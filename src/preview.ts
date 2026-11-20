@@ -1163,12 +1163,12 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ab7e7f71/highlightjs/carve.js',
-  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ab7e7f71/highlightjs/delimited.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@31215996/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@31215996/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ab7e7f71/shiki/table-tokens.css',
-  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@ab7e7f71/themes/carve-code.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@31215996/shiki/table-tokens.css',
+  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@31215996/themes/carve-code.css',
 } as const
 
 export interface ExportOptions {
