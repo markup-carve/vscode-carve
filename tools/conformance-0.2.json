@@ -1,5 +1,5 @@
 {
- "commit": "eb8ffcdb2d957de677411dd2f4da3d436131353f",
+ "commit": "68f420b3bcd5c030486f281352089d71a5b54ea4",
  "examples": [
   {
    "id": "syntax-blocks-1",
@@ -90,6 +90,16 @@
    "id": "syntax-blocks-16",
    "input": "- > q\n- b",
    "html": "<ul>\n  <li>\n    <blockquote><p>q</p></blockquote>\n  </li>\n  <li>b</li>\n</ul>"
+  },
+  {
+   "id": "syntax-blocks-292",
+   "input": "![a](a.png)\n^ The caption\n  goes on here\nNext prose.",
+   "html": "<figure>\n  <img src=\"a.png\" alt=\"a\">\n  <figcaption>The caption\ngoes on here</figcaption>\n</figure>\n<p>Next prose.</p>"
+  },
+  {
+   "id": "syntax-blocks-293",
+   "input": ":: Term\nMore prose.",
+   "html": "<dl>\n  <dt>Term</dt>\n</dl>\n<p>More prose.</p>"
   },
   {
    "id": "syntax-blocks-17",
@@ -342,10 +352,7 @@
   {
    "id": "syntax-blocks-56",
    "input": "- - -",
-   "html": "<ul>\n  <li>\n    <ul>\n      <li>-</li>\n    </ul>\n  </li>\n</ul>",
-   "diagnostics": [
-    "deprecated-spaced-thematic-break"
-   ]
+   "html": "<ul>\n  <li>\n    <ul>\n      <li>-</li>\n    </ul>\n  </li>\n</ul>"
   },
   {
    "id": "syntax-blocks-57",
@@ -384,8 +391,8 @@
   },
   {
    "id": "syntax-blocks-63",
-   "input": ":: term\nmore term text\n: first description\n\n: second description",
-   "html": "<dl>\n  <dt>term\nmore term text</dt>\n  <dd>first description</dd>\n  <dd>second description</dd>\n</dl>"
+   "input": ":: term\n: first description\n\n: second description",
+   "html": "<dl>\n  <dt>term</dt>\n  <dd>first description</dd>\n  <dd>second description</dd>\n</dl>"
   },
   {
    "id": "syntax-blocks-64",
@@ -463,9 +470,37 @@
    "html": "<ul>\n  <li>a\n:: term\n: def</li>\n</ul>"
   },
   {
+   "id": "syntax-blocks-290",
+   "input": "[a]: /url\n  \"Title\"\n\nSee [a].",
+   "html": "<p>See <a href=\"/url\" title=\"Title\">a</a>.</p>"
+  },
+  {
+   "id": "syntax-blocks-295",
+   "input": "[a]: /docs/\n  guide.html\n\nSee [a].",
+   "html": "<p>guide.html</p>\n<p>See <a href=\"/docs/\">a</a>.</p>",
+   "diagnostics": [
+    "link-definition-indented-line"
+   ]
+  },
+  {
+   "id": "syntax-blocks-296",
+   "input": "[a]: /url\n  \"Title\"\n  {.c}\n\nSee [a].",
+   "html": "<p>See <a href=\"/url\" title=\"Title\" class=\"c\">a</a>.</p>"
+  },
+  {
    "id": "syntax-blocks-241",
    "input": "*[HTML]:  Hyper Text\n\nHTML",
    "html": "<p><abbr title=\" Hyper Text\">HTML</abbr></p>"
+  },
+  {
+   "id": "syntax-blocks-291",
+   "input": "*[HTML]: Hyper Text\n  Markup Language\n\nHTML",
+   "html": "<p><abbr title=\"Hyper Text Markup Language\">HTML</abbr></p>"
+  },
+  {
+   "id": "syntax-blocks-294",
+   "input": "*[HTML]: Hyper Text\n  | a |\n\nHTML",
+   "html": "<table>\n  <tbody>\n    <tr><td>a</td></tr>\n  </tbody>\n</table>\n<p><abbr title=\"Hyper Text\">HTML</abbr></p>"
   },
   {
    "id": "syntax-blocks-262",
@@ -1033,7 +1068,10 @@
   {
    "id": "syntax-blocks-168",
    "input": "| a |\n^ one\n^ two",
-   "html": "<table>\n  <caption>one\n^ two</caption>\n  <tbody>\n    <tr><td>a</td></tr>\n  </tbody>\n</table>"
+   "html": "<table>\n  <caption>one</caption>\n  <tbody>\n    <tr><td>a</td></tr>\n  </tbody>\n</table>\n<p>^ two</p>",
+   "diagnostics": [
+    "unattached-caption"
+   ]
   },
   {
    "id": "syntax-blocks-169",
@@ -1519,7 +1557,7 @@
   {
    "id": "syntax-inline-8",
    "input": "`code` and `` a ` b `` and ` x ` and `*a*`",
-   "html": "<p><code>code</code> and <code>a ` b</code> and <code>x</code> and <code>*a*</code></p>"
+   "html": "<p><code>code</code> and <code> a ` b </code> and <code> x </code> and <code>*a*</code></p>"
   },
   {
    "id": "syntax-inline-9",

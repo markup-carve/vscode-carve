@@ -207,6 +207,16 @@ export function decorateLinks(document: unknown): unknown {
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }
 
 /**
+ * The `carve.preview.headingShift` setting as the engine's `headingShift`
+ * option. The engine refuses anything but a whole number from 0 to 5, and a
+ * workspace settings file can hold any value, so such a value renders unshifted
+ * instead of failing the whole preview.
+ */
+export function headingShiftFromSetting(value: unknown): number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 5 ? value : 0
+}
+
+/**
  * The `carve.preview.emoji` setting as the engine's `symbols` option. The
  * engine writes a symbol's value raw, so each glyph is escaped: the setting
  * can come from a workspace's own settings file.
@@ -229,6 +239,8 @@ export interface PreviewRenderOptions {
   symbols?: Record<string, string>
   /** Stamp blocks with `data-source-line` for scroll sync. */
   sourceLine?: boolean
+  /** Levels every heading moves down, 0 to 5 (C2-H-208); 0 leaves them as written. */
+  headingShift?: number
   /**
    * A document whose includes are already expanded. When set, `source` is only
    * carried for the callers that still want it; the render starts here.
@@ -254,6 +266,7 @@ function engineOptions(render: Omit<PreviewRenderOptions, 'document' | 'extensio
     ...(social ? { social } : {}),
     ...(render.symbols ? { symbols: render.symbols } : {}),
     ...(render.sourceLine ? { sourceLines: true } : {}),
+    ...(render.headingShift ? { headingShift: render.headingShift } : {}),
   }
 }
 

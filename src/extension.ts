@@ -50,6 +50,7 @@ import {
   previewDocument,
   previewExtensions,
   symbolsFromEmojiSetting,
+  headingShiftFromSetting,
   type PreviewAssets,
   type PreviewRenderOptions,
 } from './preview.js'
@@ -727,10 +728,12 @@ function previewRenderOptions(): PreviewRenderOptions {
   const mentionUrl = config.get<string>('mentionUrl')?.trim()
   const tagUrl = config.get<string>('tagUrl')?.trim()
   const symbols = symbolsFromEmojiSetting(config.get<Record<string, string>>('emoji'))
+  const headingShift = headingShiftFromSetting(config.get<unknown>('headingShift'))
   const options: PreviewRenderOptions = {}
   if (mentionUrl) options.mentionUrl = mentionUrl
   if (tagUrl) options.tagUrl = tagUrl
   if (symbols) options.symbols = symbols
+  if (headingShift) options.headingShift = headingShift
   return options
 }
 
