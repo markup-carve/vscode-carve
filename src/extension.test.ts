@@ -23,6 +23,7 @@ import {
   renderMarkdown,
   rewriteRelativeImageSources,
   symbolsFromEmojiSetting,
+  headingShiftFromSetting,
 } from './preview.js'
 
 const require = createRequire(import.meta.url)
@@ -881,6 +882,20 @@ test('the carve.preview.emoji setting reaches the engine as its symbols map', ()
   assert.match(renderPreviewBody(':smile: and :frown:\n', { symbols }), /<p>\u{1F604} and :frown:<\/p>/u)
   assert.equal(symbolsFromEmojiSetting({}), undefined)
   assert.equal(symbolsFromEmojiSetting(undefined), undefined)
+})
+
+test('the carve.preview.headingShift setting moves headings down without touching ids', () => {
+  const html = renderPreviewBody('= Title\n\n== Part\n\nSee </#Part>.\n', { headingShift: headingShiftFromSetting(1) })
+  assert.match(html, /<h2[^>]*>Title<\/h2>/)
+  assert.match(html, /<h3[^>]*>Part<\/h3>/)
+  assert.match(html, /id="Part"/)
+  assert.match(html, /href="#Part"/)
+  assert.match(renderPreviewBody('= Title\n', { headingShift: headingShiftFromSetting(0) }), /<h1[^>]*>Title<\/h1>/)
+})
+
+test('a headingShift setting the engine would refuse renders unshifted', () => {
+  for (const value of [-1, 6, 1.5, '1', null, undefined]) assert.equal(headingShiftFromSetting(value), 0)
+  assert.equal(headingShiftFromSetting(5), 5)
 })
 
 test('an emoji glyph from settings is text, not markup', () => {

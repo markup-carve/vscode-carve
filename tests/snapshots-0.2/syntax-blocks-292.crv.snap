@@ -1,0 +1,15 @@
+>![a](a.png)
+#^^ source.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^ source.carve meta.image.inline.carve string.other.image.alt.carve
+#   ^^ source.carve meta.image.inline.carve
+#     ^^^^^ source.carve meta.image.inline.carve markup.underline.link.image.carve
+#          ^ source.carve meta.image.inline.carve
+>^ The caption
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>  goes on here
+#^^ source.carve
+#  ^^^^^^^^^^^^^ source.carve
+>Next prose.
+#^^^^^^^^^^^^ source.carve

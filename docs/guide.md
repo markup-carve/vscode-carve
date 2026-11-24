@@ -60,6 +60,7 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 | `carve.trace.server` | `"off"` | Trace VS Code ↔ language-server communication (`off`/`messages`/`verbose`) in the output channel, for debugging. |
 | `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
 | `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
+| `carve.preview.headingShift` | `0` | Move every heading down this many levels (0 to 5) in the preview and the HTML export, for a page that writes its own title as the `<h1>`: with `1`, `=` renders as `<h2>`. Ids and links do not change. This is the Carve render option `headingShift`. |
 | `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
 | `carve.csv.columnColors` | `false` | Color each column of a `csv` or `tsv` fence body differently, cycling through six colors. Separators keep their own color, and a quoted field that spans lines keeps its column's color. |
 | `carve.formatter` | `"conservative"` | What **Format Document** does: `conservative` normalizes whitespace and line endings only, `migration` rewrites the document into canonical Carve. |

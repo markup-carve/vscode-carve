@@ -1,0 +1,17 @@
+>[a]: /url
+#^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ source.carve meta.link.reference.definition.carve
+#     ^^^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve
+>  "Title"
+#^^ source.carve
+#  ^ source.carve punctuation.definition.smartquote.carve
+#   ^^^^^ source.carve
+#        ^ source.carve punctuation.definition.smartquote.carve
+>  {.c}
+#^^ source.carve
+#  ^ source.carve meta.attributes.carve
+#   ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#     ^ source.carve meta.attributes.carve
+>
+>See [a].
+#^^^^^^^^^ source.carve
