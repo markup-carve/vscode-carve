@@ -452,7 +452,7 @@ let twoParserMismatches = 0
 // The key is whatever `package.json` declares - a published version once both
 // packages were on npm, a 40-hex revision before that. Either way it is the one
 // string that changes when the engine moves, which is all this key has to be.
-const ENGINE_PIN = 'github:markup-carve/carve-js#f60995a9b759634efe94b940845ea3bd8ab0e2f6'
+const ENGINE_PIN = 'github:markup-carve/carve-js#a5a7bbd2c474873b82c3cc01bda2e6948adb3473'
 const ENGINE_LAG = {}
 const lagWaived = []
 const lagStale = []
