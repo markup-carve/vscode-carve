@@ -65,6 +65,7 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 | `carve.csv.columnColors` | `false` | Color each column of a `csv` or `tsv` fence body differently, cycling through six colors. Separators keep their own color, and a quoted field that spans lines keeps its column's color. |
 | `carve.formatter` | `"conservative"` | What **Format Document** does: `conservative` normalizes whitespace and line endings only, `migration` rewrites the document into canonical Carve. |
 | `carve.format.alignTables` | `false` | Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without it. |
+| `carve.lint.upgrade` | `false` | Run the 0.1 migration rules (`deprecated-*`, `thematic-break-spelling` and the other upgrade rules) and offer their quick fixes. Turn it on while moving a 0.1 document to 0.2. |
 | `carve.extensions` | `[]` | Language extensions the server enables for diagnostics and highlighting, such as `semantic-span`. |
 | `carve.platforms` | `[]` | Platforms whose rendering the server checks against; currently `github`. |
 | `carve.severities` | `{}` | Diagnostic severity by rule name: `error`, `warning`, `information`, `hint` or `off`, for example `{ "broken-crossref": "error" }`. |

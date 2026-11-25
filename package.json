@@ -282,6 +282,11 @@
           "default": false,
           "markdownDescription": "Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without this setting."
         },
+        "carve.lint.upgrade": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Run the 0.1 migration rules (`deprecated-*`, `thematic-break-spelling` and the other upgrade rules) and offer their quick fixes. Turn it on while moving a 0.1 document to 0.2."
+        },
         "carve.csv.columnColors": {
           "type": "boolean",
           "default": false,
@@ -531,8 +536,8 @@
     "package": "vsce package"
   },
   "dependencies": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#f60995a9b759634efe94b940845ea3bd8ab0e2f6",
-    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#9bdefb1ec81fa38d708d8f56f0938997f53f5c27",
+    "@markup-carve/carve": "github:markup-carve/carve-js#a5a7bbd2c474873b82c3cc01bda2e6948adb3473",
+    "@markup-carve/carve-lsp": "github:markup-carve/carve-lsp#5d1cb4f1ff8ef60286bdbed44f23ef565a73862f",
     "vscode-languageclient": "^9.0.1",
     "vscode-oniguruma": "^1.5.1",
     "vscode-textmate": "^7.0.1"
@@ -540,7 +545,7 @@
   "devDependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "@markup-carve/carve-css": "github:markup-carve/carve-css#ad402980774f107c239cc03afc13f8e18c634eb8",
-    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#31215996ebba0cad12d958275ba87fad1d99991a",
+    "@markup-carve/carve-grammars": "github:markup-carve/carve-grammars#558680dd08616f3bb30a83d069e114b6ca899cde",
     "@shikijs/themes": "^4.5.0",
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.95.0",
@@ -553,6 +558,6 @@
     "vscode-tmgrammar-test": "^0.1.3"
   },
   "overrides": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#f60995a9b759634efe94b940845ea3bd8ab0e2f6"
+    "@markup-carve/carve": "github:markup-carve/carve-js#a5a7bbd2c474873b82c3cc01bda2e6948adb3473"
   }
 }

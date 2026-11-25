@@ -37,6 +37,7 @@ export interface InitializationOptionsInput {
   /** Only what the user set: an omitted key lets the server fall back to `.carverc.json`. */
   formatter?: string
   alignTables?: boolean
+  lintUpgrade?: boolean
   extensions?: unknown
   platforms?: unknown
   severities?: unknown
@@ -50,6 +51,7 @@ export interface CarveInitializationOptions {
   carve: {
     formatter?: string
     format?: { alignTables: boolean }
+    lint?: { upgrade: boolean }
     extensions?: string[]
     platforms?: string[]
     severities?: Record<string, string>
@@ -94,6 +96,7 @@ export function carveInitializationOptions(
   }
   if (typeof input.formatter === 'string') carve.formatter = input.formatter
   if (typeof input.alignTables === 'boolean') carve.format = { alignTables: input.alignTables }
+  if (typeof input.lintUpgrade === 'boolean') carve.lint = { upgrade: input.lintUpgrade }
   if (isStringArray(input.extensions)) carve.extensions = input.extensions
   if (isStringArray(input.platforms)) carve.platforms = input.platforms
   if (isStringRecord(input.severities)) carve.severities = input.severities

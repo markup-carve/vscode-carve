@@ -1204,6 +1204,7 @@ function includePayload(): CarveInitializationOptions {
   return carveInitializationOptions({
     formatter: explicitSetting<string>('formatter'),
     alignTables: explicitSetting<boolean>('format.alignTables'),
+    lintUpgrade: explicitSetting<boolean>('lint.upgrade'),
     extensions: explicitSetting('extensions'),
     platforms: explicitSetting('platforms'),
     severities: explicitSetting('severities'),
