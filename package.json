@@ -282,6 +282,11 @@
           "default": false,
           "markdownDescription": "Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without this setting."
         },
+        "carve.lint.upgrade": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Run the 0.1 migration rules (`deprecated-*`, `thematic-break-spelling` and the other upgrade rules) and offer their quick fixes. Turn it on while moving a 0.1 document to 0.2."
+        },
         "carve.csv.columnColors": {
           "type": "boolean",
           "default": false,
