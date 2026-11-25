@@ -18,11 +18,12 @@
 //
 // Lag is REPORTED, not gated: upstream moving is not a defect here, and a job
 // that goes red for something outside the repository teaches everyone to ignore
-// it. It DOES fail when a pin cannot be resolved to a commit on upstream main -
-// a typo, a force-pushed branch, a revision that no longer exists - because that
-// is a broken build waiting to happen (carve#499).
+// it. It DOES fail when a pin cannot be resolved to a commit on the upstream
+// branch - a typo, a force-pushed branch, a revision that no longer exists -
+// because that is a broken build waiting to happen (carve#499). The branch is
+// `main` unless `--branch` names another: the Carve 0.2 line pins `next2`.
 //
-// Usage: node tools/check-engine-pin.mjs <dep> <upstream-dir> [--manifest <path>]
+// Usage: node tools/check-engine-pin.mjs <dep> <upstream-dir> [--manifest <path>] [--branch <name>]
 
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
@@ -30,12 +31,17 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
-const [dep, upstreamDir] = process.argv.slice(2).filter((arg) => !arg.startsWith('--'))
-const manifestIndex = process.argv.indexOf('--manifest')
-const manifestPath = manifestIndex === -1 ? resolve(root, 'package.json') : process.argv[manifestIndex + 1]
+const args = process.argv.slice(2)
+const option = (name) => {
+  const index = args.indexOf(name)
+  return index === -1 ? undefined : args[index + 1]
+}
+const [dep, upstreamDir] = args.filter((arg, index) => !arg.startsWith('--') && !args[index - 1]?.startsWith('--'))
+const manifestPath = option('--manifest') ?? resolve(root, 'package.json')
+const branch = option('--branch') ?? 'main'
 
-if (!dep || !upstreamDir) {
-  console.error('usage: check-engine-pin.mjs <dep> <upstream-dir> [--manifest <path>]')
+if (!dep || !upstreamDir || !branch) {
+  console.error('usage: check-engine-pin.mjs <dep> <upstream-dir> [--manifest <path>] [--branch <name>]')
   process.exit(2)
 }
 
@@ -97,11 +103,11 @@ if (REVISION.test(afterHash)) {
   )
 }
 
-if (!gitOk('merge-base', '--is-ancestor', commit, 'origin/main')) {
-  die(`${upstreamDir} ${commit} is not on main, so the pin came from an unmerged or rewritten branch`)
+if (!gitOk('merge-base', '--is-ancestor', commit, `origin/${branch}`)) {
+  die(`${upstreamDir} ${commit} is not on ${branch}, so the pin came from an unmerged or rewritten branch`)
 }
 
-const behind = Number(git('rev-list', '--count', `${commit}..origin/main`))
+const behind = Number(git('rev-list', '--count', `${commit}..origin/${branch}`))
 say(`bundled ${dep}: ${described} - ${git('log', '-1', '--format=%s', commit)}`)
-say(`${upstreamDir} main is ${behind} commit(s) ahead`)
-if (behind > 0) say(`::warning::${dep} is ${behind} ${upstreamDir} commit(s) behind main`)
+say(`${upstreamDir} ${branch} is ${behind} commit(s) ahead`)
+if (behind > 0) say(`::warning::${dep} is ${behind} ${upstreamDir} commit(s) behind ${branch}`)
