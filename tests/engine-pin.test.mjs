@@ -183,3 +183,31 @@ test('the pins this repository ships today satisfy the checker', () => {
 		assert.ok(exact || revision, `${dep} is "${spec}", which the drift check refuses`)
 	}
 })
+
+test('--branch measures against that upstream branch, as the next2 line pins carve-js next2', () => {
+	const up = upstream('0.1.6')
+	const git = (...args) => execFileSync('git', ['-C', up.dir, ...args], { encoding: 'utf8' }).trim()
+	git('update-ref', 'refs/remotes/origin/next2', up.unmerged)
+	const m = manifest(up.unmerged)
+	try {
+		const check = (...extra) => spawnSync(process.execPath, [checker, DEP, up.dir, '--manifest', m.path, ...extra], { encoding: 'utf8' })
+		const onNext2 = check('--branch', 'next2')
+		assert.equal(onNext2.status, 0, onNext2.stdout)
+		assert.match(onNext2.stdout, /next2 is 0 commit\(s\) ahead/)
+		const onMain = check()
+		assert.equal(onMain.status, 1, onMain.stdout)
+		assert.match(onMain.stdout, /::error::.*is not on main/)
+		// `third` is on main only, so it is on neither branch the next2 line accepts.
+		const offBranch = spawnSync(process.execPath, [checker, DEP, up.dir, '--branch', 'next2', '--manifest', manifest(up.head).path], { encoding: 'utf8' })
+		assert.equal(offBranch.status, 1, offBranch.stdout)
+		assert.match(offBranch.stdout, /::error::.*is not on next2/)
+	} finally {
+		m.cleanup()
+		up.cleanup()
+	}
+})
+
+test('the drift workflow on this branch measures the pins against next2', () => {
+	const workflow = readFileSync(resolve(root, '.github/workflows/engine-drift.yml'), 'utf8')
+	assert.match(workflow, /node tools\/check-engine-pin\.mjs .* --branch next2/)
+})
