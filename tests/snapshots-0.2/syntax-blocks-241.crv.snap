@@ -1,0 +1,11 @@
+>*[HTML]:  Hyper Text
+#^ source.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+# ^ source.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#  ^^^^ source.carve meta.abbreviation.definition.carve entity.name.abbreviation.carve
+#      ^ source.carve meta.abbreviation.definition.carve punctuation.definition.abbreviation.carve
+#       ^ source.carve meta.abbreviation.definition.carve punctuation.separator.carve
+#        ^^ source.carve meta.abbreviation.definition.carve
+#          ^^^^^^^^^^ source.carve meta.abbreviation.definition.carve string.unquoted.abbreviation.carve
+>
+>HTML
+#^^^^^ source.carve

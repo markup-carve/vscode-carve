@@ -41,18 +41,22 @@ script.
 
 The grammar snapshots above measure TextMate scopes and cannot see engine output
 at all, so they stay green whether the bundled engine is correct or months
-stale. `npm run test:corpus` drives every corpus document through the two
-surfaces the extension actually ships and is part of `npm test`:
+stale. `npm run test:corpus` drives every option-free render example of the
+Carve 0.2 conformance corpus (`spec/0.2/conformance/examples.json` in
+markup-carve/carve) through the two surfaces the extension actually ships and is
+part of `npm test`. The examples are vendored in `tools/conformance-0.2.json`
+from the spec commit the pinned engine reads:
 
 ```bash
 npm run build                 # it measures dist/, not the sources
 npm run test:corpus
 npm run test:corpus -- --manifest /tmp/before.tsv   # one row per document
 npm run test:corpus -- --record   # rewrite tools/corpus-baseline.tsv
+node tools/vendor-conformance.mjs <carve-checkout>   # re-vendor the examples
 ```
 
-- The preview and export path (`renderPreviewBody`) is compared byte-for-byte
-  against the corpus `.html`.
+- The preview and export path (`renderConformanceBody`) is compared
+  byte-for-byte against the example's HTML.
 - Every document is opened in the real language server process, spawned from the
   path `serverModulePath()` hands the client, and its diagnostics, outline and
   folding ranges are collected.
@@ -104,7 +108,10 @@ and review the baseline diff by document before committing it.
 
 ## Updating the corpus
 
-Update the submodule and regenerate the snapshots:
+The `spec` submodule still holds the Carve 0.1 corpus: its documents are the
+inputs of the grammar snapshots in `tests/snapshots/` and of a few table-color
+tests, which measure TextMate scopes only. The engine is measured against the
+0.2 examples above. Update the submodule and regenerate the snapshots:
 
 ```bash
 git -C spec fetch origin main

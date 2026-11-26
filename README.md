@@ -1,11 +1,13 @@
 # vscode-carve
 
-Carve support for VS Code, with TextMate highlighting, preview, and a bundled language server. Extension version 0.1.19 bundles `carve-lsp` 0.1.17. See the [Carve documentation](https://markup-carve.github.io/carve/) for the markup language.
+Carve support for VS Code, with TextMate highlighting, preview, and a bundled language server. On the `next2` branch the extension bundles the unreleased Carve 0.2 engine and language server (carve-js and carve-lsp `next2`, pinned by commit). See the [Carve documentation](https://markup-carve.github.io/carve/) for the markup language.
 
 ## Features
 
-- Highlighting for `.crv` files and code fences.
-- Preview, import, export, and language server features.
+- Highlighting for `.crv` files and code fences. The TextMate grammar reads Carve 0.2 source; its root scope is `source.carve`, as in carve-grammars.
+- Preview, import, export, and language server features, all on the Carve 0.2 engine.
+- The preview enables the standard 0.2 extensions it can draw (details, spoiler, tabs, code groups, list tables, math, mermaid, charts, `:wiki[...]` links, `:cite[...]` citations with a `references` list, `:term[...]` glossary links and `:index[...]` entries, and SVG `img` fences drawn as images) and links bare URLs and opens off-site links in a new tab. Raw HTML is shown, as before.
+- **Carve: Export to Markdown** writes the engine's Markdown export (`toMarkdown`). Markdown and HTML import read Markdown as GFM.
 
 ## Install
 

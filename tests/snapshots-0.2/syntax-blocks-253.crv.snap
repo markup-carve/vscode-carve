@@ -1,0 +1,15 @@
+>|= H |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^^^ source.carve markup.table.row.carve
+#     ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>|={.x} ^ |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^ source.carve markup.table.row.carve meta.attributes.carve
+#   ^^ source.carve markup.table.row.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#     ^ source.carve markup.table.row.carve meta.attributes.carve
+#      ^^^ source.carve markup.table.row.carve
+#         ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| a |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve

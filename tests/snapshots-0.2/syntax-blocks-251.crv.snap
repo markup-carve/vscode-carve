@@ -1,0 +1,14 @@
+>|= H |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^^^ source.carve markup.table.row.carve
+#     ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>|= ^ |
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^ source.carve markup.table.row.carve
+#   ^ source.carve markup.table.row.carve keyword.operator.table.rowspan.carve
+#    ^ source.carve markup.table.row.carve
+#     ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>| a |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve

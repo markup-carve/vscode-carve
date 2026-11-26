@@ -59,7 +59,8 @@ test('a warning offset, translated, slices the directive it names', async () => 
       resolve: () => ({ ok: false, id: 'missing.crv', denial: 'not-found' }),
     })
     const warning = result.warnings[0]!
-    assert.equal(warning.rule, 'include-unresolved')
+    // C2-N-061: 0.2 names the class in the parse code (was `include-unresolved`).
+    assert.equal(warning.rule, 'include-not-found')
     const sliced = source.slice(utf16Offset(source, warning.start), utf16Offset(source, warning.end))
     assert.equal(sliced, '{{ missing.crv }}')
     // And the untranslated slice is wrong, so the assertion above is load-bearing.

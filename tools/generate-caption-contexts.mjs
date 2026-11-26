@@ -48,16 +48,24 @@ const payloadStart = attributeMatch?.indexOf(String.raw`\{\s*(?:`) ?? -1
 if (payloadStart < 0) throw new Error('Strict attribute payload changed')
 const attribute = attributeMatch.slice(payloadStart)
 const blockAttributes = String.raw`(?:` + attribute + String.raw`)(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
-const interrupt = '(?:%%|' + blockAttributes + '|' + String.raw`(?:(?:-{3,}|\*{3,}|_{3,})[ \t]*$|#{1,6} +(?![ \t]*$)|%{3,}(?: |$)|` + '`{3,}' + String.raw`|~{3,}|:{3,}(?: |$)|>(?: |$)|\|[^\n]*\|[ \t]*$|\+[ \t]*$|\*\[[^\]\n]+\]: |\[[^\]\n]+\]: |:: +(?![ \t]*$)))`
-const listMarker = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z]\.(?=  )|[A-Za-z]\)|[ivxlcdmIVXLCDM]+\.(?=  )|[ivxlcdmIVXLCDM]+\)|\.) +`
-const containerInterrupt = '(?:' + interrupt + '|' + listMarker + String.raw`|:: +|: +)`
+// A line that may open a block keeps its block reading when no paragraph is open.
+const blockStart = '(?:%%|' + blockAttributes + '|' + String.raw`(?:\*{3,}[ \t]*$|(?:#{1,6}|={1,6}) +(?![ \t]*$)|%{3,}(?: |$)|` + '`{3,}' + String.raw`|:{3,}(?: |$)|>(?: |$)|\|[^\n]*\|[ \t]*$|\*\[[^\]\n]+\]: |\[[^\]\n]+\]: |:: +(?![ \t]*$)))`
+// Only these shapes interrupt an open paragraph in 0.2 (C2-B-012, U-001 to U-013); a heading,
+// quote, attribute, definition, term or line comment below prose is paragraph text.
+// A quote line with no content ends a quoted paragraph at any depth; a deeper or shallower
+// quote line with text continues it (C2-B-154).
+const quoteBlank = String.raw`(?:> ?)*>[ \t]*$`
+const interrupt = String.raw`(?:%%[ \t]*#(?:region|endregion)\b|\*{3,}[ \t]*$|%{3,}(?: |$)|` + '`{3,}' + String.raw`|:{3,}(?: |$)|\|[^\n]*\|[ \t]*$)`
+const listMarker = String.raw`(?:[-*]|[0-9]+[.)]|[A-Za-z]\.(?= )|[A-Za-z]\)|[ivxlcdmIVXLCDM]+\.(?= )|[ivxlcdmIVXLCDM]+\)|\.) +`
+const containerInterrupt = '(?:' + interrupt + '|' + listMarker + String.raw`|: +)`
+const containerBlockStart = '(?:' + blockStart + '|' + listMarker + String.raw`|:: +|: +)`
 const image = '(?:' + repository.images.patterns.map(rule => rule.match).join('|') + ')' + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
 const fence = repository['code-blocks'].patterns.find(rule => rule.begin)?.begin.slice(1)
 if (!fence || !fence.includes(String.raw`\2`)) throw new Error('Generic fence capture layout changed')
 const partialImage = String.raw`!\[[^\]\n]*$`
 const math = repository.math.patterns[0].match + String.raw`(?:[ \t]*` + attribute + String.raw`)*[ \t]*$`
+// Only a one-line image is a caption host in 0.2 (C2-B-017), so a multi-line image is prose.
 const hosts = [
-  ['multiline-image', partialImage, include('caption-multiline-image', 'caption-prose-continuation')],
   ['image', image, include('caption-image-on-host-line', 'caption-prose-continuation')],
   ['table', String.raw`\|[^\n]*\|[ \t]*$`, include('table-row-behind-a-container-prefix', 'tables')],
   ['fence', fence, include('code-fence-on-quote-marker-line', 'code-blocks', 'code-block-behind-a-container-prefix')],
@@ -146,17 +154,17 @@ for (const [key, host, rules] of [
 // pending host can reuse that blank as a caption gap.
 const captionStart = String.raw`\^ +(?![ \t]*$)[^ ].*$`
 updated = replaceEntry(updated, 'caption-prose-continuation', {
-  begin: String.raw`^(?![ \t]*(?:` + captionStart + String.raw`|$)|[ \t]*` + interrupt + String.raw`)(?=[ \t]*\S)[ \t]*`,
+  begin: String.raw`^(?![ \t]*(?:` + captionStart + String.raw`|$)|[ \t]*` + blockStart + String.raw`)(?=[ \t]*\S)[ \t]*`,
   end: String.raw`^[ \t]*\n|^(?=[ \t]*` + interrupt + ')',
   patterns: include('caption-paragraph-inline'),
 })
 updated = replaceEntry(updated, 'caption-prose-continuation-in-container', {
-  begin: String.raw`^([ \t]+)(?!` + captionStart + '|$|' + containerInterrupt + String.raw`)(?=\S)`,
+  begin: String.raw`^([ \t]+)(?!` + captionStart + '|$|' + containerBlockStart + String.raw`)(?=\S)`,
   end: String.raw`^[ \t]*\n|^(?=\S)|^(?=[ \t]+` + containerInterrupt + ')',
   patterns: include('caption-paragraph-inline'),
 })
 updated = replaceEntry(updated, 'caption-prose-continuation-quoted', {
-  begin: String.raw`^((?:> )+)(?!` + captionStart + String.raw`|[ \t]*$|` + interrupt + String.raw`)(?=[ \t]*\S)`,
+  begin: String.raw`^((?:> )+)(?!` + captionStart + String.raw`|[ \t]*$|` + blockStart + String.raw`)(?=[ \t]*\S)`,
   end: blank + String.raw`|^(?!\1)|^\1(?=` + interrupt + ')',
   beginCaptures: { '1': { patterns: include('caption-quote-prefix') } },
   patterns: [
@@ -262,7 +270,7 @@ for (const [suffix, anchor, endPrefix, quoted, body] of [
 }
 const captionStartForLazyQuote = String.raw`\^ +(?![ \t]*$)[^ ].*$`
 updated = replaceEntry(updated, 'caption-quote-lazy-line', {
-  begin: String.raw`^(?![ \t]*(?:` + captionStartForLazyQuote + String.raw`|$)|[ \t]*` + interrupt + String.raw`)(?=[ \t]*\S)[ \t]*`,
+  begin: String.raw`^(?![ \t]*(?:` + captionStartForLazyQuote + String.raw`|$)|[ \t]*` + blockStart + String.raw`)(?=[ \t]*\S)[ \t]*`,
   end: String.raw`^(?=[ \t]*(?:` + captionStartForLazyQuote + '|$|' + interrupt + '))',
   patterns: include('caption-paragraph-inline'),
 })
@@ -280,7 +288,7 @@ updated = replaceEntry(updated, 'caption-list-body', {
       : rule.include === '#caption-paragraph-in-container' ? { include: '#caption-paragraph-in-list' } : rule),
 })
 updated = replaceEntry(updated, 'caption-prose-continuation-in-list', {
-  begin: String.raw`^(?![ \t]*(?:` + captionStartForLazyQuote + String.raw`|$)|[ \t]*` + containerInterrupt + String.raw`)(?=[ \t]*\S)[ \t]*`,
+  begin: String.raw`^(?![ \t]*(?:` + captionStartForLazyQuote + String.raw`|$)|[ \t]*` + containerBlockStart + String.raw`)(?=[ \t]*\S)[ \t]*`,
   end: String.raw`^[ \t]*\n|^(?=[ \t]*` + containerInterrupt + ')',
   patterns: include('caption-paragraph-inline'),
 })
@@ -292,7 +300,7 @@ const plusMarker = include('plus-marker-after-opener')
 updated = replaceEntry(updated, 'caption-paragraph-in-quote', {
   patterns: [{
     begin: String.raw`(?<=((?:> )+))\G` + content,
-    end: String.raw`^(?=[ \t]*\1[ \t]*(?:[ \t]*$|` + interrupt + String.raw`))|^(?![ \t]*\1)(?=[ \t]*(?:[ \t]*$|` + interrupt + '|' + captionStart + '))',
+    end: String.raw`^(?=[ \t]*\1[ \t]*(?:[ \t]*$|` + interrupt + String.raw`))|^(?![ \t]*\1)(?=[ \t]*(?:[ \t]*$|` + quoteBlank + '|' + interrupt + '|' + captionStart + '))',
     patterns: [
       ...plusMarker,
       { match: String.raw`^[ \t]*(?:> )+`, captures: { '0': { patterns: include('caption-quote-prefix') } } },
@@ -304,7 +312,7 @@ updated = replaceEntry(updated, 'caption-paragraph', {
   patterns: [
     {
       begin: String.raw`(?<=^((?:> )+))\G` + content,
-      end: String.raw`^(?!\1)|^(?=\1[ \t]*(?:[ \t]*$|` + interrupt + '))',
+      end: String.raw`^(?!\1)(?=[ \t]*(?:$|` + quoteBlank + '|' + interrupt + '|' + captionStart + String.raw`))|^(?=\1[ \t]*(?:[ \t]*$|` + interrupt + '))',
       patterns: [
         ...plusMarker,
         { match: '^(?:> )+', captures: { '0': { patterns: include('caption-quote-prefix') } } },

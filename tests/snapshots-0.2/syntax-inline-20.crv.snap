@@ -1,0 +1,18 @@
+>a {% one
+#^^ source.carve
+#  ^^ source.carve comment.block.inline.carve
+#    ^^^^^ source.carve comment.block.inline.carve
+>two %} b and *bo{% c %}ld* and a {% oops
+#^^^^ source.carve comment.block.inline.carve
+#    ^^ source.carve comment.block.inline.carve
+#      ^^^^^^^ source.carve
+#             ^ source.carve punctuation.definition.bold.carve
+#              ^^ source.carve markup.bold.carve
+#                ^^ source.carve markup.bold.carve comment.block.inline.carve
+#                  ^^^ source.carve markup.bold.carve comment.block.inline.carve
+#                     ^^ source.carve markup.bold.carve comment.block.inline.carve
+#                       ^^ source.carve markup.bold.carve
+#                         ^ source.carve punctuation.definition.bold.carve
+#                          ^^^^^^^ source.carve
+#                                 ^^ source.carve comment.block.inline.carve
+#                                   ^^^^^^ source.carve comment.block.inline.carve

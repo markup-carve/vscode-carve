@@ -1,0 +1,31 @@
+># The `x` value and $`r^2`
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^ source.carve markup.heading.carve entity.name.section.carve
+#      ^ source.carve markup.heading.carve entity.name.section.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#       ^ source.carve markup.heading.carve entity.name.section.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#        ^ source.carve markup.heading.carve entity.name.section.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#         ^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+#                    ^ source.carve markup.heading.carve entity.name.section.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#                     ^ source.carve markup.heading.carve entity.name.section.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                      ^^^ source.carve markup.heading.carve entity.name.section.carve markup.other.math.inline.carve markup.other.math.content.carve
+#                         ^ source.carve markup.heading.carve entity.name.section.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+>
+>[go][The x value and r^2] and [The `x` value and $`r^2`][]
+#^ source.carve meta.link.reference.carve
+# ^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#   ^^ source.carve meta.link.reference.carve
+#     ^^^^^^^^^^^^^^^^^^^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                        ^ source.carve meta.link.reference.carve
+#                         ^^^^^ source.carve
+#                              ^ source.carve meta.link.reference.carve
+#                               ^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                                   ^ source.carve meta.link.reference.carve string.other.link.title.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                    ^ source.carve meta.link.reference.carve string.other.link.title.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                                     ^ source.carve meta.link.reference.carve string.other.link.title.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                      ^^^^^^^^^^^ source.carve meta.link.reference.carve string.other.link.title.carve
+#                                                 ^ source.carve meta.link.reference.carve string.other.link.title.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#                                                  ^ source.carve meta.link.reference.carve string.other.link.title.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                                   ^^^ source.carve meta.link.reference.carve string.other.link.title.carve markup.other.math.inline.carve markup.other.math.content.carve
+#                                                      ^ source.carve meta.link.reference.carve string.other.link.title.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#                                                       ^^^ source.carve meta.link.reference.carve

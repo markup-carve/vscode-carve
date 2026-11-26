@@ -1,0 +1,15 @@
+::: |
+roses are red
+  violets
+:::
+
+::: \
+a
+b
+:::
+
+{.hardbreaks}
+:::
+a\
+b
+:::

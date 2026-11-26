@@ -60,10 +60,12 @@ A TextMate rule sees one line at a time, so a few shapes color differently from 
 | `carve.trace.server` | `"off"` | Trace VS Code ↔ language-server communication (`off`/`messages`/`verbose`) in the output channel, for debugging. |
 | `carve.preview.mentionUrl` | `""` | URL template for `@mention` links in the preview; `{name}` is replaced (e.g. `https://example.com/u/{name}`). Empty renders mentions as plain text. |
 | `carve.preview.tagUrl` | `""` | URL template for `#tag` links in the preview; `{name}` is replaced. Empty renders tags as plain text. |
+| `carve.preview.headingShift` | `0` | Move every heading down this many levels (0 to 5) in the preview and the HTML export, for a page that writes its own title as the `<h1>`: with `1`, `=` renders as `<h2>`. Ids and links do not change. This is the Carve render option `headingShift`. |
 | `carve.preview.emoji` | `{}` | Map of emoji shortcodes to glyphs, e.g. `{ "smile": "😄" }` renders `:smile:` as the glyph. Unmapped shortcodes render literally. |
 | `carve.csv.columnColors` | `false` | Color each column of a `csv` or `tsv` fence body differently, cycling through six colors. Separators keep their own color, and a quoted field that spans lines keeps its column's color. |
 | `carve.formatter` | `"conservative"` | What **Format Document** does: `conservative` normalizes whitespace and line endings only, `migration` rewrites the document into canonical Carve. |
 | `carve.format.alignTables` | `false` | Pad table cells into aligned columns when formatting a document, a selection, or on Enter. The **Align table** code action works without it. |
+| `carve.lint.upgrade` | `false` | Run the 0.1 migration rules (`deprecated-*`, `thematic-break-spelling` and the other upgrade rules) and offer their quick fixes. Turn it on while moving a 0.1 document to 0.2. |
 | `carve.extensions` | `[]` | Language extensions the server enables for diagnostics and highlighting, such as `semantic-span`. |
 | `carve.platforms` | `[]` | Platforms whose rendering the server checks against; currently `github`. |
 | `carve.severities` | `{}` | Diagnostic severity by rule name: `error`, `warning`, `information`, `hint` or `off`, for example `{ "broken-crossref": "error" }`. |
@@ -112,11 +114,9 @@ cached on identity plus modification time, so a keystroke does not re-read every
 chapter.
 
 One extension set does the parse and the render, so turning includes on cannot
-change how the document's own text is read. A CHILD is still parsed without that
-set, which is an engine limit rather than a choice here -
-[carve-js#1693](https://github.com/markup-carve/carve-js/issues/1693) - so
-extension syntax in an included file can read differently from the same syntax
-in the parent.
+change how the document's own text is read. Each included file is parsed with
+the same set (Carve 0.2, C2-N-015), so extension syntax reads the same in a
+child as in the parent.
 
 A child's relative links and images are rebased against the CHILD's folder. For example, a
 chapter at `chapters/intro.crv` writing `[see](figures/one.png)` means
@@ -145,9 +145,11 @@ It is deliberately a separate command rather than a mode of the Carve export:
 spec I15 requires writing a document back as Carve to return the author's
 document, so a plain Carve export must never expand. Both commands report the
 two side effects that are invisible in the result - the output is canonical
-Carve, so formatting is normalized rather than preserved, and colliding explicit
-ids and footnote labels are renamed (spec I5), so a flattened document can carry
-`intro-2`.
+Carve, so formatting is normalized rather than preserved, and the copy can
+render differently when two files define the same footnote, reference or
+abbreviation key. Carve 0.2 scopes those keys per file (C2-N-054, C2-N-055) and
+one flattened file holds one scope; the command still writes the copy and says
+so. Explicit ids are not renamed.
 
 A child's relative links are NOT rebased when flattening, unlike in the preview:
 `carve flatten` does not rewrite them, and matching the CLI byte for byte is

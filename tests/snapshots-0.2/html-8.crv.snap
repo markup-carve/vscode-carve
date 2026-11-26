@@ -1,0 +1,10 @@
+>- > quote
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^ source.carve markup.quote.carve punctuation.definition.quote.carve
+#   ^ source.carve markup.quote.carve
+#    ^^^^^^ source.carve markup.quote.carve
+>
+>  after
+#^^ source.carve
+#  ^^^^^^ source.carve

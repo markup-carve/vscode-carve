@@ -1,0 +1,10 @@
+>Some text
+#^^^^^^^^^^ source.carve
+># not a heading
+#^^^^^^^^^^^^^^^^ source.carve
+>> not a quote
+#^^^^^^^^^^^^^^ source.carve
+>{.x}
+#^ source.carve meta.attributes.carve
+# ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#   ^ source.carve meta.attributes.carve

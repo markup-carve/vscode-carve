@@ -1,0 +1,16 @@
+># fn1
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+>a[^x]
+#^ source.carve
+# ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#   ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+>
+>[^x]: n
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^ source.carve

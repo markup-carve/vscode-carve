@@ -1,0 +1,9 @@
+>> *a
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^ source.carve markup.quote.carve
+#   ^^ source.carve markup.quote.carve
+>> b* c
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^^^^ source.carve markup.quote.carve

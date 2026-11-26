@@ -23,7 +23,7 @@ const registry = new vsctm.Registry({
     'carve.tmLanguage.json',
   ),
 })
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 function covered(source, scope) {
   const lines = source.split('\n')
@@ -213,15 +213,13 @@ test('a list paragraph keeps a following image inside prose', () => {
   assert.ok(!covered('- prose\n  ![a](i.png)\n  ^ cap', 'markup.table.caption').includes('^ cap'))
 })
 
-for (const prefix of ['', '> ']) {
-  test(`a multiline image can take a caption: ${JSON.stringify(prefix)}`, () => {
-    const source = prefix + '![a\n' + prefix + 'b](/i)\n' + prefix + '^ cap'
-    assert.ok(covered(source, 'markup.table.caption').includes('^ cap'))
+// Only a paragraph of exactly one image line is a caption host in Carve 0.2 (C2-B-017);
+// the 0.2 reference engine renders each of these as a paragraph with `^ cap` as text.
+for (const source of ['![a\nb](/i)\n^ cap', '> ![a\n> b](/i)\n> ^ cap', '- ![a\n  b](/i)\n  ^ cap']) {
+  test(`a multiline image takes no caption: ${JSON.stringify(source)}`, () => {
+    assert.ok(!covered(source, 'markup.table.caption').includes('^ cap'))
   })
 }
-test('a multiline image can take a caption inside a list', () => {
-  assert.ok(covered('- ![a\n  b](/i)\n  ^ cap', 'markup.table.caption').includes('^ cap'))
-})
 test('an unclosed image does not make its caret line a caption', () => {
   assert.ok(!covered('![a\n^ cap', 'markup.table.caption').includes('^ cap'))
 })
@@ -251,9 +249,11 @@ for (const source of [
   }
 }
 
+// None of these interrupts a paragraph in Carve 0.2 (U-003, C2-B-012): the image stays
+// paragraph text and the caret line with it.
 for (const separator of ['{#fig}', '%% c', '%%c']) {
-  test(`a paragraph interrupter leaves a fresh image caption slot: ${separator}`, () => {
-    assert.ok(covered('prose\n' + separator + '\n![a](i.png)\n^ cap', 'markup.table.caption').includes('^ cap'))
+  test(`a line under prose leaves no image caption slot: ${separator}`, () => {
+    assert.ok(!covered('prose\n' + separator + '\n![a](i.png)\n^ cap', 'markup.table.caption').includes('^ cap'))
   })
 }
 for (const opening of ['Intro text', '[x](u) intro']) {
@@ -322,7 +322,6 @@ for (const source of [
   '![a](i.png)\n\n![b](j.png)\n^ cap',
   '> ![a](i.png)\n>\n> ![b](j.png)\n> ^ cap',
   '- ![a](i.png)\n\n  ![b](j.png)\n  ^ cap',
-  '![a\n- x](/i)\n^ cap',
 ]) {
   test('a fresh eligible host can take a caption: ' + JSON.stringify(source), () => {
     assert.ok(covered(source, 'markup.table.caption').includes('^ cap'))
@@ -333,14 +332,13 @@ for (const source of [
   '- intro\n\n  ![a](i.png)\n\n^ cap',
   '- ![a\n  %% c\n  b](/i)\n  ^ cap',
   '- ![a\n  - x](/i)\n  ^ cap',
+  '![a\n- x](/i)\n^ cap',
+  '![a\n  ---\nb](/i)\n^ cap',
 ]) {
   test('an image slot respects its container after a gap or interruption: ' + JSON.stringify(source), () => {
     assert.ok(!covered(source, 'markup.table.caption').includes('^ cap'))
   })
 }
-test('an indented document line can continue an image paragraph', () => {
-  assert.ok(covered('![a\n  ---\nb](/i)\n^ cap', 'markup.table.caption').includes('^ cap'))
-})
 test('unfinished images preserve inline code and emphasis', () => {
   const source = '![Figure shows *x*\nand `code` here\n\nnext'
   assert.ok(covered(source, 'markup.bold').includes('x'))

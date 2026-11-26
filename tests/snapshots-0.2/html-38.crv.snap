@@ -1,0 +1,25 @@
+>:::: figure
+#^^^^ source.carve markup.other.figure-group.carve punctuation.definition.figure-group.carve
+#    ^ source.carve markup.other.figure-group.carve
+#     ^^^^^^ source.carve markup.other.figure-group.carve entity.name.type.figure-group.carve
+>![a](a.png)
+#^^ source.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^ source.carve meta.image.inline.carve string.other.image.alt.carve
+#   ^^ source.carve meta.image.inline.carve
+#     ^^^^^ source.carve meta.image.inline.carve markup.underline.link.image.carve
+#          ^ source.carve meta.image.inline.carve
+>^ First
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>| t |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+>^ Second
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>::::
+#^^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

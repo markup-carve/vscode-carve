@@ -1,15 +1,15 @@
 >|= < |= b |
-#^^ text.carve markup.table.row.carve keyword.operator.table.header.carve
-#  ^ text.carve markup.table.row.carve
-#   ^ text.carve markup.table.row.carve keyword.operator.table.colspan.carve
-#    ^ text.carve markup.table.row.carve
-#     ^^ text.carve markup.table.row.carve keyword.operator.table.header.carve
-#       ^^^ text.carve markup.table.row.carve
-#          ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#  ^ source.carve markup.table.row.carve
+#   ^ source.carve markup.table.row.carve keyword.operator.table.colspan.carve
+#    ^ source.carve markup.table.row.carve
+#     ^^ source.carve markup.table.row.carve keyword.operator.table.header.carve
+#       ^^^ source.carve markup.table.row.carve
+#          ^ source.carve markup.table.row.carve punctuation.separator.table.carve
 >| c | d |
-#^ text.carve markup.table.row.carve punctuation.separator.table.carve
-# ^^^ text.carve markup.table.row.carve
-#    ^ text.carve markup.table.row.carve punctuation.separator.table.carve
-#     ^^^ text.carve markup.table.row.carve
-#        ^ text.carve markup.table.row.carve punctuation.separator.table.carve
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^^^ source.carve markup.table.row.carve
+#    ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#     ^^^ source.carve markup.table.row.carve
+#        ^ source.carve markup.table.row.carve punctuation.separator.table.carve
 >

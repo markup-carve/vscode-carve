@@ -1,0 +1,57 @@
+>::: note
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+>Plain.
+#^^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: warning "Be careful"
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+#           ^ source.carve markup.other.div.carve
+#            ^^^^^^^^^^^^ source.carve markup.other.div.carve string.quoted.double.carve
+>Body.
+#^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: tip [Tab]
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+#       ^ source.carve markup.other.div.carve
+#        ^^^^^ source.carve markup.other.div.carve entity.name.label.carve
+>Labeled.
+#^^^^^^^^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: custom "Title"
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+#          ^ source.carve markup.other.div.carve
+#           ^^^^^^^ source.carve markup.other.div.carve string.quoted.double.carve
+>c
+#^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: toc "Contents"
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+#       ^ source.carve markup.other.div.carve
+#        ^^^^^^^^^^ source.carve markup.other.div.carve string.quoted.double.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: index
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^^^ source.carve markup.other.div.carve entity.name.type.div.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

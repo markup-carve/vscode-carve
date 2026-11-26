@@ -5,9 +5,12 @@
  * and bare openers checked for a closer ahead of their body scan, and
  * Oniguruma cannot be interrupted, so VS Code froze for that long. The work
  * runs in a child with a deadline: a regression fails here instead of hanging
- * the suite. The budgets are generous, a fix measured at tens of milliseconds
- * against seconds before. Bold is left out of the styling check: a bare `*`
- * opens the one multi-line inline region, which runs to the blank line.
+ * the suite. Each case is timed against a prose line of the same length in the
+ * same child, so machine load scales both: the freeze was about 29,000x prose,
+ * today's slowest case is about 350x, and the limit is 1000x. Bold is left out
+ * of the styling check: a bare `*` opens the one multi-line inline region,
+ * which runs to the blank line. The ratio limit cannot see quadratic growth
+ * at one length, so the growth test times each line at two lengths.
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -29,14 +32,25 @@ const registry = new vsctm.Registry({
   }),
   loadGrammar: async () => vsctm.parseRawGrammar(readFileSync('syntaxes/carve.tmLanguage.json', 'utf8'), 'carve.tmLanguage.json'),
 })
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 grammar.tokenizeLine('warm *a* {/b/} =c= {^d^}', vsctm.INITIAL)
 const cases = JSON.parse(process.argv[1])
+// The fastest of three runs: load only ever adds time.
+const time = (line) => {
+  let best = Infinity
+  let tokens
+  for (let run = 0; run < 3; run++) {
+    const start = performance.now()
+    tokens = grammar.tokenizeLine(line, vsctm.INITIAL).tokens
+    best = Math.min(best, performance.now() - start)
+  }
+  return { ms: best, tokens }
+}
 const out = {}
 for (const [name, line] of cases) {
-  const start = performance.now()
-  const { tokens } = grammar.tokenizeLine(line, vsctm.INITIAL)
-  out[name] = { ms: performance.now() - start, styled: tokens.some((t) => t.scopes.some((s) => /italic|underline|strikethrough|highlight|superscript|subscript|inserted|deleted/.test(s))) }
+  const { ms, tokens } = time(line)
+  const prose = 'a b, c. d e f '.repeat(Math.ceil(line.length / 14)).slice(0, line.length)
+  out[name] = { ms, proseMs: time(prose).ms, styled: tokens.some((t) => t.scopes.some((s) => /italic|underline|strikethrough|highlight|superscript|subscript|inserted|deleted/.test(s))) }
 }
 process.stdout.write(JSON.stringify(out))
 `
@@ -50,7 +64,12 @@ const long = ['=a ', '/a ', '~a ', '_a ', '{^a ', '{,a ', '/*a ']
 const hidden = [' `x/}`', ' x\\/}', ' x\\*}', ' x\\*} x\\/}', ' `x*}` `y/}`']
   .map((tail) => [`hidden closer${tail}`, '{*a {/b '.repeat(250).trim() + tail])
 
-function run(cases, budgetMs) {
+// Times prose of the same length, as measured in the same child.
+const PROSE_LIMIT = 1000
+// Below this a prose run is timer noise, so it counts as this long.
+const PROSE_FLOOR_MS = 0.5
+
+function run(cases) {
   const result = spawnSync(process.execPath, ['--input-type=module', '-e', script, JSON.stringify(cases)], {
     cwd: root,
     timeout: 120000,
@@ -60,21 +79,48 @@ function run(cases, budgetMs) {
   assert.equal(result.status, 0, result.stderr)
   const measured = JSON.parse(result.stdout)
   for (const [name] of cases) {
-    assert.ok(measured[name].ms < budgetMs, `${name}: ${Math.round(measured[name].ms)} ms, budget ${budgetMs} ms`)
+    const { ms, proseMs } = measured[name]
+    const ratio = ms / Math.max(proseMs, PROSE_FLOOR_MS)
+    assert.ok(ratio < PROSE_LIMIT, `${name}: ${Math.round(ms)} ms, ${Math.round(ratio)}x prose of the same length (${proseMs.toFixed(2)} ms), limit ${PROSE_LIMIT}x`)
     assert.equal(measured[name].styled, false, `${name}: an unclosed opener was styled`)
   }
 }
 
 test('alternating unclosed braced openers tokenize in linear-ish time', () => {
-  run(nested, 3000)
+  run(nested)
 })
 
 test('long lines of unclosed bare and braced openers tokenize quickly', () => {
-  run(long, 3000)
+  run(long)
 })
 
 test('a closer behind an escape or inside code does not make the run slow', () => {
-  run(hidden, 3000)
+  run(hidden)
+})
+
+// Eight times the input may take at most this many times as long: linear
+// growth is about 8x, the quadratic tokenizing of vscode-carve#452 was 50x.
+const GROWTH_LIMIT = 24
+const GROWTH_FLOOR_MS = 2
+
+test('unclosed opener runs grow linearly with the line length', () => {
+  const units = ['/*a ', '{*a {/b ', '{/a {*b ', '/a ', '{^a ', '{,a ', '=a ']
+  const cases = units.flatMap((unit) => [2000, 16000].map((n) => [`${unit.trim()} ${n}`, unit.repeat(Math.ceil(n / unit.length)).slice(0, n)]))
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e', script, JSON.stringify(cases)], {
+    cwd: root,
+    timeout: 120000,
+    encoding: 'utf8',
+  })
+  assert.equal(result.error, undefined, 'tokenizing ran past the two-minute deadline')
+  assert.equal(result.status, 0, result.stderr)
+  const measured = JSON.parse(result.stdout)
+  for (const unit of units) {
+    const short = measured[`${unit.trim()} 2000`]
+    const long = measured[`${unit.trim()} 16000`]
+    const growth = long.ms / Math.max(short.ms, GROWTH_FLOOR_MS)
+    assert.ok(growth < GROWTH_LIMIT, `${unit.trim()}: ${short.ms.toFixed(1)} ms at 2,000 characters, ${long.ms.toFixed(1)} ms at 16,000, ${growth.toFixed(1)}x, limit ${GROWTH_LIMIT}x`)
+    assert.equal(long.styled, false, `${unit.trim()}: an unclosed opener was styled`)
+  }
 })
 
 test('a closed span after the unclosed run is still styled', () => {

@@ -1,0 +1,5 @@
+>the sum $`a + b
+#^^^^^^^^ source.carve
+#        ^ source.carve markup.other.math.inline.carve punctuation.definition.math.carve
+#         ^ source.carve markup.other.math.inline.carve punctuation.definition.raw.carve
+#          ^^^^^^ source.carve markup.other.math.inline.carve markup.other.math.content.carve

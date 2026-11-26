@@ -1,0 +1,1 @@
+[s]{#a .b k=v} [s]{k="v w" k2='x'} [s]{:en} [s]{ .a } [s]{open}

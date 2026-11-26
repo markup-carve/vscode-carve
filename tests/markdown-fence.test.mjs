@@ -35,7 +35,7 @@ async function grammar() {
   const wasm = readFileSync(require.resolve('vscode-oniguruma/release/onig.wasm')).buffer
   const files = new Map([
     ['text.html.markdown', JSON.stringify(markdownGrammar)],
-    ['text.carve', readFileSync(join(root, 'syntaxes/carve.tmLanguage.json'), 'utf8')],
+    ['source.carve', readFileSync(join(root, 'syntaxes/carve.tmLanguage.json'), 'utf8')],
     ['markdown.carve.codeblock', readFileSync(join(root, 'syntaxes/carve-markdown-injection.tmLanguage.json'), 'utf8')],
   ])
   const registry = new Registry({

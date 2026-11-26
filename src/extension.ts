@@ -50,6 +50,7 @@ import {
   previewDocument,
   previewExtensions,
   symbolsFromEmojiSetting,
+  headingShiftFromSetting,
   type PreviewAssets,
   type PreviewRenderOptions,
 } from './preview.js'
@@ -258,8 +259,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       const editor = vscode.window.activeTextEditor
       if (!editor || editor.document.languageId !== 'carve') return
       const text = editor.document.getText()
-      const { carveToCarve } = await import('@markup-carve/carve')
-      const formatted = carveToCarve(text)
+      const { format } = await import('@markup-carve/carve')
+      const formatted = format(text)
       if (formatted === text) {
         void vscode.window.showInformationMessage('Carve: already canonical.')
         return
@@ -620,7 +621,7 @@ async function expandIncludesFor(
       source: document.getText(),
       sourcePath: document.uri.fsPath,
       resolve: gate.resolver,
-      extensions,
+      extensions: [...extensions.extensions],
       cache: includeCache,
     })
   } catch (error) {
@@ -727,10 +728,12 @@ function previewRenderOptions(): PreviewRenderOptions {
   const mentionUrl = config.get<string>('mentionUrl')?.trim()
   const tagUrl = config.get<string>('tagUrl')?.trim()
   const symbols = symbolsFromEmojiSetting(config.get<Record<string, string>>('emoji'))
+  const headingShift = headingShiftFromSetting(config.get<unknown>('headingShift'))
   const options: PreviewRenderOptions = {}
   if (mentionUrl) options.mentionUrl = mentionUrl
   if (tagUrl) options.tagUrl = tagUrl
   if (symbols) options.symbols = symbols
+  if (headingShift) options.headingShift = headingShift
   return options
 }
 
@@ -983,7 +986,7 @@ async function exportMarkdown(context: vscode.ExtensionContext): Promise<void> {
   }
   // The Markdown target is the engine's own and enables no extension set, so
   // the expansion parses the same way: with none.
-  const expansion = await expandIncludesFor(context, editor.document, [])
+  const expansion = await expandIncludesFor(context, editor.document, { extensions: [], renderers: {} })
   reportRefusals(expansion)
   const markdown = renderMarkdown(editor.document.getText(), expansion?.doc)
   const defaultPath = editor.document.uri.path.replace(/\.crv$/i, '') + '.md'
@@ -1201,6 +1204,7 @@ function includePayload(): CarveInitializationOptions {
   return carveInitializationOptions({
     formatter: explicitSetting<string>('formatter'),
     alignTables: explicitSetting<boolean>('format.alignTables'),
+    lintUpgrade: explicitSetting<boolean>('lint.upgrade'),
     extensions: explicitSetting('extensions'),
     platforms: explicitSetting('platforms'),
     severities: explicitSetting('severities'),

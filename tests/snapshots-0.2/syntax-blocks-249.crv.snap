@@ -1,0 +1,12 @@
+>| `a | 1 |
+#^ source.carve markup.table.row.carve punctuation.separator.table.carve
+# ^ source.carve markup.table.row.carve
+#  ^ source.carve markup.table.row.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#   ^^^^^^^^ source.carve markup.table.row.carve markup.raw.inline.carve markup.raw.inline.content.carve
+>+ b` | 2 |
+#^^^ source.carve markup.table.row.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#   ^ source.carve markup.table.row.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#    ^ source.carve markup.table.row.carve
+#     ^ source.carve markup.table.row.carve punctuation.separator.table.carve
+#      ^^^ source.carve markup.table.row.carve
+#         ^ source.carve markup.table.row.carve punctuation.separator.table.carve

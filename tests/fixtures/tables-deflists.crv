@@ -1,5 +1,4 @@
-| Left | Center | Right |
-|:-----|:------:|------:|
+|={<} Left |={~} Center |={>} Right |
 | a    | b      | c     |
 
 :: Term one %% trailing comment stays a comment

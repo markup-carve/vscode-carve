@@ -1,0 +1,20 @@
+>:::  "T"
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^^ source.carve markup.other.div.carve
+#     ^^^ source.carve markup.other.div.carve string.quoted.double.carve
+>x
+#^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>::: [l]
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^^^ source.carve markup.other.div.carve entity.name.label.carve
+>z
+#^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+>
+>:::[x] y
+#^^^^^^^^^ source.carve

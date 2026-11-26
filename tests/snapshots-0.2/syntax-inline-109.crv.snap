@@ -1,0 +1,7 @@
+>[later] and ![later] and [missing]
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
+>
+>[later]: /u
+#^^^^^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#        ^ source.carve meta.link.reference.definition.carve
+#         ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve

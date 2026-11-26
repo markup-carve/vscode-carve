@@ -1,0 +1,6 @@
+>{~a~>b~}
+#^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve
+#  ^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#   ^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#    ^^ source.carve markup.strikethrough.carve markup.strikethrough.carve
+#      ^^ source.carve markup.strikethrough.carve punctuation.definition.strike.carve

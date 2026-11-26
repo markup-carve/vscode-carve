@@ -1,0 +1,8 @@
+>- ```
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve markup.list.unnumbered.carve
+#  ^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+>  code
+#^^^^^^^ source.carve markup.raw.block.fenced.code.carve
+>after
+#^^^^^^ source.carve

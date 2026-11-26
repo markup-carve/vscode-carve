@@ -1,0 +1,9 @@
+>later markup still works: [a and *b* and {=c and `d`
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
+#                                 ^ source.carve punctuation.definition.bold.carve
+#                                  ^ source.carve markup.bold.carve
+#                                   ^ source.carve punctuation.definition.bold.carve
+#                                    ^^^^^^^^^^^^^ source.carve
+#                                                 ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#                                                  ^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve
+#                                                   ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve

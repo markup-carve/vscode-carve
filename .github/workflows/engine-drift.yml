@@ -14,7 +14,7 @@ name: Engine drift
 # It reports rather than gates on lag: upstream moving is not a defect here, and
 # a job that goes red for something outside the repository teaches people to
 # ignore it. It DOES fail when a pin is not exact, or cannot be resolved to a
-# commit on that repository's main - a typo, a force-pushed branch, a revision
+# commit on that repository's next2 (the Carve 0.2 line this branch pins) - a typo, a force-pushed branch, a revision
 # that no longer exists - because that is a broken build waiting to happen.
 # carve-js has rewritten history before: three sibling repos pinned revisions
 # that a fresh clone cannot check out (carve#499).
@@ -56,19 +56,11 @@ jobs:
           path: ${{ matrix.path }}
           fetch-depth: 0
 
-      - name: Compare the pin against ${{ matrix.path }} main
-        run: node tools/check-engine-pin.mjs '${{ matrix.dep }}' '${{ matrix.path }}'
+      - name: Compare the pin against ${{ matrix.path }} next2
+        run: node tools/check-engine-pin.mjs '${{ matrix.dep }}' '${{ matrix.path }}' --branch next2
 
-  # The `spec` submodule is a pin too, and it is the one nothing else watches.
-  # carve-js and carve-rs get bump PRs from carve's bump-downstream workflow;
-  # this repo does not, so its corpus quietly fell 178 commits behind - three
-  # weeks - which means the grammar coverage matrix has been measuring an old
-  # language with a green tick (#37).
-  #
-  # Reported, not gated: the spec moving is not a defect here, and bumping it
-  # is a deliberate review (new categories need a covered/skip decision and the
-  # token diff wants reading). Failing on lag would just teach people to ignore
-  # the job. It DOES fail if the pin is not a commit on carve main.
+  # The spec pin follows Carve 0.2 on next2. Report the distance and the
+  # option-free render-example population without gating on upstream movement.
   spec-pin:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -82,7 +74,7 @@ jobs:
           path: carve-spec
           fetch-depth: 0
 
-      - name: Compare the spec submodule against carve main
+      - name: Compare the spec submodule against carve next2
         run: |
           set -euo pipefail
           rev="$(git rev-parse HEAD:spec)"
@@ -90,15 +82,15 @@ jobs:
             echo "::error::the spec submodule pins ${rev}, which is not a commit in markup-carve/carve"
             exit 1
           fi
-          if ! git -C carve-spec merge-base --is-ancestor "${rev}" origin/main; then
-            echo "::error::spec ${rev} is not on main, so the pin came from an unmerged or rewritten branch"
+          if ! git -C carve-spec merge-base --is-ancestor "${rev}" origin/next2; then
+            echo "::error::spec ${rev} is not on next2, so the pin came from an unmerged or rewritten branch"
             exit 1
           fi
-          behind="$(git -C carve-spec rev-list --count "${rev}..origin/main")"
-          corpus="$(git -C carve-spec ls-tree -r --name-only "${rev}" tests/corpus | grep -c '\.crv$' || true)"
-          latest="$(git -C carve-spec ls-tree -r --name-only origin/main tests/corpus | grep -c '\.crv$' || true)"
+          behind="$(git -C carve-spec rev-list --count "${rev}..origin/next2")"
+          corpus="$(git -C carve-spec show "${rev}:spec/0.2/conformance/examples.json" | python3 -c 'import json,sys; print(sum(e.get("kind") == "render" and not e.get("options") and isinstance(e.get("expected", {}).get("html"), str) for e in json.load(sys.stdin)["examples"]))' )"
+          latest="$(git -C carve-spec show origin/next2:spec/0.2/conformance/examples.json | python3 -c 'import json,sys; print(sum(e.get("kind") == "render" and not e.get("options") and isinstance(e.get("expected", {}).get("html"), str) for e in json.load(sys.stdin)["examples"]))' )"
           echo "spec pin: ${rev} ($(git -C carve-spec log -1 --format=%s "${rev}"))"
-          echo "carve main is ${behind} commit(s) ahead; corpus ${corpus} -> ${latest} documents"
+          echo "carve next2 is ${behind} commit(s) ahead; render examples ${corpus} -> ${latest}"
           if [ "${behind}" -gt 0 ]; then
-            echo "::warning::the spec submodule is ${behind} commit(s) behind carve main (corpus ${corpus} vs ${latest})"
+            echo "::warning::the spec submodule is ${behind} commit(s) behind carve next2 (render examples ${corpus} vs ${latest})"
           fi

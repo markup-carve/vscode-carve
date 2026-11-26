@@ -1,0 +1,5 @@
+>/a /b/ c/
+#^ source.carve markup.italic.carve punctuation.definition.italic.carve
+# ^^^^ source.carve markup.italic.carve markup.italic.carve
+#     ^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#      ^^^^ source.carve

@@ -1,17 +1,16 @@
 import assert from 'node:assert/strict'
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import test from 'node:test'
 import { createTableMarkerScanner } from './table-colors.js'
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)))
-const corpusDir = join(root, 'spec/tests/corpus')
-const corpusFiles = readdirSync(corpusDir)
-const corpus = (slug: string, variant = ''): string => {
-  const file = corpusFiles.find((name) => name.endsWith(`${slug}${variant}.crv`))
-  assert.ok(file, `Missing corpus case ${slug}${variant}`)
-  return readFileSync(join(corpusDir, file), 'utf8')
+const examples = JSON.parse(readFileSync(join(root, 'tools/conformance-0.2.json'), 'utf8')).examples as { id: string; input: string }[]
+const corpus = (id: string): string => {
+  const example = examples.find((item) => item.id === id)
+  assert.ok(example, `Missing 0.2 conformance example ${id}`)
+  return example.input
 }
 
 test('table markers get colors in Carve fences and ordinary rows', async () => {
@@ -44,30 +43,26 @@ test('table markers get colors in Carve fences and ordinary rows', async () => {
 
 test('editor marker roles match the shared Carve palette', async () => {
   const scan = await createTableMarkerScanner(root)
-  const source = '- [ ] +\n> Attached quote\n\n- [x] done\n\n. ordered\n\n|=> 2-col header|<|=> header|\n| value | | value |'
+  const source = '- [ ] open\n\n> Quote\n\n- [x] done\n\n. ordered\n\n|={>} 2-col header|<|={>} header|\n| value | | value |'
   const lines = source.split('\n')
   const tokens = scan(source).map(({ line, start, end, kind }) => [kind, lines[line].slice(start, end)])
   for (const pair of [
     ['listPunctuation', '-'], ['listPunctuation', '.'], ['taskOpen', ' '],
-    ['taskDone', 'x'], ['continuationMarker', '+'], ['quoteMarker', '>'],
+    ['taskDone', 'x'], ['quoteMarker', '>'],
     ['tableHeader', '|='], ['tableAlignment', '>'], ['tableSpan', '<'],
   ]) assert.ok(tokens.some((token) => token[0] === pair[0] && token[1] === pair[1]), pair.join(': '))
   assert.deepEqual(scan('```js\n- [ ] +\n|=> header|<|\n```').filter((marker) =>
     ['listPunctuation', 'taskOpen', 'continuationMarker', 'tableHeader', 'tableSpan'].includes(marker.kind)), [])
 })
 
-test('a standalone plus gets a continuation color only when the parser accepts it', async () => {
+test('a standalone plus gets no continuation color', async () => {
+  // Carve 0.2 has no continuation marker (U-014 to U-017): every `+` line is text.
   const scan = await createTableMarkerScanner(root)
   const markers = (source: string) => scan(source).filter((marker) => marker.kind === 'continuationMarker')
-  assert.deepEqual(markers('- item\n+\n> attached').map((marker) => marker.line), [1])
-  assert.deepEqual(markers('> - item\n> +\n> > attached').map((marker) => marker.line), [1])
-  // A `+` that attaches nothing is consumed and leaves no node (markup-carve/carve#4409).
-  assert.deepEqual(markers('- item\n+').map((marker) => marker.line), [1])
-  assert.deepEqual(markers('+\nplain').map((marker) => marker.line), [])
-  assert.deepEqual(markers('> +\n> plain').map((marker) => marker.line), [0])
-  assert.deepEqual(markers('```\n+\n```').map((marker) => marker.line), [])
+  for (const source of ['- item\n+\n> attached', '> - item\n> +\n> > attached', '- item\n+', '+\nplain', '> +\n> plain']) {
+    assert.deepEqual(markers(source), [], source)
+  }
 })
-
 test('description markers keep their own color role', async () => {
   const scan = await createTableMarkerScanner(root)
   const source = ':: Term\n: body text\n\n- item'
@@ -87,13 +82,13 @@ test('only x task states use the checked color', async () => {
 test('alignment markers are colored beside the header or boundary pipe', async () => {
   const scan = await createTableMarkerScanner(root)
   const lines = [
-    '|=> Category |= Item |',
-    '|> Right | Plain |',
+    '|={>} Category |= Item |',
+    '|{>} Right | Plain |',
     '```carve',
-    '|=> Stage |= Owner |',
+    '|={>} Stage |= Owner |',
     '```',
-    '|=?^ Heading |= Other |',
-    '|?v Value | Other |',
+    '|={?^} Heading |= Other |',
+    '|{?v} Value | Other |',
     '| x |< |',
     '| a |< span |',
     '|^ x | y |',
@@ -112,7 +107,8 @@ test('alignment markers are colored beside the header or boundary pipe', async (
   assert.deepEqual(marked(5, 'operator'), ['|=', '?^', '|='])
   assert.deepEqual(marked(6, 'operator'), ['?v'])
   assert.deepEqual(marked(7, 'operator'), ['<'])
-  assert.deepEqual(marked(8, 'operator'), ['<'])
+  // A glued `<` before cell text is cell text in Carve 0.2 (U-056).
+  assert.deepEqual(marked(8, 'operator'), [])
   assert.deepEqual(marked(9, 'operator'), [])
   assert.deepEqual(marked(10, 'operator'), [])
   assert.deepEqual(marked(11, 'operator'), [])
@@ -184,13 +180,14 @@ test('only parsed CSV and TSV tables receive table body highlighting', async () 
 
 test('the pinned corpus keeps the editor corrections and their negative boundaries', async () => {
   const scan = await createTableMarkerScanner(root)
-  const unclosed = corpus('an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing')
+  const unclosed = corpus('syntax-blocks-116')
   assert.deepEqual(scan(unclosed).filter((marker) => marker.kind === 'plain'), [])
-  const nested = corpus('a-line-is-read-in-the-container-whose-column-it-reaches', '-4')
+  const nested = corpus('syntax-blocks-15')
   assert.ok(scan(nested).some((marker) => marker.kind === 'listMarker'))
-  const table = corpus('csv-and-tsv-table-bodies', '-2')
+  const table = corpus('syntax-blocks-214')
   assert.ok(scan(table).some((marker) => marker.kind === 'tableBody'))
-  const plainCsv = corpus('csv-and-tsv-table-bodies', '-3')
+  // The 0.2 render examples cover table CSV but not a bare CSV fence.
+  const plainCsv = '```csv\na,b\n```'
   assert.deepEqual(scan(plainCsv).filter((marker) => marker.kind === 'tableBody'), [])
 })
 

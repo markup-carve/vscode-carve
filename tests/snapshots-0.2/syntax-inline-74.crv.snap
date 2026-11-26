@@ -1,0 +1,32 @@
+>[a][r] and [b][r]{.own k=2}
+#^ source.carve meta.link.reference.carve
+# ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#  ^^ source.carve meta.link.reference.carve
+#    ^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#     ^ source.carve meta.link.reference.carve
+#      ^^^^^ source.carve
+#           ^ source.carve meta.link.reference.carve
+#            ^ source.carve meta.link.reference.carve string.other.link.title.carve
+#             ^^ source.carve meta.link.reference.carve
+#               ^ source.carve meta.link.reference.carve constant.other.reference.link.carve
+#                ^ source.carve meta.link.reference.carve
+#                 ^ source.carve meta.attributes.carve
+#                  ^^^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                      ^ source.carve meta.attributes.carve
+#                       ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                        ^ source.carve meta.attributes.carve
+#                         ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                          ^ source.carve meta.attributes.carve
+>
+>{.def k=1}
+#^ source.carve meta.attributes.carve
+# ^^^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#     ^ source.carve meta.attributes.carve
+#      ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#       ^ source.carve meta.attributes.carve
+#        ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#         ^ source.carve meta.attributes.carve
+>[r]: /u
+#^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ source.carve meta.link.reference.definition.carve
+#     ^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve

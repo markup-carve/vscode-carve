@@ -1,17 +1,17 @@
 >[^a]: intro
-#^^^^^ text.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
-#     ^ text.carve meta.footnote.definition.carve
-#      ^^^^^^ text.carve
+#^^^^^ source.carve meta.footnote.definition.carve constant.other.reference.footnote.carve
+#     ^ source.carve meta.footnote.definition.carve
+#      ^^^^^^ source.carve
 >+
-#^ text.carve
+#^ source.carve
 > more
-#^ text.carve
-# ^^^^^ text.carve
+#^ source.carve
+# ^^^^^ source.carve
 >
 >see[^a]
-#^^^ text.carve
-#   ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#    ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
-#     ^ text.carve constant.other.reference.footnote.carve constant.other.footnote.carve
-#      ^ text.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#^^^ source.carve
+#   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#     ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#      ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
 >

@@ -1,0 +1,6 @@
+>[a](/u v) and [a](/u "T) and [a](/u
+#^^^^^^^^^^^^^^^^^^^^^ source.carve
+#                     ^ source.carve punctuation.definition.smartquote.carve
+#                      ^^^^^^^^^^^^^^ source.carve
+>v)
+#^^^ source.carve

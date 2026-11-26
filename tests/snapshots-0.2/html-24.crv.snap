@@ -1,0 +1,34 @@
+># Hello, World!
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+># Don't stop -- go
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+#             ^^ source.carve markup.heading.carve entity.name.section.carve constant.character.typography.carve
+#               ^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+># Café 日本語
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+># 2nd *try*
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^ source.carve markup.heading.carve entity.name.section.carve
+#      ^ source.carve markup.heading.carve entity.name.section.carve punctuation.definition.bold.carve
+#       ^^^ source.carve markup.heading.carve entity.name.section.carve markup.bold.carve
+#          ^ source.carve markup.heading.carve entity.name.section.carve punctuation.definition.bold.carve
+>
+># ***
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^ source.carve markup.heading.carve entity.name.section.carve
+>
+># Hello-World
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve

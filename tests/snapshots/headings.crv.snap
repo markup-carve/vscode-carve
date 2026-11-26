@@ -1,13 +1,13 @@
 ># Welcome
-#^ text.carve markup.heading.carve punctuation.definition.heading.carve
-# ^ text.carve markup.heading.carve
-#  ^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
 >## Getting started
-#^^ text.carve markup.heading.carve punctuation.definition.heading.carve
-#  ^ text.carve markup.heading.carve
-#   ^^^^^^^^^^^^^^^ text.carve markup.heading.carve entity.name.section.carve
+#^^ source.carve markup.heading.carve punctuation.definition.heading.carve
+#  ^ source.carve markup.heading.carve
+#   ^^^^^^^^^^^^^^^^ source.carve markup.heading.carve entity.name.section.carve
 >### Setup
-#^^^ text.carve markup.heading.carve punctuation.definition.heading.carve
-#   ^ text.carve markup.heading.carve
-#    ^^^^^ text.carve markup.heading.carve entity.name.section.carve
+#^^^ source.carve markup.heading.carve punctuation.definition.heading.carve
+#   ^ source.carve markup.heading.carve
+#    ^^^^^^ source.carve markup.heading.carve entity.name.section.carve
 >

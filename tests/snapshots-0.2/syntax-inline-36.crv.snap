@@ -1,0 +1,17 @@
+>/emphasis/ and *strong* and *a
+#^ source.carve markup.italic.carve punctuation.definition.italic.carve
+# ^^^^^^^^ source.carve markup.italic.carve markup.italic.carve
+#         ^ source.carve markup.italic.carve punctuation.definition.italic.carve
+#          ^^^^^ source.carve
+#               ^ source.carve punctuation.definition.bold.carve
+#                ^^^^^^ source.carve markup.bold.carve
+#                      ^ source.carve punctuation.definition.bold.carve
+#                       ^^^^^ source.carve
+#                            ^ source.carve punctuation.definition.bold.carve
+#                             ^^ source.carve markup.bold.carve
+>b* and * a* and *a *
+#^ source.carve markup.bold.carve
+# ^ source.carve punctuation.definition.bold.carve
+#  ^^^^^^^^^^^^^^ source.carve
+#                ^ source.carve punctuation.definition.bold.carve
+#                 ^^^^ source.carve markup.bold.carve

@@ -66,6 +66,23 @@ test('package.json contributes carve.format.alignTables, off by default', () => 
   assert.equal(setting?.default, false)
 })
 
+test('carve.lint.upgrade is sent under carve.lint only when the user set it', () => {
+  assert.equal('lint' in carveInitializationOptions({ includes: {}, workspaceTrusted: true }).carve, false)
+  const on = carveInitializationOptions({ lintUpgrade: true, includes: {}, workspaceTrusted: true })
+  assert.deepEqual(on.carve.lint, { upgrade: true })
+  const off = carveInitializationOptions({ lintUpgrade: false, includes: {}, workspaceTrusted: true })
+  assert.deepEqual(off.carve.lint, { upgrade: false })
+})
+
+test('package.json contributes carve.lint.upgrade, off by default', () => {
+  const manifest = JSON.parse(readSource(join(projectRoot, 'package.json'), 'utf8')) as {
+    contributes: { configuration: { properties: Record<string, { type: string; default: unknown }> } }
+  }
+  const setting = manifest.contributes.configuration.properties['carve.lint.upgrade']
+  assert.equal(setting?.type, 'boolean')
+  assert.equal(setting?.default, false)
+})
+
 test('an unset gate is auto, which is on for a trusted workspace', () => {
   assert.equal(includeEnabledFrom(undefined), 'auto')
 })
@@ -197,7 +214,8 @@ test('with the gate open the server reports an unresolved include instead of pro
     )
 
     const missing = await run(broken, 'Hi\n\n{{ chapters/missing.crv }}\n')
-    assert.deepEqual(missing.diagnostics.map((d) => d.code), ['include-unresolved'])
+    // C2-N-070: the parse reports `include-not-found`; `include-unresolved` is the render's loss.
+    assert.deepEqual(missing.diagnostics.map((d) => d.code), ['include-not-found'])
     // The MERELY ATTEMPTED target is watched too, keyed on the resolved
     // candidate rather than the path as written, so creating the file
     // invalidates the document that wanted it.
@@ -327,6 +345,30 @@ test('the installed server aligns tables on Format Document when carve.format.al
     options: { tabSize: 2, insertSpaces: true },
   })) as { newText: string }[]
   assert.equal(edits[0]?.newText, '|= Name |= Score |\n| Ada   | 10     |\n')
+})
+
+test('the installed server runs the upgrade rules when carve.lint.upgrade is set', async (context) => {
+  const { LspStdioClient } = (await import(pathToFileURL(join(lspDist, 'lsp-stdio-client.js')).href)) as {
+    LspStdioClient: { spawnServer(path: string): {
+      request(method: string, params: unknown): Promise<unknown>
+      notify(method: string, params: unknown): void
+      stop(): void
+    } }
+  }
+  const codes = async (lintUpgrade: boolean): Promise<string[]> => {
+    const client = LspStdioClient.spawnServer(join(lspDist, 'server.js'))
+    context.after(() => client.stop())
+    const payload = carveInitializationOptions({ lintUpgrade, includes: {}, workspaceTrusted: true })
+    await client.request('initialize', { processId: null, capabilities: {}, workspaceFolders: [], initializationOptions: payload })
+    client.notify('initialized', {})
+    client.notify('workspace/didChangeConfiguration', { settings: payload })
+    const uri = 'untitled:price.crv'
+    client.notify('textDocument/didOpen', { textDocument: { uri, languageId: 'carve', version: 1, text: '|=> Price |\n' } })
+    const report = (await client.request('textDocument/diagnostic', { textDocument: { uri } })) as { items: { code?: string }[] }
+    return report.items.map((item) => String(item.code))
+  }
+  assert.ok((await codes(true)).includes('deprecated-cell-alignment'))
+  assert.equal((await codes(false)).includes('deprecated-cell-alignment'), false)
 })
 
 test('extensions, platforms, severities and inlay hints stay unsent until the user sets them', () => {

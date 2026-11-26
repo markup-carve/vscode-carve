@@ -1,0 +1,10 @@
+>[a]: /docs/
+#^^^^ source.carve meta.link.reference.definition.carve constant.other.reference.link.carve
+#    ^ source.carve meta.link.reference.definition.carve
+#     ^^^^^^ source.carve meta.link.reference.definition.carve markup.underline.link.carve
+>  guide.html
+#^^ source.carve
+#  ^^^^^^^^^^^ source.carve
+>
+>See [a].
+#^^^^^^^^^ source.carve

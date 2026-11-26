@@ -45,7 +45,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {{line: string, text: string, scopes: string[]}[]} one entry per token. */
 function tokenize(src) {
@@ -80,40 +80,24 @@ const on = (tokens, line) => tokens.filter((t) => t.line === line)
  *      *[A]: a
  *   tail
  */
+// A definition stands at column 0 outside every container in Carve 0.2 (C2-B-081), so each
+// of these lines is paragraph text: the 0.2 reference engine renders it literally.
 const HOSTS = [
-  ['a description body', ':: t\n:  d\n   *[A]: a\ntail\n', '   *[A]: a'],
-  ['a list item', '- a\n  *[A]: a\ntail\n', '  *[A]: a'],
-  ['a list item inside a description body', ':: t\n:  - a\n    *[A]: a\n', '    *[A]: a'],
-  ['a footnote body', '[^a]: intro\n  *[A]: a\n  more\n', '  *[A]: a'],
+  ['a description body', ':: t\n:  d\n\n   *[A]: a\ntail\n', '   *[A]: a'],
+  ['a list item', '- a\n\n  *[A]: a\ntail\n', '  *[A]: a'],
+  ['a list item inside a description body', ':: t\n:  - a\n\n    *[A]: a\n', '    *[A]: a'],
+  ['a footnote body', '[^a]: intro\n\n  *[A]: a\n  more\n', '  *[A]: a'],
   ['an item body after a blank line', '- a\n\n  *[A]: a\n', '  *[A]: a'],
-  ['a tab-indented item body', '- a\n\t*[A]: a\n', '\t*[A]: a'],
+  ['a tab-indented item body', '- a\n\n\t*[A]: a\n', '\t*[A]: a'],
+  ['an item body directly under its text', '- a\n  *[A]: a\n', '  *[A]: a'],
 ]
 
 for (const [label, src, line] of HOSTS) {
-  test(`an abbreviation definition in ${label} is a definition`, () => {
+  test(`an abbreviation line in ${label} is no definition`, () => {
     const got = on(tokenize(src), line)
-    assert.ok(got.some((t) => has(t, ABBR)), `the line carries no definition scope:\n${report(tokenize(src))}`)
-    assert.ok(!got.some((t) => has(t, 'bold')), `the star opened bold:\n${report(tokenize(src))}`)
+    assert.ok(!got.some((t) => has(t, ABBR)), `the line carries a definition scope:\n${report(tokenize(src))}`)
   })
 }
-
-test('a definition line keeps the block below it', () => {
-  // Spec model: `<li><p>a</p><ul><li>b</li></ul></li>`.
-  for (const [src, line, below] of [
-    ['- a\n\n  *[A]: a\n  - b\n', '  *[A]: a', '  - b'],
-    ['- a\n\n  *[A]: escaped \\*\n  - b\n', '  *[A]: escaped \\*', '  - b'],
-    ['- a\n\n  *[A]: x \\* and *b*\n  - c\n', '  *[A]: x \\* and *b*', '  - c'],
-    ['- a\n  *[A]: x and *b*\n', '  *[A]: x and *b*', null],
-  ]) {
-    const tokens = tokenize(src)
-    assert.ok(on(tokens, line).some((t) => has(t, ABBR)), report(tokens))
-    assert.ok(!on(tokens, line).some((t) => has(t, 'bold')), report(tokens))
-    if (below) {
-      const bullet = on(tokens, below).find((t) => t.text === '-')
-      assert.ok(bullet && has(bullet, 'punctuation.definition.list.begin.carve'), report(tokens))
-    }
-  }
-})
 
 test('an abbreviation definition at the document level is still a definition', () => {
   // The negative that keeps the fix from being a deletion. Engine:
@@ -126,16 +110,13 @@ test('an abbreviation definition at the document level is still a definition', (
   )
 })
 
-test('a reference definition at a content column is still collected', () => {
-  // Only the abbreviation rule left `#definitions-in-container`. A link
-  // reference definition IS collected by its container (markup-carve/carve#660)
-  // and must keep its scope. Engine: `:: t` over `:  d` over `   [r]: /u`
-  // renders `<dd>d</dd>` with the definition consumed.
-  const tokens = tokenize(':: t\n:  d\n   [r]: /u\n')
+test('a reference definition at a content column is text', () => {
+  // C2-B-081: the 0.2 reference engine renders `[r]: /u` in the description as a paragraph.
+  const tokens = tokenize(':: t\n:  d\n\n   [r]: /u\n')
   const got = on(tokens, '   [r]: /u')
   assert.ok(
-    got.some((t) => has(t, 'meta.link.reference.definition.carve')),
-    `the reference definition lost its scope:\n${report(tokens)}`,
+    !got.some((t) => has(t, 'meta.link.reference.definition.carve')),
+    `the line carries a definition scope:\n${report(tokens)}`,
   )
 })
 
@@ -270,7 +251,7 @@ test('the container table region does not hold its host open', () => {
   const tokens = tokenize('- | a |\n  + b |\ntail\n')
   for (const t of on(tokens, 'tail')) {
     assert.ok(
-      t.scopes.length === 1 && t.scopes[0] === 'text.carve',
+      t.scopes.length === 1 && t.scopes[0] === 'source.carve',
       `the host outran its bound on tail: ${t.scopes.join(' ')}`,
     )
   }

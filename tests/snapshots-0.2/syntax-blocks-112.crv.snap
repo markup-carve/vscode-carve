@@ -1,0 +1,6 @@
+>```js {.x}
+#^^^^^^^^^^^ source.carve
+>code
+#^^^^^ source.carve
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve

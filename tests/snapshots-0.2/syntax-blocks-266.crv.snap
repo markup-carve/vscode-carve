@@ -1,0 +1,12 @@
+>a
+#^^ source.carve
+>
+>{%%}
+#^^ source.carve comment.block.inline.carve
+#  ^^ source.carve comment.block.inline.carve
+>{%%}
+#^^ source.carve comment.block.inline.carve
+#  ^^ source.carve comment.block.inline.carve
+>
+>b
+#^^ source.carve

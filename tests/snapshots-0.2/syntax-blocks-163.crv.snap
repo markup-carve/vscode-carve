@@ -1,0 +1,8 @@
+>> q
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^ source.carve markup.quote.carve
+>^ Attr
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve

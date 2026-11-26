@@ -60,7 +60,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {{line: string, text: string, scopes: string[]}[]} one entry per token. */
 function tokenize(src) {
@@ -265,7 +265,8 @@ const QUOTE_SHAPES = [
   ['a wider quote fence', '> %%%%\n> [r]: /url\n> %%%%\n\n[r][]\n'],
   ['an insignificant tail on a quote fence', '> %%% TODO\n> [r]: /url\n> %%% end\n\n[r][]\n'],
   ['a marked blank line in the body', '> %%%\n> [r]: /url\n>\n> x\n> %%%\n\n[r][]\n'],
-  ['a quote inside a list item', '- a\n  > %%%\n  > [r]: /url\n  > %%%\n\n[r][]\n'],
+  // The blank line keeps the quote out of the item's paragraph (U-006).
+  ['a quote inside a list item', '- a\n\n  > %%%\n  > [r]: /url\n  > %%%\n\n[r][]\n'],
   // The closer matches the opener's width EXACTLY here too: the `> %%%%` in the
   // middle does not close this fence, so the definition BELOW it is still
   // hidden and only the real `> %%%` ends the run. Drop the width backreference

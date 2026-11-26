@@ -1,153 +1,153 @@
 >\[x]{kbd}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^^^^^^ text.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^^^^^^ source.carve
 >
 >\[x]{.c}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^^^^^ text.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^^^^^ source.carve
 >
 >\[x]{}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^^^ text.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^^^ source.carve
 >
 >\[x]{.c} [y]{.d}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^^^^^ text.carve
-#        ^ text.carve
-#         ^ text.carve meta.span.inline.carve punctuation.definition.span.begin.carve
-#          ^ text.carve meta.span.inline.carve string.other.span.carve
-#           ^ text.carve meta.span.inline.carve punctuation.definition.span.end.carve
-#            ^ text.carve meta.attributes.carve
-#             ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#               ^ text.carve meta.attributes.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^^^^^ source.carve
+#        ^ source.carve
+#         ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#          ^ source.carve meta.span.inline.carve string.other.span.carve
+#           ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#            ^ source.carve meta.attributes.carve
+#             ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#               ^ source.carve meta.attributes.carve
 >
 >\\\[x]{.c}
-#^^ text.carve
-#  ^^ text.carve constant.character.escape.carve
-#    ^ text.carve
-#     ^^^^^ text.carve
+#^^ source.carve
+#  ^^ source.carve constant.character.escape.carve
+#    ^ source.carve
+#     ^^^^^ source.carve
 >
 >\[x\]{.c}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^^ text.carve constant.character.escape.carve
-#     ^^^^^ text.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^^ source.carve constant.character.escape.carve
+#     ^^^^^ source.carve
 >
 >f(u){.c}
-#^ text.carve
-# ^ text.carve
-#  ^ text.carve
-#   ^^^^^ text.carve
+#^ source.carve
+# ^ source.carve
+#  ^ source.carve
+#   ^^^^^ source.carve
 >
 >f(a(b)c){.c}
-#^ text.carve
-# ^ text.carve
-#  ^^^^^ text.carve
-#       ^^^^^ text.carve
+#^ source.carve
+# ^ source.carve
+#  ^^^^^ source.carve
+#       ^^^^^ source.carve
 >
 >(a){.c}
-#^ text.carve
-# ^ text.carve
-#  ^^^^^ text.carve
+#^ source.carve
+# ^ source.carve
+#  ^^^^^ source.carve
 >
 >see (note){.c}
-#^^^^ text.carve
-#    ^ text.carve
-#     ^^^^ text.carve
-#         ^^^^^ text.carve
+#^^^^ source.carve
+#    ^ source.carve
+#     ^^^^ source.carve
+#         ^^^^^ source.carve
 >
 >\[x](u){.c}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^^ text.carve
-#     ^ text.carve
-#      ^^^^^ text.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^^ source.carve
+#     ^ source.carve
+#      ^^^^^ source.carve
 >
 >x\](u){.c}
-#^ text.carve
-# ^^^ text.carve
-#    ^ text.carve
-#     ^^^^^ text.carve
+#^ source.carve
+# ^^^ source.carve
+#    ^ source.carve
+#     ^^^^^ source.carve
 >
 >[a\](u){.c}
-#^ text.carve
-# ^ text.carve
-#  ^^^ text.carve
-#     ^ text.carve
-#      ^^^^^ text.carve
+#^ source.carve
+# ^ source.carve
+#  ^^^ source.carve
+#     ^ source.carve
+#      ^^^^^ source.carve
 >
 >(*b*){.c}
-#^ text.carve
-# ^ text.carve punctuation.definition.bold.carve
-#  ^ text.carve markup.bold.carve
-#   ^ text.carve punctuation.definition.bold.carve
-#    ^^^^^ text.carve
+#^ source.carve
+# ^ source.carve punctuation.definition.bold.carve
+#  ^ source.carve markup.bold.carve
+#   ^ source.carve punctuation.definition.bold.carve
+#    ^^^^^ source.carve
 >
 >(a [l](u) b){.c}
-#^ text.carve
-# ^^ text.carve
-#   ^ text.carve meta.link.inline.carve punctuation.definition.link.begin.carve
-#    ^ text.carve meta.link.inline.carve string.other.link.title.carve
-#     ^ text.carve meta.link.inline.carve punctuation.definition.link.end.carve
-#      ^ text.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
-#       ^ text.carve meta.link.inline.carve markup.underline.link.carve
-#        ^ text.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
-#         ^^ text.carve
-#           ^^^^^ text.carve
+#^ source.carve
+# ^^ source.carve
+#   ^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+#    ^ source.carve meta.link.inline.carve string.other.link.title.carve
+#     ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#      ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#       ^ source.carve meta.link.inline.carve markup.underline.link.carve
+#        ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#         ^^ source.carve
+#           ^^^^^ source.carve
 >
 >[*a*\](u){.c}
-#^ text.carve
-# ^ text.carve punctuation.definition.bold.carve
-#  ^ text.carve markup.bold.carve
-#   ^ text.carve punctuation.definition.bold.carve
-#    ^^^ text.carve
-#       ^ text.carve
-#        ^^^^^ text.carve
+#^ source.carve
+# ^ source.carve punctuation.definition.bold.carve
+#  ^ source.carve markup.bold.carve
+#   ^ source.carve punctuation.definition.bold.carve
+#    ^^^ source.carve
+#       ^ source.carve
+#        ^^^^^ source.carve
 >
 >\[x](*b*){.c}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^^ text.carve
-#     ^ text.carve punctuation.definition.bold.carve
-#      ^ text.carve markup.bold.carve
-#       ^ text.carve punctuation.definition.bold.carve
-#        ^^^^^ text.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^^ source.carve
+#     ^ source.carve punctuation.definition.bold.carve
+#      ^ source.carve markup.bold.carve
+#       ^ source.carve punctuation.definition.bold.carve
+#        ^^^^^ source.carve
 >
 >(a){*b*}
-#^^^ text.carve
-#   ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#     ^ text.carve markup.bold.carve markup.bold.carve
-#      ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#^^^ source.carve
+#   ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
+#     ^ source.carve markup.bold.carve markup.bold.carve
+#      ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
 >
 >\[x]{*b*}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve
-#   ^ text.carve
-#    ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
-#      ^ text.carve markup.bold.carve markup.bold.carve
-#       ^^ text.carve markup.bold.carve punctuation.definition.bold.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve
+#   ^ source.carve
+#    ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
+#      ^ source.carve markup.bold.carve markup.bold.carve
+#       ^^ source.carve markup.bold.carve punctuation.definition.bold.carve
 >
 >[x](u){.c}
-#^ text.carve meta.link.inline.carve punctuation.definition.link.begin.carve
-# ^ text.carve meta.link.inline.carve string.other.link.title.carve
-#  ^ text.carve meta.link.inline.carve punctuation.definition.link.end.carve
-#   ^ text.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
-#    ^ text.carve meta.link.inline.carve markup.underline.link.carve
-#     ^ text.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
-#      ^ text.carve meta.attributes.carve
-#       ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#         ^ text.carve meta.attributes.carve
+#^ source.carve meta.link.inline.carve punctuation.definition.link.begin.carve
+# ^ source.carve meta.link.inline.carve string.other.link.title.carve
+#  ^ source.carve meta.link.inline.carve punctuation.definition.link.end.carve
+#   ^ source.carve meta.link.inline.carve punctuation.definition.metadata.begin.carve
+#    ^ source.carve meta.link.inline.carve markup.underline.link.carve
+#     ^ source.carve meta.link.inline.carve punctuation.definition.metadata.end.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#         ^ source.carve meta.attributes.carve
 >
 >\\[x]{.c}
-#^^ text.carve constant.character.escape.carve
-#  ^ text.carve meta.span.inline.carve punctuation.definition.span.begin.carve
-#   ^ text.carve meta.span.inline.carve string.other.span.carve
-#    ^ text.carve meta.span.inline.carve punctuation.definition.span.end.carve
-#     ^ text.carve meta.attributes.carve
-#      ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#        ^ text.carve meta.attributes.carve
+#^^ source.carve constant.character.escape.carve
+#  ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#   ^ source.carve meta.span.inline.carve string.other.span.carve
+#    ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#     ^ source.carve meta.attributes.carve
+#      ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#        ^ source.carve meta.attributes.carve
 >

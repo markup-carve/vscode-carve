@@ -20,7 +20,7 @@ const registry = new vsctm.Registry({
     'carve.tmLanguage.json',
   ),
 })
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 function tokenize(source) {
   const lines = source.split('\n')
@@ -39,17 +39,12 @@ function covered(source, scope) {
     .join('')).join('\n')
 }
 
-// An abbreviation definition is a definition in every container
-// (markup-carve/carve#4874), so its star opens no bold run.
-test('an abbreviation definition in a container is a definition, not bold', () => {
-  for (const source of [
-    '- a\n\n  *[A]: a\n  - b',
-    '- a\n  *[HTML]: Hyper Text\n\nThe HTML spec.',
-  ]) {
-    assert.notEqual(covered(source, 'meta.abbreviation.definition.carve').replace(/\n/g, ''), '')
-    assert.ok(!covered(source, 'markup.bold.carve').includes('[A]'))
-    assert.ok(!covered(source, 'markup.bold.carve').includes('[HTML]'))
-  }
+// A document-level abbreviation definition opens no bold run with its star. Inside a
+// container the same line is text in Carve 0.2 (C2-B-081).
+test('an abbreviation definition at column 0 is a definition, not bold', () => {
+  const source = '*[HTML]: Hyper Text\n\nThe HTML spec.'
+  assert.notEqual(covered(source, 'meta.abbreviation.definition.carve').replace(/\n/g, ''), '')
+  assert.ok(!covered(source, 'markup.bold.carve').includes('[HTML]'))
 })
 
 test('a bold run crosses soft line breaks and closes normally', () => {

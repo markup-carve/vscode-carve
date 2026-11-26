@@ -1,0 +1,9 @@
+>a `<br>`{=html} b
+#^^ source.carve
+#  ^ source.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#   ^^^^ source.carve markup.raw.inline.passthrough.carve markup.raw.inline.content.carve
+#       ^ source.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.carve
+#        ^^ source.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.begin.carve
+#          ^^^^ source.carve markup.raw.inline.passthrough.carve entity.name.type.format.carve
+#              ^ source.carve markup.raw.inline.passthrough.carve punctuation.definition.raw.format.end.carve
+#               ^^^ source.carve

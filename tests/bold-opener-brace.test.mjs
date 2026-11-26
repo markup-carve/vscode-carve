@@ -20,7 +20,7 @@ const registry = new vsctm.Registry({
     'carve.tmLanguage.json',
   ),
 })
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 function covered(source, scope) {
   let state = vsctm.INITIAL

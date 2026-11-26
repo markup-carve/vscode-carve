@@ -1,0 +1,45 @@
+>[s]{#a .b k=v} [s]{k="v w" k2='x'} [s]{:en} [s]{ .a } [s]{open}
+#^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+# ^ source.carve meta.span.inline.carve string.other.span.carve
+#  ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#   ^ source.carve meta.attributes.carve
+#    ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#         ^ source.carve meta.attributes.carve
+#          ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#           ^ source.carve meta.attributes.carve
+#            ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#             ^ source.carve meta.attributes.carve
+#              ^ source.carve
+#               ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#                ^ source.carve meta.span.inline.carve string.other.span.carve
+#                 ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#                  ^ source.carve meta.attributes.carve
+#                   ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                    ^ source.carve meta.attributes.carve
+#                     ^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                          ^ source.carve meta.attributes.carve
+#                           ^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                             ^ source.carve meta.attributes.carve
+#                              ^^^ source.carve meta.attributes.carve string.quoted.single.attribute.carve
+#                                 ^ source.carve meta.attributes.carve
+#                                  ^ source.carve
+#                                   ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#                                    ^ source.carve meta.span.inline.carve string.other.span.carve
+#                                     ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#                                      ^ source.carve meta.attributes.carve
+#                                       ^^^ source.carve meta.attributes.carve entity.other.attribute-name.language.carve
+#                                          ^ source.carve meta.attributes.carve
+#                                           ^ source.carve
+#                                            ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#                                             ^ source.carve meta.span.inline.carve string.other.span.carve
+#                                              ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#                                               ^^ source.carve meta.attributes.carve
+#                                                 ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#                                                   ^^ source.carve meta.attributes.carve
+#                                                     ^ source.carve
+#                                                      ^ source.carve meta.span.inline.carve punctuation.definition.span.begin.carve
+#                                                       ^ source.carve meta.span.inline.carve string.other.span.carve
+#                                                        ^ source.carve meta.span.inline.carve punctuation.definition.span.end.carve
+#                                                         ^^^^^^ source.carve meta.attributes.carve

@@ -26,9 +26,9 @@ const v = 3
 x = 1
 ```
 
-~~~js "Title" [label]
+```js "Title" [label]
 const e = 4
-~~~
+```
 
 ```=html
 <b>raw</b>

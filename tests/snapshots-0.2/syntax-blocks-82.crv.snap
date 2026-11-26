@@ -1,0 +1,8 @@
+>[^a]:
+#^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+# ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#  ^ source.carve constant.other.reference.footnote.carve constant.other.footnote.carve
+#   ^ source.carve constant.other.reference.footnote.carve punctuation.definition.footnote.carve
+#    ^^ source.carve
+>  body
+#^^^^^^^ source.carve

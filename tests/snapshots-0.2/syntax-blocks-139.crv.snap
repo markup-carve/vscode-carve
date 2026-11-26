@@ -1,0 +1,14 @@
+>{.x}
+#^ source.carve meta.attributes.carve
+# ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#   ^ source.carve meta.attributes.carve
+>::: \
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve
+#   ^ source.carve markup.other.div.carve
+#    ^ source.carve markup.other.div.carve entity.name.type.div.carve
+>a
+#^^ source.carve
+>b
+#^^ source.carve
+>:::
+#^^^ source.carve markup.other.div.carve punctuation.definition.div.carve

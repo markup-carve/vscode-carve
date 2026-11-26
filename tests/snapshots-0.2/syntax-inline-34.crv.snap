@@ -1,0 +1,9 @@
+>a {_k=v_} b and {_a_}
+#^^ source.carve
+#  ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#    ^^^ source.carve markup.underline.text.carve markup.underline.text.carve
+#       ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#         ^^^^^^^ source.carve
+#                ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve
+#                  ^ source.carve markup.underline.text.carve markup.underline.text.carve
+#                   ^^ source.carve markup.underline.text.carve punctuation.definition.underline.carve

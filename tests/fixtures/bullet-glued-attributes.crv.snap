@@ -1,68 +1,68 @@
 >-{#x} an attributed bullet
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve meta.attributes.carve
-#  ^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
-#    ^ text.carve meta.attributes.carve
-#     ^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve meta.attributes.carve
+#  ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#    ^ source.carve meta.attributes.carve
+#     ^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >*{.c} an attributed star bullet
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve meta.attributes.carve
-#  ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#    ^ text.carve meta.attributes.carve
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve meta.attributes.carve
+#  ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#    ^ source.carve meta.attributes.carve
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{} an empty block attaches nothing
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{not attrs} bare keys are two boolean attributes
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^^^^^^^^^^^ text.carve meta.attributes.carve
-#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^^^^^^^^^^^ source.carve meta.attributes.carve
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{title="a}b"} a brace inside a quoted value
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve meta.attributes.carve
-#  ^^^^^ text.carve meta.attributes.carve entity.other.attribute-name.carve
-#       ^ text.carve meta.attributes.carve
-#        ^^^^^ text.carve meta.attributes.carve string.quoted.double.attribute.carve
-#             ^ text.carve meta.attributes.carve
-#              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve meta.attributes.carve
+#  ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#       ^ source.carve meta.attributes.carve
+#        ^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#             ^ source.carve meta.attributes.carve
+#              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{.c} [x] a task item carrying a class
-#^ text.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
-# ^ text.carve meta.attributes.carve
-#  ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#    ^ text.carve meta.attributes.carve
-#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve markup.list.unnumbered.carve punctuation.definition.list.begin.carve
+# ^ source.carve meta.attributes.carve
+#  ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#    ^ source.carve meta.attributes.carve
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{#x}
-#^ text.carve
-# ^ text.carve meta.attributes.carve
-#  ^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
-#    ^ text.carve meta.attributes.carve
+#^ source.carve
+# ^ source.carve meta.attributes.carve
+#  ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#    ^ source.carve meta.attributes.carve
 >
 >-{#x}{.y} two glued blocks are prose even with content
-#^ text.carve
-# ^ text.carve meta.attributes.carve
-#  ^^ text.carve meta.attributes.carve entity.other.attribute-name.id.carve
-#    ^ text.carve meta.attributes.carve
-#     ^ text.carve meta.attributes.carve
-#      ^^ text.carve meta.attributes.carve entity.other.attribute-name.class.carve
-#        ^ text.carve meta.attributes.carve
-#         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve
+# ^ source.carve meta.attributes.carve
+#  ^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#    ^ source.carve meta.attributes.carve
+#     ^ source.carve meta.attributes.carve
+#      ^^ source.carve meta.attributes.carve entity.other.attribute-name.class.carve
+#        ^ source.carve meta.attributes.carve
+#         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{+a+} an insertion span is not attributes
-#^ text.carve
-# ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
-#   ^ text.carve markup.inserted.critic.carve markup.inserted.carve
-#    ^^ text.carve markup.inserted.critic.carve punctuation.definition.critic.carve
-#      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^ source.carve
+# ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#   ^ source.carve markup.inserted.critic.carve markup.inserted.carve
+#    ^^ source.carve markup.inserted.critic.carve punctuation.definition.critic.carve
+#      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{2=v} a digit-first key is not an attribute
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >
 >-{a:b} a colon is not an identifier character
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.carve
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve
 >

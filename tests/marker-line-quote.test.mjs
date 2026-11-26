@@ -54,7 +54,7 @@ const registry = new vsctm.Registry({
     ),
 })
 
-const grammar = await registry.loadGrammar('text.carve')
+const grammar = await registry.loadGrammar('source.carve')
 
 /** @returns {{line: string, text: string, scopes: string[]}[]} one entry per token. */
 function tokenize(src) {
@@ -133,8 +133,9 @@ for (const [label, src] of NOT_A_QUOTE) {
 
 test('an indented quote below the marker line still opens at the line start', () => {
   // The control for the \G anchor: `#block-quotes` owns this line, not
-  // `#block-quote-on-marker-line`, and it has to keep owning it.
-  const quoted = tokenize('- a\n  > quoted\n').filter((t) => t.text.includes('quoted'))
+  // `#block-quote-on-marker-line`, and it has to keep owning it. The blank line
+  // matters: directly under the item text the quote line is paragraph text (U-006).
+  const quoted = tokenize('- a\n\n  > quoted\n').filter((t) => t.text.includes('quoted'))
   assert.ok(quoted.length > 0 && quoted.every(isQuoted), 'an indented quote line lost its scope')
 })
 

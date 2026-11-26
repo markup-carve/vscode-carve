@@ -1,10 +1,7 @@
 >1. a
-#^^ text.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
-#  ^ text.carve markup.list.numbered.carve
-#   ^^ text.carve
+#^^ source.carve markup.list.numbered.carve punctuation.definition.list.begin.carve
+#  ^ source.carve markup.list.numbered.carve
+#   ^^ source.carve
 >    > quote
-#^^^^ text.carve
-#    ^ text.carve markup.quote.carve punctuation.definition.quote.carve
-#     ^ text.carve markup.quote.carve
-#      ^^^^^^ text.carve markup.quote.carve
+#^^^^^^^^^^^^ source.carve
 >

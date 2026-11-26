@@ -1,0 +1,4 @@
+>see `unclosed *x* and [y](/u)
+#^^^^ source.carve
+#    ^ source.carve markup.raw.inline.carve punctuation.definition.raw.carve
+#     ^^^^^^^^^^^^^^^^^^^^^^^^^ source.carve markup.raw.inline.carve markup.raw.inline.content.carve

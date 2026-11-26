@@ -1,0 +1,10 @@
+>---JSON
+#^^^ source.carve meta.frontmatter.unknown.carve punctuation.definition.frontmatter.begin.carve
+#   ^^^^ source.carve meta.frontmatter.unknown.carve entity.name.type.frontmatter.carve
+>{"a": 1}
+#^^^^^^^^^ source.carve meta.frontmatter.unknown.carve meta.embedded.block.frontmatter
+>---
+#^^^ source.carve meta.frontmatter.unknown.carve punctuation.definition.frontmatter.end.carve
+>
+>text
+#^^^^^ source.carve

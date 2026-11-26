@@ -1,0 +1,72 @@
+>{#fig-sun}
+#^ source.carve meta.attributes.carve
+# ^^^^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#         ^ source.carve meta.attributes.carve
+>![a](x.png)
+#^^ source.carve meta.image.inline.carve punctuation.definition.image.begin.carve
+#  ^ source.carve meta.image.inline.carve string.other.image.alt.carve
+#   ^^ source.carve meta.image.inline.carve
+#     ^^^^^ source.carve meta.image.inline.carve markup.underline.link.image.carve
+#          ^ source.carve meta.image.inline.carve
+>^ Figure #: The sun
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>{#l1}
+#^ source.carve meta.attributes.carve
+# ^^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#    ^ source.carve meta.attributes.carve
+>```js
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.begin.carve
+#   ^^ source.carve markup.raw.block.fenced.code.carve entity.name.type.language.carve
+>x
+#^^ source.carve markup.raw.block.fenced.code.carve
+>```
+#^^^ source.carve markup.raw.block.fenced.code.carve punctuation.definition.raw.end.carve
+>^ Listing #: Code
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>> q
+#^ source.carve markup.quote.carve punctuation.definition.quote.carve
+# ^ source.carve markup.quote.carve
+#  ^^ source.carve markup.quote.carve
+>^ Someone
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>{#e1}
+#^ source.carve meta.attributes.carve
+# ^^^ source.carve meta.attributes.carve entity.other.attribute-name.id.carve
+#    ^ source.carve meta.attributes.carve
+>$$`E=mc^2`
+#^^ source.carve markup.other.math.display.carve punctuation.definition.math.carve
+#  ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve
+#   ^^^^^^ source.carve markup.other.math.display.carve markup.other.math.content.carve
+#         ^ source.carve markup.other.math.display.carve punctuation.definition.raw.carve
+>^ Equation #: Mass
+#^ source.carve markup.table.caption.carve punctuation.definition.caption.carve
+# ^ source.carve markup.table.caption.carve
+#  ^^^^^^^^^^^^^^^^ source.carve markup.table.caption.carve string.unquoted.caption.carve
+>
+>See </#fig-sun>, </#l1>, </#e1> and </#none>.
+#^^^^ source.carve
+#    ^^^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#       ^^^^^^^ source.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#              ^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#               ^^ source.carve
+#                 ^^^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                    ^^ source.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                      ^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                       ^^ source.carve
+#                         ^^^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                            ^^ source.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                              ^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                               ^^^^^ source.carve
+#                                    ^^^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                       ^^^^ source.carve meta.link.cross-reference.carve markup.underline.link.cross-reference.carve
+#                                           ^ source.carve meta.link.cross-reference.carve punctuation.definition.link.carve
+#                                            ^^ source.carve

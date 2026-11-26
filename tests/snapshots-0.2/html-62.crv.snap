@@ -1,0 +1,29 @@
+>{style="color:red" align=center k=v}
+#^ source.carve meta.attributes.carve
+# ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#      ^ source.carve meta.attributes.carve
+#       ^^^^^^^^^^^ source.carve meta.attributes.carve string.quoted.double.attribute.carve
+#                  ^ source.carve meta.attributes.carve
+#                   ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                        ^ source.carve meta.attributes.carve
+#                         ^^^^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                               ^ source.carve meta.attributes.carve
+#                                ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#                                 ^ source.carve meta.attributes.carve
+#                                  ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                                   ^ source.carve meta.attributes.carve
+>Text.
+#^^^^^^ source.carve
+>
+>{k=v align=center}
+#^ source.carve meta.attributes.carve
+# ^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#  ^ source.carve meta.attributes.carve
+#   ^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#    ^ source.carve meta.attributes.carve
+#     ^^^^^ source.carve meta.attributes.carve entity.other.attribute-name.carve
+#          ^ source.carve meta.attributes.carve
+#           ^^^^^^ source.carve meta.attributes.carve string.unquoted.attribute.carve
+#                 ^ source.carve meta.attributes.carve
+>Text.
+#^^^^^^ source.carve

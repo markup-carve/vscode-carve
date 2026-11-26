@@ -1,0 +1,15 @@
+::: glossary>
+q
+:::
+
+```js}
+code
+```
+
+```=html~
+<b>x</b>
+```
+
+::: note{.x}
+n
+:::

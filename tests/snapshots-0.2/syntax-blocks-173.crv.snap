@@ -1,0 +1,6 @@
+>= Title
+#^ source.carve markup.heading.carve punctuation.definition.heading.carve
+# ^ source.carve markup.heading.carve
+#  ^^^^^^ source.carve markup.heading.carve entity.name.section.carve
+>text
+#^^^^^ source.carve

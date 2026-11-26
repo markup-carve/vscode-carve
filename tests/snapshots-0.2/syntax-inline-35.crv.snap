@@ -1,0 +1,10 @@
+>a {'x'} b and {"a": "b"}
+#^^^^^^^^^^^^^^^ source.carve
+#               ^ source.carve punctuation.definition.smartquote.carve
+#                ^ source.carve
+#                 ^ source.carve punctuation.definition.smartquote.carve
+#                  ^^ source.carve
+#                    ^ source.carve punctuation.definition.smartquote.carve
+#                     ^ source.carve
+#                      ^ source.carve punctuation.definition.smartquote.carve
+#                       ^^ source.carve

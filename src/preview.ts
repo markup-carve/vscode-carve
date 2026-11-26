@@ -1,21 +1,31 @@
+import { parse, render, renderWithDocumentTransforms, tabsExtensions, tabsRenderer, type DocumentTransform } from '@markup-carve/carve'
 import {
-  autolink,
-  carveToHtml,
-  renderDocument,
-  carveToMarkdown,
-  type CarveExtension,
   chart,
   citations,
   codeGroup,
   details,
-  externalLinks,
+  glossary,
+  imgFence,
+  index,
   listTable,
   mathBlock,
   mermaid,
   spoiler,
-  tabs,
   wikilinks,
-} from '@markup-carve/carve'
+  withExtensions,
+} from '@markup-carve/carve/extensions'
+import { toMarkdown } from '@markup-carve/carve/export'
+
+type RenderOptions = NonNullable<Parameters<typeof render>[1]>
+type ExtensionDefinitions = NonNullable<RenderOptions['extensions']>
+type ExtensionRenderers = NonNullable<RenderOptions['renderers']>
+
+/** Extension definitions, the renderers that draw them and the document transforms that resolve them (C2-X-053). */
+export interface PreviewExtensionSet {
+  extensions: ExtensionDefinitions
+  renderers: ExtensionRenderers
+  transforms?: readonly DocumentTransform[]
+}
 
 /**
  * The extensions the preview enables.
@@ -24,20 +34,14 @@ import {
  * math stays literal, and mermaid/chart fences never hydrate. Constructed fresh
  * per render so no cross-document state leaks.
  *
- * The reference set is the docs playground, whose list lives in
- * `docs/.vitepress/carve-extensions.js` in markup-carve/carve. That file is in
- * another repository and the pinned engine package does not export the list, so
- * there is no honest way to read it from here - `presets` is the fenced-diagram
- * renderers, not this. The set is therefore pinned locally and reconciled by
- * hand, and `PREVIEW_EXTENSIONS`/`EXCLUDED_EXTENSIONS` below turn the parts that
- * CAN be checked locally into a test: that every extension factory the pinned
- * engine exports is classified one way or the other.
+ * The reference set is the docs playground, reconciled by hand.
+ * `PREVIEW_EXTENSIONS`/`EXCLUDED_EXTENSIONS` below turn the parts that CAN be
+ * checked locally into a test: every extension factory the pinned engine
+ * exports from `@markup-carve/carve/extensions` is classified one way or the
+ * other.
  *
- * `citations` is the one that mattered most. It changes the PARSE rather than
- * the render: without it `[@key]` produces no citation node at all, so
- * `citation`, `citation_group` and `citation_definition` were unreachable in
- * this preview while they worked in the docs playground. The other three
- * degraded quietly - the nodes existed and only the rendering differed.
+ * `autolink` and `externalLinks` are no longer engine extensions in 0.2; the
+ * preview rebuilds them as a document transform (`decorateLinks`).
  */
 export const PREVIEW_EXTENSIONS = [
   'details',
@@ -48,47 +52,34 @@ export const PREVIEW_EXTENSIONS = [
   'codeGroup',
   'listTable',
   'chart',
-  'citations',
   'wikilinks',
-  'autolink',
-  'externalLinks',
+  'citations',
+  'glossary',
+  'index',
+  'imgFence',
 ] as const
 
 /**
  * Every extension factory the pinned engine exports that the preview
  * deliberately does NOT enable, each with the reason it stays off.
  *
- * This is what stops the drift. The list the preview should match is in another
- * repo, but the thing that actually causes drift is local and checkable: a new
- * extension lands in the engine and nobody decides about it. The guard in
- * `extension.test.ts` fails until a new factory is named in one list or the
- * other, so the decision has to be made rather than defaulted.
+ * The guard in `extension.test.ts` fails until a new factory is named in one
+ * list or the other, so the decision has to be made rather than defaulted.
  */
 export const EXCLUDED_EXTENSIONS: Record<string, string> = {
-  // A DECISION, not a gap. The docs playground enables headingPermalinks; this
-  // preview will not. The maintainer found the paragraph anchors noisy in the
-  // IntelliJ preview, where they are now hover-only, and an editor preview is
-  // not a page anyone deep-links into - the reader is looking at their own
-  // document, with the source beside it. Do not "fix" this divergence by
-  // adding it back.
+  // A DECISION, not a gap. The docs playground enabled headingPermalinks; this
+  // preview will not. 0.2 ships no such extension, and if one returns it stays
+  // off: an editor preview is not a page anyone deep-links into.
   headingPermalinks: 'DECISION: the paragraph anchors are noise in an editor preview, which nobody deep-links into',
-
-  // Auto-injects a list that pushes the author's own first block down the page.
-  tableOfContents: 'auto-injects a TOC that displaces the document being edited',
 
   // Need configuration, or have no visible effect zero-config. A preview gets
   // no per-document configuration, so these would be inert.
   defaultAttributes: 'needs per-document default-attribute config',
-  headingLevelShift: 'needs a shift-amount option',
-  headingReference: 'needs config / overlaps core cross-references',
-  headingNumbers: 'needs section-numbering config / overlaps core heading numbering',
   tabNormalize: 'invisible whitespace transform, nothing to show',
-  glossary: 'needs a ::: glossary block plus :term[] uses, nothing to show zero-config',
-  index: 'needs :index[] markers plus a ::: index block, nothing to show zero-config',
-  tocPlacement: 'needs a ::: toc block, nothing to show zero-config',
+  inlineFootnotesToParentheses: 'rewrites footnotes the reader wants to see as footnotes',
+  smartQuotes: 'needs a locale, and the core smartTypography option is off in the preview',
   colorSwatch: 'needs :color[] markers, nothing to show zero-config',
   codeCallouts: 'needs <n> markers plus a bound list, nothing to show zero-config',
-  imgFence: 'needs an img fence with an SVG body to show anything zero-config',
   semanticSpan: 'consumes samp/var/cite/dfn, contradicting the corpus-pinned HTML for the core semantic-name examples',
 
   // Fenced-diagram presets whose client library the preview does not bundle.
@@ -99,68 +90,131 @@ export const EXCLUDED_EXTENSIONS: Record<string, string> = {
   wavedrom: 'needs the WaveDrom client library, not bundled',
   abc: 'needs the abcjs client library, not bundled',
   vegaLite: 'needs the Vega-Lite client library, not bundled',
+  presets: 'every diagram preset at once, most of whose client libraries are not bundled',
 }
 
 /** Factory per enabled name, so the guard can check the list drives the render. */
-const EXTENSION_FACTORIES: Record<string, () => CarveExtension> = {
+const EXTENSION_FACTORIES: Record<string, () => PreviewExtensionSet> = {
   details,
   spoiler,
   mermaid,
   mathBlock,
-  tabs,
+  tabs: () => ({ extensions: tabsExtensions, renderers: { 'carve.tabs': tabsRenderer } }),
   codeGroup,
   listTable,
   chart,
-  citations,
   wikilinks,
-  autolink,
-  externalLinks,
+  citations,
+  glossary,
+  index,
+  imgFence,
 }
 
 /**
- * The enabled extensions that deliberately change the HTML of a TIER-1
- * construct, rather than adding one of their own.
- *
- * Both decorate ordinary links, which the spec corpus pins byte-for-byte:
- * `externalLinks` adds `target`/`rel` to an off-site link, and `autolink` turns
- * a bare URL into one. Measured against the 1538-document corpus: with the rest
- * of the preview set enabled, externalLinks changes 20 documents and autolink
- * changes 10, and the other ten extensions change none.
- *
- * That divergence is wanted in a preview and unwanted in a conformance
- * measurement, so the two renders are separated rather than the corpus being
- * given a waiver list. `renderConformanceBody` is what the corpus tool measures;
- * `renderPreviewBody` is what a reader sees.
- *
- * The separation is also the guard. Any future extension that changes Tier-1
- * output makes the corpus fail until it is named here - which means saying, in
- * writing, that the change is intended. A waiver list per document could not
- * tell "we meant this" from "the engine regressed".
+ * The preview features that deliberately change the HTML of a TIER-1
+ * construct. `externalLinks` adds `target`/`rel` to an off-site link and
+ * `autolink` turns a bare URL into one; both are host transforms in 0.2 (see
+ * `decorateLinks`). The conformance render leaves them out, so the corpus
+ * measures the engine and not the preview's decoration.
  */
 export const TIER1_DECORATING_EXTENSIONS = ['autolink', 'externalLinks'] as const
 
 /**
- * The enabled extensions that read a shape the core keeps as text: `citations`
- * takes `[@a]` and `wikilinks` takes `[[x]]`. The corpus pins the core reading
- * (rows 717 and 867), so the conformance render leaves these out as well.
+ * The enabled extensions that claim a shape the core reads as its own node:
+ * `spoiler` turns the core `::: spoiler` div into a details element, which the
+ * corpus pins as a div (syntax-blocks examples 137 and 138). The conformance
+ * render leaves it out. `wikilinks` claims `:wiki[...]` (C2-X-057), not `[[x]]`.
  */
-export const TIER1_CLAIMING_EXTENSIONS = ['citations', 'wikilinks'] as const
+export const TIER1_CLAIMING_EXTENSIONS = ['spoiler'] as const
+
+function extensionSet(names: readonly string[]): PreviewExtensionSet {
+  const merged = withExtensions(...names.map((name) => EXTENSION_FACTORIES[name]!()))
+  return { extensions: merged.extensions ?? [], renderers: merged.renderers ?? {}, transforms: merged.transforms ?? [] }
+}
 
 /**
  * One fresh instance of each enabled extension.
  *
  * Exported because a render that expands includes has to PARSE with the same
  * set it renders with: several of these change the parse rather than the render,
- * so a parse made without them reads the document differently (#209). Two fresh
- * sets for one render is not the same thing either - the set is built fresh per
- * render so no cross-document state leaks, and an extension that collects during
- * the parse and emits during the render would be split across two instances.
+ * so a parse made without them reads the document differently (#209).
  */
-export function previewExtensions(): CarveExtension[] {
-  return PREVIEW_EXTENSIONS.map((name) => EXTENSION_FACTORIES[name]())
+export function previewExtensions(): PreviewExtensionSet {
+  return extensionSet(PREVIEW_EXTENSIONS)
+}
+
+interface TreeNode {
+  type: string
+  href?: string
+  value?: string
+  children?: TreeNode[]
+  attrs?: { keyValues?: Array<[string, string]>; [key: string]: unknown }
+  [key: string]: unknown
+}
+
+const BARE_URL = /https?:\/\/[^\s<>]+/g
+const TRAILING_PUNCTUATION = /[.,;:!?'")\]]+$/
+const OFF_SITE = /^https?:\/\//i
+// Text in these nodes is not prose a bare URL could be linked from.
+const NO_AUTOLINK = new Set(['link', 'image', 'code', 'code_block', 'raw_block', 'raw_inline', 'math', 'autolink', 'url'])
+
+function autolinkedText(node: TreeNode): TreeNode[] {
+  const value = node.value ?? ''
+  const pieces: TreeNode[] = []
+  let at = 0
+  for (const match of value.matchAll(BARE_URL)) {
+    const url = match[0].replace(TRAILING_PUNCTUATION, '')
+    if (!url.match(/^https?:\/\/./)) continue
+    if (match.index > at) pieces.push({ type: 'text', value: value.slice(at, match.index) })
+    pieces.push({ type: 'link', href: url, children: [{ type: 'text', value: url }] })
+    at = match.index + url.length
+  }
+  if (pieces.length === 0) return [node]
+  if (at < value.length) pieces.push({ type: 'text', value: value.slice(at) })
+  return pieces
+}
+
+/**
+ * The 0.1 `autolink` and `externalLinks` extensions, rebuilt as a transform of
+ * the parsed tree: a bare `http(s)` URL in prose becomes a link, and every
+ * off-site link opens in a new browsing context with `rel="noopener noreferrer"`.
+ */
+export function decorateLinks(document: unknown): unknown {
+  const walk = (node: TreeNode, linkable: boolean): void => {
+    if (node.type === 'link' && node.href && OFF_SITE.test(node.href)) {
+      const pairs = node.attrs?.keyValues ?? []
+      const has = (key: string) => pairs.some(([name]) => name === key)
+      const added: Array<[string, string]> = []
+      if (!has('target')) added.push(['target', '_blank'])
+      if (!has('rel')) added.push(['rel', 'noopener noreferrer'])
+      if (added.length) node.attrs = { ...node.attrs, keyValues: [...pairs, ...added] }
+    }
+    const childLinkable = linkable && !NO_AUTOLINK.has(node.type)
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'pos' || key === 'attrs' || !Array.isArray(value)) continue
+      const children = value as TreeNode[]
+      if (!children.some((child) => child && typeof child === 'object' && typeof child.type === 'string')) continue
+      if (childLinkable && children.some((child) => child.type === 'text')) {
+        node[key] = children.flatMap((child) => child.type === 'text' ? autolinkedText(child) : [child])
+      }
+      for (const child of node[key] as TreeNode[]) walk(child, childLinkable)
+    }
+  }
+  walk(document as TreeNode, true)
+  return document
 }
 
 const HTML_ESCAPES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }
+
+/**
+ * The `carve.preview.headingShift` setting as the engine's `headingShift`
+ * option. The engine refuses anything but a whole number from 0 to 5, and a
+ * workspace settings file can hold any value, so such a value renders unshifted
+ * instead of failing the whole preview.
+ */
+export function headingShiftFromSetting(value: unknown): number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= 5 ? value : 0
+}
 
 /**
  * The `carve.preview.emoji` setting as the engine's `symbols` option. The
@@ -185,60 +239,72 @@ export interface PreviewRenderOptions {
   symbols?: Record<string, string>
   /** Stamp blocks with `data-source-line` for scroll sync. */
   sourceLine?: boolean
+  /** Levels every heading moves down, 0 to 5 (C2-H-208); 0 leaves them as written. */
+  headingShift?: number
   /**
    * A document whose includes are already expanded. When set, `source` is only
    * carried for the callers that still want it; the render starts here.
    */
   document?: unknown
   /**
-   * The extension instances to render with. A caller that expanded includes
-   * passes the SAME set it parsed with; anyone else omits it and gets a fresh
-   * one.
+   * The extension set to render with. A caller that expanded includes passes
+   * the SAME set it parsed with; anyone else omits it and gets a fresh one.
    */
-  extensions?: CarveExtension[]
+  extensions?: PreviewExtensionSet
+}
+
+function engineOptions(render: Omit<PreviewRenderOptions, 'document' | 'extensions'>, set: PreviewExtensionSet): RenderOptions {
+  const social = render.mentionUrl || render.tagUrl
+    ? { ...(render.mentionUrl ? { mentionUrl: render.mentionUrl } : {}), ...(render.tagUrl ? { tagUrl: render.tagUrl } : {}) }
+    : undefined
+  return {
+    // U-076, U-077: 0.2 escapes raw HTML unless the host opts in. The preview
+    // showed it under 0.1 and its webview CSP still blocks unnonced script.
+    rawHtml: true,
+    extensions: set.extensions,
+    renderers: set.renderers,
+    ...(social ? { social } : {}),
+    ...(render.symbols ? { symbols: render.symbols } : {}),
+    ...(render.sourceLine ? { sourceLines: true } : {}),
+    ...(render.headingShift ? { headingShift: render.headingShift } : {}),
+  }
 }
 
 /**
  * The preview body.
  *
  * With `document` set the render starts from a document the caller already
- * expanded, through `renderDocument` - the same composition `carveToHtml`
- * performs, minus the parse it would redo. Composing it by hand instead would
- * skip `applyTransforms`, and the preview enables fourteen extensions,
- * `citations` among them, so the result would silently be a degraded render of
- * the thing this is meant to improve (#190).
+ * expanded, minus the parse it would redo. Either way the tree goes through
+ * `decorateLinks` before the render.
  */
-export function renderPreviewBody(source: string, render: PreviewRenderOptions = {}): string {
-  const { document, extensions: supplied, ...options } = render
-  const extensions = supplied ?? previewExtensions()
-  if (document === undefined) return carveToHtml(source, { ...options, extensions })
-  return renderDocument(document as Parameters<typeof renderDocument>[0], { ...options, extensions })
+export function renderPreviewBody(source: string, options: PreviewRenderOptions = {}): string {
+  const { document, extensions: supplied, ...rest } = options
+  const set = supplied ?? previewExtensions()
+  const tree = document ?? parse(source, { extensions: set.extensions })
+  return renderWithDocumentTransforms(decorateLinks(tree) as Parameters<typeof render>[0], set.transforms ?? [], engineOptions(rest, set)).html
 }
 
 /**
  * Render to Markdown.
  *
  * No extension set: the extensions decorate an HTML render, and the Markdown
- * target is the engine's own. What lands on disk is what carveToMarkdown
- * writes, with no wrapper - the HTML export builds a whole standalone page
- * around its output, and Markdown has nothing to wrap.
+ * export is the engine's own (`toMarkdown`). What lands on disk is what it
+ * writes, with no wrapper.
  */
 export function renderMarkdown(source: string, document?: unknown): string {
-  if (document === undefined) return carveToMarkdown(source)
-  return renderDocument(document as Parameters<typeof renderDocument>[0], { target: 'markdown' })
+  const tree = document ?? parse(source)
+  return toMarkdown(tree as Parameters<typeof toMarkdown>[0]).output
 }
 
 /**
- * The preview render with the Tier-1 decorating and claiming extensions left out - what the
- * spec corpus is measured against. See TIER1_DECORATING_EXTENSIONS for why this
- * is a second function rather than a list of waived documents.
+ * The preview render with the Tier-1 decorating and claiming features left out - what the
+ * spec corpus is measured against.
  */
-export function renderConformanceBody(source: string, render: PreviewRenderOptions = {}): string {
-  const decorating = new Set<string>([...TIER1_DECORATING_EXTENSIONS, ...TIER1_CLAIMING_EXTENSIONS])
-  const extensions = PREVIEW_EXTENSIONS
-    .filter((name) => !decorating.has(name))
-    .map((name) => EXTENSION_FACTORIES[name]())
-  return carveToHtml(source, { ...render, extensions })
+export function renderConformanceBody(source: string, options: PreviewRenderOptions = {}): string {
+  const claiming = new Set<string>(TIER1_CLAIMING_EXTENSIONS as readonly string[])
+  const set = extensionSet(PREVIEW_EXTENSIONS.filter((name) => !claiming.has(name)))
+  const { document: _document, extensions: _extensions, ...rest } = options
+  return renderWithDocumentTransforms(source, set.transforms ?? [], { ...engineOptions(rest, set), rawHtml: false }).html
 }
 
 export interface PreviewAssets {
@@ -1110,12 +1176,12 @@ const CDN = {
   katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css',
   katexAutoRender: 'https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js',
   hljsJs: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
-  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/highlightjs/carve.js',
-  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/highlightjs/delimited.js',
+  hljsCarveJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@558680dd/highlightjs/carve.js',
+  hljsDelimitedJs: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@558680dd/highlightjs/delimited.js',
   hljsLightCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github.min.css',
   hljsDarkCss: 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/github-dark.min.css',
-  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/shiki/table-tokens.css',
-  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@b4f8c285/themes/carve-code.css',
+  hljsTableCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@558680dd/shiki/table-tokens.css',
+  hljsCarveCss: 'https://cdn.jsdelivr.net/gh/markup-carve/carve-grammars@558680dd/themes/carve-code.css',
 } as const
 
 export interface ExportOptions {
