@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: markup-carve/carve-grammars
-          ref: next2
+          ref: main
           path: carve-grammars
 
       # GATED: a stale declaration is bookkeeping owned by this repository.

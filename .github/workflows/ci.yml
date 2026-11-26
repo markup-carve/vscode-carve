@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, next2]
+    branches: [main]
   pull_request:
-    branches: [main, next2]
+    branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 

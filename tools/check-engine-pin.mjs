@@ -21,7 +21,7 @@
 // it. It DOES fail when a pin cannot be resolved to a commit on the upstream
 // branch - a typo, a force-pushed branch, a revision that no longer exists -
 // because that is a broken build waiting to happen (carve#499). The branch is
-// `main` unless `--branch` names another: the Carve 0.2 line pins `next2`.
+// `main` unless `--branch` names another: carve-lsp is checked against `next2`.
 //
 // Usage: node tools/check-engine-pin.mjs <dep> <upstream-dir> [--manifest <path>] [--branch <name>]
 

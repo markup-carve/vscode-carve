@@ -207,7 +207,9 @@ test('--branch measures against that upstream branch, as the next2 line pins car
 	}
 })
 
-test('the drift workflow on this branch measures the pins against next2', () => {
+test('the drift workflow measures carve-js against main and carve-lsp against next2', () => {
 	const workflow = readFileSync(resolve(root, '.github/workflows/engine-drift.yml'), 'utf8')
-	assert.match(workflow, /node tools\/check-engine-pin\.mjs .* --branch next2/)
+	assert.match(workflow, /node tools\/check-engine-pin\.mjs .* --branch '\$\{\{ matrix\.branch \}\}'/)
+	assert.match(workflow, /path: carve-js\n\s+branch: main\n/)
+	assert.match(workflow, /path: carve-lsp\n\s+branch: next2\n/)
 })
