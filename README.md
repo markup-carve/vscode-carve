@@ -1,6 +1,6 @@
 # vscode-carve
 
-Carve support for VS Code, with TextMate highlighting, preview, and a bundled language server. On the `next2` branch the extension bundles the unreleased Carve 0.2 engine and language server (carve-js and carve-lsp `next2`, pinned by commit). See the [Carve documentation](https://markup-carve.github.io/carve/) for the markup language.
+Carve support for VS Code, with TextMate highlighting, preview, and a bundled language server. The extension bundles the unreleased Carve 0.2 engine and language server (carve-js and carve-lsp `next2`, pinned by commit). See the [Carve documentation](https://markup-carve.github.io/carve/) for the markup language.
 
 ## Features
 
