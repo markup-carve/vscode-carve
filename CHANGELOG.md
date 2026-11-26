@@ -12,7 +12,7 @@ The bundled language server no longer keeps a CPU core busy while a large worksp
 
 ### Fixes
 
-- The extension bundles carve-lsp 0.1.17. Position lookups in the server no longer slow down with file size, so startup indexing, links, highlights and selection ranges stay fast in large documents, and workspace diagnostics are sent once and then only when something changes (markup-carve/carve-lsp#668).
+- The extension bundles carve-lsp 0.1.17. Position lookups in the server no longer slow down with file size, so startup indexing, links, highlights and selection ranges stay fast in large documents, and workspace diagnostics are sent once and then only when something changes (#471, markup-carve/carve-lsp#668).
 
 **Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.18...v0.1.19
 
