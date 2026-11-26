@@ -17,6 +17,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - A table row followed by a `%%` comment is highlighted as a row (C2-B-167).
 
+## [0.1.19] - 2026-11-26
+
+The bundled language server no longer keeps a CPU core busy while a large workspace is open.
+
+### Fixes
+
+- The extension bundles carve-lsp 0.1.17. Position lookups in the server no longer slow down with file size, so startup indexing, links, highlights and selection ranges stay fast in large documents, and workspace diagnostics are sent once and then only when something changes (#471, markup-carve/carve-lsp#668).
+
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.18...v0.1.19
+
 ## [0.1.18] - 2026-11-12
 
 A hotfix: 0.1.17 failed to activate, so no Carve feature in VS Code worked.
