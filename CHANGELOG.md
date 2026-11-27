@@ -6,16 +6,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-27
+
+The extension reads, previews and edits documents as Carve 0.2.
+
 ### Breaking
 
-- Preview, export, import, formatting and the bundled language server run on the Carve 0.2 engine (carve-js and carve-lsp `next2`). Carve 0.1 source can read differently; `carve upgrade` rewrites it.
-- The grammar's root scope is `source.carve`, as in carve-grammars. Themes or injections that target `text.carve` need the new name (#451).
-- The preview no longer renders `[@key]` citations: Carve 0.2 has no citation extension yet (carve-js#5082). Wiki links are written `:wiki[Page]`, and a tab's label is its quoted title.
-- **Carve: Export as a self-contained Carve file** no longer renames colliding ids or footnote labels. Carve 0.2 scopes footnote, reference and abbreviation keys per file, so the summary says when the copy renders differently.
+- Preview, export, import, formatting and the bundled language server run on the Carve 0.2 engine (carve-js and carve-lsp 0.2). Carve 0.1 source can read differently; `carve upgrade` rewrites it (#448, #453).
+- The grammar's root scope is `source.carve`, as in carve-grammars. Themes or injections that target `text.carve` need the new name (#451, #453).
+- The preview renders 0.2 citations, written `:cite[key]` with a references directive; `[@key]` is text. Wiki links are written `:wiki[Page]`, and a tab's label is its quoted title (#453, #454).
+- **Carve: Export as a self-contained Carve file** no longer renames colliding ids or footnote labels. Carve 0.2 scopes footnote, reference and abbreviation keys per file, so the summary says when the copy renders differently (#454).
 
 ### Fixes
 
 - A table row followed by a `%%` comment is highlighted as a row (C2-B-167).
+- A line of many unclosed inline openers highlights in linear time instead of rescanning the line for each opener (#455).
+
+### Improvements
+
+- `carve.preview.headingShift` (0 to 5, default 0) shifts heading levels in the preview and the HTML export (#467).
+- `carve.lint.upgrade` runs the 0.1 migration rules and offers their quick fixes, for moving a 0.1 document to 0.2 (#470).
+
+**Full Changelog**: https://github.com/markup-carve/vscode-carve/compare/v0.1.19...v0.2.0
 
 ## [0.1.19] - 2026-11-26
 
