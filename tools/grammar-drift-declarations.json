@@ -33,7 +33,6 @@
     "symbol": { "local": "mentions-tags", "fixture": "grammar-correctness" },
     "critic_add": { "local": "critic-markup", "fixture": "bullet-glued-attributes" },
     "critic_del": { "local": "critic-markup", "fixture": "bullet-glued-attributes" },
-    "critic_sub": { "local": "critic-markup", "fixture": "forced-emphasis" },
     "critic_comment": { "local": "critic-markup", "fixture": "bullet-glued-attributes" },
     "forced_strong": { "local": "forced-emphasis", "fixture": "forced-emphasis" },
     "forced_italic": { "local": "forced-emphasis", "fixture": "forced-emphasis" },
@@ -73,8 +72,7 @@
     "block_comment_on_marker_line": { "local": "comment-fence-on-marker-line", "fixture": "container-grammar-rules" },
     "footnote_def": { "local": "definitions", "fixture": "reference-images-and-crossrefs" },
     "heading_in_container": { "local": "headings-behind-a-container-prefix", "fixture": "container-grammar-rules" },
-    "fenced_code_in_container": { "local": "code-block-behind-a-container-prefix", "fixture": "container-grammar-rules" },
-    "marker_line_continuation": { "local": "plus-marker-after-opener", "fixture": "grammar-correctness" }
+    "fenced_code_in_container": { "local": "code-block-behind-a-container-prefix", "fixture": "container-grammar-rules" }
   },
   "localRulesGroupedUpstream": {
     "attribute-items": { "upstream": "attributes", "fixture": "attribute-attachment" },
