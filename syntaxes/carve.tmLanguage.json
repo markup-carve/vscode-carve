@@ -49,6 +49,9 @@
       "include": "#lists"
     },
     {
+      "include": "#snippet-definition"
+    },
+    {
       "include": "#definitions"
     },
     {
@@ -100,6 +103,9 @@
       "include": "#trailing-comment"
     },
     {
+      "include": "#snippet-use"
+    },
+    {
       "include": "#include-directive"
     },
     {
@@ -125,6 +131,82 @@
     }
   ],
   "repository": {
+    "snippet-definition": {
+      "comment": "A snippet definition `{$name}: value` (C2-B-236): only at column 0, so a container line or a lazy line of an open paragraph (which `#prose_continuation` holds) stays text. The marker's parts and glued blocks take the attribute scopes; a part that is no valid attribute part, or an id anywhere in the marker, makes no definition, and the line falls through to the paragraph rule. The value needs a character other than a space or a tab after the one space, and is inline content of this line only. An id in an attribute line ABOVE also refuses the definition; a line-local rule cannot see that line, so such a line keeps the definition scopes.",
+      "match": "^(?:\\A\\x{FEFF})?(\\{\\$)([A-Za-z0-9_][A-Za-z0-9_-]*)((?: +(?:\\.[A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*)(?: +(?:\\.[A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*))*) *)?(\\})((?:\\{ *(?:\\.[A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*)(?: +(?:\\.[A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*))* *\\})*)(:)( (?=[ \\t]*[^ \\t\\n]).*)$",
+      "name": "meta.snippet.definition.carve",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.snippet.begin.carve"
+        },
+        "2": {
+          "name": "variable.other.snippet.carve"
+        },
+        "3": {
+          "name": "meta.attributes.carve",
+          "patterns": [
+            {
+              "include": "#attribute-items"
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.snippet.end.carve"
+        },
+        "5": {
+          "patterns": [
+            {
+              "begin": "(\\{)(?=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^{}\"'\\n])*\\})",
+              "beginCaptures": {
+                "1": {
+                  "name": "punctuation.definition.attributes.carve"
+                }
+              },
+              "end": "\\}",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.attributes.carve"
+                }
+              },
+              "name": "meta.attributes.carve",
+              "patterns": [
+                {
+                  "include": "#attribute-items"
+                }
+              ]
+            }
+          ]
+        },
+        "6": {
+          "name": "punctuation.separator.carve"
+        },
+        "7": {
+          "patterns": [
+            {
+              "include": "#attribute-text-inline"
+            }
+          ]
+        }
+      }
+    },
+    "snippet-use": {
+      "comment": "A snippet use `{{ $name }}` (C2-I-128; alone on its line, C2-B-237, it reads the same). Tried before `#include_directive`, which would read `$name` as a path. A name of another shape (`{{ $a.crv }}`), no space (`{{$v}}`), a tab, or an option (`{{ $v @shift:1 }}`) makes no use and stays with the include rule. A use carries no attributes, so valid attribute blocks glued after it are consumed here without a scope instead of being read as `#attributes`; a braced or critic comment there keeps its comment scope.",
+      "match": "((\\{\\{) +(\\$[A-Za-z0-9_][A-Za-z0-9_-]*) +(\\}\\}))((?:\\{ *(?:[.#][A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*)(?: +(?:[.#][A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*))* *\\})*)",
+      "captures": {
+        "1": {
+          "name": "meta.snippet.use.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.snippet.begin.carve"
+        },
+        "3": {
+          "name": "variable.other.snippet.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.snippet.end.carve"
+        }
+      }
+    },
     "frontmatter": {
       "patterns": [
         {
@@ -1234,6 +1316,9 @@
           "include": "#trailing-comment-cell"
         },
         {
+          "include": "#snippet-use"
+        },
+        {
           "include": "#include-directive"
         },
         {
@@ -2007,6 +2092,9 @@
               "include": "#inline-code"
             },
             {
+              "include": "#snippet-use"
+            },
+            {
               "include": "#include-directive"
             },
             {
@@ -2270,6 +2358,9 @@
         },
         {
           "include": "#trailing-comment"
+        },
+        {
+          "include": "#snippet-use"
         },
         {
           "include": "#include-directive"
@@ -3361,6 +3452,9 @@
         },
         {
           "include": "#trailing-comment"
+        },
+        {
+          "include": "#snippet-use"
         },
         {
           "include": "#include-directive"
@@ -4563,6 +4657,9 @@
           "include": "#trailing-comment"
         },
         {
+          "include": "#snippet-use"
+        },
+        {
           "include": "#include-directive"
         },
         {
@@ -4786,6 +4883,9 @@
         },
         {
           "include": "#trailing-comment"
+        },
+        {
+          "include": "#snippet-use"
         },
         {
           "include": "#include-directive"
@@ -5640,6 +5740,9 @@
           "include": "#trailing-comment"
         },
         {
+          "include": "#snippet-use"
+        },
+        {
           "include": "#include-directive"
         },
         {
@@ -5828,6 +5931,9 @@
         },
         {
           "include": "#trailing-comment"
+        },
+        {
+          "include": "#snippet-use"
         },
         {
           "include": "#include-directive"
@@ -6339,6 +6445,9 @@
         },
         {
           "include": "#trailing-comment"
+        },
+        {
+          "include": "#snippet-use"
         },
         {
           "include": "#include-directive"
