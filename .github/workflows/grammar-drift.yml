@@ -45,7 +45,9 @@ jobs:
       - name: Grammar declarations still describe upstream
         env:
           CARVE_GRAMMARS_DIR: carve-grammars
-        run: node tools/check-grammar-drift.mjs declarations
+        run: |
+          node --test tests/grammar-declarations-current.test.mjs
+          node tools/check-grammar-drift.mjs declarations
 
       # GATED: a declaration that is well-formed by NAME can still be false about
       # the CONSTRUCT, and the arm above cannot see the difference (#200). The

@@ -7,16 +7,11 @@
   "upstream:critic_del": "no fixture holds a critic deletion",
   "upstream:critic_comment": "no fixture holds a critic comment",
   "upstream:attributes_multiline": "no fixture holds an attribute block crossing a line break",
-  "upstream:underline": "no fixture holds a bare underline run",
-  "upstream:highlight": "no fixture holds a bare highlight run",
   "upstream:heading_tag": "no fixture holds a tag on a heading",
   "upstream:definition_list": "a definition term is left unscoped locally - a real coverage gap, not bookkeeping",
   "upstream:block_comment_on_quote_marker_line_in_container": "no fixture holds a comment fence on a quote marker line inside a container",
   "upstream:block_comment_on_quote_on_marker_line": "no fixture holds a comment fence on a quote on a list marker line",
   "upstream:heading_in_container": "no fixture holds a heading behind a container prefix that upstream's rule reaches",
   "upstream:fenced_code_in_container": "no fixture holds a code fence behind a container prefix that upstream's rule reaches",
-  "upstream:list_item": "a task checkbox glued to an attribute block (-{.c} [x]) is left unscoped locally - the known limitation the task branch of lists documents",
-  "upstream:critic_sub": "carve-grammars next2 leaves the rule unreachable: Carve 0.2 reads the substitution as braced strike (U-069)",
-  "upstream:strike": "carve-grammars next2 leaves the rule unreachable: a bare tilde run is text in Carve 0.2 (U-066)",
-  "upstream:marker_line_continuation": "carve-grammars next2 leaves the rule unreachable: Carve 0.2 has no continuation marker (U-014 to U-017)"
+  "upstream:list_item": "a task checkbox glued to an attribute block (-{.c} [x]) is left unscoped locally - the known limitation the task branch of lists documents"
 }
