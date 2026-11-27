@@ -14,7 +14,7 @@ name: Engine drift
 # It reports rather than gates on lag: upstream moving is not a defect here, and
 # a job that goes red for something outside the repository teaches people to
 # ignore it. It DOES fail when a pin is not exact, or cannot be resolved to a
-# commit on the branch it follows (carve-js main, carve-lsp next2 until it moves to main) - a typo, a force-pushed branch, a revision
+# commit on the branch it follows (main for both carve-js and carve-lsp) - a typo, a force-pushed branch, a revision
 # that no longer exists - because that is a broken build waiting to happen.
 # carve-js has rewritten history before: three sibling repos pinned revisions
 # that a fresh clone cannot check out (carve#499).
@@ -47,7 +47,7 @@ jobs:
           - dep: "@markup-carve/carve-lsp"
             repo: markup-carve/carve-lsp
             path: carve-lsp
-            branch: next2
+            branch: main
     steps:
       - uses: actions/checkout@v6
 
